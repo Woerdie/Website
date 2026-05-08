@@ -898,7 +898,7 @@
         </div>
       </div>
       <div class="contact-form reveal">
-        <form onsubmit="handleSubmit(event)">
+        <form action="https://formspree.io/f/xeenlbpw" method="POST">
           <div class="form-row">
             <div class="form-group">
               <label>Naam</label>
@@ -953,20 +953,6 @@
     }, { threshold: 0.1 });
     reveals.forEach(el => observer.observe(el));
 
-    // Form submit
-    function handleSubmit(e) {
-      e.preventDefault();
-      const btn = e.target.querySelector('.btn-submit');
-      btn.textContent = 'Verstuurd ✓';
-      btn.style.background = '#4caf50';
-      btn.style.color = 'white';
-      setTimeout(() => {
-        btn.textContent = 'Verstuur bericht';
-        btn.style.background = '';
-        btn.style.color = '';
-        e.target.reset();
-      }, 3000);
-    }
   </script>
 </body>
 </html>
