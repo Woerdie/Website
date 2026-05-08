@@ -898,7 +898,8 @@
         </div>
       </div>
       <div class="contact-form reveal">
-        <form action="https://formspree.io/f/xeenlbpw" method="POST">
+        <form id="contactForm">
+          <input type="hidden" name="access_key" value="0e93a4d9-2f36-476b-b6d7-f7f4bcc963f2" />
           <div class="form-row">
             <div class="form-group">
               <label>Naam</label>
@@ -940,6 +941,32 @@
       toggle.classList.remove('open');
       mobileMenu.classList.remove('open');
     }
+
+    // Web3Forms submit
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const btn = this.querySelector('.btn-submit');
+      btn.textContent = 'Versturen...';
+      btn.disabled = true;
+      const data = new FormData(this);
+      const res = await fetch('https://api.web3forms.com/submit', { method: 'POST', body: data });
+      const json = await res.json();
+      if (json.success) {
+        btn.textContent = 'Verstuurd ✓';
+        btn.style.background = '#4caf50';
+        btn.style.color = 'white';
+        this.reset();
+        setTimeout(() => {
+          btn.textContent = 'Verstuur bericht';
+          btn.style.background = '';
+          btn.style.color = '';
+          btn.disabled = false;
+        }, 3000);
+      } else {
+        btn.textContent = 'Er ging iets mis, probeer opnieuw';
+        btn.disabled = false;
+      }
+    });
 
     // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
