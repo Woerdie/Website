@@ -134,18 +134,45 @@
         radial-gradient(ellipse at 10% 80%, rgba(201,168,76,0.05) 0%, transparent 50%);
     }
 
-    .hero-lines {
+    .hero-photo {
       position: absolute;
       right: 0; top: 0; bottom: 0;
-      width: 45%;
-      opacity: 0.04;
-      background: repeating-linear-gradient(
-        0deg,
-        transparent,
-        transparent 48px,
-        var(--gold) 48px,
-        var(--gold) 49px
-      );
+      width: 48%;
+      overflow: hidden;
+    }
+
+    .hero-photo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.45;
+    }
+
+    .hero-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      border-left: 2px dashed rgba(201,168,76,0.3);
+      color: rgba(201,168,76,0.4);
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .hero-photo-placeholder svg {
+      width: 40px; height: 40px;
+      opacity: 0.4;
+    }
+
+    .hero-photo::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, var(--navy) 0%, transparent 40%);
     }
 
     .hero-content {
@@ -620,14 +647,97 @@
       transform: none;
     }
 
-    /* RESPONSIVE */
+    /* HAMBURGER */
+    .nav-toggle {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .nav-toggle span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: all 0.3s;
+    }
+
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 72px; left: 0; right: 0;
+      background: var(--navy);
+      border-top: 1px solid rgba(201,168,76,0.2);
+      padding: 1.5rem 5%;
+      z-index: 99;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      transition: color 0.2s;
+    }
+
+    .mobile-menu a:last-child { border-bottom: none; }
+    .mobile-menu a:hover { color: var(--gold); }
+
+    /* TABLET (768px - 1024px) */
+    @media (max-width: 1024px) {
+      .hero-content { max-width: 55%; }
+      .over-grid { gap: 3rem; }
+      .contact-wrapper { gap: 3rem; }
+      .diensten-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* MOBILE + TABLET NAV */
     @media (max-width: 768px) {
       .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+
+      .hero-photo { display: none; }
+      .hero-content { max-width: 100%; }
+      .hero-badges { gap: 1rem; }
+
       .over-grid { grid-template-columns: 1fr; }
-      .over-visual { height: 260px; }
+      .over-visual { height: 220px; }
+
       .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; }
+      .contact-form { padding: 1.5rem; }
       .form-row { grid-template-columns: 1fr; }
-      section { padding: 70px 5%; }
+
+      .diensten-grid { grid-template-columns: 1fr; }
+
+      section { padding: 60px 5%; }
+
+      footer {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+      }
+    }
+
+    /* SMALL MOBILE */
+    @media (max-width: 400px) {
+      .hero-title { font-size: 2rem; }
+      .nav-brand span { display: none; }
     }
   </style>
 </head>
@@ -647,12 +757,31 @@
       <li><a href="#over">Over ons</a></li>
       <li><a href="#Contact" class="btn-nav">Contact</a></li>
     </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
   </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#Diensten" onclick="closeMenu()">Diensten</a>
+    <a href="#over" onclick="closeMenu()">Over ons</a>
+    <a href="#Contact" onclick="closeMenu()">Contact</a>
+  </div>
 
   <!-- HERO -->
   <section id="home">
     <div class="hero-bg"></div>
-    <div class="hero-lines"></div>
+    <div class="hero-photo">
+      <!-- Vervang 'jouwfoto.jpg' door de bestandsnaam van je foto -->
+      <!-- <img src="jouwfoto.jpg" alt="Fiducia Bewindvoering" /> -->
+      <div class="hero-photo-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+        </svg>
+        Foto plaatsen
+      </div>
+    </div>
     <div class="hero-content">
       <div class="hero-tag">Professioneel bewindvoerder · NBBI aangesloten</div>
       <h1 class="hero-title">
@@ -800,6 +929,18 @@
   </footer>
 
   <script>
+    // Hamburger menu
+    const toggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+    });
+    function closeMenu() {
+      toggle.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    }
+
     // Scroll reveal
     const reveals = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver(entries => {
