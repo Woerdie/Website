@@ -1,1 +1,831 @@
-<h1>Hallo wereld</h1>
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiducia Bewindvoering – Samen werken aan een betere toekomst</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #1a2744;
+      --navy-light: #243460;
+      --gold: #c9a84c;
+      --gold-light: #e4c97e;
+      --cream: #f7f4ee;
+      --white: #ffffff;
+      --text: #2d2d2d;
+      --text-light: #666;
+      --radius: 4px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(26, 39, 68, 0.97);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      height: 72px;
+      border-bottom: 1px solid rgba(201,168,76,0.2);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .logo-placeholder {
+      width: 44px;
+      height: 44px;
+      border: 2px dashed var(--gold);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gold);
+      font-size: 10px;
+      text-align: center;
+      line-height: 1.2;
+      font-family: 'DM Sans', sans-serif;
+      letter-spacing: 0.02em;
+    }
+
+    .nav-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.1rem;
+      color: var(--white);
+      letter-spacing: 0.01em;
+    }
+
+    .nav-brand span {
+      display: block;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.7rem;
+      color: var(--gold);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 300;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: rgba(255,255,255,0.8);
+      text-decoration: none;
+      font-size: 0.85rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--gold); }
+
+    .nav-links a.btn-nav {
+      background: var(--gold);
+      color: var(--navy);
+      padding: 8px 20px;
+      border-radius: var(--radius);
+      font-weight: 600;
+    }
+
+    .nav-links a.btn-nav:hover {
+      background: var(--gold-light);
+      color: var(--navy);
+    }
+
+    /* HERO */
+    #home {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      padding: 120px 5% 80px;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 70% 50%, rgba(201,168,76,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse at 10% 80%, rgba(201,168,76,0.05) 0%, transparent 50%);
+    }
+
+    .hero-lines {
+      position: absolute;
+      right: 0; top: 0; bottom: 0;
+      width: 45%;
+      opacity: 0.04;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 48px,
+        var(--gold) 48px,
+        var(--gold) 49px
+      );
+    }
+
+    .hero-content {
+      position: relative;
+      max-width: 680px;
+      animation: fadeUp 0.9s ease both;
+    }
+
+    .hero-tag {
+      display: inline-block;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.4);
+      color: var(--gold);
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 2px;
+      margin-bottom: 2rem;
+      font-weight: 500;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 1.5rem;
+      font-weight: 700;
+    }
+
+    .hero-title em {
+      font-style: normal;
+      color: var(--gold);
+    }
+
+    .hero-sub {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.75;
+      max-width: 520px;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+    }
+
+    .hero-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--gold);
+      color: var(--navy);
+      text-decoration: none;
+      padding: 14px 32px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.95rem;
+      letter-spacing: 0.04em;
+      transition: all 0.25s;
+    }
+
+    .hero-cta:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(201,168,76,0.3);
+    }
+
+    .hero-cta svg { width: 18px; height: 18px; }
+
+    .hero-badges {
+      margin-top: 3rem;
+      display: flex;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      opacity: 0.7;
+    }
+
+    /* SECTION BASE */
+    section { padding: 100px 5%; }
+
+    .section-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      color: var(--navy);
+      line-height: 1.2;
+      margin-bottom: 1.2rem;
+    }
+
+    .section-intro {
+      font-size: 1rem;
+      color: var(--text-light);
+      line-height: 1.8;
+      max-width: 560px;
+    }
+
+    /* DIENSTEN */
+    #Diensten {
+      background: var(--white);
+    }
+
+    .diensten-header {
+      margin-bottom: 4rem;
+    }
+
+    .diensten-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2px;
+      background: #e8e4dc;
+      border: 2px solid #e8e4dc;
+    }
+
+    .dienst-card {
+      background: var(--white);
+      padding: 3rem 2.5rem;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .dienst-card::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0;
+      width: 100%; height: 3px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .dienst-card:hover::before { transform: scaleX(1); }
+    .dienst-card:hover { background: #faf9f6; }
+
+    .dienst-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      color: var(--gold);
+      opacity: 0.25;
+      font-weight: 700;
+      line-height: 1;
+      margin-bottom: 1.5rem;
+    }
+
+    .dienst-icon {
+      width: 48px; height: 48px;
+      background: rgba(26,39,68,0.07);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .dienst-icon svg {
+      width: 24px; height: 24px;
+      color: var(--navy);
+    }
+
+    .dienst-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      color: var(--navy);
+      margin-bottom: 1rem;
+    }
+
+    .dienst-card p {
+      font-size: 0.92rem;
+      color: var(--text-light);
+      line-height: 1.75;
+    }
+
+    /* OVER ONS */
+    #over {
+      background: var(--cream);
+    }
+
+    .over-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6rem;
+      align-items: center;
+    }
+
+    .over-visual {
+      position: relative;
+      height: 400px;
+    }
+
+    .over-block-main {
+      position: absolute;
+      inset: 0;
+      background: var(--navy);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .over-block-main::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 30px,
+        rgba(201,168,76,0.04) 30px,
+        rgba(201,168,76,0.04) 31px
+      );
+    }
+
+    .over-block-accent {
+      position: absolute;
+      bottom: -20px; right: -20px;
+      width: 120px; height: 120px;
+      background: var(--gold);
+      border-radius: 4px;
+      opacity: 0.15;
+    }
+
+    .over-block-text {
+      position: absolute;
+      bottom: 2rem; left: 2rem; right: 2rem;
+      color: white;
+    }
+
+    .over-block-text .big-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 3.5rem;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+    }
+
+    .over-block-text p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+      margin-top: 0.5rem;
+    }
+
+    .over-content .section-intro {
+      margin-bottom: 2rem;
+    }
+
+    .over-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .over-list li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.92rem;
+      color: var(--text);
+    }
+
+    .over-list li::before {
+      content: '';
+      width: 20px; height: 20px;
+      min-width: 20px;
+      background: var(--gold);
+      border-radius: 50%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%231a2744'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd'/%3E%3C/svg%3E");
+      background-size: contain;
+    }
+
+    /* CONTACT */
+    #Contact {
+      background: var(--navy);
+    }
+
+    .contact-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 6rem;
+      align-items: start;
+    }
+
+    .contact-info .section-title { color: var(--white); }
+    .contact-info .section-intro { color: rgba(255,255,255,0.55); }
+
+    .contact-detail {
+      margin-top: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .contact-item-icon {
+      width: 40px; height: 40px;
+      background: rgba(201,168,76,0.15);
+      border: 1px solid rgba(201,168,76,0.3);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .contact-item-icon svg {
+      width: 18px; height: 18px;
+      color: var(--gold);
+    }
+
+    .contact-item span {
+      color: rgba(255,255,255,0.75);
+      font-size: 0.92rem;
+    }
+
+    .contact-item a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+
+    .contact-item a:hover { text-decoration: underline; }
+
+    /* FORM */
+    .contact-form {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 2.5rem;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: var(--radius);
+      color: var(--white);
+      padding: 12px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.92rem;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--gold);
+      background: rgba(255,255,255,0.1);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(255,255,255,0.25);
+    }
+
+    .form-group textarea { resize: vertical; min-height: 120px; }
+
+    .btn-submit {
+      width: 100%;
+      background: var(--gold);
+      color: var(--navy);
+      border: none;
+      padding: 14px;
+      border-radius: var(--radius);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 700;
+      font-size: 0.95rem;
+      letter-spacing: 0.06em;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+
+    .btn-submit:hover {
+      background: var(--gold-light);
+      transform: translateY(-1px);
+    }
+
+    /* FOOTER */
+    footer {
+      background: #111d35;
+      padding: 2rem 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-top: 1px solid rgba(201,168,76,0.1);
+    }
+
+    footer p {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+      list-style: none;
+    }
+
+    .footer-links a {
+      font-size: 0.8rem;
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--gold); }
+
+    /* ANIMATION */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .over-grid { grid-template-columns: 1fr; }
+      .over-visual { height: 260px; }
+      .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; }
+      .form-row { grid-template-columns: 1fr; }
+      section { padding: 70px 5%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#home" class="nav-logo">
+      <div class="logo-placeholder">LOGO</div>
+      <div class="nav-brand">
+        Fiducia
+        <span>Bewindvoering & Inkomensbeheer</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#Diensten">Diensten</a></li>
+      <li><a href="#over">Over ons</a></li>
+      <li><a href="#Contact" class="btn-nav">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-lines"></div>
+    <div class="hero-content">
+      <div class="hero-tag">Professioneel bewindvoerder · NBBI aangesloten</div>
+      <h1 class="hero-title">
+        Samen werken aan<br />een <em>betere toekomst</em>
+      </h1>
+      <p class="hero-sub">
+        Fiducia Bewindvoering en Inkomensbeheer helpt u weer op het juiste spoor op financieel gebied. Of het nu gaat om bewindvoering, inkomensbeheer of budgetcoaching — wij staan voor u klaar.
+      </p>
+      <a href="#Contact" class="hero-cta">
+        Neem contact op
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <div class="hero-badges">
+        <div class="badge"><span class="badge-dot"></span> Door Rechtbank aangesteld</div>
+        <div class="badge"><span class="badge-dot"></span> Aangesloten bij NBBI</div>
+        <div class="badge"><span class="badge-dot"></span> Persoonlijke begeleiding</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIENSTEN -->
+  <section id="Diensten">
+    <div class="diensten-header reveal">
+      <div class="section-label">Wat wij bieden</div>
+      <h2 class="section-title">Onze diensten</h2>
+      <p class="section-intro">Wij bieden drie kernservices aan die volledig zijn afgestemd op uw persoonlijke financiële situatie.</p>
+    </div>
+    <div class="diensten-grid reveal">
+      <div class="dienst-card">
+        <div class="dienst-number">01</div>
+        <div class="dienst-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+          </svg>
+        </div>
+        <h3>Bewindvoering</h3>
+        <p>Wij beheren uw financiën en zorgen dat uw rekeningen op tijd worden betaald. U hoeft zich geen zorgen meer te maken over uw geldzaken.</p>
+      </div>
+      <div class="dienst-card">
+        <div class="dienst-number">02</div>
+        <div class="dienst-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+        </div>
+        <h3>Inkomensbeheer</h3>
+        <p>Geheel of gedeeltelijk inkomensbeheer op maat. Wij zorgen voor een overzichtelijke verdeling van uw inkomsten en uitgaven.</p>
+      </div>
+      <div class="dienst-card">
+        <div class="dienst-number">03</div>
+        <div class="dienst-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <h3>Budgetcoaching</h3>
+        <p>Wij coachen u om zelf grip te krijgen op uw financiën. Samen maken we een plan zodat u op de lange termijn financieel zelfredzaam wordt.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- OVER ONS -->
+  <section id="over">
+    <div class="over-grid">
+      <div class="over-visual reveal">
+        <div class="over-block-main">
+          <div class="over-block-text">
+            <div class="big-text">NBBI</div>
+            <p>Gecertificeerd & door de Rechtbank aangesteld</p>
+          </div>
+        </div>
+        <div class="over-block-accent"></div>
+      </div>
+      <div class="over-content reveal">
+        <div class="section-label">Over ons</div>
+        <h2 class="section-title">Professioneel en betrouwbaar</h2>
+        <p class="section-intro">
+          Wij zijn beide door de Rechtbank aangesteld als professioneel bewindvoerder en aangesloten bij de branchevereniging NBBI. Met persoonlijke aandacht helpen wij u stap voor stap naar financiële rust.
+        </p>
+        <ul class="over-list">
+          <li>Door de Rechtbank aangesteld als professioneel bewindvoerder</li>
+          <li>Aangesloten bij branchevereniging NBBI</li>
+          <li>Persoonlijke en betrokken begeleiding</li>
+          <li>Ervaren in bewindvoering, inkomensbeheer en budgetcoaching</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="Contact">
+    <div class="contact-wrapper">
+      <div class="contact-info reveal">
+        <div class="section-label" style="color: var(--gold-light)">Bereikbaarheid</div>
+        <h2 class="section-title">Neem contact op</h2>
+        <p class="section-intro">Per mail zijn wij 24 uur per dag bereikbaar. U ontvangt binnen 2 werkdagen een reactie.</p>
+        <div class="contact-detail">
+          <div class="contact-item">
+            <div class="contact-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <span><a href="mailto:info@fiduciabewindvoering.nl">info@fiduciabewindvoering.nl</a></span>
+          </div>
+          <div class="contact-item">
+            <div class="contact-item-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+              </svg>
+            </div>
+            <span>Reactie binnen 2 werkdagen</span>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form reveal">
+        <form onsubmit="handleSubmit(event)">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Naam</label>
+              <input type="text" placeholder="Uw naam" required />
+            </div>
+            <div class="form-group">
+              <label>E-mail</label>
+              <input type="email" placeholder="uw@email.nl" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Bericht</label>
+            <textarea placeholder="Hoe kunnen wij u helpen?" required></textarea>
+          </div>
+          <button type="submit" class="btn-submit">Verstuur bericht</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 Fiducia Bewindvoering en Inkomensbeheer</p>
+    <ul class="footer-links">
+      <li><a href="#">Privacy</a></li>
+      <li><a href="#">Klachtenregeling</a></li>
+    </ul>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 100);
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Form submit
+    function handleSubmit(e) {
+      e.preventDefault();
+      const btn = e.target.querySelector('.btn-submit');
+      btn.textContent = 'Verstuurd ✓';
+      btn.style.background = '#4caf50';
+      btn.style.color = 'white';
+      setTimeout(() => {
+        btn.textContent = 'Verstuur bericht';
+        btn.style.background = '';
+        btn.style.color = '';
+        e.target.reset();
+      }, 3000);
+    }
+  </script>
+</body>
+</html>
