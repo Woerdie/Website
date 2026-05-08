@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiducia – Kies een design</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 5%;
+    }
+
+    .header { text-align: center; margin-bottom: 4rem; animation: fadeUp 0.7s ease both; }
+    .header-tag { display: inline-block; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.5); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 6px 16px; border-radius: 50px; margin-bottom: 1.5rem; }
+    .header h1 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 1rem; }
+    .header p { color: rgba(255,255,255,0.45); font-size: 1rem; font-weight: 300; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      width: 100%;
+      max-width: 900px;
+      animation: fadeUp 0.7s 0.15s ease both;
+    }
+
+    .card {
+      position: relative;
+      border-radius: 20px;
+      overflow: hidden;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.08);
+      transition: transform 0.3s, box-shadow 0.3s;
+      display: block;
+    }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .card:hover .card-arrow { transform: translateX(4px); }
+
+    .card-preview { height: 220px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
+    .card:nth-child(1) .card-preview { background: #1a2744; }
+    .card:nth-child(2) .card-preview { background: #2d5a3d; }
+    .card:nth-child(3) .card-preview { background: #0e0e0e; }
+    .card:nth-child(4) .card-preview { background: #e8f0fb; }
+
+    .preview-inner { width: 80%; max-width: 300px; }
+    .preview-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+    .preview-logo { width: 26px; height: 26px; border-radius: 6px; border: 1.5px dashed; opacity: 0.5; }
+    .preview-dots { display: flex; gap: 6px; align-items: center; }
+    .preview-dots span { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.15); }
+    .preview-dots span:nth-child(1) { width: 24px; }
+    .preview-dots span:nth-child(2) { width: 24px; }
+    .preview-btn { height: 3px; width: 44px; border-radius: 4px; }
+    .preview-accent-bar { height: 3px; width: 36px; border-radius: 2px; margin-bottom: 10px; }
+    .preview-title { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 800; line-height: 1.25; margin-bottom: 10px; }
+    .preview-lines { display: flex; flex-direction: column; gap: 5px; }
+    .preview-lines span { height: 5px; border-radius: 3px; background: rgba(255,255,255,0.1); }
+    .preview-lines span:nth-child(1) { width: 85%; }
+    .preview-lines span:nth-child(2) { width: 68%; }
+    .preview-lines span:nth-child(3) { width: 52%; }
+
+    /* Design 1 */
+    .card:nth-child(1) .preview-logo { border-color: #c9a84c; color: #c9a84c; }
+    .card:nth-child(1) .preview-btn { background: #c9a84c; }
+    .card:nth-child(1) .preview-accent-bar { background: #c9a84c; }
+    .card:nth-child(1) .preview-title { color: #fff; }
+    /* Design 2 */
+    .card:nth-child(2) .preview-logo { border-color: #8faf97; color: #8faf97; border-radius: 50%; }
+    .card:nth-child(2) .preview-btn { background: #8faf97; border-radius: 50px; }
+    .card:nth-child(2) .preview-accent-bar { background: #8faf97; border-radius: 50px; }
+    .card:nth-child(2) .preview-title { color: #fff; }
+    /* Design 3 */
+    .card:nth-child(3) .preview-logo { border-color: #e85d26; color: #e85d26; }
+    .card:nth-child(3) .preview-btn { background: #e85d26; }
+    .card:nth-child(3) .preview-accent-bar { background: #e85d26; }
+    .card:nth-child(3) .preview-title { color: #f5f5f5; letter-spacing: -0.03em; font-size: 1rem; }
+    /* Design 4 */
+    .card:nth-child(4) .preview-logo { border-color: #1e4d8c; color: #1e4d8c; }
+    .card:nth-child(4) .preview-btn { background: #1e4d8c; border-radius: 8px; }
+    .card:nth-child(4) .preview-accent-bar { background: #1e4d8c; }
+    .card:nth-child(4) .preview-title { color: #1a1e2e; }
+    .card:nth-child(4) .preview-lines span { background: rgba(30,77,140,0.15); }
+    .card:nth-child(4) .preview-dots span { background: rgba(30,77,140,0.2); }
+
+    .card-body { background: #141414; padding: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; }
+    .card-num { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
+    .card-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 600; color: #fff; }
+    .card-desc { font-size: 0.78rem; color: rgba(255,255,255,0.3); margin-top: 2px; }
+    .card-arrow { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; transition: transform 0.25s; }
+    .card-arrow svg { width: 16px; height: 16px; color: rgba(255,255,255,0.4); }
+
+    .footer-note { margin-top: 2.5rem; text-align: center; color: rgba(255,255,255,0.2); font-size: 0.8rem; animation: fadeUp 0.7s 0.3s ease both; }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+      .card-preview { height: 170px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="header-tag">Fiducia Bewindvoering</div>
+    <h1>Kies een websitedesign</h1>
+    <p>Bekijk alle vier de opties en kies welke het beste past.</p>
+  </div>
+
+  <div class="grid">
+    <a href="design1.html" class="card">
+      <div class="card-preview">
+        <div class="preview-inner">
+          <div class="preview-nav">
+            <div class="preview-logo"></div>
+            <div class="preview-dots"><span></span><span></span><div class="preview-btn"></div></div>
+          </div>
+          <div class="preview-accent-bar"></div>
+          <div class="preview-title">Samen werken aan<br/>een betere toekomst</div>
+          <div class="preview-lines"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="card-num">Design 01</div>
+          <div class="card-name">Navy & Goud</div>
+          <div class="card-desc">Klassiek · Luxe · Zakelijk</div>
+        </div>
+        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+    </a>
+
+    <a href="design2.html" class="card">
+      <div class="card-preview">
+        <div class="preview-inner">
+          <div class="preview-nav">
+            <div class="preview-logo"></div>
+            <div class="preview-dots"><span></span><span></span><div class="preview-btn"></div></div>
+          </div>
+          <div class="preview-accent-bar"></div>
+          <div class="preview-title">Samen werken aan<br/>een betere toekomst</div>
+          <div class="preview-lines"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="card-num">Design 02</div>
+          <div class="card-name">Groen & Natuur</div>
+          <div class="card-desc">Warm · Organisch · Vriendelijk</div>
+        </div>
+        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+    </a>
+
+    <a href="design3.html" class="card">
+      <div class="card-preview">
+        <div class="preview-inner">
+          <div class="preview-nav">
+            <div class="preview-logo"></div>
+            <div class="preview-dots"><span></span><span></span><div class="preview-btn"></div></div>
+          </div>
+          <div class="preview-accent-bar"></div>
+          <div class="preview-title">SAMEN WERKEN AAN<br/>EEN BETERE TOEKOMST</div>
+          <div class="preview-lines"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="card-num">Design 03</div>
+          <div class="card-name">Donker & Oranje</div>
+          <div class="card-desc">Modern · Bold · Impactvol</div>
+        </div>
+        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+    </a>
+
+    <a href="design4.html" class="card">
+      <div class="card-preview">
+        <div class="preview-inner">
+          <div class="preview-nav">
+            <div class="preview-logo"></div>
+            <div class="preview-dots"><span></span><span></span><div class="preview-btn"></div></div>
+          </div>
+          <div class="preview-accent-bar"></div>
+          <div class="preview-title">Samen werken aan<br/>een betere toekomst</div>
+          <div class="preview-lines"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div>
+          <div class="card-num">Design 04</div>
+          <div class="card-name">Blauw & Wit</div>
+          <div class="card-desc">Clean · Professioneel · Helder</div>
+        </div>
+        <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+      </div>
+    </a>
+  </div>
+
+  <p class="footer-note">Klik op een design om de volledige pagina te bekijken</p>
+</body>
+</html>

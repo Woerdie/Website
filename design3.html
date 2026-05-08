@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fiducia Bewindvoering – Design 3</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --dark: #0e0e0e;
+      --dark2: #1a1a1a;
+      --dark3: #242424;
+      --orange: #e85d26;
+      --orange-light: #ff7a42;
+      --white: #f5f5f5;
+      --text-mid: #888;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Inter', sans-serif; background: var(--dark); color: var(--white); overflow-x: hidden; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(14,14,14,0.95); backdrop-filter: blur(10px); display: flex; align-items: center; justify-content: space-between; padding: 0 6%; height: 70px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+    .logo-placeholder { width: 40px; height: 40px; border: 2px dashed var(--orange); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--orange); font-size: 9px; text-align: center; line-height: 1.2; }
+    .nav-brand { font-family: 'Syne', sans-serif; font-size: 1.1rem; color: var(--white); font-weight: 700; }
+    .nav-brand span { display: block; font-family: 'Inter', sans-serif; font-size: 0.65rem; color: var(--text-mid); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 300; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { color: var(--text-mid); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.04em; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a.btn-nav { background: var(--orange); color: var(--white); padding: 8px 20px; border-radius: 6px; font-weight: 600; }
+    .nav-links a.btn-nav:hover { background: var(--orange-light); color: var(--white); }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--white); border-radius: 2px; transition: all 0.3s; }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-menu { display: none; position: fixed; top: 70px; left: 0; right: 0; background: var(--dark2); border-top: 1px solid rgba(255,255,255,0.06); padding: 1.5rem 6%; z-index: 99; flex-direction: column; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { color: rgba(255,255,255,0.7); text-decoration: none; font-size: 1rem; padding: 1rem 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-weight: 500; }
+    .mobile-menu a:last-child { border-bottom: none; }
+
+    /* HERO */
+    #home { min-height: 100vh; padding: 120px 6% 80px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden; }
+    .hero-bg-text { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: 'Syne', sans-serif; font-size: clamp(8rem, 18vw, 22rem); font-weight: 800; color: rgba(255,255,255,0.02); white-space: nowrap; pointer-events: none; user-select: none; letter-spacing: -0.05em; }
+    .hero-content { position: relative; max-width: 800px; animation: fadeUp 0.8s ease both; }
+    .hero-top { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2.5rem; }
+    .hero-line { flex: 1; max-width: 80px; height: 2px; background: var(--orange); }
+    .hero-tag { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); font-weight: 600; }
+    .hero-title { font-family: 'Syne', sans-serif; font-size: clamp(3rem, 7vw, 6rem); font-weight: 800; line-height: 0.95; margin-bottom: 2rem; letter-spacing: -0.03em; }
+    .hero-title span { display: block; }
+    .hero-title .accent { color: var(--orange); }
+    .hero-bottom { display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 2rem; }
+    .hero-sub { font-size: 1rem; color: var(--text-mid); line-height: 1.8; max-width: 420px; font-weight: 300; }
+    .hero-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 10px; background: var(--orange); color: var(--white); text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: 600; font-size: 0.92rem; letter-spacing: 0.04em; transition: all 0.25s; }
+    .btn-primary:hover { background: var(--orange-light); transform: translateX(4px); }
+    .hero-scroll { display: flex; align-items: center; gap: 8px; color: var(--text-mid); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .hero-scroll-line { width: 40px; height: 1px; background: var(--text-mid); }
+    .hero-photo { position: absolute; right: 6%; top: 50%; transform: translateY(-50%); width: 38%; max-width: 480px; aspect-ratio: 3/4; overflow: hidden; border-radius: 4px; }
+    .hero-photo img { width: 100%; height: 100%; object-fit: cover; opacity: 0.35; }
+    .hero-photo-placeholder { width: 100%; height: 100%; background: var(--dark3); border: 2px dashed rgba(232,93,38,0.3); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(232,93,38,0.35); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
+    .hero-photo-placeholder svg { width: 36px; height: 36px; }
+
+    /* SECTION */
+    section { padding: 100px 6%; }
+    .section-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--orange); font-weight: 600; margin-bottom: 1rem; display: flex; align-items: center; gap: 10px; }
+    .section-label::before { content: ''; width: 30px; height: 2px; background: var(--orange); }
+    .section-title { font-family: 'Syne', sans-serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 800; line-height: 1.1; margin-bottom: 1.2rem; letter-spacing: -0.02em; }
+    .section-intro { font-size: 1rem; color: var(--text-mid); line-height: 1.8; max-width: 520px; font-weight: 300; }
+
+    /* DIENSTEN */
+    #Diensten { background: var(--dark2); }
+    .diensten-header { margin-bottom: 4rem; }
+    .diensten-list { display: flex; flex-direction: column; gap: 0; }
+    .dienst-row { display: grid; grid-template-columns: 80px 1fr auto; align-items: center; gap: 2rem; padding: 2.5rem 0; border-bottom: 1px solid rgba(255,255,255,0.07); transition: all 0.3s; cursor: default; }
+    .dienst-row:first-child { border-top: 1px solid rgba(255,255,255,0.07); }
+    .dienst-row:hover { padding-left: 1rem; }
+    .dienst-row:hover .dienst-num { color: var(--orange); }
+    .dienst-num { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; color: rgba(255,255,255,0.2); letter-spacing: 0.1em; }
+    .dienst-body h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--white); margin-bottom: 0.5rem; letter-spacing: -0.01em; }
+    .dienst-body p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.7; font-weight: 300; max-width: 500px; }
+    .dienst-icon-wrap { width: 56px; height: 56px; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; }
+    .dienst-row:hover .dienst-icon-wrap { border-color: var(--orange); background: rgba(232,93,38,0.1); }
+    .dienst-icon-wrap svg { width: 24px; height: 24px; color: var(--text-mid); transition: color 0.3s; }
+    .dienst-row:hover .dienst-icon-wrap svg { color: var(--orange); }
+
+    /* OVER */
+    #over { background: var(--dark); }
+    .over-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
+    .over-visual { position: relative; }
+    .over-big { font-family: 'Syne', sans-serif; font-size: clamp(5rem, 12vw, 10rem); font-weight: 800; color: var(--dark3); line-height: 0.9; letter-spacing: -0.05em; user-select: none; }
+    .over-card { background: var(--dark2); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 2rem; margin-top: -2rem; position: relative; }
+    .over-card-tag { display: inline-block; background: var(--orange); color: var(--white); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 4px; margin-bottom: 1rem; }
+    .over-card p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.7; font-weight: 300; }
+    .over-list { list-style: none; display: flex; flex-direction: column; gap: 1.25rem; margin-top: 2rem; }
+    .over-list li { display: flex; align-items: flex-start; gap: 14px; font-size: 0.95rem; color: var(--text-mid); line-height: 1.5; }
+    .over-list li .bullet { min-width: 8px; height: 8px; border-radius: 50%; background: var(--orange); margin-top: 6px; }
+
+    /* CONTACT */
+    #Contact { background: var(--dark2); }
+    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.3fr; gap: 6rem; align-items: start; }
+    .contact-form { background: var(--dark3); border: 1px solid rgba(255,255,255,0.07); border-radius: 16px; padding: 2.5rem; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+    .form-group label { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-mid); font-weight: 600; }
+    .form-group input, .form-group textarea { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--white); padding: 12px 16px; font-family: 'Inter', sans-serif; font-size: 0.92rem; outline: none; transition: border-color 0.2s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--orange); background: rgba(232,93,38,0.05); }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.2); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .btn-submit { width: 100%; background: var(--orange); color: var(--white); border: none; padding: 14px; border-radius: 8px; font-family: 'Inter', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; letter-spacing: 0.04em; }
+    .btn-submit:hover { background: var(--orange-light); }
+    .contact-info .section-intro { margin-bottom: 2.5rem; }
+    .contact-item { display: flex; align-items: center; gap: 14px; margin-bottom: 1.25rem; }
+    .contact-item-icon { width: 42px; height: 42px; background: rgba(232,93,38,0.1); border: 1px solid rgba(232,93,38,0.3); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .contact-item-icon svg { width: 18px; height: 18px; color: var(--orange); }
+    .contact-item span { color: var(--text-mid); font-size: 0.92rem; }
+    .contact-item a { color: var(--orange); text-decoration: none; }
+
+    /* FOOTER */
+    footer { background: var(--dark); padding: 2rem 6%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.2); }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.2); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--orange); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 1024px) {
+      .hero-photo { width: 36%; }
+      .over-grid { gap: 3rem; }
+      .contact-wrapper { gap: 3rem; }
+    }
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .hero-photo { display: none; }
+      .hero-content { max-width: 100%; }
+      .hero-bottom { flex-direction: column; align-items: flex-start; }
+      .hero-actions { align-items: flex-start; }
+      .dienst-row { grid-template-columns: 60px 1fr; }
+      .dienst-icon-wrap { display: none; }
+      .over-grid { grid-template-columns: 1fr; }
+      .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; }
+      .form-row { grid-template-columns: 1fr; }
+      section { padding: 70px 6%; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="#home" class="nav-logo">
+      <div class="logo-placeholder">LOGO</div>
+      <div class="nav-brand">FIDUCIA<span>Bewindvoering & Inkomensbeheer</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#Diensten">Diensten</a></li>
+      <li><a href="#over">Over ons</a></li>
+      <li><a href="#Contact" class="btn-nav">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#Diensten" onclick="closeMenu()">Diensten</a>
+    <a href="#over" onclick="closeMenu()">Over ons</a>
+    <a href="#Contact" onclick="closeMenu()">Contact</a>
+  </div>
+
+  <section id="home">
+    <div class="hero-bg-text">FIDUCIA</div>
+    <div class="hero-photo">
+      <div class="hero-photo-placeholder">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Foto plaatsen
+      </div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-top"><div class="hero-line"></div><div class="hero-tag">NBBI aangesloten · Rechtbank aangesteld</div></div>
+      <h1 class="hero-title">
+        <span>SAMEN</span>
+        <span>WERKEN AAN</span>
+        <span class="accent">EEN BETERE</span>
+        <span>TOEKOMST</span>
+      </h1>
+      <div class="hero-bottom">
+        <p class="hero-sub">Fiducia Bewindvoering en Inkomensbeheer helpt u stap voor stap naar financiële rust. Persoonlijk, professioneel en betrouwbaar.</p>
+        <div class="hero-actions">
+          <a href="#Contact" class="btn-primary">Contact opnemen <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+          <div class="hero-scroll"><div class="hero-scroll-line"></div>Scroll om meer te zien</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="Diensten">
+    <div class="diensten-header reveal">
+      <div class="section-label">Wat wij bieden</div>
+      <h2 class="section-title">Onze diensten</h2>
+      <p class="section-intro">Drie kernservices afgestemd op uw financiële situatie.</p>
+    </div>
+    <div class="diensten-list reveal">
+      <div class="dienst-row">
+        <div class="dienst-num">01</div>
+        <div class="dienst-body"><h3>Bewindvoering</h3><p>Wij beheren uw financiën en zorgen dat uw rekeningen op tijd worden betaald. U hoeft zich geen zorgen meer te maken over uw geldzaken.</p></div>
+        <div class="dienst-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+      </div>
+      <div class="dienst-row">
+        <div class="dienst-num">02</div>
+        <div class="dienst-body"><h3>Inkomensbeheer</h3><p>Geheel of gedeeltelijk inkomensbeheer op maat. Overzichtelijke verdeling van uw inkomsten en uitgaven.</p></div>
+        <div class="dienst-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+      </div>
+      <div class="dienst-row">
+        <div class="dienst-num">03</div>
+        <div class="dienst-body"><h3>Budgetcoaching</h3><p>Wij coachen u om zelf grip te krijgen op uw financiën en op de lange termijn financieel zelfredzaam te worden.</p></div>
+        <div class="dienst-icon-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="over">
+    <div class="over-grid">
+      <div class="over-visual reveal">
+        <div class="over-big">NBBI</div>
+        <div class="over-card">
+          <div class="over-card-tag">Gecertificeerd</div>
+          <p>Wij zijn beide door de Rechtbank aangesteld als professioneel bewindvoerder en aangesloten bij de branchevereniging NBBI. Dit garandeert een betrouwbare en transparante werkwijze.</p>
+        </div>
+      </div>
+      <div class="reveal">
+        <div class="section-label">Over ons</div>
+        <h2 class="section-title">Professioneel en betrouwbaar</h2>
+        <p class="section-intro">Met persoonlijke aandacht helpen wij u stap voor stap naar financiële rust.</p>
+        <ul class="over-list">
+          <li><span class="bullet"></span>Door de Rechtbank aangesteld als professioneel bewindvoerder</li>
+          <li><span class="bullet"></span>Aangesloten bij branchevereniging NBBI</li>
+          <li><span class="bullet"></span>Persoonlijke en betrokken begeleiding</li>
+          <li><span class="bullet"></span>Ervaren in bewindvoering, inkomensbeheer en budgetcoaching</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="Contact">
+    <div class="contact-wrapper">
+      <div class="contact-info reveal">
+        <div class="section-label">Bereikbaarheid</div>
+        <h2 class="section-title">Neem contact op</h2>
+        <p class="section-intro">Per mail zijn wij 24 uur per dag bereikbaar. U ontvangt binnen 2 werkdagen een reactie.</p>
+        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><span><a href="mailto:info@fiduciabewindvoering.nl">info@fiduciabewindvoering.nl</a></span></div>
+        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Reactie binnen 2 werkdagen</span></div>
+      </div>
+      <div class="contact-form reveal">
+        <form id="contactForm">
+          <input type="hidden" name="access_key" value="0e93a4d9-2f36-476b-b6d7-f7f4bcc963f2" />
+          <div class="form-row">
+            <div class="form-group"><label>Naam</label><input type="text" name="name" placeholder="Uw naam" required /></div>
+            <div class="form-group"><label>E-mail</label><input type="email" name="email" placeholder="uw@email.nl" required /></div>
+          </div>
+          <div class="form-group"><label>Bericht</label><textarea name="message" placeholder="Hoe kunnen wij u helpen?" required></textarea></div>
+          <button type="submit" class="btn-submit">Verstuur bericht</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2025 Fiducia Bewindvoering en Inkomensbeheer</p>
+    <ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Klachtenregeling</a></li></ul>
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('navToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    toggle.addEventListener('click', () => { toggle.classList.toggle('open'); mobileMenu.classList.toggle('open'); });
+    function closeMenu() { toggle.classList.remove('open'); mobileMenu.classList.remove('open'); }
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => { entries.forEach((e,i) => { if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*100); observer.unobserve(e.target); } }); }, {threshold:0.1});
+    reveals.forEach(el => observer.observe(el));
+    document.getElementById('contactForm').addEventListener('submit', async function(e) {
+      e.preventDefault(); const btn = this.querySelector('.btn-submit'); btn.textContent = 'Versturen...'; btn.disabled = true;
+      const res = await fetch('https://api.web3forms.com/submit', {method:'POST',body:new FormData(this)});
+      const json = await res.json();
+      if(json.success){ btn.textContent='Verstuurd ✓'; btn.style.background='#4caf50'; this.reset(); setTimeout(()=>{btn.textContent='Verstuur bericht';btn.style.background='';btn.disabled=false;},3000); }
+      else { btn.textContent='Er ging iets mis'; btn.disabled=false; }
+    });
+  </script>
+</body>
+</html>
