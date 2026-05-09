@@ -7,9 +7,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #0a0f1e; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 5%; }
-    .header { text-align: center; margin-bottom: 3rem; animation: fadeUp 0.7s ease both; }
-    .header img { height: 56px; width: auto; margin-bottom: 1.5rem;  }
+    body { font-family: 'Inter', sans-serif; background: #1a2744; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 5%; }
+    .header { text-align: center; margin-bottom: 3rem; animation: fadeUp 0.7s ease both; display: flex; flex-direction: column; align-items: center; }
+    .header img { height: 64px; width: auto; margin-bottom: 1.5rem; }
     .header-tag { display: inline-block; background: rgba(74,127,193,0.15); border: 1px solid rgba(74,127,193,0.3); color: rgba(255,255,255,0.5); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 6px 16px; border-radius: 50px; margin-bottom: 1.5rem; }
     .header h1 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 0.75rem; }
     .header p { color: rgba(255,255,255,0.45); font-size: 1rem; font-weight: 300; }
@@ -18,27 +18,27 @@
     .card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
     .card:hover .card-arrow { transform: translateX(4px); }
     .card-preview { height: 200px; display: flex; align-items: center; justify-content: center; }
-    .card:nth-child(1) .card-preview { background: #1a3a6b; }
+    .card:nth-child(1) .card-preview { background: #e8f0fb; }
     .card:nth-child(2) .card-preview { background: #f0ebe0; }
     .card:nth-child(3) .card-preview { background: #fffdfb; }
     .card:nth-child(4) .card-preview { background: #f8f9fc; }
     .preview-inner { width: 80%; max-width: 300px; }
     .preview-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
     .preview-logo { height: 22px; width: 60px; border-radius: 4px; opacity: 0.6; }
-    .card:nth-child(1) .preview-logo { background: rgba(255,255,255,0.3); }
+    .card:nth-child(1) .preview-logo { background: rgba(26,58,107,0.3); }
     .card:nth-child(2) .preview-logo { background: rgba(26,58,107,0.3); }
     .card:nth-child(3) .preview-logo { background: rgba(26,58,107,0.25); }
     .card:nth-child(4) .preview-logo { background: rgba(26,58,107,0.25); }
     .preview-btn { height: 3px; width: 44px; border-radius: 4px; background: #4a7fc1; }
     .preview-accent-bar { height: 3px; width: 36px; border-radius: 2px; margin-bottom: 10px; background: #4a7fc1; }
     .preview-title { font-family: 'Syne', sans-serif; font-size: 0.9rem; font-weight: 800; line-height: 1.25; margin-bottom: 10px; }
-    .card:nth-child(1) .preview-title { color: #fff; }
+    .card:nth-child(1) .preview-title { color: #1a3a6b; }
     .card:nth-child(2) .preview-title { color: #1a3a6b; }
     .card:nth-child(3) .preview-title { color: #3d2b1f; font-family: 'Georgia', serif; font-style: italic; font-weight: normal; }
     .card:nth-child(4) .preview-title { color: #1a1e2e; font-family: 'Georgia', serif; }
     .preview-lines { display: flex; flex-direction: column; gap: 5px; }
     .preview-lines span { height: 4px; border-radius: 3px; }
-    .card:nth-child(1) .preview-lines span { background: rgba(255,255,255,0.1); }
+    .card:nth-child(1) .preview-lines span { background: rgba(26,58,107,0.1); }
     .card:nth-child(2) .preview-lines span { background: rgba(26,58,107,0.1); }
     .card:nth-child(3) .preview-lines span { background: rgba(61,43,31,0.1); }
     .card:nth-child(4) .preview-lines span { background: rgba(26,58,107,0.1); }
