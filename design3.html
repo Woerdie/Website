@@ -429,11 +429,13 @@
   </section>
 
   <footer>
-    <p>© 2025 BewindWijs</p>
+    <p>© <span id="year"></span> BewindWijs</p>
     <ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Klachtenregeling</a></li></ul>
   </footer>
 
   <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
     const toggle = document.getElementById('navToggle');
     const mobileMenu = document.getElementById('mobileMenu');
     toggle.addEventListener('click', () => { toggle.classList.toggle('open'); mobileMenu.classList.toggle('open'); });
