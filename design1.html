@@ -13,8 +13,10 @@
       --navy-light: #243460;
       --gold: #c9a84c;
       --gold-light: #e4c97e;
-      --cream: #f7f4ee;
+      --cream: #f5f7fa;
+      --cream-warm: #f9f7f4;
       --white: #ffffff;
+      --sky: #eef2f8;
       --text: #2d2d2d;
       --text-light: #666;
       --radius: 4px;
@@ -34,14 +36,15 @@
       position: fixed;
       top: 0; left: 0; right: 0;
       z-index: 100;
-      background: rgba(26, 39, 68, 0.97);
+      background: rgba(255,255,255,0.97);
       backdrop-filter: blur(8px);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 5%;
       height: 72px;
-      border-bottom: 1px solid rgba(201,168,76,0.2);
+      border-bottom: 1px solid rgba(26,39,68,0.08);
+      box-shadow: 0 2px 16px rgba(26,39,68,0.06);
     }
 
     .nav-logo {
@@ -59,18 +62,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--gold);
+      color: var(--navy);
       font-size: 10px;
       text-align: center;
       line-height: 1.2;
       font-family: 'DM Sans', sans-serif;
       letter-spacing: 0.02em;
+      background: rgba(201,168,76,0.08);
     }
 
     .nav-brand {
       font-family: 'Playfair Display', serif;
       font-size: 1.1rem;
-      color: var(--white);
+      color: var(--navy);
       letter-spacing: 0.01em;
     }
 
@@ -91,7 +95,7 @@
     }
 
     .nav-links a {
-      color: rgba(255,255,255,0.8);
+      color: var(--navy);
       text-decoration: none;
       font-size: 0.85rem;
       letter-spacing: 0.08em;
@@ -118,7 +122,7 @@
     /* HERO */
     #home {
       min-height: 100vh;
-      background: var(--navy);
+      background: linear-gradient(135deg, var(--sky) 0%, var(--white) 60%, #edf1f7 100%);
       display: flex;
       align-items: center;
       position: relative;
@@ -130,8 +134,8 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse at 70% 50%, rgba(201,168,76,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse at 10% 80%, rgba(201,168,76,0.05) 0%, transparent 50%);
+        radial-gradient(ellipse at 80% 20%, rgba(201,168,76,0.10) 0%, transparent 50%),
+        radial-gradient(ellipse at 10% 90%, rgba(26,39,68,0.04) 0%, transparent 50%);
     }
 
     .hero-photo {
@@ -145,7 +149,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      opacity: 0.45;
+      opacity: 0.75;
     }
 
     .hero-photo-placeholder {
@@ -156,8 +160,8 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
-      border-left: 2px dashed rgba(201,168,76,0.3);
-      color: rgba(201,168,76,0.4);
+      border-left: 2px dashed rgba(26,39,68,0.12);
+      color: rgba(26,39,68,0.25);
       font-size: 0.8rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -165,14 +169,14 @@
 
     .hero-photo-placeholder svg {
       width: 40px; height: 40px;
-      opacity: 0.4;
+      opacity: 0.3;
     }
 
     .hero-photo::after {
       content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(to right, var(--navy) 0%, transparent 40%);
+      background: linear-gradient(to right, var(--white) 0%, transparent 40%);
     }
 
     .hero-content {
@@ -183,9 +187,9 @@
 
     .hero-tag {
       display: inline-block;
-      background: rgba(201,168,76,0.15);
-      border: 1px solid rgba(201,168,76,0.4);
-      color: var(--gold);
+      background: rgba(26,39,68,0.07);
+      border: 1px solid rgba(26,39,68,0.15);
+      color: var(--navy);
       font-size: 0.72rem;
       letter-spacing: 0.18em;
       text-transform: uppercase;
@@ -198,7 +202,7 @@
     .hero-title {
       font-family: 'Playfair Display', serif;
       font-size: clamp(2.4rem, 5vw, 3.8rem);
-      color: var(--white);
+      color: var(--navy);
       line-height: 1.15;
       margin-bottom: 1.5rem;
       font-weight: 700;
@@ -211,7 +215,7 @@
 
     .hero-sub {
       font-size: 1.05rem;
-      color: rgba(255,255,255,0.65);
+      color: #556;
       line-height: 1.75;
       max-width: 520px;
       margin-bottom: 2.5rem;
@@ -222,8 +226,8 @@
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      background: var(--gold);
-      color: var(--navy);
+      background: var(--navy);
+      color: var(--white);
       text-decoration: none;
       padding: 14px 32px;
       border-radius: var(--radius);
@@ -234,9 +238,9 @@
     }
 
     .hero-cta:hover {
-      background: var(--gold-light);
+      background: var(--navy-light);
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(201,168,76,0.3);
+      box-shadow: 0 8px 24px rgba(26,39,68,0.2);
     }
 
     .hero-cta svg { width: 18px; height: 18px; }
@@ -252,7 +256,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      color: rgba(255,255,255,0.5);
+      color: var(--text-light);
       font-size: 0.8rem;
       letter-spacing: 0.04em;
     }
@@ -261,7 +265,7 @@
       width: 6px; height: 6px;
       border-radius: 50%;
       background: var(--gold);
-      opacity: 0.7;
+      opacity: 0.9;
     }
 
     /* SECTION BASE */
@@ -474,7 +478,7 @@
 
     /* CONTACT */
     #Contact {
-      background: var(--navy);
+      background: var(--sky);
     }
 
     .contact-wrapper {
@@ -484,8 +488,8 @@
       align-items: start;
     }
 
-    .contact-info .section-title { color: var(--white); }
-    .contact-info .section-intro { color: rgba(255,255,255,0.55); }
+    .contact-info .section-title { color: var(--navy); }
+    .contact-info .section-intro { color: var(--text-light); }
 
     .contact-detail {
       margin-top: 2.5rem;
@@ -502,37 +506,40 @@
 
     .contact-item-icon {
       width: 40px; height: 40px;
-      background: rgba(201,168,76,0.15);
-      border: 1px solid rgba(201,168,76,0.3);
+      background: var(--white);
+      border: 1px solid rgba(26,39,68,0.12);
       border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 2px 8px rgba(26,39,68,0.06);
     }
 
     .contact-item-icon svg {
       width: 18px; height: 18px;
-      color: var(--gold);
+      color: var(--navy);
     }
 
     .contact-item span {
-      color: rgba(255,255,255,0.75);
+      color: var(--text);
       font-size: 0.92rem;
     }
 
     .contact-item a {
-      color: var(--gold);
+      color: var(--navy);
       text-decoration: none;
+      font-weight: 500;
     }
 
-    .contact-item a:hover { text-decoration: underline; }
+    .contact-item a:hover { text-decoration: underline; color: var(--gold); }
 
     /* FORM */
     .contact-form {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 8px;
+      background: var(--white);
+      border: 1px solid rgba(26,39,68,0.08);
+      border-radius: 12px;
       padding: 2.5rem;
+      box-shadow: 0 4px 24px rgba(26,39,68,0.07);
     }
 
     .form-row {
@@ -553,40 +560,40 @@
       font-size: 0.78rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
+      color: var(--text-light);
       font-weight: 500;
     }
 
     .form-group input,
     .form-group textarea {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.15);
+      background: var(--cream);
+      border: 1px solid rgba(26,39,68,0.14);
       border-radius: var(--radius);
-      color: var(--white);
+      color: var(--text);
       padding: 12px 16px;
       font-family: 'DM Sans', sans-serif;
       font-size: 0.92rem;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.2s;
       outline: none;
     }
 
     .form-group input:focus,
     .form-group textarea:focus {
-      border-color: var(--gold);
-      background: rgba(255,255,255,0.1);
+      border-color: var(--navy);
+      background: var(--white);
     }
 
     .form-group input::placeholder,
     .form-group textarea::placeholder {
-      color: rgba(255,255,255,0.25);
+      color: #aab;
     }
 
     .form-group textarea { resize: vertical; min-height: 120px; }
 
     .btn-submit {
       width: 100%;
-      background: var(--gold);
-      color: var(--navy);
+      background: var(--navy);
+      color: var(--white);
       border: none;
       padding: 14px;
       border-radius: var(--radius);
@@ -599,25 +606,26 @@
     }
 
     .btn-submit:hover {
-      background: var(--gold-light);
+      background: var(--navy-light);
       transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(26,39,68,0.18);
     }
 
     /* FOOTER */
     footer {
-      background: #111d35;
+      background: #e8ecf2;
       padding: 2rem 5%;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
       gap: 1rem;
-      border-top: 1px solid rgba(201,168,76,0.1);
+      border-top: 1px solid rgba(26,39,68,0.1);
     }
 
     footer p {
       font-size: 0.8rem;
-      color: rgba(255,255,255,0.3);
+      color: rgba(26,39,68,0.45);
     }
 
     .footer-links {
@@ -628,12 +636,12 @@
 
     .footer-links a {
       font-size: 0.8rem;
-      color: rgba(255,255,255,0.3);
+      color: rgba(26,39,68,0.45);
       text-decoration: none;
       transition: color 0.2s;
     }
 
-    .footer-links a:hover { color: var(--gold); }
+    .footer-links a:hover { color: var(--navy); }
 
     /* ANIMATION */
     @keyframes fadeUp {
@@ -667,7 +675,7 @@
       display: block;
       width: 24px;
       height: 2px;
-      background: var(--white);
+      background: var(--navy);
       border-radius: 2px;
       transition: all 0.3s;
     }
@@ -680,22 +688,23 @@
       display: none;
       position: fixed;
       top: 72px; left: 0; right: 0;
-      background: var(--navy);
-      border-top: 1px solid rgba(201,168,76,0.2);
+      background: var(--white);
+      border-top: 1px solid rgba(26,39,68,0.08);
       padding: 1.5rem 5%;
       z-index: 99;
       flex-direction: column;
       gap: 0;
+      box-shadow: 0 8px 24px rgba(26,39,68,0.08);
     }
 
     .mobile-menu.open { display: flex; }
 
     .mobile-menu a {
-      color: rgba(255,255,255,0.8);
+      color: var(--navy);
       text-decoration: none;
       font-size: 1rem;
       padding: 1rem 0;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(26,39,68,0.07);
       font-weight: 500;
       letter-spacing: 0.04em;
       transition: color 0.2s;
@@ -881,7 +890,7 @@
   <section id="Contact">
     <div class="contact-wrapper">
       <div class="contact-info reveal">
-        <div class="section-label" style="color: var(--gold-light)">Bereikbaarheid</div>
+        <div class="section-label">Bereikbaarheid</div>
         <h2 class="section-title">Neem contact op</h2>
         <p class="section-intro">Per mail zijn wij 24 uur per dag bereikbaar. U ontvangt binnen 2 werkdagen een reactie.</p>
         <div class="contact-detail">
