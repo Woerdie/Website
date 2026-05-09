@@ -3,290 +3,150 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BewindWijs – Design 4</title>
+  <title>BewindWijs – Samen werken aan een betere toekomst</title>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Mulish:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --blue: #1e4d8c;
-      --blue-light: #2a67bd;
-      --blue-pale: #e8f0fb;
-      --sky: #6da0d8;
-      --white: #ffffff;
-      --off-white: #f8f9fc;
-      --text: #1a1e2e;
-      --text-mid: #64748b;
-    }
+    :root { --bd: #1a3a6b; --bm: #2a5298; --bl: #4a7fc1; --bp: #e8f0fb; --white: #fff; --off: #f8f9fc; --text: #1a1e2e; --tm: #64748b; }
     html { scroll-behavior: smooth; }
     body { font-family: 'Mulish', sans-serif; background: var(--white); color: var(--text); overflow-x: hidden; }
-
-    /* NAV */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--white); border-bottom: 1px solid rgba(30,77,140,0.1); display: flex; align-items: center; justify-content: space-between; padding: 0 6%; height: 70px; }
-    .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-    .logo-placeholder { width: 42px; height: 42px; border: 2px dashed var(--blue); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: var(--blue); font-size: 9px; text-align: center; line-height: 1.2; }
-    .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1.25rem; color: var(--blue); font-weight: 700; }
-    .nav-brand span { display: block; font-family: 'Mulish', sans-serif; font-size: 0.65rem; color: var(--text-mid); letter-spacing: 0.12em; text-transform: uppercase; font-weight: 400; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--white); border-bottom: 1px solid rgba(26,58,107,0.1); display: flex; align-items: center; justify-content: space-between; padding: 0 6%; height: 70px; }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
+    .nav-logo img { height: 42px; width: auto; }
     .nav-links { display: flex; gap: 2.5rem; list-style: none; }
-    .nav-links a { color: var(--text-mid); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--blue); }
-    .nav-links a.btn-nav { background: var(--blue); color: var(--white); padding: 9px 24px; border-radius: 8px; font-weight: 700; }
-    .nav-links a.btn-nav:hover { background: var(--blue-light); color: var(--white); }
+    .nav-links a { color: var(--tm); text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--bd); }
+    .nav-links a.btn-nav { background: var(--bd); color: var(--white); padding: 9px 24px; border-radius: 8px; font-weight: 700; }
+    .nav-links a.btn-nav:hover { background: var(--bm); }
     .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
-    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--blue); border-radius: 2px; transition: all 0.3s; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--bd); border-radius: 2px; transition: all 0.3s; }
     .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .nav-toggle.open span:nth-child(2) { opacity: 0; }
     .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .mobile-menu { display: none; position: fixed; top: 70px; left: 0; right: 0; background: var(--white); border-top: 1px solid rgba(30,77,140,0.1); padding: 1.5rem 6%; z-index: 99; flex-direction: column; }
+    .mobile-menu { display: none; position: fixed; top: 70px; left: 0; right: 0; background: var(--white); border-top: 1px solid rgba(26,58,107,0.1); padding: 1.5rem 6%; z-index: 99; flex-direction: column; }
     .mobile-menu.open { display: flex; }
-    .mobile-menu a { color: var(--text); text-decoration: none; font-size: 1rem; padding: 1rem 0; border-bottom: 1px solid rgba(30,77,140,0.08); font-weight: 600; }
+    .mobile-menu a { color: var(--text); text-decoration: none; font-size: 1rem; padding: 1rem 0; border-bottom: 1px solid rgba(26,58,107,0.08); font-weight: 600; }
     .mobile-menu a:last-child { border-bottom: none; }
-
-    /* HERO */
-    #home { min-height: 100vh; background: var(--off-white); display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 100px 6% 60px; gap: 4rem; position: relative; overflow: hidden; }
-    .hero-bg-circle { position: absolute; right: -10%; top: 50%; transform: translateY(-50%); width: 60%; aspect-ratio: 1; border-radius: 50%; background: var(--blue-pale); opacity: 0.6; }
+    #home { min-height: 100vh; background: var(--off); display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 100px 6% 60px; gap: 4rem; position: relative; overflow: hidden; }
+    #home::before { content: ''; position: absolute; right: -10%; top: 50%; transform: translateY(-50%); width: 60%; aspect-ratio: 1; border-radius: 50%; background: var(--bp); opacity: 0.6; }
     .hero-left { position: relative; animation: fadeUp 0.8s ease both; }
     .hero-eyebrow { display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem; }
-    .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
-    .hero-eyebrow-text { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--blue); }
-    .hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.6rem, 5vw, 4.2rem); color: var(--text); line-height: 1.1; margin-bottom: 1.5rem; font-weight: 700; }
-    .hero-title em { font-style: italic; color: var(--blue); }
-    .hero-sub { font-size: 1rem; color: var(--text-mid); line-height: 1.85; max-width: 460px; margin-bottom: 2.5rem; font-weight: 300; }
+    .hero-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--bl); }
+    .hero-eyebrow-text { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--bd); }
+    h1.hero-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(2.6rem, 5vw, 4.2rem); color: var(--text); line-height: 1.1; margin-bottom: 1.5rem; font-weight: 700; }
+    h1.hero-title em { font-style: italic; color: var(--bd); }
+    .hero-sub { font-size: 1rem; color: var(--tm); line-height: 1.85; max-width: 460px; margin-bottom: 2.5rem; font-weight: 300; }
     .hero-cta-group { display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; }
-    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--blue); color: var(--white); text-decoration: none; padding: 13px 28px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; transition: all 0.25s; }
-    .btn-primary:hover { background: var(--blue-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(30,77,140,0.25); }
-    .btn-ghost { display: inline-flex; align-items: center; gap: 8px; color: var(--blue); text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: gap 0.2s; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--bd); color: var(--white); text-decoration: none; padding: 13px 28px; border-radius: 8px; font-weight: 700; font-size: 0.9rem; transition: all 0.25s; }
+    .btn-primary:hover { background: var(--bm); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,58,107,0.25); }
+    .btn-ghost { display: inline-flex; align-items: center; gap: 8px; color: var(--bd); text-decoration: none; font-weight: 700; font-size: 0.9rem; transition: gap 0.2s; }
     .btn-ghost:hover { gap: 12px; }
     .hero-right { position: relative; height: 520px; animation: fadeUp 0.8s 0.15s ease both; }
-    .hero-img-main { position: absolute; inset: 0; background: var(--blue); border-radius: 24px; overflow: hidden; }
+    .hero-img-main { position: absolute; inset: 0; background: var(--bd); border-radius: 24px; overflow: hidden; }
     .hero-img-main img { width: 100%; height: 100%; object-fit: cover; opacity: 0.35; }
     .hero-img-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(255,255,255,0.3); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
     .hero-img-placeholder svg { width: 36px; height: 36px; }
-    .hero-badge { position: absolute; bottom: -20px; left: -20px; background: var(--white); border-radius: 16px; padding: 1.2rem 1.5rem; box-shadow: 0 8px 32px rgba(30,77,140,0.15); display: flex; align-items: center; gap: 12px; }
-    .hero-badge-icon { width: 44px; height: 44px; background: var(--blue-pale); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-    .hero-badge-icon svg { width: 20px; height: 20px; color: var(--blue); }
+    .hero-badge { position: absolute; bottom: -20px; left: -20px; background: var(--white); border-radius: 16px; padding: 1.2rem 1.5rem; box-shadow: 0 8px 32px rgba(26,58,107,0.15); display: flex; align-items: center; gap: 12px; }
+    .hero-badge-icon { width: 44px; height: 44px; background: var(--bp); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .hero-badge-icon svg { width: 20px; height: 20px; color: var(--bd); }
     .hero-badge-text strong { display: block; font-size: 0.9rem; color: var(--text); font-weight: 700; }
-    .hero-badge-text span { font-size: 0.75rem; color: var(--text-mid); }
-
-    /* SECTION */
+    .hero-badge-text span { font-size: 0.75rem; color: var(--tm); }
     section { padding: 100px 6%; }
-    .section-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--blue); font-weight: 700; margin-bottom: 0.75rem; }
+    .section-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bl); font-weight: 700; margin-bottom: 0.75rem; }
     .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(1.8rem, 3.5vw, 2.8rem); color: var(--text); line-height: 1.15; margin-bottom: 1.2rem; font-weight: 700; }
-    .section-intro { font-size: 1rem; color: var(--text-mid); line-height: 1.85; max-width: 520px; font-weight: 300; }
-
-    /* DIENSTEN */
+    .section-intro { font-size: 1rem; color: var(--tm); line-height: 1.85; max-width: 520px; font-weight: 300; }
     #Diensten { background: var(--white); }
     .diensten-header { margin-bottom: 3.5rem; }
     .diensten-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-    .dienst-card { border: 1.5px solid rgba(30,77,140,0.1); border-radius: 20px; padding: 2.5rem 2rem; transition: all 0.3s; background: var(--white); }
-    .dienst-card:hover { border-color: var(--blue); box-shadow: 0 12px 40px rgba(30,77,140,0.1); transform: translateY(-4px); }
-    .dienst-icon { width: 52px; height: 52px; background: var(--blue-pale); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; transition: background 0.3s; }
-    .dienst-card:hover .dienst-icon { background: var(--blue); }
-    .dienst-icon svg { width: 24px; height: 24px; color: var(--blue); transition: color 0.3s; }
+    .dienst-card { border: 1.5px solid rgba(26,58,107,0.1); border-radius: 20px; padding: 2.5rem 2rem; transition: all 0.3s; background: var(--white); }
+    .dienst-card:hover { border-color: var(--bd); box-shadow: 0 12px 40px rgba(26,58,107,0.1); transform: translateY(-4px); }
+    .dienst-icon { width: 52px; height: 52px; background: var(--bp); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; transition: background 0.3s; }
+    .dienst-card:hover .dienst-icon { background: var(--bd); }
+    .dienst-icon svg { width: 24px; height: 24px; color: var(--bd); transition: color 0.3s; }
     .dienst-card:hover .dienst-icon svg { color: var(--white); }
     .dienst-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.4rem; color: var(--text); margin-bottom: 0.75rem; font-weight: 700; }
-    .dienst-card p { font-size: 0.9rem; color: var(--text-mid); line-height: 1.75; font-weight: 300; }
-
-    /* OVER */
-    #over { background: var(--blue); }
-    #over .section-label { color: var(--sky); }
-    #over .section-title { color: var(--white); }
+    .dienst-card p { font-size: 0.9rem; color: var(--tm); line-height: 1.75; font-weight: 300; }
+    #over { background: var(--bd); }
+    #over .section-label { color: rgba(255,255,255,0.5); }
+    #over .section-title { font-family: 'Cormorant Garamond', serif; color: var(--white); }
     #over .section-intro { color: rgba(255,255,255,0.65); }
     .over-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 6rem; align-items: center; }
     .over-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
     .over-list li { display: flex; align-items: center; gap: 12px; color: rgba(255,255,255,0.75); font-size: 0.95rem; padding: 0.75rem 1rem; background: rgba(255,255,255,0.06); border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); }
-    .over-list li svg { width: 18px; height: 18px; min-width: 18px; color: var(--sky); }
+    .over-list li svg { width: 18px; height: 18px; min-width: 18px; color: var(--bl); }
     .over-visual { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
     .over-box { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 1.75rem 1.5rem; }
     .over-box .num { font-family: 'Cormorant Garamond', serif; font-size: 2.4rem; color: var(--white); font-weight: 700; line-height: 1; }
     .over-box .lbl { font-size: 0.78rem; color: rgba(255,255,255,0.5); margin-top: 6px; line-height: 1.4; }
     .over-box.wide { grid-column: span 2; background: rgba(255,255,255,0.12); }
-
-    /* CONTACT */
-    #Contact { background: var(--off-white); }
+    #Contact { background: var(--off); }
     .contact-wrapper { display: grid; grid-template-columns: 1fr 1.3fr; gap: 5rem; align-items: start; }
-    .contact-form { background: var(--white); border-radius: 24px; padding: 2.5rem; box-shadow: 0 4px 40px rgba(30,77,140,0.08); border: 1px solid rgba(30,77,140,0.08); }
+    .contact-form { background: var(--white); border-radius: 24px; padding: 2.5rem; box-shadow: 0 4px 40px rgba(26,58,107,0.08); border: 1px solid rgba(26,58,107,0.08); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
     .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
-    .form-group label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-mid); font-weight: 700; }
-    .form-group input, .form-group textarea { background: var(--off-white); border: 1.5px solid rgba(30,77,140,0.25); border-radius: 10px; color: var(--text); padding: 12px 16px; font-family: 'Mulish', sans-serif; font-size: 0.92rem; outline: none; transition: all 0.2s; }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--blue); background: var(--white); box-shadow: 0 0 0 4px rgba(30,77,140,0.08); }
+    .form-group label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tm); font-weight: 700; }
+    .form-group input, .form-group textarea { background: var(--off); border: 1.5px solid transparent; border-radius: 10px; color: var(--text); padding: 12px 16px; font-family: 'Mulish', sans-serif; font-size: 0.92rem; outline: none; transition: all 0.2s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--bd); background: var(--white); box-shadow: 0 0 0 4px rgba(26,58,107,0.08); }
     .form-group textarea { resize: vertical; min-height: 120px; }
-    .btn-submit { width: 100%; background: var(--blue); color: var(--white); border: none; padding: 14px; border-radius: 10px; font-family: 'Mulish', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; }
-    .btn-submit:hover { background: var(--blue-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(30,77,140,0.25); }
+    .btn-submit { width: 100%; background: var(--bd); color: var(--white); border: none; padding: 14px; border-radius: 10px; font-family: 'Mulish', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; }
+    .btn-submit:hover { background: var(--bm); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(26,58,107,0.25); }
     .contact-info .section-intro { margin-bottom: 2rem; }
     .contact-item { display: flex; align-items: center; gap: 14px; margin-bottom: 1.25rem; }
-    .contact-item-icon { width: 44px; height: 44px; background: var(--blue-pale); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-    .contact-item-icon svg { width: 18px; height: 18px; color: var(--blue); }
-    .contact-item span { color: var(--text-mid); font-size: 0.92rem; }
-    .contact-item a { color: var(--blue); text-decoration: none; font-weight: 600; }
-
-    /* FOOTER */
+    .contact-item-icon { width: 44px; height: 44px; background: var(--bp); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .contact-item-icon svg { width: 18px; height: 18px; color: var(--bd); }
+    .contact-item span { color: var(--tm); font-size: 0.92rem; }
+    .contact-item a { color: var(--bd); text-decoration: none; font-weight: 600; }
     footer { background: var(--text); padding: 2rem 6%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
     footer p { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
     .footer-links { display: flex; gap: 1.5rem; list-style: none; }
     .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--sky); }
-
+    .footer-links a:hover { color: var(--bl); }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
     .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .reveal.visible { opacity: 1; transform: none; }
-
-    @media (max-width: 1024px) {
-      .diensten-grid { grid-template-columns: 1fr 1fr; }
-      .over-grid { gap: 3rem; }
-      .contact-wrapper { gap: 3rem; }
-    }
-    @media (max-width: 768px) {
-      .nav-links { display: none; }
-      .nav-toggle { display: flex; }
-      #home { grid-template-columns: 1fr; }
-      .hero-right { display: none; }
-      .hero-bg-circle { display: none; }
-      .diensten-grid { grid-template-columns: 1fr; }
-      .over-grid { grid-template-columns: 1fr; gap: 3rem; }
-      .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; }
-      .form-row { grid-template-columns: 1fr; }
-      section { padding: 70px 6%; }
-      footer { flex-direction: column; text-align: center; }
-    }
+    @media (max-width: 1024px) { .diensten-grid { grid-template-columns: 1fr 1fr; } .over-grid { gap: 3rem; } .contact-wrapper { gap: 3rem; } }
+    @media (max-width: 768px) { .nav-links { display: none; } .nav-toggle { display: flex; } #home { grid-template-columns: 1fr; } #home::before { display: none; } .hero-right { display: none; } .diensten-grid { grid-template-columns: 1fr; } .over-grid { grid-template-columns: 1fr; gap: 3rem; } .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; } .form-row { grid-template-columns: 1fr; } section { padding: 70px 6%; } footer { flex-direction: column; text-align: center; } }
   </style>
 </head>
 <body>
   <nav>
-    <a href="#home" class="nav-logo">
-      <div class="logo-placeholder">LOGO</div>
-      <div class="nav-brand">BewindWijs<span>Bewindvoering & Inkomensbeheer</span></div>
-    </a>
-    <ul class="nav-links">
-      <li><a href="#Diensten">Diensten</a></li>
-      <li><a href="#over">Over ons</a></li>
-      <li><a href="#Contact" class="btn-nav">Contact</a></li>
-    </ul>
+    <a href="#home" class="nav-logo"><img src="logo.png" alt="BewindWijs" /></a>
+    <ul class="nav-links"><li><a href="#Diensten">Diensten</a></li><li><a href="#over">Over ons</a></li><li><a href="#Contact" class="btn-nav">Contact</a></li></ul>
     <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
   </nav>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#Diensten" onclick="closeMenu()">Diensten</a>
-    <a href="#over" onclick="closeMenu()">Over ons</a>
-    <a href="#Contact" onclick="closeMenu()">Contact</a>
-  </div>
-
+  <div class="mobile-menu" id="mobileMenu"><a href="#Diensten" onclick="closeMenu()">Diensten</a><a href="#over" onclick="closeMenu()">Over ons</a><a href="#Contact" onclick="closeMenu()">Contact</a></div>
   <section id="home">
-    <div class="hero-bg-circle"></div>
     <div class="hero-left">
       <div class="hero-eyebrow"><div class="hero-dot"></div><div class="hero-eyebrow-text">NBBI aangesloten · Rechtbank aangesteld</div></div>
       <h1 class="hero-title">Samen werken aan<br />een <em>betere toekomst</em></h1>
       <p class="hero-sub">BewindWijs helpt u stap voor stap naar financiële rust. Persoonlijk, professioneel en betrouwbaar.</p>
-      <div class="hero-cta-group">
-        <a href="#Contact" class="btn-primary">Neem contact op <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-        <a href="#Diensten" class="btn-ghost">Onze diensten <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-      </div>
+      <div class="hero-cta-group"><a href="#Contact" class="btn-primary">Neem contact op <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a><a href="#Diensten" class="btn-ghost">Onze diensten <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a></div>
     </div>
     <div class="hero-right">
-      <div class="hero-img-main">
-        <div class="hero-img-placeholder">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          Foto plaatsen
-        </div>
-      </div>
-      <div class="hero-badge">
-        <div class="hero-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
-        <div class="hero-badge-text"><strong>NBBI Gecertificeerd</strong><span>Door Rechtbank aangesteld</span></div>
-      </div>
+      <div class="hero-img-main"><div class="hero-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Foto plaatsen</div></div>
+      <div class="hero-badge"><div class="hero-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><div class="hero-badge-text"><strong>NBBI Gecertificeerd</strong><span>Door Rechtbank aangesteld</span></div></div>
     </div>
   </section>
-
-  <section id="Diensten">
-    <div class="diensten-header reveal">
-      <div class="section-label">Wat wij bieden</div>
-      <h2 class="section-title">Onze diensten</h2>
-      <p class="section-intro">Drie kernservices volledig afgestemd op uw persoonlijke financiële situatie.</p>
-    </div>
+  <section id="Diensten"><div class="diensten-header reveal"><div class="section-label">Wat wij bieden</div><h2 class="section-title">Onze diensten</h2><p class="section-intro">Drie kernservices volledig afgestemd op uw persoonlijke financiële situatie.</p></div>
     <div class="diensten-grid reveal">
-      <div class="dienst-card">
-        <div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
-        <h3>Bewindvoering</h3>
-        <p>Wij beheren uw financiën en zorgen dat uw rekeningen op tijd worden betaald. U hoeft zich geen zorgen meer te maken over uw geldzaken.</p>
-      </div>
-      <div class="dienst-card">
-        <div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-        <h3>Inkomensbeheer</h3>
-        <p>Geheel of gedeeltelijk inkomensbeheer op maat. Overzichtelijke verdeling van uw inkomsten en uitgaven.</p>
-      </div>
-      <div class="dienst-card">
-        <div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
-        <h3>Budgetcoaching</h3>
-        <p>Wij coachen u om zelf grip te krijgen op uw financiën en financieel zelfredzaam te worden.</p>
-      </div>
+      <div class="dienst-card"><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h3>Bewindvoering</h3><p>Wij beheren uw financiën en zorgen dat uw rekeningen op tijd worden betaald.</p></div>
+      <div class="dienst-card"><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h3>Inkomensbeheer</h3><p>Overzichtelijke verdeling van uw inkomsten en uitgaven op maat.</p></div>
+      <div class="dienst-card"><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><h3>Budgetcoaching</h3><p>Wij coachen u zodat u financieel zelfredzaam wordt.</p></div>
     </div>
   </section>
-
-  <section id="over">
-    <div class="over-grid">
-      <div class="over-content reveal">
-        <div class="section-label">Over ons</div>
-        <h2 class="section-title">Professioneel en betrouwbaar</h2>
-        <p class="section-intro">Wij zijn beide door de Rechtbank aangesteld als professioneel bewindvoerder en aangesloten bij de branchevereniging NBBI.</p>
-        <ul class="over-list">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Door de Rechtbank aangesteld als professioneel bewindvoerder</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Aangesloten bij branchevereniging NBBI</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Persoonlijke en betrokken begeleiding</li>
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg> Transparante werkwijze en heldere communicatie</li>
-        </ul>
-      </div>
-      <div class="over-visual reveal">
-        <div class="over-box wide"><div class="num">NBBI</div><div class="lbl">Aangesloten bij branchevereniging</div></div>
-        <div class="over-box"><div class="num">24/7</div><div class="lbl">Bereikbaar per mail</div></div>
-        <div class="over-box"><div class="num">&lt; 2</div><div class="lbl">Werkdagen reactietijd</div></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="Contact">
-    <div class="contact-wrapper">
-      <div class="contact-info reveal">
-        <div class="section-label">Bereikbaarheid</div>
-        <h2 class="section-title">Neem contact op</h2>
-        <p class="section-intro">Per mail zijn wij 24 uur per dag bereikbaar. U ontvangt binnen 2 werkdagen een reactie.</p>
-        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><span><a href="mailto:info@bewindwijs.nl">info@bewindwijs.nl</a></span></div>
-        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><span>Leusden</span></div>
-        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Reactie binnen 2 werkdagen</span></div>
-      </div>
-      <div class="contact-form reveal">
-        <form id="contactForm">
-          <input type="hidden" name="access_key" value="0e93a4d9-2f36-476b-b6d7-f7f4bcc963f2" />
-          <div class="form-row">
-            <div class="form-group"><label>Naam</label><input type="text" name="name" placeholder="Uw naam" required /></div>
-            <div class="form-group"><label>E-mail</label><input type="email" name="email" placeholder="uw@email.nl" required /></div>
-          </div>
-          <div class="form-group"><label>Bericht</label><textarea name="message" placeholder="Hoe kunnen wij u helpen?" required></textarea></div>
-          <button type="submit" class="btn-submit">Verstuur bericht</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <p>© <span id="year"></span> BewindWijs</p>
-    <ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Klachtenregeling</a></li></ul>
-  </footer>
-
+  <section id="over"><div class="over-grid"><div class="over-content reveal"><div class="section-label">Over ons</div><h2 class="section-title">Professioneel en betrouwbaar</h2><p class="section-intro">Wij zijn beide door de Rechtbank aangesteld als professioneel bewindvoerder en aangesloten bij NBBI.</p><ul class="over-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Door de Rechtbank aangesteld als professioneel bewindvoerder</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Aangesloten bij branchevereniging NBBI</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Persoonlijke en betrokken begeleiding</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Transparante werkwijze en heldere communicatie</li></ul></div>
+    <div class="over-visual reveal"><div class="over-box wide"><div class="num">NBBI</div><div class="lbl">Aangesloten bij branchevereniging</div></div><div class="over-box"><div class="num">24/7</div><div class="lbl">Bereikbaar per mail</div></div><div class="over-box"><div class="num">&lt; 2</div><div class="lbl">Werkdagen reactietijd</div></div></div>
+  </div></section>
+  <section id="Contact"><div class="contact-wrapper"><div class="contact-info reveal"><div class="section-label">Bereikbaarheid</div><h2 class="section-title">Neem contact op</h2><p class="section-intro">Per mail zijn wij 24 uur per dag bereikbaar. U ontvangt binnen 2 werkdagen een reactie.</p><div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><span><a href="mailto:info@bewindwijs.nl">info@bewindwijs.nl</a></span></div><div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Reactie binnen 2 werkdagen</span></div></div>
+    <div class="contact-form reveal"><form id="contactForm"><input type="hidden" name="access_key" value="0e93a4d9-2f36-476b-b6d7-f7f4bcc963f2" /><div class="form-row"><div class="form-group"><label>Naam</label><input type="text" name="name" placeholder="Uw naam" required /></div><div class="form-group"><label>E-mail</label><input type="email" name="email" placeholder="uw@email.nl" required /></div></div><div class="form-group"><label>Bericht</label><textarea name="message" placeholder="Hoe kunnen wij u helpen?" required></textarea></div><button type="submit" class="btn-submit">Verstuur bericht</button></form></div>
+  </div></section>
+  <footer><p>© 2025 BewindWijs – Leusden</p><ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Klachtenregeling</a></li></ul></footer>
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    const toggle = document.getElementById('navToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    toggle.addEventListener('click', () => { toggle.classList.toggle('open'); mobileMenu.classList.toggle('open'); });
-    function closeMenu() { toggle.classList.remove('open'); mobileMenu.classList.remove('open'); }
-    const reveals = document.querySelectorAll('.reveal');
-    const observer = new IntersectionObserver(entries => { entries.forEach((e,i) => { if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'),i*100); observer.unobserve(e.target); } }); }, {threshold:0.1});
-    reveals.forEach(el => observer.observe(el));
-    document.getElementById('contactForm').addEventListener('submit', async function(e) {
-      e.preventDefault(); const btn = this.querySelector('.btn-submit'); btn.textContent = 'Versturen...'; btn.disabled = true;
-      const res = await fetch('https://api.web3forms.com/submit', {method:'POST',body:new FormData(this)});
-      const json = await res.json();
-      if(json.success){ btn.textContent='Verstuurd ✓'; btn.style.background='#4caf50'; this.reset(); setTimeout(()=>{btn.textContent='Verstuur bericht';btn.style.background='';btn.disabled=false;},3000); }
-      else { btn.textContent='Er ging iets mis'; btn.disabled=false; }
-    });
+    const toggle=document.getElementById('navToggle'),mm=document.getElementById('mobileMenu');
+    toggle.addEventListener('click',()=>{toggle.classList.toggle('open');mm.classList.toggle('open');});
+    function closeMenu(){toggle.classList.remove('open');mm.classList.remove('open');}
+    document.querySelectorAll('.reveal').forEach(el=>new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:0.1}).observe(el));
+    document.getElementById('contactForm').addEventListener('submit',async function(e){e.preventDefault();const btn=this.querySelector('.btn-submit');btn.textContent='Versturen...';btn.disabled=true;const r=await fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(this)});const j=await r.json();if(j.success){btn.textContent='Verstuurd ✓';btn.style.background='#4caf50';this.reset();setTimeout(()=>{btn.textContent='Verstuur bericht';btn.style.background='';btn.disabled=false;},3000);}else{btn.textContent='Er ging iets mis';btn.disabled=false;}});
   </script>
 </body>
 </html>
