@@ -4,18 +4,18 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BewindWijs – Kies een design</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #1a2744; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 5%; }
+    body { font-family: 'Source Sans 3', sans-serif; background: #1a1a1a; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 5%; }
     .header { text-align: center; margin-bottom: 3rem; animation: fadeUp 0.7s ease both; display: flex; flex-direction: column; align-items: center; }
     .header img { height: 64px; width: auto; margin-bottom: 1.5rem; }
-    .header-tag { display: inline-block; background: rgba(74,127,193,0.15); border: 1px solid rgba(74,127,193,0.3); color: rgba(255,255,255,0.5); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 6px 16px; border-radius: 50px; margin-bottom: 1.5rem; }
-    .header h1 { font-family: 'Syne', sans-serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; line-height: 1.1; letter-spacing: -0.03em; margin-bottom: 0.75rem; }
-    .header p { color: rgba(255,255,255,0.45); font-size: 1rem; font-weight: 300; }
+    .header-tag { display: inline-block; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: rgba(255,255,255,0.7); font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; padding: 6px 16px; border-radius: 50px; margin-bottom: 1.5rem; }
+    .header h1 { font-family: 'Lora', serif; font-size: clamp(2rem, 5vw, 3rem); font-weight: 700; line-height: 1.2; letter-spacing: -0.01em; margin-bottom: 0.75rem; color: #fff; }
+    .header p { color: rgba(255,255,255,0.6); font-size: 1rem; font-weight: 300; }
     .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; width: 100%; max-width: 900px; animation: fadeUp 0.7s 0.15s ease both; }
-    .card { position: relative; border-radius: 20px; overflow: hidden; text-decoration: none; border: 1px solid rgba(255,255,255,0.08); transition: transform 0.3s, box-shadow 0.3s; display: block; }
-    .card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.5); }
+    .card { position: relative; border-radius: 20px; overflow: hidden; text-decoration: none; border: 2px solid rgba(26,58,107,0.15); transition: transform 0.3s, box-shadow 0.3s; display: block; }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 24px 60px rgba(26,58,107,0.15); border-color: rgba(26,58,107,0.35); }
     .card:hover .card-arrow { transform: translateX(4px); }
     .card-preview { height: 200px; display: flex; align-items: center; justify-content: center; }
     .card:nth-child(1) .card-preview { background: #e8f0fb; }
@@ -45,13 +45,13 @@
     .preview-lines span:nth-child(1) { width: 85%; }
     .preview-lines span:nth-child(2) { width: 68%; }
     .preview-lines span:nth-child(3) { width: 52%; }
-    .card-body { background: #141414; padding: 1.5rem; border-top: 1px solid rgba(255,255,255,0.06); display: flex; align-items: center; justify-content: space-between; }
-    .card-num { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 4px; }
-    .card-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 600; color: #fff; }
-    .card-desc { font-size: 0.78rem; color: rgba(255,255,255,0.3); margin-top: 2px; }
-    .card-arrow { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: center; transition: transform 0.25s; }
-    .card-arrow svg { width: 16px; height: 16px; color: rgba(255,255,255,0.4); }
-    .footer-note { margin-top: 2.5rem; text-align: center; color: rgba(255,255,255,0.2); font-size: 0.8rem; animation: fadeUp 0.7s 0.3s ease both; }
+    .card-body { background: #fff; padding: 1.5rem; border-top: 2px solid rgba(26,58,107,0.1); display: flex; align-items: center; justify-content: space-between; }
+    .card-num { font-size: 0.68rem; letter-spacing: 0.2em; text-transform: uppercase; color: #999; margin-bottom: 4px; }
+    .card-name { font-family: 'Lora', serif; font-size: 1rem; font-weight: 600; color: #1a2744; }
+    .card-desc { font-size: 0.78rem; color: #999; margin-top: 2px; }
+    .card-arrow { width: 36px; height: 36px; min-width: 36px; border-radius: 50%; border: 1px solid rgba(26,58,107,0.2); display: flex; align-items: center; justify-content: center; transition: transform 0.25s; }
+    .card-arrow svg { width: 16px; height: 16px; color: #1a2744; }
+    .footer-note { margin-top: 2.5rem; text-align: center; color: rgba(255,255,255,0.3); font-size: 0.8rem; animation: fadeUp 0.7s 0.3s ease both; }
     @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
     @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .card-preview { height: 160px; } }
   </style>
