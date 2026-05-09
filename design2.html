@@ -4,107 +4,106 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BewindWijs – Samen werken aan een betere toekomst</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --bd: #1a3a6b; --bl: #4a7fc1; --bp: #e8f0fb; --warm: #f9f5f0; --warm2: #f0e9df; --warm3: #e4d9cc; --brown: #3d2b1f; --tm: #7a6155; --white: #fffdfb; --text: #2c1f17; }
+    :root { --bd: #1a3a6b; --bl: #4a7fc1; --bp: #e8f0fb; --green: #2d5a3d; --sage: #8faf97; --sand: #f0ebe0; --sand2: #e2d9c8; --white: #fff; --text: #1a1a1a; --tm: #555; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Source Sans 3', sans-serif; background: var(--warm); color: var(--text); overflow-x: hidden; }
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(249,245,240,0.96); backdrop-filter: blur(8px); border-bottom: 1px solid var(--warm3); display: flex; align-items: center; justify-content: space-between; padding: 0 6%; height: 70px; }
+    body { font-family: 'Outfit', sans-serif; background: var(--sand); color: var(--text); overflow-x: hidden; }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: var(--sand); border-bottom: 1px solid var(--sand2); display: flex; align-items: center; justify-content: space-between; padding: 0 6%; height: 68px; }
     .nav-logo { display: flex; align-items: center; text-decoration: none; }
-    .nav-logo img { height: 42px; width: auto; }
-    .nav-links { display: flex; gap: 2.2rem; list-style: none; }
+    .nav-logo img { height: 40px; width: auto; }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
     .nav-links a { color: var(--tm); text-decoration: none; font-size: 0.88rem; font-weight: 500; transition: color 0.2s; }
     .nav-links a:hover { color: var(--bd); }
-    .nav-links a.btn-nav { background: var(--bd); color: var(--white); padding: 9px 22px; border-radius: 6px; font-weight: 600; }
+    .nav-links a.btn-nav { background: var(--bd); color: var(--white); padding: 9px 22px; border-radius: 50px; font-weight: 600; }
     .nav-links a.btn-nav:hover { background: var(--bl); }
     .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
-    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--brown); border-radius: 2px; transition: all 0.3s; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--bd); border-radius: 2px; transition: all 0.3s; }
     .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .nav-toggle.open span:nth-child(2) { opacity: 0; }
     .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .mobile-menu { display: none; position: fixed; top: 70px; left: 0; right: 0; background: var(--warm); border-top: 1px solid var(--warm3); padding: 1.5rem 6%; z-index: 99; flex-direction: column; }
+    .mobile-menu { display: none; position: fixed; top: 68px; left: 0; right: 0; background: var(--sand); border-top: 1px solid var(--sand2); padding: 1.5rem 6%; z-index: 99; flex-direction: column; }
     .mobile-menu.open { display: flex; }
-    .mobile-menu a { color: var(--text); text-decoration: none; font-size: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--warm3); font-weight: 500; }
+    .mobile-menu a { color: var(--text); text-decoration: none; font-size: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--sand2); font-weight: 500; }
     .mobile-menu a:last-child { border-bottom: none; }
-    #home { min-height: 100vh; padding: 110px 6% 80px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 5rem; align-items: center; background: var(--white); position: relative; overflow: hidden; }
-    #home::before { content: ''; position: absolute; right: -8%; top: 50%; transform: translateY(-50%); width: 55%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle, var(--warm2) 0%, transparent 70%); pointer-events: none; }
-    .hero-left { position: relative; animation: fadeUp 0.9s ease both; }
-    .hero-keurmerk { display: inline-flex; align-items: center; gap: 10px; background: var(--bp); border: 1px solid rgba(26,58,107,0.15); border-radius: 50px; padding: 7px 16px; margin-bottom: 2rem; }
-    .hero-keurmerk-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bl); }
-    .hero-keurmerk span { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--bd); font-weight: 600; }
-    h1.hero-title { font-family: 'Lora', serif; font-size: clamp(2.2rem, 4.5vw, 3.6rem); color: var(--brown); line-height: 1.2; margin-bottom: 1.5rem; font-weight: 600; }
+    #home { min-height: 100vh; padding: 120px 6% 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; background: var(--sand); }
+    .hero-left { animation: fadeUp 0.8s ease both; }
+    .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: var(--bp); border: 1px solid rgba(26,58,107,0.2); border-radius: 50px; padding: 6px 14px; margin-bottom: 2rem; font-weight: 500; }
+    .hero-tag::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--bl); }
+    .hero-tag { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bd); }
+    h1.hero-title { font-family: 'Fraunces', serif; font-size: clamp(2.6rem, 5vw, 4rem); color: var(--text); line-height: 1.1; margin-bottom: 1.5rem; font-weight: 700; }
     h1.hero-title em { font-style: italic; color: var(--bd); }
-    .hero-sub { font-size: 1.05rem; color: var(--tm); line-height: 1.85; max-width: 460px; margin-bottom: 2.5rem; font-weight: 300; }
-    .hero-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--bd); color: var(--white); text-decoration: none; padding: 14px 30px; border-radius: 6px; font-weight: 600; font-size: 0.95rem; transition: all 0.25s; }
-    .hero-cta:hover { background: var(--bl); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,58,107,0.25); }
-    .hero-cta svg { width: 16px; height: 16px; }
-    .hero-trust { display: flex; gap: 2rem; margin-top: 2.5rem; flex-wrap: wrap; }
-    .trust-item { display: flex; align-items: center; gap: 8px; color: var(--tm); font-size: 0.82rem; }
-    .trust-item svg { width: 16px; height: 16px; color: var(--bl); }
-    .hero-right { position: relative; height: 480px; animation: fadeUp 0.9s 0.2s ease both; }
-    .hero-img-box { position: absolute; inset: 0; background: var(--warm2); border-radius: 16px 60px 16px 60px; overflow: hidden; border: 1px solid var(--warm3); }
+    .hero-sub { font-size: 1rem; color: var(--tm); line-height: 1.8; max-width: 480px; margin-bottom: 2.5rem; font-weight: 300; }
+    .btn-primary { display: inline-flex; align-items: center; gap: 8px; background: var(--bd); color: var(--white); text-decoration: none; padding: 13px 28px; border-radius: 50px; font-weight: 600; font-size: 0.92rem; transition: all 0.25s; }
+    .btn-primary:hover { background: var(--bl); transform: translateY(-2px); }
+    .btn-secondary { display: inline-flex; align-items: center; gap: 8px; border: 2px solid var(--bd); color: var(--bd); text-decoration: none; padding: 11px 28px; border-radius: 50px; font-weight: 600; font-size: 0.92rem; transition: all 0.25s; }
+    .btn-secondary:hover { background: var(--bd); color: var(--white); }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .hero-right { position: relative; height: 500px; animation: fadeUp 0.8s 0.2s ease both; }
+    .hero-img-box { position: absolute; inset: 0; background: var(--bp); border-radius: 40% 60% 60% 40% / 50% 40% 60% 50%; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 2px solid rgba(26,58,107,0.1); }
     .hero-img-box img { width: 100%; height: 100%; object-fit: cover; }
-    .hero-img-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(26,58,107,0.25); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; border: 2px dashed rgba(26,58,107,0.15); border-radius: 16px 60px 16px 60px; }
+    .hero-img-placeholder { display: flex; flex-direction: column; align-items: center; gap: 10px; color: rgba(26,58,107,0.3); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; }
     .hero-img-placeholder svg { width: 36px; height: 36px; }
+    .hero-float { position: absolute; bottom: 30px; left: -20px; background: var(--white); border-radius: 16px; padding: 16px 20px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 12px; }
+    .hero-float-icon { width: 36px; height: 36px; background: var(--bd); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .hero-float-icon svg { width: 18px; height: 18px; color: white; }
+    .hero-float-text { font-size: 0.78rem; }
+    .hero-float-text strong { display: block; color: var(--text); font-weight: 600; }
+    .hero-float-text span { color: var(--tm); }
     section { padding: 100px 6%; }
-    .section-label { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--bl); font-weight: 600; margin-bottom: 0.8rem; }
-    .section-title { font-family: 'Lora', serif; font-size: clamp(1.8rem, 3vw, 2.5rem); color: var(--brown); line-height: 1.2; margin-bottom: 1.2rem; font-weight: 600; }
-    .section-intro { font-size: 1rem; color: var(--tm); line-height: 1.85; max-width: 520px; font-weight: 300; }
-    #Diensten { background: var(--warm); }
+    .section-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bd); font-weight: 600; margin-bottom: 1rem; }
+    .section-title { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); color: var(--text); line-height: 1.2; margin-bottom: 1.2rem; }
+    .section-intro { font-size: 1rem; color: var(--tm); line-height: 1.8; max-width: 520px; font-weight: 300; }
+    #Diensten { background: var(--white); }
     .diensten-header { margin-bottom: 3.5rem; }
     .diensten-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
-    .dienst-card { background: var(--white); border: 1px solid var(--warm3); border-radius: 16px; padding: 2.5rem 2rem; transition: all 0.3s; }
-    .dienst-card:hover { border-color: var(--bl); box-shadow: 0 8px 32px rgba(26,58,107,0.1); transform: translateY(-4px); }
-    .dienst-num { font-family: 'Lora', serif; font-size: 0.85rem; color: var(--bl); font-style: italic; margin-bottom: 1.2rem; opacity: 0.7; }
-    .dienst-icon { width: 48px; height: 48px; background: var(--bp); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.2rem; transition: background 0.3s; }
-    .dienst-card:hover .dienst-icon { background: var(--bd); }
-    .dienst-icon svg { width: 22px; height: 22px; color: var(--bd); transition: color 0.3s; }
-    .dienst-card:hover .dienst-icon svg { color: var(--white); }
-    .dienst-card h3 { font-family: 'Lora', serif; font-size: 1.3rem; color: var(--brown); margin-bottom: 0.75rem; font-weight: 600; }
-    .dienst-card p { font-size: 0.9rem; color: var(--tm); line-height: 1.8; font-weight: 300; }
-    #over { background: var(--warm2); }
-    .over-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
-    .over-quote { background: var(--white); border-radius: 20px; padding: 2.5rem; border: 1px solid var(--warm3); position: relative; }
-    .over-quote::before { content: '\201C'; font-family: 'Lora', serif; font-size: 6rem; color: var(--bl); opacity: 0.15; position: absolute; top: -10px; left: 20px; line-height: 1; }
-    .over-quote p { font-family: 'Lora', serif; font-size: 1.1rem; color: var(--brown); line-height: 1.75; font-style: italic; position: relative; }
-    .over-quote-footer { margin-top: 1.5rem; display: flex; align-items: center; gap: 10px; }
-    .over-quote-line { width: 30px; height: 2px; background: var(--bl); }
-    .over-quote-name { font-size: 0.8rem; color: var(--tm); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
-    .over-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; margin-top: 2rem; }
-    .over-list li { display: flex; align-items: flex-start; gap: 12px; font-size: 0.95rem; color: var(--tm); line-height: 1.6; padding: 0.75rem 1rem; background: var(--white); border-radius: 10px; border: 1px solid var(--warm3); }
-    .over-list li svg { width: 18px; height: 18px; min-width: 18px; color: var(--bl); margin-top: 1px; }
-    #Contact { background: var(--bd); }
-    #Contact .section-label { color: rgba(255,255,255,0.5); }
-    #Contact .section-title { font-family: 'Lora', serif; color: var(--white); }
-    #Contact .section-intro { color: rgba(255,255,255,0.55); }
-    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.3fr; gap: 5rem; align-items: start; }
-    .contact-form { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); border-radius: 16px; padding: 2.5rem; }
+    .dienst-card { background: var(--sand); border-radius: 20px; padding: 2.5rem 2rem; transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden; }
+    .dienst-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(26,58,107,0.12); }
+    .dienst-card::before { content: attr(data-num); position: absolute; top: -10px; right: 16px; font-family: 'Fraunces', serif; font-size: 5rem; color: var(--bd); opacity: 0.06; font-weight: 700; line-height: 1; }
+    .dienst-icon { width: 52px; height: 52px; background: var(--bd); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
+    .dienst-icon svg { width: 24px; height: 24px; color: var(--white); }
+    .dienst-card h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; color: var(--text); margin-bottom: 0.75rem; }
+    .dienst-card p { font-size: 0.9rem; color: var(--tm); line-height: 1.75; font-weight: 300; }
+    #over { background: var(--bd); }
+    #over .section-label { color: rgba(255,255,255,0.5); }
+    #over .section-title { color: var(--white); }
+    #over .section-intro { color: rgba(255,255,255,0.7); }
+    .over-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: center; }
+    .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2.5rem; }
+    .stat-box { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 1.5rem; }
+    .stat-box .num { font-family: 'Fraunces', serif; font-size: 2.2rem; color: var(--white); font-weight: 700; }
+    .stat-box .label { font-size: 0.8rem; color: rgba(255,255,255,0.55); margin-top: 4px; }
+    .over-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; }
+    .over-list li { display: flex; align-items: flex-start; gap: 12px; color: rgba(255,255,255,0.8); font-size: 0.95rem; line-height: 1.5; }
+    .over-list li::before { content: '✓'; min-width: 22px; height: 22px; background: var(--bl); color: var(--white); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; margin-top: 1px; }
+    #Contact { background: var(--sand); }
+    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 5rem; align-items: start; }
+    .contact-form { background: var(--white); border-radius: 24px; padding: 2.5rem; box-shadow: 0 4px 32px rgba(26,58,107,0.08); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
     .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
-    .form-group label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.45); font-weight: 600; }
-    .form-group input, .form-group textarea { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: var(--white); padding: 12px 16px; font-family: 'Source Sans 3', sans-serif; font-size: 0.92rem; outline: none; transition: border-color 0.2s; }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--bl); background: rgba(255,255,255,0.1); }
-    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.2); }
+    .form-group label { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tm); font-weight: 600; }
+    .form-group input, .form-group textarea { background: var(--sand); border: 2px solid transparent; border-radius: 10px; color: var(--text); padding: 12px 16px; font-family: 'Outfit', sans-serif; font-size: 0.92rem; outline: none; transition: border-color 0.2s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--bd); background: var(--white); }
     .form-group textarea { resize: vertical; min-height: 120px; }
-    .btn-submit { width: 100%; background: var(--bl); color: var(--white); border: none; padding: 14px; border-radius: 8px; font-family: 'Source Sans 3', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; }
-    .btn-submit:hover { background: #5a8fd1; transform: translateY(-1px); }
+    .btn-submit { width: 100%; background: var(--bd); color: var(--white); border: none; padding: 14px; border-radius: 50px; font-family: 'Outfit', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; }
+    .btn-submit:hover { background: var(--bl); transform: translateY(-1px); }
     .contact-info .section-intro { margin-bottom: 2rem; }
     .contact-item { display: flex; align-items: center; gap: 14px; margin-bottom: 1.25rem; }
-    .contact-item-icon { width: 42px; height: 42px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-    .contact-item-icon svg { width: 18px; height: 18px; color: var(--bl); }
-    .contact-item span { color: rgba(255,255,255,0.6); font-size: 0.92rem; }
-    .contact-item a { color: var(--bl); text-decoration: none; }
-    footer { background: #0f2347; padding: 2rem 6%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-top: 1px solid rgba(74,127,193,0.15); }
-    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.25); }
+    .contact-item-icon { width: 42px; height: 42px; background: var(--bd); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .contact-item-icon svg { width: 18px; height: 18px; color: white; }
+    .contact-item span { color: var(--tm); font-size: 0.92rem; }
+    .contact-item a { color: var(--bd); text-decoration: none; font-weight: 500; }
+    footer { background: var(--bd); padding: 2rem 6%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
     .footer-links { display: flex; gap: 1.5rem; list-style: none; }
-    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.25); text-decoration: none; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--bl); }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
-    .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.8s ease, transform 0.8s ease; }
+    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.4); text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--white); }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .reveal.visible { opacity: 1; transform: none; }
     @media (max-width: 1024px) { .diensten-grid { grid-template-columns: 1fr 1fr; } .over-grid { gap: 3rem; } .contact-wrapper { gap: 3rem; } }
-    @media (max-width: 768px) { .nav-links { display: none; } .nav-toggle { display: flex; } #home { grid-template-columns: 1fr; padding-top: 100px; } .hero-right { display: none; } #home::before { display: none; } .diensten-grid { grid-template-columns: 1fr; } .over-grid { grid-template-columns: 1fr; gap: 3rem; } .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; } .contact-form { padding: 1.5rem; } .form-row { grid-template-columns: 1fr; } section { padding: 70px 6%; } footer { flex-direction: column; text-align: center; } }
+    @media (max-width: 768px) { .nav-links { display: none; } .nav-toggle { display: flex; } #home { grid-template-columns: 1fr; padding-top: 100px; } .hero-right { display: none; } .diensten-grid { grid-template-columns: 1fr; } .over-grid { grid-template-columns: 1fr; } .stat-grid { grid-template-columns: 1fr 1fr; } .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; } .form-row { grid-template-columns: 1fr; } section { padding: 70px 6%; } footer { flex-direction: column; text-align: center; } }
   </style>
 </head>
 <body>
@@ -116,23 +115,25 @@
   <div class="mobile-menu" id="mobileMenu"><a href="#Diensten" onclick="closeMenu()">Diensten</a><a href="#over" onclick="closeMenu()">Over ons</a><a href="#Contact" onclick="closeMenu()">Contact</a></div>
   <section id="home">
     <div class="hero-left">
-      <div class="hero-keurmerk"><div class="hero-keurmerk-dot"></div><span>NBBI aangesloten · Rechtbank aangesteld</span></div>
+      <div class="hero-tag">NBBI aangesloten · Rechtbank aangesteld</div>
       <h1 class="hero-title">Samen werken aan<br />een <em>betere toekomst</em></h1>
-      <p class="hero-sub">BewindWijs staat voor u klaar met rust, aandacht en professionaliteit. Stap voor stap naar financiële zekerheid.</p>
-      <a href="#Contact" class="hero-cta">Neem contact op <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-      <div class="hero-trust"><div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Door de Rechtbank aangesteld</div><div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>Lid van NBBI</div></div>
+      <p class="hero-sub">BewindWijs helpt u stap voor stap naar financiële rust. Persoonlijk, betrouwbaar en door de Rechtbank aangesteld.</p>
+      <div class="hero-actions"><a href="#Contact" class="btn-primary">Neem contact op <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a><a href="#Diensten" class="btn-secondary">Onze diensten</a></div>
     </div>
-    <div class="hero-right"><div class="hero-img-box"><div class="hero-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Foto plaatsen</div></div></div>
+    <div class="hero-right">
+      <div class="hero-img-box"><div class="hero-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Foto plaatsen</div></div>
+      <div class="hero-float"><div class="hero-float-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><div class="hero-float-text"><strong>NBBI Gecertificeerd</strong><span>Rechtbank aangesteld</span></div></div>
+    </div>
   </section>
-  <section id="Diensten"><div class="diensten-header reveal"><div class="section-label">Wat wij bieden</div><h2 class="section-title">Onze diensten</h2><p class="section-intro">Drie kernservices volledig afgestemd op uw persoonlijke situatie.</p></div>
+  <section id="Diensten"><div class="diensten-header reveal"><div class="section-label">Wat wij bieden</div><h2 class="section-title">Onze diensten</h2><p class="section-intro">Drie kernservices afgestemd op uw persoonlijke financiële situatie.</p></div>
     <div class="diensten-grid reveal">
-      <div class="dienst-card"><div class="dienst-num">één</div><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h3>Bewindvoering</h3><p>Wij beheren uw financiën en zorgen dat uw rekeningen op tijd worden betaald.</p></div>
-      <div class="dienst-card"><div class="dienst-num">twee</div><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h3>Inkomensbeheer</h3><p>Overzichtelijke verdeling van uw inkomsten en uitgaven op maat.</p></div>
-      <div class="dienst-card"><div class="dienst-num">drie</div><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><h3>Budgetcoaching</h3><p>Samen maken we een plan zodat u financieel zelfredzaam wordt.</p></div>
+      <div class="dienst-card" data-num="01"><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h3>Bewindvoering</h3><p>Wij beheren uw financiën en zorgen dat uw rekeningen op tijd worden betaald.</p></div>
+      <div class="dienst-card" data-num="02"><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h3>Inkomensbeheer</h3><p>Overzichtelijke verdeling van uw inkomsten en uitgaven op maat.</p></div>
+      <div class="dienst-card" data-num="03"><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><h3>Budgetcoaching</h3><p>Wij coachen u zodat u op de lange termijn financieel zelfredzaam wordt.</p></div>
     </div>
   </section>
-  <section id="over"><div class="over-grid"><div class="reveal"><div class="section-label">Over ons</div><h2 class="section-title">Vertrouwd en persoonlijk</h2><p class="section-intro">Wij geloven dat iedereen recht heeft op rust en duidelijkheid in zijn financiële situatie.</p><ul class="over-list"><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Door de Rechtbank aangesteld als professioneel bewindvoerder</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Aangesloten bij branchevereniging NBBI</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Persoonlijke en betrokken begeleiding op maat</li><li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>Duidelijke communicatie en transparante werkwijze</li></ul></div>
-    <div class="reveal"><div class="over-quote"><p>Wij helpen mensen die door omstandigheden de grip op hun financiën zijn kwijtgeraakt. Met geduld, respect en expertise werken wij samen aan een stabiele toekomst.</p><div class="over-quote-footer"><div class="over-quote-line"></div><div class="over-quote-name">BewindWijs – Leusden</div></div></div></div>
+  <section id="over"><div class="over-grid"><div class="reveal"><div class="section-label">Over ons</div><h2 class="section-title">Professioneel en betrouwbaar</h2><p class="section-intro">Wij zijn beide door de Rechtbank aangesteld als professioneel bewindvoerder en aangesloten bij NBBI.</p><div class="stat-grid"><div class="stat-box"><div class="num">NBBI</div><div class="label">Branchevereniging lid</div></div><div class="stat-box"><div class="num">24/7</div><div class="label">Bereikbaar per mail</div></div><div class="stat-box"><div class="num">3</div><div class="label">Kernservices</div></div><div class="stat-box"><div class="num">2</div><div class="label">Werkdagen reactie</div></div></div></div>
+    <div class="reveal"><ul class="over-list"><li>Door de Rechtbank aangesteld als professioneel bewindvoerder</li><li>Aangesloten bij branchevereniging NBBI</li><li>Persoonlijke en betrokken begeleiding</li><li>Ervaren in bewindvoering, inkomensbeheer en budgetcoaching</li><li>Transparante werkwijze en heldere communicatie</li></ul></div>
   </div></section>
   <section id="Contact"><div class="contact-wrapper"><div class="contact-info reveal"><div class="section-label">Bereikbaarheid</div><h2 class="section-title">Neem contact op</h2><p class="section-intro">Per mail zijn wij 24 uur per dag bereikbaar. U ontvangt binnen 2 werkdagen een reactie.</p><div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><span><a href="mailto:info@bewindwijs.nl">info@bewindwijs.nl</a></span></div><div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Reactie binnen 2 werkdagen</span></div></div>
     <div class="contact-form reveal"><form id="contactForm"><input type="hidden" name="access_key" value="0e93a4d9-2f36-476b-b6d7-f7f4bcc963f2" /><div class="form-row"><div class="form-group"><label>Naam</label><input type="text" name="name" placeholder="Uw naam" required /></div><div class="form-group"><label>E-mail</label><input type="email" name="email" placeholder="uw@email.nl" required /></div></div><div class="form-group"><label>Bericht</label><textarea name="message" placeholder="Hoe kunnen wij u helpen?" required></textarea></div><button type="submit" class="btn-submit">Verstuur bericht</button></form></div>
@@ -142,7 +143,7 @@
     const toggle=document.getElementById('navToggle'),mm=document.getElementById('mobileMenu');
     toggle.addEventListener('click',()=>{toggle.classList.toggle('open');mm.classList.toggle('open');});
     function closeMenu(){toggle.classList.remove('open');mm.classList.remove('open');}
-    document.querySelectorAll('.reveal').forEach(el=>new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:0.1}).observe(el));
+    reveals=document.querySelectorAll('.reveal');reveals.forEach(el=>new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:0.1}).observe(el));
     document.getElementById('contactForm').addEventListener('submit',async function(e){e.preventDefault();const btn=this.querySelector('.btn-submit');btn.textContent='Versturen...';btn.disabled=true;const r=await fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(this)});const j=await r.json();if(j.success){btn.textContent='Verstuurd ✓';btn.style.background='#4caf50';this.reset();setTimeout(()=>{btn.textContent='Verstuur bericht';btn.style.background='';btn.disabled=false;},3000);}else{btn.textContent='Er ging iets mis';btn.disabled=false;}});
   </script>
 </body>
