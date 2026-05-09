@@ -302,7 +302,7 @@
 
     .diensten-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 2px;
       background: #e8e4dc;
       border: 2px solid #e8e4dc;
@@ -710,6 +710,7 @@
       .over-grid { gap: 3rem; }
       .contact-wrapper { gap: 3rem; }
       .diensten-grid { grid-template-columns: 1fr 1fr; }
+      .diensten-grid::after { content: ''; background: var(--white); }
     }
 
     /* MOBILE + TABLET NAV */
