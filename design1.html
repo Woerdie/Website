@@ -1,190 +1,310 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BewindWijs – Samen werken aan een betere toekomst</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bd: #1a3a6b; --bm: #2a5298; --bl: #4a7fc1; --bp: #e8f0fb;
-      --cream: #f7f4ee; --cream2: #f0ebe0; --white: #fff;
-      --text: #2d2d2d; --tl: #666; --r: 4px;
-    }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(247,244,238,0.97); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 72px; border-bottom: 1px solid rgba(26,58,107,0.1); }
-    .nav-logo { display: flex; align-items: center; text-decoration: none; }
-    .nav-logo img { height: 44px; width: auto; }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a { color: var(--tl); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--bd); }
-    .nav-links a.btn-nav { background: var(--bd); color: var(--white); padding: 9px 22px; border-radius: var(--r); font-weight: 600; }
-    .nav-links a.btn-nav:hover { background: var(--bm); }
-    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
-    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--bd); border-radius: 2px; transition: all 0.3s; }
-    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .nav-toggle.open span:nth-child(2) { opacity: 0; }
-    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .mobile-menu { display: none; position: fixed; top: 72px; left: 0; right: 0; background: var(--cream); border-top: 1px solid rgba(26,58,107,0.1); padding: 1.5rem 5%; z-index: 99; flex-direction: column; }
-    .mobile-menu.open { display: flex; }
-    .mobile-menu a { color: var(--text); text-decoration: none; font-size: 1rem; padding: 1rem 0; border-bottom: 1px solid rgba(26,58,107,0.08); font-weight: 500; }
-    .mobile-menu a:last-child { border-bottom: none; }
-    #home { min-height: 100vh; background: var(--white); display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 100px 5% 60px; gap: 4rem; position: relative; overflow: hidden; }
-    #home::before { content: ''; position: absolute; right: -5%; top: 50%; transform: translateY(-50%); width: 55%; aspect-ratio: 1; border-radius: 50%; background: var(--bp); opacity: 0.5; pointer-events: none; }
-    .hero-left { position: relative; animation: fadeUp 0.9s ease both; }
-    .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: var(--bp); border: 1px solid rgba(26,58,107,0.15); border-radius: 50px; padding: 7px 16px; margin-bottom: 2rem; }
-    .hero-tag-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bl); }
-    .hero-tag span { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bd); font-weight: 600; }
-    h1.hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 4.5vw, 3.6rem); color: var(--bd); line-height: 1.15; margin-bottom: 1.5rem; font-weight: 700; }
-    h1.hero-title em { font-style: italic; color: var(--bl); }
-    .hero-sub { font-size: 1rem; color: var(--tl); line-height: 1.85; max-width: 460px; margin-bottom: 2.5rem; font-weight: 300; }
-    .hero-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--bd); color: var(--white); text-decoration: none; padding: 14px 30px; border-radius: var(--r); font-weight: 600; font-size: 0.95rem; transition: all 0.25s; }
-    .hero-cta:hover { background: var(--bm); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,58,107,0.25); }
-    .hero-cta svg { width: 16px; height: 16px; }
-    .hero-badges { margin-top: 2.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    .badge { display: flex; align-items: center; gap: 8px; color: var(--tl); font-size: 0.8rem; }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bl); }
-    .hero-right { position: relative; height: 500px; animation: fadeUp 0.9s 0.15s ease both; }
-    .hero-img-box { position: absolute; inset: 0; background: var(--bp); border-radius: 16px 60px 16px 60px; overflow: hidden; border: 1px solid rgba(26,58,107,0.1); }
-    .hero-img-box img { width: 100%; height: 100%; object-fit: cover; }
-    .hero-img-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(74,127,193,0.4); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; border: 2px dashed rgba(74,127,193,0.25); border-radius: 16px 60px 16px 60px; }
-    .hero-img-placeholder svg { width: 36px; height: 36px; }
-    .hero-badge { position: absolute; bottom: -16px; left: -16px; background: var(--white); border-radius: 14px; padding: 1rem 1.25rem; box-shadow: 0 8px 32px rgba(26,58,107,0.12); display: flex; align-items: center; gap: 12px; border: 1px solid rgba(26,58,107,0.1); }
-    .hero-badge-icon { width: 40px; height: 40px; background: var(--bp); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-    .hero-badge-icon svg { width: 20px; height: 20px; color: var(--bd); }
-    .hero-badge-text strong { display: block; font-size: 0.88rem; color: var(--bd); font-weight: 600; }
-    .hero-badge-text span { font-size: 0.73rem; color: var(--tl); }
-    section { padding: 100px 5%; }
-    .section-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bl); font-weight: 600; margin-bottom: 1rem; }
-    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); color: var(--bd); line-height: 1.2; margin-bottom: 1.2rem; }
-    .section-intro { font-size: 1rem; color: var(--tl); line-height: 1.8; max-width: 560px; }
-    #Diensten { background: var(--white); }
-    .diensten-header { margin-bottom: 4rem; }
-    .diensten-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #c8d9f0; border: 2px solid #c8d9f0; }
-    .dienst-card { background: var(--white); padding: 3rem 2.5rem; position: relative; overflow: hidden; transition: background 0.3s; }
-    .dienst-card::before { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--bl); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; }
-    .dienst-card:hover::before { transform: scaleX(1); }
-    .dienst-card:hover { background: #f5f8fd; }
-    .dienst-number { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--bl); opacity: 0.2; font-weight: 700; line-height: 1; margin-bottom: 1.5rem; }
-    .dienst-icon { width: 48px; height: 48px; background: var(--bp); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
-    .dienst-icon svg { width: 24px; height: 24px; color: var(--bd); }
-    .dienst-card h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--bd); margin-bottom: 1rem; }
-    .dienst-card p { font-size: 0.92rem; color: var(--tl); line-height: 1.75; }
-    #over { background: var(--cream); }
-    .over-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
-    .over-visual { position: relative; height: 400px; }
-    .over-block-main { position: absolute; inset: 0; background: var(--bd); border-radius: 4px; overflow: hidden; }
-    .over-block-main::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(74,127,193,0.06) 30px, rgba(74,127,193,0.06) 31px); }
-    .over-block-accent { position: absolute; bottom: -20px; right: -20px; width: 120px; height: 120px; background: var(--bl); border-radius: 4px; opacity: 0.15; }
-    .over-block-text { position: absolute; bottom: 2rem; left: 2rem; right: 2rem; color: white; }
-    .over-block-text .big-text { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 700; color: var(--bl); line-height: 1; }
-    .over-block-text p { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 0.5rem; }
-    .over-content .section-intro { margin-bottom: 2rem; }
-    .over-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
-    .over-list li { display: flex; align-items: center; gap: 12px; font-size: 0.92rem; color: var(--text); }
-    .over-list li::before { content: ''; width: 20px; height: 20px; min-width: 20px; background: var(--bl); border-radius: 50%; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23ffffff'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-size: contain; }
-    #Contact { background: var(--bd); }
-    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 6rem; align-items: start; }
-    .contact-info .section-label { color: rgba(255,255,255,0.5); }
-    .contact-info .section-title { color: var(--white); }
-    .contact-info .section-intro { color: rgba(255,255,255,0.55); }
-    .contact-detail { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
-    .contact-item { display: flex; align-items: center; gap: 14px; }
-    .contact-item-icon { width: 40px; height: 40px; background: rgba(74,127,193,0.2); border: 1px solid rgba(74,127,193,0.4); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-    .contact-item-icon svg { width: 18px; height: 18px; color: var(--bl); }
-    .contact-item span { color: rgba(255,255,255,0.75); font-size: 0.92rem; }
-    .contact-item a { color: var(--bl); text-decoration: none; }
-    .contact-item a:hover { text-decoration: underline; }
-    .contact-form { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 2.5rem; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
-    .form-group label { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); font-weight: 500; }
-    .form-group input, .form-group textarea { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--r); color: var(--white); padding: 12px 16px; font-family: 'DM Sans', sans-serif; font-size: 0.92rem; transition: border-color 0.2s; outline: none; }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--bl); background: rgba(255,255,255,0.1); }
-    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.25); }
-    .form-group textarea { resize: vertical; min-height: 120px; }
-    .btn-submit { width: 100%; background: var(--bl); color: var(--white); border: none; padding: 14px; border-radius: var(--r); font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; }
-    .btn-submit:hover { background: #5a8fd1; transform: translateY(-1px); }
-    footer { background: #0f2347; padding: 2rem 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-top: 1px solid rgba(74,127,193,0.15); }
-    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
-    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
-    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--bl); }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
-    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal.visible { opacity: 1; transform: none; }
-    @media (max-width: 1024px) { .over-grid { gap: 3rem; } .contact-wrapper { gap: 3rem; } .diensten-grid { grid-template-columns: 1fr 1fr; } .diensten-grid::after { content: ''; background: var(--white); } }
-    @media (max-width: 768px) { .nav-links { display: none; } .nav-toggle { display: flex; } #home { grid-template-columns: 1fr; padding-top: 100px; } .hero-right { display: none; } #home::before { display: none; } .diensten-grid { grid-template-columns: 1fr; } .over-grid { grid-template-columns: 1fr; } .over-visual { height: 240px; } .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; } .contact-form { padding: 1.5rem; } .form-row { grid-template-columns: 1fr; } section { padding: 70px 5%; } footer { flex-direction: column; text-align: center; } }
-  </style>
+mport { useState } from "react";
+
+const docContent = `
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><meta charset='utf-8'><title>Opdrachten Verkeersveiligheid</title>
+<style>
+  body { font-family: Calibri, sans-serif; font-size: 11pt; margin: 2.5cm; line-height: 1.5; }
+  h1 { font-size: 18pt; text-align: center; margin-bottom: 4px; }
+  h2 { font-size: 13pt; margin-top: 24px; border-bottom: 2px solid #1f3864; color: #1f3864; padding-bottom: 3px; }
+  p { margin: 6px 0; }
+  .subtitle { text-align: center; color: #555; font-size: 11pt; margin-bottom: 20px; }
+  .opdrachtnr { font-weight: bold; font-size: 12pt; color: #1f3864; }
+  .vraag { font-style: italic; margin-bottom: 6px; }
+  .subbold { font-weight: bold; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+  td, th { border: 1px solid #aaa; padding: 5px 8px; font-size: 10.5pt; vertical-align: top; }
+  th { background-color: #dce6f1; font-weight: bold; }
+  hr { border: none; border-top: 1px solid #ccc; margin: 18px 0; }
+</style>
 </head>
 <body>
-  <nav>
-    <a href="#home" class="nav-logo"><img src="Logo.png" alt="BewindWijs" /></a>
-    <ul class="nav-links">
-      <li><a href="#Diensten">Diensten</a></li>
-      <li><a href="#over">Over ons</a></li>
-      <li><a href="#Contact" class="btn-nav">Contact</a></li>
-    </ul>
-    <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
-  </nav>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#Diensten" onclick="closeMenu()">Diensten</a>
-    <a href="#over" onclick="closeMenu()">Over ons</a>
-    <a href="#Contact" onclick="closeMenu()">Contact</a>
-  </div>
-  <section id="home">
-    <div class="hero-left">
-      <div class="hero-tag"><div class="hero-tag-dot"></div><span>NBBI aangesloten · Rechtbank aangesteld</span></div>
-      <h1 class="hero-title">Samen werken aan<br />een <em>betere toekomst</em></h1>
-      <p class="hero-sub">BewindWijs helpt u weer op het juiste spoor. Of het nu gaat om bewindvoering, inkomensbeheer of budgetcoaching — wij staan voor u klaar.</p>
-      <a href="#Contact" class="hero-cta">Neem contact op <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-      <div class="hero-badges">
-        <div class="badge"><span class="badge-dot"></span> Door Rechtbank aangesteld</div>
-        <div class="badge"><span class="badge-dot"></span> Aangesloten bij NBBI</div>
-        <div class="badge"><span class="badge-dot"></span> Persoonlijke begeleiding</div>
-      </div>
+
+<h1>Opdrachten Verkeersveiligheid</h1>
+<p class='subtitle'>Daan Woerdman &nbsp;|&nbsp; Windesheim &nbsp;|&nbsp; Ruimtelijke Ontwikkeling &amp; Infrastructuur &nbsp;|&nbsp; Case: Veerhuizen</p>
+
+<hr/>
+<h2>Les 1 – Aanleiding en termen</h2>
+
+<p class='opdrachtnr'>Opdracht 1 – Wat wil je weten?</p>
+<p class='vraag'>Stel je voor: jij bent verkeersveiligheidsadviseur en je eerste klus is het analyseren van Veerhuizen. Welke data en informatie zou je verzamelen?</p>
+
+<p><span class='subbold'>Ongevallen &amp; registratie</span><br/>
+Ongevallendata: hoeveel ongelukken, waar precies, met welke voertuigen en op welke tijdstippen. Bijna-ongelukken worden vaak niet geregistreerd maar wijzen wel op gevaarlijke plekken. Verder de soort slachtoffers: doden, ziekenhuisgewonden, SEH en UMS.</p>
+
+<p><span class='subbold'>Verkeersstromen &amp; gedrag</span><br/>
+Verkeersintensiteit: hoeveel fietsers, vrachtwagens en auto's per dag op welke route. Snelheidsgegevens: houden voertuigen zich aan de maximumsnelheid. Vrachtrouteplanning: welke wegen gebruiken vrachtwagens en wanneer. Schooltijden en routes: wanneer en hoe gaan leerlingen naar school. Voertuigtypen: welke mix is er (e-bikes, speed-pedelecs, scooters, vrachtwagens). Tijdstippen van drukte: wanneer zijn de piekuren.</p>
+
+<p><span class='subbold'>Infrastructuur</span><br/>
+Infrastructuur in kaart: zijn er fietspaden, hoe zijn kruispunten ingericht, is er verlichting, zijn er drempels. Wegindeling: zijn er aparte rijstroken voor vracht en langzaam verkeer. Snelfietsroute: hoe is die nu ingericht en waar ontbreekt infrastructuur. Wet- en regelgeving: welke snelheidslimieten, voorrangsregels en verkeersborden gelden er nu.</p>
+
+<p><span class='subbold'>Beleving &amp; gedrag van mensen</span><br/>
+Subjectieve veiligheid: hoe veilig voelen ouders, scholieren en andere gebruikers zich (via enquêtes). Gedrag van ouders: hoeveel brengen kinderen met de auto en waarom. Gedrag van jongeren: rijden ze risicovol, gebruiken ze telefoons.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 2 – Denk als de weggebruiker</p>
+<p class='vraag'>Kruip in de huid van een vrachtwagenchauffeur en een 14-jarige scholier. Gebruik de formule: verkeersonveiligheid = risico × gevolg.</p>
+
+<p><span class='subbold'>Vrachtwagenchauffeur</span><br/>
+Risico: hij is professioneel opgeleid en kent de routes, wat het risico verlaagt. Maar hij rijdt op drukke routes waar fietsers en scholieren lopen. De dode hoek bij het afslaan is een groot gevaar. Tijdsdruk kan leiden tot minder oplettendheid. Risico = gemiddeld.<br/>
+Gevolg: een vrachtwagen weegt al snel 20.000 tot 40.000 kg, waardoor een botsing voor de andere partij enorme schade oplevert. De chauffeur zit beschermd in de cabine, maar voor een fietser of voetganger is het gevolg levensbedreigend. Gevolg = zeer ernstig.<br/>
+Conclusie: gemiddeld risico × zeer ernstig gevolg = hoge verkeersonveiligheid.</p>
+
+<p><span class='subbold'>14-jarige scholier</span><br/>
+Risico: hij fietst dagelijks tussen vrachtwagens door op drukke routes, heeft weinig verkeservaring en is snel afgeleid. Hij rijdt vaak in grote groepen, wat leidt tot onvoorspelbaar gedrag. Risico = hoog.<br/>
+Gevolg: als fietser heeft hij geen enkele bescherming. Bij een botsing met een vrachtwagen is het gevolg levensbedreigend. Gevolg = zeer ernstig.<br/>
+Conclusie: hoog risico × zeer ernstig gevolg = zeer hoge verkeersonveiligheid.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 3 – Wat maakt een botsing erg?</p>
+<p class='vraag'>Kies één gevaarlijke situatie en leg uit waarom die gevaarlijk is aan de hand van massa, snelheid, richting en incasseringsvermogen.</p>
+
+<p>Gekozen situatie: een vrachtwagen die bij een kruispunt afslaat en daarbij een fietsende scholier raakt.</p>
+
+<p><span class='subbold'>Massa</span> – Een beladen vrachtwagen weegt al snel 20.000 tot 40.000 kg, terwijl een fietsende scholier hier nauwelijks tegenop weegt. Bij een botsing absorbeert de lichtste partij vrijwel alle kracht.</p>
+<p><span class='subbold'>Snelheid</span> – Ook al rijdt de vrachtwagen langzaam bij het afslaan, de enorme massa compenseert dat volledig. Als de snelheid verdubbelt, verviervoudigt de impact. Zelfs bij 15 km/u is de klap dodelijk.</p>
+<p><span class='subbold'>Richting</span> – De vrachtwagen slaat af en raakt de fietser zijdelings of van achteren. De scholier ziet dit vaak niet aankomen en heeft geen tijd om te remmen of uit te wijken.</p>
+<p><span class='subbold'>Incasseringsvermogen</span> – De chauffeur zit beschermd in een stevige cabine met gordel. De scholier heeft geen enkele bescherming en draagt vrijwel nooit een fietshelm.</p>
+<p>Conclusie: door de combinatie van een enorm massaverschil, geen bescherming en een onverwachte zijdelingse botsing is de kans op een dodelijk slachtoffer of zwaar letsel groot.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 4 – Wat registreren we wel en niet?</p>
+<p class='vraag'>Koppel de juiste termen aan het ongeluk: dode, ziekenhuisgewonde, ernstig verkeersgewonde (MAIS), SEH, UMS.</p>
+
+<p><span class='subbold'>Dode</span> – De fietser overlijdt ter plaatse. Dit wordt altijd geregistreerd als verkeersdode.</p>
+<p><span class='subbold'>Ziekenhuisgewonde &amp; ernstig verkeersgewonde (MAIS 3)</span> – De automobilist ligt 3 weken in het ziekenhuis en heeft een MAIS-score van 3. Hij wordt geregistreerd als ziekenhuisgewonde én als ernstig verkeersgewonde.</p>
+<p><span class='subbold'>SEH</span> – De bijrijder wordt dezelfde dag ontslagen. Hij wordt geregistreerd als SEH-slachtoffer, maar komt lang niet altijd terug in de officiële verkeerscijfers.</p>
+<p><span class='subbold'>SEH (ter plaatse behandeld)</span> – De bestuurder van de tweede auto wordt ter plaatse behandeld en hoeft niet mee. Dit wordt vrijwel nooit geregistreerd.</p>
+<p><span class='subbold'>UMS</span> – De schade aan de fiets en de twee auto's valt onder Uitsluitend Materiële Schade. Geen lichamelijk letsel bij deze categorie.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 5 – Onveilig gevoel ≠ cijfers</p>
+<p class='vraag'>Ouders voelen zich onveilig en brengen hun kinderen met de auto. Waarom is dit ongewenst en wat moet de gemeente doen?</p>
+
+<p>Doordat ouders hun kinderen met de auto brengen, ontstaat er juist méér verkeer rondom de school. Dit maakt de situatie gevaarlijker voor andere fietsers en voetgangers. Het is een zichzelf versterkend probleem: hoe meer ouders het onveilig vinden en met de auto komen, hoe drukker en gevaarlijker het wordt.</p>
+<p>De gemeente moet dit op twee manieren aanpakken. Ten eerste door te communiceren: laat zien hoe de situatie er objectief uitziet met cijfers en metingen, en betrek scholen bij campagnes. Ten tweede door de infrastructuur te verbeteren: veiligere fietspaden en oversteken aanleggen, zodat ouders het niet alleen op papier maar ook in de praktijk veilig vinden.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 6 – Wel of niet veilig?</p>
+<p class='vraag'>Jongeren (12-18) hebben relatief veel ongevallen, maar voelen zich juist veilig. Waarom is dat een probleem en hoe heet dit fenomeen?</p>
+
+<p>Omdat jongeren zich veilig voelen, nemen ze meer risico's. Ze rijden te snel, zijn afgeleid door telefoon of vrienden, en schatten gevaarlijke situaties verkeerd in. Juist omdat ze het gevaar niet zien, nemen ze geen voorzorgsmaatregelen. Dit maakt de kans op ongelukken nog groter.</p>
+<p>Dit is het verschil tussen objectieve veiligheid en subjectieve veiligheid. De objectieve veiligheid is laag: de cijfers laten zien dat jongeren relatief veel ongelukken hebben. Maar de subjectieve veiligheid is hoog: ze voelen zich juist veilig. Dit is gevaarlijk omdat het gevoel het gedrag bepaalt, niet de cijfers.</p>
+
+<hr/>
+<h2>Les 2 – Menselijk gedrag en oorzaken</h2>
+
+<p class='opdrachtnr'>Opdracht 7 – Asmussen in actie</p>
+<p class='vraag'>Bekijk het fasemodel van Asmussen. Bedenk per fase een maatregel passend bij Veerhuizen en geef aan in welke fase je het liefst zou ingrijpen en waarom.</p>
+
+<table>
+  <tr>
+    <th>Fase</th>
+    <th>Situatie</th>
+    <th>Maatregel voor Veerhuizen</th>
+  </tr>
+  <tr>
+    <td><b>Vervoersfase</b><br/>(vervoersconcept)</td>
+    <td>Voorafgaand aan de verplaatsing: keuze om wel of niet te reizen, welk vervoermiddel, welk dagdeel.</td>
+    <td>Promoot de snelfietsroute actief bij scholen en werkgevers, zodat scholieren en medewerkers bewust kiezen voor de fiets op een veilig tijdstip. Zorg dat de school via een veilige route bereikbaar is, niet via de vrachtroutering.</td>
+  </tr>
+  <tr>
+    <td><b>Verkeersfase</b><br/>(verkeerssituatie)</td>
+    <td>Tijdens de verplaatsing: routekeuze en omstandigheden (donker, regen).</td>
+    <td>Zorg voor goede verlichting op de blauwe fietsroute door het bedrijventerrein, met name op kruispunten met vrachtwagenbewegingen. Verbeter de afwatering zodat spoorvorming wordt voorkomen.</td>
+  </tr>
+  <tr>
+    <td><b>Ontmoetingsfase</b><br/>(incidentsituatie)</td>
+    <td>Het moment dat verkeersdeelnemers elkaar tegenkomen.</td>
+    <td>Scheid vrachtwagens en fietsers fysiek van elkaar door aparte rijstroken of fietspaden aan te leggen op de gevaarlijke kruispunten. Voeg dodehoekspiegels of detectiesystemen toe.</td>
+  </tr>
+  <tr>
+    <td><b>Botsfase</b><br/>(ongevalsituatie)</td>
+    <td>De fase waarin de botsing daadwerkelijk ontstaat.</td>
+    <td>Verlaag de maximumsnelheid op routes waar fietsers en vrachtwagens samenkomen naar 30 km/u. Pas de wegbreedte aan zodat chauffeurs automatisch langzamer rijden.</td>
+  </tr>
+  <tr>
+    <td><b>Letsel- en schadefase</b><br/>(letselsituatie)</td>
+    <td>De fase na de botsing waarbij letsel en schade ontstaan.</td>
+    <td>Stel regels over beschermende uitrusting, zoals helmplicht voor speed-pedelecs. Zorg dat obstakels langs de weg vergevingsgezind zijn ingericht.</td>
+  </tr>
+  <tr>
+    <td><b>Behandeling &amp; revalidatiefase</b><br/>(herstelsituatie)</td>
+    <td>De fase waarin herstel centraal staat.</td>
+    <td>Optimaliseer aanrijtijden van hulpdiensten in het gebied. Zorg voor duidelijke adresaanduidingen zodat ambulances snel ter plaatse kunnen zijn.</td>
+  </tr>
+</table>
+
+<p><span class='subbold'>In welke fase zou ik het liefst ingrijpen?</span><br/>
+Ik zou het liefst ingrijpen in de vervoersfase, omdat je daar het vroegst in de keten zit. Als je in deze fase al zorgt dat scholieren via een veilige route reizen en vrachtwagens een andere route nemen, dan hoef je de gevaarlijke ontmoeting überhaupt niet meer op te lossen. Je voorkomt dat iemand in een onveilige situatie terechtkomt, wat altijd beter is dan achteraf schade beperken.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 8 – Detectivewerk: oorzaak &amp; mens</p>
+<p class='vraag'>Maak een lijstje met de problemen in Veerhuizen. Bedenk per deelprobleem een onderliggende oorzaak en koppel die aan de mens, de weg/omgeving of het voertuig.</p>
+
+<table>
+  <tr>
+    <th>Deelprobleem</th>
+    <th>Onderliggende oorzaak</th>
+    <th>Koppeling</th>
+    <th>Toelichting</th>
+  </tr>
+  <tr>
+    <td>Vrachtwagens en fietsers gebruiken dezelfde routes</td>
+    <td>Er is geen fysieke scheiding tussen zwaar verkeer en langzaam verkeer op het bedrijventerrein</td>
+    <td>Weg / omgeving</td>
+    <td>De infrastructuur is niet ingericht op het mengen van deze verkeerssoorten. Dit is een ontwerpfout van de weg, niet primair een gedragsprobleem van de gebruiker.</td>
+  </tr>
+  <tr>
+    <td>Scholieren rijden roekeloos en afgeleid</td>
+    <td>Jongeren hebben weinig ervaring en overschatten zichzelf; groepsgedrag versterkt risicovol rijden</td>
+    <td>Mens</td>
+    <td>Dit is een gedragskwestie: jongeren schatten risico's verkeerd in (subjectieve veiligheid is hoog, objectieve veiligheid laag). Kennis, houding en emotie spelen hier een grote rol.</td>
+  </tr>
+  <tr>
+    <td>Vrachtwagenchauffeurs hebben een grote dode hoek</td>
+    <td>Basisvoertuigen zijn niet uitgerust met dodehoekdetectie of extra spiegels</td>
+    <td>Voertuig</td>
+    <td>Het voertuig zelf zorgt voor een structureel waarnemingsprobleem. Zonder technische hulpmiddelen kan de chauffeur fietsers naast zijn cabine simpelweg niet zien.</td>
+  </tr>
+  <tr>
+    <td>Ouders brengen kinderen met de auto, wat extra drukte geeft</td>
+    <td>Subjectief onveiligheidsgevoel van ouders leidt tot keuze voor de auto</td>
+    <td>Mens</td>
+    <td>Het gedrag van ouders wordt gestuurd door gevoel, niet door objectieve cijfers. Dit is een houdings- en gedragsprobleem dat vraagt om communicatie en educatie.</td>
+  </tr>
+  <tr>
+    <td>De snelfietsroute is infrastructureel nog niet goed vormgegeven</td>
+    <td>De route loopt deels door het industrieterrein zonder aparte fietspaden of goede markering</td>
+    <td>Weg / omgeving</td>
+    <td>De omgeving nodigt niet uit tot veilig fietsgedrag. Een onduidelijke of oncomfortabele route leidt ertoe dat fietsers afwijken naar gevaarlijkere plekken.</td>
+  </tr>
+  <tr>
+    <td>Veel diversiteit aan voertuigen (e-bikes, speed-pedelecs, scooters)</td>
+    <td>Snelheidsverschillen tussen voertuigen op dezelfde route zorgen voor onverwachte en gevaarlijke situaties</td>
+    <td>Voertuig &amp; weg / omgeving</td>
+    <td>De toenemende heterogeniteit van het verkeer zorgt voor onverwachte snelheidsverschillen. De infrastructuur is hier niet op aangepast, waardoor conflicten ontstaan.</td>
+  </tr>
+</table>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 9 – Gatenkaas in praktijk</p>
+<p class='vraag'>Kies een mogelijk ongeval. Geef per onderdeel van het gatenkaasmodel aan wat er mis kan gaan, benoem voor minstens twee onderdelen een maatregel en geef aan welk type conflict dit is.</p>
+
+<p><span class='subbold'>Gekozen situatie:</span> een dodehoekongeval waarbij een vrachtwagen rechtsaf slaat op een kruispunt op het bedrijventerrein en een fietsende scholier raakt die naast de vrachtwagen rijdt.</p>
+<p><span class='subbold'>Type conflict:</span> dwarser conflict – de vrachtwagen beweegt dwars op de rijrichting van de fietser.</p>
+
+<table>
+  <tr>
+    <th>Laag (gatenkaas)</th>
+    <th>Wat kan er mis zijn / misgaan?</th>
+  </tr>
+  <tr>
+    <td><b>1. Systeemontwerp</b><br/>(latente fout)</td>
+    <td>Het kruispunt is niet ontworpen met een fysieke scheiding tussen fietsers en afslaand vrachtverkeer. Er is geen apart fietspad of opstelstrook voor fietsers aan de rechterzijde. Dit is een sluimerende fout in het wegontwerp die pas zichtbaar wordt als er een conflict is.</td>
+  </tr>
+  <tr>
+    <td><b>2. Kwaliteitsbewaking</b><br/>(latente fout)</td>
+    <td>Er is geen periodieke verkeersveiligheidsaudit uitgevoerd op dit kruispunt, waardoor de gevaarlijke inrichting nooit is opgemerkt of aangepakt. Mogelijk is er ook geen toezicht op de naleving van rijroutes door vrachtwagens.</td>
+  </tr>
+  <tr>
+    <td><b>3. Psychologische voorlopers</b><br/>(latente fout / onveilige handeling)</td>
+    <td>De vrachtwagenchauffeur is vermoeid door een vroege dienst en heeft tijdsdruk. De scholier rijdt in een grote groep en is afgeleid door vrienden. Beide verkeersdeelnemers zijn mentaal niet volledig bij de situatie.</td>
+  </tr>
+  <tr>
+    <td><b>4. Handelingen in het verkeer</b><br/>(onveilige handeling)</td>
+    <td>De vrachtwagenchauffeur slaat rechtsaf zonder voldoende te controleren of er fietsers naast zijn voertuig rijden. De scholier rijdt door aan de rechterkant van de vrachtwagen, in de dode hoek, terwijl de vrachtwagen zijn richtingaanwijzer al heeft aangezet.</td>
+  </tr>
+  <tr>
+    <td><b>5. Defensiemechanismen</b><br/>(latente fout / onveilige handeling)</td>
+    <td>De vrachtwagen heeft geen dodehoekdetectiesysteem of waarschuwingssignaal. Er zijn geen verkeerslichten of een voorrangssituatie die de fietser extra beschermt. Er is geen fysieke barrière die voorkomt dat fietsers naast een afslaande vrachtwagen rijden.</td>
+  </tr>
+</table>
+
+<p><span class='subbold'>Maatregelen (voor minimaal twee lagen):</span></p>
+
+<p><span class='subbold'>Maatregel bij laag 1 (systeemontwerp):</span> Herontwerp het kruispunt zodat fietsers een apart fietspad krijgen met een duidelijke opstelstrook vóór het stopstreep van de vrachtwagens. Dit zorgt ervoor dat fietsers zichtbaar zijn voor de chauffeur voordat hij afslaat, en dat de vrachtwagen pas afslaat nadat fietsers al zijn overgestoken.</p>
+
+<p><span class='subbold'>Maatregel bij laag 5 (defensiemechanismen):</span> Verplicht dodehoekdetectiesystemen op alle vrachtwagens die het bedrijventerrein gebruiken. Dit systeem waarschuwt de chauffeur met een geluidssignaal of trilling als er een fietser naast zijn voertuig rijdt bij het afslaan. Dit is een technische veiligheidsmaatregel die het laatste gat in de kaas dichtstopt.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 10 – Van waarnemen tot handelen</p>
+<p class='vraag'>Kies een verkeersdeelnemer en beschrijf een (bijna-)ongeval. Geef per fase van informatieverwerking (waarnemen – verwerken – beslissen – handelen) aan wat er fout gaat.</p>
+
+<p><span class='subbold'>Gekozen verkeersdeelnemer:</span> een bezorger in een bestelbus die een pakketje aflevert op het bedrijventerrein in Veerhuizen.</p>
+<p><span class='subbold'>Situatie:</span> het is een drukke ochtend. Een groep scholieren fietst op de blauwe route richting school. De bezorger wil een zijstraat inrijden en slaat rechtsaf. Hij rijdt bijna over een fietser die naast de bestelbus rijdt.</p>
+
+<p><span class='subbold'>1) Waarnemen</span><br/>
+De bezorger kijkt in zijn buitenspiegel maar ziet de fietser niet. Dit komt doordat hij de fietser niet verwachtte op dit deel van het bedrijventerrein; hij keek of er auto's aankwamen, niet of er fietsers naast zijn bus reden. Daarnaast heeft een bestelbus een relatief grote dode hoek aan de rechterkant. Hij keek wel, maar zag de fietser niet.</p>
+
+<p><span class='subbold'>2) Verwerken</span><br/>
+Op het moment dat hij zijn spiegel checkt, verwerkt hij tegelijk een melding op zijn routeapp die op de stoel naast hem ligt. Zijn aandacht is verdeeld. Hij ziet geen fietser in de spiegel en concludeert dat de weg vrij is, terwijl hij de informatie eigenlijk niet volledig heeft verwerkt. Zijn hersenen vullen het gat in: de weg lijkt vrij.</p>
+
+<p><span class='subbold'>3) Beslissen</span><br/>
+Op basis van zijn onvolledige waarneming besluit hij rechtsaf te slaan. Hij heeft tijdsdruk omdat er nog vijf pakketten bezorgd moeten worden. Dit beïnvloedt zijn beslissing: hij neemt de extra seconde niet om nog een keer te controleren.</p>
+
+<p><span class='subbold'>4) Handelen</span><br/>
+De bezorger draait zijn stuur naar rechts en geeft gas. Pas op het laatste moment ziet hij in zijn rechterbuitenspiegel een glimp van de fiets. Hij remt, maar heeft nauwelijks reactietijd meer: in het verkeer is de gemiddelde reactietijd al 1,0 seconde. De fietser weet nog net op tijd uit te wijken. Een bijna-ongeluk.</p>
+
+<p><span class='subbold'>Conclusie:</span><br/>
+In elke fase ging er iets mis: de fietser werd niet waargenomen (dode hoek en verwachtingsbias), de informatie werd niet goed verwerkt door afleiding, de beslissing werd genomen onder tijdsdruk zonder extra check, en bij het handelen was er te weinig reactietijd over. Dit is een goed voorbeeld van hoe meerdere kleine fouten samen een bijna-ongeluk veroorzaken, precies zoals het gatenkaasmodel beschrijft.</p>
+
+<hr/>
+<p style='font-size:9pt; color:#888; text-align:center;'>Opdrachten Verkeersveiligheid &nbsp;|&nbsp; Daan Woerdman &nbsp;|&nbsp; Windesheim Hogeschool &nbsp;|&nbsp; Ruimtelijke Ontwikkeling</p>
+
+</body></html>
+`;
+
+export default function App() {
+  const [downloaded, setDownloaded] = useState(false);
+
+  const download = () => {
+    const blob = new Blob([docContent], { type: "application/msword" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Opdrachten_Verkeersveiligheid_DaanWoerdman.doc";
+    a.click();
+    URL.revokeObjectURL(url);
+    setDownloaded(true);
+  };
+
+  return (
+    <div style={{ fontFamily: "Calibri, sans-serif", padding: "40px", textAlign: "center", maxWidth: 520, margin: "0 auto" }}>
+      <div style={{ fontSize: 48, marginBottom: 12 }}>📄</div>
+      <h2 style={{ fontSize: 18, marginBottom: 6 }}>Opdrachten Verkeersveiligheid</h2>
+      <p style={{ color: "#555", fontSize: 13, marginBottom: 6 }}>Daan Woerdman · Windesheim · Case Veerhuizen</p>
+      <p style={{ color: "#777", fontSize: 12, marginBottom: 24 }}>
+        Opdrachten 1 t/m 10 volledig uitgewerkt
+      </p>
+      <button
+        onClick={download}
+        style={{
+          backgroundColor: "#1f3864",
+          color: "white",
+          border: "none",
+          padding: "12px 28px",
+          fontSize: 15,
+          borderRadius: 6,
+          cursor: "pointer",
+          fontFamily: "Calibri, sans-serif"
+        }}
+      >
+        ⬇️ Download Word-document (.doc)
+      </button>
+      {downloaded && (
+        <p style={{ marginTop: 16, color: "green", fontSize: 13 }}>
+          ✅ Download gestart! Open het bestand in Word.
+        </p>
+      )}
     </div>
-    <div class="hero-right">
-      <div class="hero-img-box">
-        <!-- <img src="jouwfoto.jpg" alt="BewindWijs" /> -->
-        <div class="hero-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Foto plaatsen</div>
-      </div>
-      <div class="hero-badge">
-        <div class="hero-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
-        <div class="hero-badge-text"><strong>NBBI Gecertificeerd</strong><span>Door Rechtbank aangesteld</span></div>
-      </div>
-    </div>
-  </section>
-  <section id="Diensten">
-    <div class="diensten-header reveal"><div class="section-label">Wat wij bieden</div><h2 class="section-title">Onze diensten</h2><p class="section-intro">Drie kernservices volledig afgestemd op uw persoonlijke financiële situatie.</p></div>
-    <div class="diensten-grid reveal">
-      <div class="dienst-card"><div class="dienst-number">01</div><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h3>Bewindvoering</h3><p>Wij beheren uw financiën en zorgen dat uw rekeningen op tijd worden betaald. U hoeft zich geen zorgen meer te maken over uw geldzaken.</p></div>
-      <div class="dienst-card"><div class="dienst-number">02</div><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h3>Inkomensbeheer</h3><p>Geheel of gedeeltelijk inkomensbeheer op maat. Wij zorgen voor een overzichtelijke verdeling van uw inkomsten en uitgaven.</p></div>
-      <div class="dienst-card"><div class="dienst-number">03</div><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><h3>Budgetcoaching</h3><p>Wij coachen u om zelf grip te krijgen op uw financiën. Samen maken we een plan zodat u financieel zelfredzaam wordt.</p></div>
-    </div>
-  </section>
-  <section id="over">
-    <div class="over-grid">
-      <div class="over-visual reveal"><div class="over-block-main"><div class="over-block-text"><div class="big-text">NBBI</div><p>Gecertificeerd & door de Rechtbank aangesteld</p></div></div><div class="over-block-accent"></div></div>
-      <div class="over-content reveal"><div class="section-label">Over ons</div><h2 class="section-title">Professioneel en betrouwbaar</h2><p class="section-intro">Wij zijn beide door de Rechtbank aangesteld als professioneel bewindvoerder en aangesloten bij de branchevereniging NBBI.</p><ul class="over-list"><li>Door de Rechtbank aangesteld als professioneel bewindvoerder</li><li>Aangesloten bij branchevereniging NBBI</li><li>Persoonlijke en betrokken begeleiding</li><li>Ervaren in bewindvoering, inkomensbeheer en budgetcoaching</li></ul></div>
-    </div>
-  </section>
-  <section id="Contact">
-    <div class="contact-wrapper">
-      <div class="contact-info reveal"><div class="section-label">Bereikbaarheid</div><h2 class="section-title">Neem contact op</h2><p class="section-intro">Per mail zijn wij 24 uur per dag bereikbaar. U ontvangt binnen 2 werkdagen een reactie.</p><div class="contact-detail"><div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><span><a href="mailto:info@bewindwijs.nl">info@bewindwijs.nl</a></span></div><div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Reactie binnen 2 werkdagen</span></div></div></div>
-      <div class="contact-form reveal"><form id="contactForm"><input type="hidden" name="access_key" value="0e93a4d9-2f36-476b-b6d7-f7f4bcc963f2" /><div class="form-row"><div class="form-group"><label>Naam</label><input type="text" name="name" placeholder="Uw naam" required /></div><div class="form-group"><label>E-mail</label><input type="email" name="email" placeholder="uw@email.nl" required /></div></div><div class="form-group"><label>Bericht</label><textarea name="message" placeholder="Hoe kunnen wij u helpen?" required></textarea></div><button type="submit" class="btn-submit">Verstuur bericht</button></form></div>
-    </div>
-  </section>
-  <footer><p>© 2025 BewindWijs – Leusden</p><ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Klachtenregeling</a></li></ul></footer>
-  <script>
-    const toggle=document.getElementById('navToggle'),mobileMenu=document.getElementById('mobileMenu');
-    toggle.addEventListener('click',()=>{toggle.classList.toggle('open');mobileMenu.classList.toggle('open');});
-    function closeMenu(){toggle.classList.remove('open');mobileMenu.classList.remove('open');}
-    const reveals=document.querySelectorAll('.reveal');
-    new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*100);}});},{threshold:0.1}).observe && reveals.forEach(el=>new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});},{threshold:0.1}).observe(el));
-    document.getElementById('contactForm').addEventListener('submit',async function(e){e.preventDefault();const btn=this.querySelector('.btn-submit');btn.textContent='Versturen...';btn.disabled=true;const res=await fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(this)});const json=await res.json();if(json.success){btn.textContent='Verstuurd ✓';btn.style.background='#4caf50';this.reset();setTimeout(()=>{btn.textContent='Verstuur bericht';btn.style.background='';btn.disabled=false;},3000);}else{btn.textContent='Er ging iets mis';btn.disabled=false;}});
-  </script>
-</body>
-</html>
+  );
+}
