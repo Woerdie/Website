@@ -1,0 +1,310 @@
+import { useState } from "react";
+
+const docContent = `
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head><meta charset='utf-8'><title>Opdrachten Verkeersveiligheid</title>
+<style>
+  body { font-family: Calibri, sans-serif; font-size: 11pt; margin: 2.5cm; line-height: 1.5; }
+  h1 { font-size: 18pt; text-align: center; margin-bottom: 4px; }
+  h2 { font-size: 13pt; margin-top: 24px; border-bottom: 2px solid #1f3864; color: #1f3864; padding-bottom: 3px; }
+  p { margin: 6px 0; }
+  .subtitle { text-align: center; color: #555; font-size: 11pt; margin-bottom: 20px; }
+  .opdrachtnr { font-weight: bold; font-size: 12pt; color: #1f3864; }
+  .vraag { font-style: italic; margin-bottom: 6px; }
+  .subbold { font-weight: bold; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+  td, th { border: 1px solid #aaa; padding: 5px 8px; font-size: 10.5pt; vertical-align: top; }
+  th { background-color: #dce6f1; font-weight: bold; }
+  hr { border: none; border-top: 1px solid #ccc; margin: 18px 0; }
+</style>
+</head>
+<body>
+
+<h1>Opdrachten Verkeersveiligheid</h1>
+<p class='subtitle'>Daan Woerdman &nbsp;|&nbsp; Windesheim &nbsp;|&nbsp; Ruimtelijke Ontwikkeling &amp; Infrastructuur &nbsp;|&nbsp; Case: Veerhuizen</p>
+
+<hr/>
+<h2>Les 1 – Aanleiding en termen</h2>
+
+<p class='opdrachtnr'>Opdracht 1 – Wat wil je weten?</p>
+<p class='vraag'>Stel je voor: jij bent verkeersveiligheidsadviseur en je eerste klus is het analyseren van Veerhuizen. Welke data en informatie zou je verzamelen?</p>
+
+<p><span class='subbold'>Ongevallen &amp; registratie</span><br/>
+Ongevallendata: hoeveel ongelukken, waar precies, met welke voertuigen en op welke tijdstippen. Bijna-ongelukken worden vaak niet geregistreerd maar wijzen wel op gevaarlijke plekken. Verder de soort slachtoffers: doden, ziekenhuisgewonden, SEH en UMS.</p>
+
+<p><span class='subbold'>Verkeersstromen &amp; gedrag</span><br/>
+Verkeersintensiteit: hoeveel fietsers, vrachtwagens en auto's per dag op welke route. Snelheidsgegevens: houden voertuigen zich aan de maximumsnelheid. Vrachtrouteplanning: welke wegen gebruiken vrachtwagens en wanneer. Schooltijden en routes: wanneer en hoe gaan leerlingen naar school. Voertuigtypen: welke mix is er (e-bikes, speed-pedelecs, scooters, vrachtwagens). Tijdstippen van drukte: wanneer zijn de piekuren.</p>
+
+<p><span class='subbold'>Infrastructuur</span><br/>
+Infrastructuur in kaart: zijn er fietspaden, hoe zijn kruispunten ingericht, is er verlichting, zijn er drempels. Wegindeling: zijn er aparte rijstroken voor vracht en langzaam verkeer. Snelfietsroute: hoe is die nu ingericht en waar ontbreekt infrastructuur. Wet- en regelgeving: welke snelheidslimieten, voorrangsregels en verkeersborden gelden er nu.</p>
+
+<p><span class='subbold'>Beleving &amp; gedrag van mensen</span><br/>
+Subjectieve veiligheid: hoe veilig voelen ouders, scholieren en andere gebruikers zich (via enquêtes). Gedrag van ouders: hoeveel brengen kinderen met de auto en waarom. Gedrag van jongeren: rijden ze risicovol, gebruiken ze telefoons.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 2 – Denk als de weggebruiker</p>
+<p class='vraag'>Kruip in de huid van een vrachtwagenchauffeur en een 14-jarige scholier. Gebruik de formule: verkeersonveiligheid = risico × gevolg.</p>
+
+<p><span class='subbold'>Vrachtwagenchauffeur</span><br/>
+Risico: hij is professioneel opgeleid en kent de routes, wat het risico verlaagt. Maar hij rijdt op drukke routes waar fietsers en scholieren lopen. De dode hoek bij het afslaan is een groot gevaar. Tijdsdruk kan leiden tot minder oplettendheid. Risico = gemiddeld.<br/>
+Gevolg: een vrachtwagen weegt al snel 20.000 tot 40.000 kg, waardoor een botsing voor de andere partij enorme schade oplevert. De chauffeur zit beschermd in de cabine, maar voor een fietser of voetganger is het gevolg levensbedreigend. Gevolg = zeer ernstig.<br/>
+Conclusie: gemiddeld risico × zeer ernstig gevolg = hoge verkeersonveiligheid.</p>
+
+<p><span class='subbold'>14-jarige scholier</span><br/>
+Risico: hij fietst dagelijks tussen vrachtwagens door op drukke routes, heeft weinig verkeservaring en is snel afgeleid. Hij rijdt vaak in grote groepen, wat leidt tot onvoorspelbaar gedrag. Risico = hoog.<br/>
+Gevolg: als fietser heeft hij geen enkele bescherming. Bij een botsing met een vrachtwagen is het gevolg levensbedreigend. Gevolg = zeer ernstig.<br/>
+Conclusie: hoog risico × zeer ernstig gevolg = zeer hoge verkeersonveiligheid.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 3 – Wat maakt een botsing erg?</p>
+<p class='vraag'>Kies één gevaarlijke situatie en leg uit waarom die gevaarlijk is aan de hand van massa, snelheid, richting en incasseringsvermogen.</p>
+
+<p>Gekozen situatie: een vrachtwagen die bij een kruispunt afslaat en daarbij een fietsende scholier raakt.</p>
+
+<p><span class='subbold'>Massa</span> – Een beladen vrachtwagen weegt al snel 20.000 tot 40.000 kg, terwijl een fietsende scholier hier nauwelijks tegenop weegt. Bij een botsing absorbeert de lichtste partij vrijwel alle kracht.</p>
+<p><span class='subbold'>Snelheid</span> – Ook al rijdt de vrachtwagen langzaam bij het afslaan, de enorme massa compenseert dat volledig. Als de snelheid verdubbelt, verviervoudigt de impact. Zelfs bij 15 km/u is de klap dodelijk.</p>
+<p><span class='subbold'>Richting</span> – De vrachtwagen slaat af en raakt de fietser zijdelings of van achteren. De scholier ziet dit vaak niet aankomen en heeft geen tijd om te remmen of uit te wijken.</p>
+<p><span class='subbold'>Incasseringsvermogen</span> – De chauffeur zit beschermd in een stevige cabine met gordel. De scholier heeft geen enkele bescherming en draagt vrijwel nooit een fietshelm.</p>
+<p>Conclusie: door de combinatie van een enorm massaverschil, geen bescherming en een onverwachte zijdelingse botsing is de kans op een dodelijk slachtoffer of zwaar letsel groot.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 4 – Wat registreren we wel en niet?</p>
+<p class='vraag'>Koppel de juiste termen aan het ongeluk: dode, ziekenhuisgewonde, ernstig verkeersgewonde (MAIS), SEH, UMS.</p>
+
+<p><span class='subbold'>Dode</span> – De fietser overlijdt ter plaatse. Dit wordt altijd geregistreerd als verkeersdode.</p>
+<p><span class='subbold'>Ziekenhuisgewonde &amp; ernstig verkeersgewonde (MAIS 3)</span> – De automobilist ligt 3 weken in het ziekenhuis en heeft een MAIS-score van 3. Hij wordt geregistreerd als ziekenhuisgewonde én als ernstig verkeersgewonde.</p>
+<p><span class='subbold'>SEH</span> – De bijrijder wordt dezelfde dag ontslagen. Hij wordt geregistreerd als SEH-slachtoffer, maar komt lang niet altijd terug in de officiële verkeerscijfers.</p>
+<p><span class='subbold'>SEH (ter plaatse behandeld)</span> – De bestuurder van de tweede auto wordt ter plaatse behandeld en hoeft niet mee. Dit wordt vrijwel nooit geregistreerd.</p>
+<p><span class='subbold'>UMS</span> – De schade aan de fiets en de twee auto's valt onder Uitsluitend Materiële Schade. Geen lichamelijk letsel bij deze categorie.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 5 – Onveilig gevoel ≠ cijfers</p>
+<p class='vraag'>Ouders voelen zich onveilig en brengen hun kinderen met de auto. Waarom is dit ongewenst en wat moet de gemeente doen?</p>
+
+<p>Doordat ouders hun kinderen met de auto brengen, ontstaat er juist méér verkeer rondom de school. Dit maakt de situatie gevaarlijker voor andere fietsers en voetgangers. Het is een zichzelf versterkend probleem: hoe meer ouders het onveilig vinden en met de auto komen, hoe drukker en gevaarlijker het wordt.</p>
+<p>De gemeente moet dit op twee manieren aanpakken. Ten eerste door te communiceren: laat zien hoe de situatie er objectief uitziet met cijfers en metingen, en betrek scholen bij campagnes. Ten tweede door de infrastructuur te verbeteren: veiligere fietspaden en oversteken aanleggen, zodat ouders het niet alleen op papier maar ook in de praktijk veilig vinden.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 6 – Wel of niet veilig?</p>
+<p class='vraag'>Jongeren (12-18) hebben relatief veel ongevallen, maar voelen zich juist veilig. Waarom is dat een probleem en hoe heet dit fenomeen?</p>
+
+<p>Omdat jongeren zich veilig voelen, nemen ze meer risico's. Ze rijden te snel, zijn afgeleid door telefoon of vrienden, en schatten gevaarlijke situaties verkeerd in. Juist omdat ze het gevaar niet zien, nemen ze geen voorzorgsmaatregelen. Dit maakt de kans op ongelukken nog groter.</p>
+<p>Dit is het verschil tussen objectieve veiligheid en subjectieve veiligheid. De objectieve veiligheid is laag: de cijfers laten zien dat jongeren relatief veel ongelukken hebben. Maar de subjectieve veiligheid is hoog: ze voelen zich juist veilig. Dit is gevaarlijk omdat het gevoel het gedrag bepaalt, niet de cijfers.</p>
+
+<hr/>
+<h2>Les 2 – Menselijk gedrag en oorzaken</h2>
+
+<p class='opdrachtnr'>Opdracht 7 – Asmussen in actie</p>
+<p class='vraag'>Bekijk het fasemodel van Asmussen. Bedenk per fase een maatregel passend bij Veerhuizen en geef aan in welke fase je het liefst zou ingrijpen en waarom.</p>
+
+<table>
+  <tr>
+    <th>Fase</th>
+    <th>Situatie</th>
+    <th>Maatregel voor Veerhuizen</th>
+  </tr>
+  <tr>
+    <td><b>Vervoersfase</b><br/>(vervoersconcept)</td>
+    <td>Voorafgaand aan de verplaatsing: keuze om wel of niet te reizen, welk vervoermiddel, welk dagdeel.</td>
+    <td>Promoot de snelfietsroute actief bij scholen en werkgevers, zodat scholieren en medewerkers bewust kiezen voor de fiets op een veilig tijdstip. Zorg dat de school via een veilige route bereikbaar is, niet via de vrachtroutering.</td>
+  </tr>
+  <tr>
+    <td><b>Verkeersfase</b><br/>(verkeerssituatie)</td>
+    <td>Tijdens de verplaatsing: routekeuze en omstandigheden (donker, regen).</td>
+    <td>Zorg voor goede verlichting op de blauwe fietsroute door het bedrijventerrein, met name op kruispunten met vrachtwagenbewegingen. Verbeter de afwatering zodat spoorvorming wordt voorkomen.</td>
+  </tr>
+  <tr>
+    <td><b>Ontmoetingsfase</b><br/>(incidentsituatie)</td>
+    <td>Het moment dat verkeersdeelnemers elkaar tegenkomen.</td>
+    <td>Scheid vrachtwagens en fietsers fysiek van elkaar door aparte rijstroken of fietspaden aan te leggen op de gevaarlijke kruispunten. Voeg dodehoekspiegels of detectiesystemen toe.</td>
+  </tr>
+  <tr>
+    <td><b>Botsfase</b><br/>(ongevalsituatie)</td>
+    <td>De fase waarin de botsing daadwerkelijk ontstaat.</td>
+    <td>Verlaag de maximumsnelheid op routes waar fietsers en vrachtwagens samenkomen naar 30 km/u. Pas de wegbreedte aan zodat chauffeurs automatisch langzamer rijden.</td>
+  </tr>
+  <tr>
+    <td><b>Letsel- en schadefase</b><br/>(letselsituatie)</td>
+    <td>De fase na de botsing waarbij letsel en schade ontstaan.</td>
+    <td>Stel regels over beschermende uitrusting, zoals helmplicht voor speed-pedelecs. Zorg dat obstakels langs de weg vergevingsgezind zijn ingericht.</td>
+  </tr>
+  <tr>
+    <td><b>Behandeling &amp; revalidatiefase</b><br/>(herstelsituatie)</td>
+    <td>De fase waarin herstel centraal staat.</td>
+    <td>Optimaliseer aanrijtijden van hulpdiensten in het gebied. Zorg voor duidelijke adresaanduidingen zodat ambulances snel ter plaatse kunnen zijn.</td>
+  </tr>
+</table>
+
+<p><span class='subbold'>In welke fase zou ik het liefst ingrijpen?</span><br/>
+Ik zou het liefst ingrijpen in de vervoersfase, omdat je daar het vroegst in de keten zit. Als je in deze fase al zorgt dat scholieren via een veilige route reizen en vrachtwagens een andere route nemen, dan hoef je de gevaarlijke ontmoeting überhaupt niet meer op te lossen. Je voorkomt dat iemand in een onveilige situatie terechtkomt, wat altijd beter is dan achteraf schade beperken.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 8 – Detectivewerk: oorzaak &amp; mens</p>
+<p class='vraag'>Maak een lijstje met de problemen in Veerhuizen. Bedenk per deelprobleem een onderliggende oorzaak en koppel die aan de mens, de weg/omgeving of het voertuig.</p>
+
+<table>
+  <tr>
+    <th>Deelprobleem</th>
+    <th>Onderliggende oorzaak</th>
+    <th>Koppeling</th>
+    <th>Toelichting</th>
+  </tr>
+  <tr>
+    <td>Vrachtwagens en fietsers gebruiken dezelfde routes</td>
+    <td>Er is geen fysieke scheiding tussen zwaar verkeer en langzaam verkeer op het bedrijventerrein</td>
+    <td>Weg / omgeving</td>
+    <td>De infrastructuur is niet ingericht op het mengen van deze verkeerssoorten. Dit is een ontwerpfout van de weg, niet primair een gedragsprobleem van de gebruiker.</td>
+  </tr>
+  <tr>
+    <td>Scholieren rijden roekeloos en afgeleid</td>
+    <td>Jongeren hebben weinig ervaring en overschatten zichzelf; groepsgedrag versterkt risicovol rijden</td>
+    <td>Mens</td>
+    <td>Dit is een gedragskwestie: jongeren schatten risico's verkeerd in (subjectieve veiligheid is hoog, objectieve veiligheid laag). Kennis, houding en emotie spelen hier een grote rol.</td>
+  </tr>
+  <tr>
+    <td>Vrachtwagenchauffeurs hebben een grote dode hoek</td>
+    <td>Basisvoertuigen zijn niet uitgerust met dodehoekdetectie of extra spiegels</td>
+    <td>Voertuig</td>
+    <td>Het voertuig zelf zorgt voor een structureel waarnemingsprobleem. Zonder technische hulpmiddelen kan de chauffeur fietsers naast zijn cabine simpelweg niet zien.</td>
+  </tr>
+  <tr>
+    <td>Ouders brengen kinderen met de auto, wat extra drukte geeft</td>
+    <td>Subjectief onveiligheidsgevoel van ouders leidt tot keuze voor de auto</td>
+    <td>Mens</td>
+    <td>Het gedrag van ouders wordt gestuurd door gevoel, niet door objectieve cijfers. Dit is een houdings- en gedragsprobleem dat vraagt om communicatie en educatie.</td>
+  </tr>
+  <tr>
+    <td>De snelfietsroute is infrastructureel nog niet goed vormgegeven</td>
+    <td>De route loopt deels door het industrieterrein zonder aparte fietspaden of goede markering</td>
+    <td>Weg / omgeving</td>
+    <td>De omgeving nodigt niet uit tot veilig fietsgedrag. Een onduidelijke of oncomfortabele route leidt ertoe dat fietsers afwijken naar gevaarlijkere plekken.</td>
+  </tr>
+  <tr>
+    <td>Veel diversiteit aan voertuigen (e-bikes, speed-pedelecs, scooters)</td>
+    <td>Snelheidsverschillen tussen voertuigen op dezelfde route zorgen voor onverwachte en gevaarlijke situaties</td>
+    <td>Voertuig &amp; weg / omgeving</td>
+    <td>De toenemende heterogeniteit van het verkeer zorgt voor onverwachte snelheidsverschillen. De infrastructuur is hier niet op aangepast, waardoor conflicten ontstaan.</td>
+  </tr>
+</table>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 9 – Gatenkaas in praktijk</p>
+<p class='vraag'>Kies een mogelijk ongeval. Geef per onderdeel van het gatenkaasmodel aan wat er mis kan gaan, benoem voor minstens twee onderdelen een maatregel en geef aan welk type conflict dit is.</p>
+
+<p><span class='subbold'>Gekozen situatie:</span> een dodehoekongeval waarbij een vrachtwagen rechtsaf slaat op een kruispunt op het bedrijventerrein en een fietsende scholier raakt die naast de vrachtwagen rijdt.</p>
+<p><span class='subbold'>Type conflict:</span> dwarser conflict – de vrachtwagen beweegt dwars op de rijrichting van de fietser.</p>
+
+<table>
+  <tr>
+    <th>Laag (gatenkaas)</th>
+    <th>Wat kan er mis zijn / misgaan?</th>
+  </tr>
+  <tr>
+    <td><b>1. Systeemontwerp</b><br/>(latente fout)</td>
+    <td>Het kruispunt is niet ontworpen met een fysieke scheiding tussen fietsers en afslaand vrachtverkeer. Er is geen apart fietspad of opstelstrook voor fietsers aan de rechterzijde. Dit is een sluimerende fout in het wegontwerp die pas zichtbaar wordt als er een conflict is.</td>
+  </tr>
+  <tr>
+    <td><b>2. Kwaliteitsbewaking</b><br/>(latente fout)</td>
+    <td>Er is geen periodieke verkeersveiligheidsaudit uitgevoerd op dit kruispunt, waardoor de gevaarlijke inrichting nooit is opgemerkt of aangepakt. Mogelijk is er ook geen toezicht op de naleving van rijroutes door vrachtwagens.</td>
+  </tr>
+  <tr>
+    <td><b>3. Psychologische voorlopers</b><br/>(latente fout / onveilige handeling)</td>
+    <td>De vrachtwagenchauffeur is vermoeid door een vroege dienst en heeft tijdsdruk. De scholier rijdt in een grote groep en is afgeleid door vrienden. Beide verkeersdeelnemers zijn mentaal niet volledig bij de situatie.</td>
+  </tr>
+  <tr>
+    <td><b>4. Handelingen in het verkeer</b><br/>(onveilige handeling)</td>
+    <td>De vrachtwagenchauffeur slaat rechtsaf zonder voldoende te controleren of er fietsers naast zijn voertuig rijden. De scholier rijdt door aan de rechterkant van de vrachtwagen, in de dode hoek, terwijl de vrachtwagen zijn richtingaanwijzer al heeft aangezet.</td>
+  </tr>
+  <tr>
+    <td><b>5. Defensiemechanismen</b><br/>(latente fout / onveilige handeling)</td>
+    <td>De vrachtwagen heeft geen dodehoekdetectiesysteem of waarschuwingssignaal. Er zijn geen verkeerslichten of een voorrangssituatie die de fietser extra beschermt. Er is geen fysieke barrière die voorkomt dat fietsers naast een afslaande vrachtwagen rijden.</td>
+  </tr>
+</table>
+
+<p><span class='subbold'>Maatregelen (voor minimaal twee lagen):</span></p>
+
+<p><span class='subbold'>Maatregel bij laag 1 (systeemontwerp):</span> Herontwerp het kruispunt zodat fietsers een apart fietspad krijgen met een duidelijke opstelstrook vóór het stopstreep van de vrachtwagens. Dit zorgt ervoor dat fietsers zichtbaar zijn voor de chauffeur voordat hij afslaat, en dat de vrachtwagen pas afslaat nadat fietsers al zijn overgestoken.</p>
+
+<p><span class='subbold'>Maatregel bij laag 5 (defensiemechanismen):</span> Verplicht dodehoekdetectiesystemen op alle vrachtwagens die het bedrijventerrein gebruiken. Dit systeem waarschuwt de chauffeur met een geluidssignaal of trilling als er een fietser naast zijn voertuig rijdt bij het afslaan. Dit is een technische veiligheidsmaatregel die het laatste gat in de kaas dichtstopt.</p>
+
+<hr/>
+
+<p class='opdrachtnr'>Opdracht 10 – Van waarnemen tot handelen</p>
+<p class='vraag'>Kies een verkeersdeelnemer en beschrijf een (bijna-)ongeval. Geef per fase van informatieverwerking (waarnemen – verwerken – beslissen – handelen) aan wat er fout gaat.</p>
+
+<p><span class='subbold'>Gekozen verkeersdeelnemer:</span> een bezorger in een bestelbus die een pakketje aflevert op het bedrijventerrein in Veerhuizen.</p>
+<p><span class='subbold'>Situatie:</span> het is een drukke ochtend. Een groep scholieren fietst op de blauwe route richting school. De bezorger wil een zijstraat inrijden en slaat rechtsaf. Hij rijdt bijna over een fietser die naast de bestelbus rijdt.</p>
+
+<p><span class='subbold'>1) Waarnemen</span><br/>
+De bezorger kijkt in zijn buitenspiegel maar ziet de fietser niet. Dit komt doordat hij de fietser niet verwachtte op dit deel van het bedrijventerrein; hij keek of er auto's aankwamen, niet of er fietsers naast zijn bus reden. Daarnaast heeft een bestelbus een relatief grote dode hoek aan de rechterkant. Hij keek wel, maar zag de fietser niet.</p>
+
+<p><span class='subbold'>2) Verwerken</span><br/>
+Op het moment dat hij zijn spiegel checkt, verwerkt hij tegelijk een melding op zijn routeapp die op de stoel naast hem ligt. Zijn aandacht is verdeeld. Hij ziet geen fietser in de spiegel en concludeert dat de weg vrij is, terwijl hij de informatie eigenlijk niet volledig heeft verwerkt. Zijn hersenen vullen het gat in: de weg lijkt vrij.</p>
+
+<p><span class='subbold'>3) Beslissen</span><br/>
+Op basis van zijn onvolledige waarneming besluit hij rechtsaf te slaan. Hij heeft tijdsdruk omdat er nog vijf pakketten bezorgd moeten worden. Dit beïnvloedt zijn beslissing: hij neemt de extra seconde niet om nog een keer te controleren.</p>
+
+<p><span class='subbold'>4) Handelen</span><br/>
+De bezorger draait zijn stuur naar rechts en geeft gas. Pas op het laatste moment ziet hij in zijn rechterbuitenspiegel een glimp van de fiets. Hij remt, maar heeft nauwelijks reactietijd meer: in het verkeer is de gemiddelde reactietijd al 1,0 seconde. De fietser weet nog net op tijd uit te wijken. Een bijna-ongeluk.</p>
+
+<p><span class='subbold'>Conclusie:</span><br/>
+In elke fase ging er iets mis: de fietser werd niet waargenomen (dode hoek en verwachtingsbias), de informatie werd niet goed verwerkt door afleiding, de beslissing werd genomen onder tijdsdruk zonder extra check, en bij het handelen was er te weinig reactietijd over. Dit is een goed voorbeeld van hoe meerdere kleine fouten samen een bijna-ongeluk veroorzaken, precies zoals het gatenkaasmodel beschrijft.</p>
+
+<hr/>
+<p style='font-size:9pt; color:#888; text-align:center;'>Opdrachten Verkeersveiligheid &nbsp;|&nbsp; Daan Woerdman &nbsp;|&nbsp; Windesheim Hogeschool &nbsp;|&nbsp; Ruimtelijke Ontwikkeling</p>
+
+</body></html>
+`;
+
+export default function App() {
+  const [downloaded, setDownloaded] = useState(false);
+
+  const download = () => {
+    const blob = new Blob([docContent], { type: "application/msword" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Opdrachten_Verkeersveiligheid_DaanWoerdman.doc";
+    a.click();
+    URL.revokeObjectURL(url);
+    setDownloaded(true);
+  };
+
+  return (
+    <div style={{ fontFamily: "Calibri, sans-serif", padding: "40px", textAlign: "center", maxWidth: 520, margin: "0 auto" }}>
+      <div style={{ fontSize: 48, marginBottom: 12 }}>📄</div>
+      <h2 style={{ fontSize: 18, marginBottom: 6 }}>Opdrachten Verkeersveiligheid</h2>
+      <p style={{ color: "#555", fontSize: 13, marginBottom: 6 }}>Daan Woerdman · Windesheim · Case Veerhuizen</p>
+      <p style={{ color: "#777", fontSize: 12, marginBottom: 24 }}>
+        Opdrachten 1 t/m 10 volledig uitgewerkt
+      </p>
+      <button
+        onClick={download}
+        style={{
+          backgroundColor: "#1f3864",
+          color: "white",
+          border: "none",
+          padding: "12px 28px",
+          fontSize: 15,
+          borderRadius: 6,
+          cursor: "pointer",
+          fontFamily: "Calibri, sans-serif"
+        }}
+      >
+        ⬇️ Download Word-document (.doc)
+      </button>
+      {downloaded && (
+        <p style={{ marginTop: 16, color: "green", fontSize: 13 }}>
+          ✅ Download gestart! Open het bestand in Word.
+        </p>
+      )}
+    </div>
+  );
+}
