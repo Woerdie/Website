@@ -64,12 +64,16 @@
 
     /* OVER MIJ */
     #over { background: var(--white); }
-    .over-content { max-width: 800px; }
-    .over-block { margin-bottom: 1.5rem; }
-    .over-block h3 { font-family: 'Lora', serif; font-size: 1.2rem; color: var(--bd); font-weight: 700; margin-bottom: 0.5rem; }
-    .over-block p { font-size: 1rem; color: var(--tm); line-height: 1.85; font-weight: 300; }
-    .over-values { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
-    .over-value { background: var(--bp); border: 1px solid rgba(26,58,107,0.15); border-radius: 50px; padding: 6px 16px; font-size: 0.85rem; color: var(--bd); font-weight: 600; }
+    .over-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; align-items: start; margin-top: 1.5rem; }
+    .over-left { }
+    .over-intro { font-size: 1.05rem; color: var(--text); line-height: 1.85; font-weight: 400; }
+    .over-right { }
+    .over-block { margin-bottom: 1.75rem; padding-bottom: 1.75rem; border-bottom: 1px solid rgba(26,58,107,0.08); }
+    .over-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+    .over-block h3 { font-family: 'Lora', serif; font-size: 1.1rem; color: var(--bd); font-weight: 700; margin-bottom: 0.5rem; }
+    .over-block p { font-size: 0.97rem; color: var(--text); line-height: 1.85; font-weight: 300; }
+    .over-values { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 2rem; }
+    .over-value { background: var(--bp); border: 1px solid rgba(26,58,107,0.15); border-radius: 6px; padding: 8px 14px; font-size: 0.85rem; color: var(--bd); font-weight: 600; }
 
     /* BEWINDVOERING */
     #bewindvoering { background: var(--off); }
@@ -167,6 +171,7 @@
       h2.section-title { font-size: 1.7rem; }
       .section-intro { font-size: 0.95rem; }
 
+      .over-grid { grid-template-columns: 1fr; gap: 2rem; }
       .over-content { max-width: 100%; }
 
       .bw-grid { grid-template-columns: 1fr; }
@@ -236,36 +241,38 @@
 
   <!-- OVER MIJ -->
   <section id="over">
-    <div class="over-content reveal">
+    <div class="reveal">
       <div class="section-label">Over mij</div>
-      <h2 class="section-title">Een stevige basis in onzekere tijden</h2>
-
-        <div class="over-block">
-          <p>Ik ben 53 jaar, inmiddels bijna acht jaar bewindvoerder en sinds maart 2025 ook professioneel mentor. Met ruime ervaring in zowel financiële als persoonlijke begeleiding sta ik mensen bij die ondersteuning nodig hebben bij hun financiën, dagelijkse keuzes en zorgvraagstukken. Mijn doel is om rust, overzicht en vertrouwen te brengen in situaties die complex of overweldigend kunnen voelen.</p>
+      <div class="over-grid">
+        <!-- Links: titel + intro -->
+        <div class="over-left">
+          <h2 class="section-title">Een stevige basis in onzekere tijden</h2>
+          <p class="over-intro">Ik ben 53 jaar, inmiddels bijna acht jaar bewindvoerder en sinds maart 2025 ook professioneel mentor. Met ruime ervaring in zowel financiële als persoonlijke begeleiding sta ik mensen bij die ondersteuning nodig hebben bij hun financiën, dagelijkse keuzes en zorgvraagstukken.</p>
+          <p class="over-intro" style="margin-top:1rem;">Mijn doel is om rust, overzicht en vertrouwen te brengen in situaties die complex of overweldigend kunnen voelen.</p>
+          <div class="over-values">
+            <span class="over-value">✓ 15 jaar bancaire ervaring</span>
+            <span class="over-value">✓ NBBI aangesloten</span>
+            <span class="over-value">✓ Rechtbank aangesteld</span>
+            <span class="over-value">✓ Professioneel mentor</span>
+          </div>
         </div>
-
-        <div class="over-block">
-          <h3>Een achtergrond die zekerheid biedt</h3>
-          <p>Voordat ik bewindvoerder werd, werkte ik 15 jaar in de bancaire wereld. Daar heb ik niet alleen veel financiële kennis opgedaan, maar ook geleerd hoe belangrijk het is om helder te communiceren en zorgvuldig met iemands belangen om te gaan. Daarna heb ik drie jaar gewerkt als budgetbeheerder en budgetcoach, waarbij ik mensen hielp om weer grip te krijgen op hun financiële situatie. Die combinatie van ervaring vormt vandaag de basis van mijn werk: professioneel, deskundig en altijd met oog voor de mens.</p>
-        </div>
-
-        <div class="over-block">
-          <h3>Open, eerlijk en naast de cliënt</h3>
-          <p>Openheid en eerlijkheid vind ik essentieel. Ik kies bewust voor een manier van werken waarbij ik niet boven iemand ga staan, maar ernaast. Samen kijken we naar wat nodig is om stabiliteit te creëren en zorgen te verminderen. Dat doe ik met respect, duidelijkheid en een warme, betrokken benadering.</p>
-        </div>
-
-        <div class="over-block">
-          <h3>Samen werken aan stabiliteit en groei</h3>
-          <p>Of het nu gaat om het beschermen van financiële belangen, het nemen van verantwoordelijke beslissingen of het versterken van zelfredzaamheid: ik bied ondersteuning op maat. Betrouwbaar, zorgvuldig en mensgericht. Zodat cliënten zich gesteund voelen en weten dat ze er niet alleen voor staan.</p>
-        </div>
-
-        <div class="over-values">
-          <span class="over-value">15 jaar bancaire ervaring</span>
-          <span class="over-value">NBBI aangesloten</span>
-          <span class="over-value">Rechtbank aangesteld</span>
-          <span class="over-value">Professioneel mentor</span>
+        <!-- Rechts: 3 subkopjes -->
+        <div class="over-right">
+          <div class="over-block">
+            <h3>Een achtergrond die zekerheid biedt</h3>
+            <p>Voordat ik bewindvoerder werd, werkte ik 15 jaar in de bancaire wereld. Daar heb ik geleerd hoe belangrijk het is om helder te communiceren en zorgvuldig met iemands belangen om te gaan. Daarna drie jaar als budgetbeheerder en budgetcoach — die combinatie vormt de basis van mijn werk: professioneel, deskundig en altijd met oog voor de mens.</p>
+          </div>
+          <div class="over-block">
+            <h3>Open, eerlijk en naast de cliënt</h3>
+            <p>Openheid en eerlijkheid vind ik essentieel. Ik kies bewust voor een manier van werken waarbij ik niet boven iemand ga staan, maar ernaast. Samen kijken we naar wat nodig is om stabiliteit te creëren en zorgen te verminderen.</p>
+          </div>
+          <div class="over-block" style="margin-bottom:0">
+            <h3>Samen werken aan stabiliteit en groei</h3>
+            <p>Of het nu gaat om het beschermen van financiële belangen, het nemen van verantwoordelijke beslissingen of het versterken van zelfredzaamheid: ik bied ondersteuning op maat. Betrouwbaar, zorgvuldig en mensgericht.</p>
+          </div>
         </div>
       </div>
+    </div>
   </section>
 
   <!-- BEWINDVOERING -->
