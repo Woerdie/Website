@@ -4,21 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>BewindWijs – Samen werken aan een betere toekomst</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
       --bd: #1a3a6b; --bm: #2a5298; --bl: #4a7fc1; --bp: #e8f0fb;
-      --cream: #f7f4ee; --cream2: #f0ebe0; --white: #fff;
-      --text: #2d2d2d; --tl: #666; --r: 4px;
+      --white: #fff; --off: #f8f9fc; --cream: #f7f4ee;
+      --text: #1a1e2e; --tm: #64748b; --r: 6px;
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--text); overflow-x: hidden; }
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(247,244,238,0.97); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 72px; border-bottom: 1px solid rgba(26,58,107,0.1); }
+    body { font-family: 'Source Sans 3', sans-serif; background: var(--off); color: var(--text); overflow-x: hidden; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,249,252,0.97); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 72px; border-bottom: 1px solid rgba(26,58,107,0.1); }
     .nav-logo { display: flex; align-items: center; text-decoration: none; }
     .nav-logo img { height: 44px; width: auto; }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a { color: var(--tl); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a { color: var(--tm); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
     .nav-links a:hover { color: var(--bd); }
     .nav-links a.btn-nav { background: var(--bd); color: var(--white); padding: 9px 22px; border-radius: var(--r); font-weight: 600; }
     .nav-links a.btn-nav:hover { background: var(--bm); }
@@ -27,164 +29,338 @@
     .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
     .nav-toggle.open span:nth-child(2) { opacity: 0; }
     .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .mobile-menu { display: none; position: fixed; top: 72px; left: 0; right: 0; background: var(--cream); border-top: 1px solid rgba(26,58,107,0.1); padding: 1.5rem 5%; z-index: 99; flex-direction: column; }
+    .mobile-menu { display: none; position: fixed; top: 72px; left: 0; right: 0; background: var(--off); border-top: 1px solid rgba(26,58,107,0.1); padding: 1.5rem 5%; z-index: 99; flex-direction: column; }
     .mobile-menu.open { display: flex; }
     .mobile-menu a { color: var(--text); text-decoration: none; font-size: 1rem; padding: 1rem 0; border-bottom: 1px solid rgba(26,58,107,0.08); font-weight: 500; }
     .mobile-menu a:last-child { border-bottom: none; }
-    #home { min-height: 100vh; background: var(--white); display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 100px 5% 60px; gap: 4rem; position: relative; overflow: hidden; }
-    #home::before { content: ''; position: absolute; right: -5%; top: 50%; transform: translateY(-50%); width: 55%; aspect-ratio: 1; border-radius: 50%; background: var(--bp); opacity: 0.5; pointer-events: none; }
+
+    /* HERO */
+    #home { min-height: 100vh; background: var(--bd); display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 100px 5% 60px; gap: 4rem; position: relative; overflow: hidden; }
+    #home::before { content: ''; position: absolute; right: -5%; top: 50%; transform: translateY(-50%); width: 55%; aspect-ratio: 1; border-radius: 50%; background: rgba(74,127,193,0.1); pointer-events: none; }
     .hero-left { position: relative; animation: fadeUp 0.9s ease both; }
-    .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: var(--bp); border: 1px solid rgba(26,58,107,0.15); border-radius: 50px; padding: 7px 16px; margin-bottom: 2rem; }
+    .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; padding: 7px 16px; margin-bottom: 2rem; }
     .hero-tag-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bl); }
-    .hero-tag span { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--bd); font-weight: 600; }
-    h1.hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 4.5vw, 3.6rem); color: var(--bd); line-height: 1.15; margin-bottom: 1.5rem; font-weight: 700; }
+    .hero-tag span { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.7); font-weight: 600; }
+    h1.hero-title { font-family: 'Lora', serif; font-size: clamp(2.2rem, 4.5vw, 3.6rem); color: var(--white); line-height: 1.15; margin-bottom: 1.5rem; font-weight: 700; }
     h1.hero-title em { font-style: italic; color: var(--bl); }
-    .hero-sub { font-size: 1rem; color: var(--tl); line-height: 1.85; max-width: 460px; margin-bottom: 2.5rem; font-weight: 300; }
-    .hero-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--bd); color: var(--white); text-decoration: none; padding: 14px 30px; border-radius: var(--r); font-weight: 600; font-size: 0.95rem; transition: all 0.25s; }
-    .hero-cta:hover { background: var(--bm); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,58,107,0.25); }
+    .hero-sub { font-size: 1rem; color: rgba(255,255,255,0.75); line-height: 1.85; max-width: 460px; margin-bottom: 2.5rem; font-weight: 300; }
+    .hero-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--white); color: var(--bd); text-decoration: none; padding: 14px 30px; border-radius: var(--r); font-weight: 700; font-size: 0.95rem; transition: all 0.25s; }
+    .hero-cta:hover { background: var(--bp); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
     .hero-cta svg { width: 16px; height: 16px; }
     .hero-badges { margin-top: 2.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    .badge { display: flex; align-items: center; gap: 8px; color: var(--tl); font-size: 0.8rem; }
+    .badge { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-size: 0.8rem; }
     .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bl); }
     .hero-right { position: relative; height: 500px; animation: fadeUp 0.9s 0.15s ease both; }
-    .hero-img-box { position: absolute; inset: 0; background: var(--bp); border-radius: 16px 60px 16px 60px; overflow: hidden; border: 1px solid rgba(26,58,107,0.1); }
+    .hero-img-box { position: absolute; inset: 0; background: rgba(255,255,255,0.08); border-radius: 16px 60px 16px 60px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); }
     .hero-img-box img { width: 100%; height: 100%; object-fit: cover; }
-    .hero-img-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(74,127,193,0.4); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; border: 2px dashed rgba(74,127,193,0.25); border-radius: 16px 60px 16px 60px; }
+    .hero-img-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(255,255,255,0.25); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; border: 2px dashed rgba(255,255,255,0.2); border-radius: 16px 60px 16px 60px; }
     .hero-img-placeholder svg { width: 36px; height: 36px; }
-    .hero-badge { position: absolute; bottom: -16px; left: -16px; background: var(--white); border-radius: 14px; padding: 1rem 1.25rem; box-shadow: 0 8px 32px rgba(26,58,107,0.12); display: flex; align-items: center; gap: 12px; border: 1px solid rgba(26,58,107,0.1); }
-    .hero-badge-icon { width: 40px; height: 40px; background: var(--bp); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
-    .hero-badge-icon svg { width: 20px; height: 20px; color: var(--bd); }
-    .hero-badge-text strong { display: block; font-size: 0.88rem; color: var(--bd); font-weight: 600; }
-    .hero-badge-text span { font-size: 0.73rem; color: var(--tl); }
-    section { padding: 100px 5%; }
-    .section-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bl); font-weight: 600; margin-bottom: 1rem; }
-    .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3.5vw, 2.6rem); color: var(--bd); line-height: 1.2; margin-bottom: 1.2rem; }
-    .section-intro { font-size: 1rem; color: var(--tl); line-height: 1.8; max-width: 560px; }
-    #Diensten { background: var(--white); }
-    .diensten-header { margin-bottom: 4rem; }
-    .diensten-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: #c8d9f0; border: 2px solid #c8d9f0; }
-    .dienst-card { background: var(--white); padding: 3rem 2.5rem; position: relative; overflow: hidden; transition: background 0.3s; }
-    .dienst-card::before { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 3px; background: var(--bl); transform: scaleX(0); transform-origin: left; transition: transform 0.3s ease; }
-    .dienst-card:hover::before { transform: scaleX(1); }
-    .dienst-card:hover { background: #f5f8fd; }
-    .dienst-number { font-family: 'Playfair Display', serif; font-size: 3rem; color: var(--bl); opacity: 0.2; font-weight: 700; line-height: 1; margin-bottom: 1.5rem; }
-    .dienst-icon { width: 48px; height: 48px; background: var(--bp); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.5rem; }
-    .dienst-icon svg { width: 24px; height: 24px; color: var(--bd); }
-    .dienst-card h3 { font-family: 'Playfair Display', serif; font-size: 1.4rem; color: var(--bd); margin-bottom: 1rem; }
-    .dienst-card p { font-size: 0.92rem; color: var(--tl); line-height: 1.75; }
-    #over { background: var(--cream); }
-    .over-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6rem; align-items: center; }
-    .over-visual { position: relative; height: 400px; }
-    .over-block-main { position: absolute; inset: 0; background: var(--bd); border-radius: 4px; overflow: hidden; }
-    .over-block-main::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(74,127,193,0.06) 30px, rgba(74,127,193,0.06) 31px); }
-    .over-block-accent { position: absolute; bottom: -20px; right: -20px; width: 120px; height: 120px; background: var(--bl); border-radius: 4px; opacity: 0.15; }
-    .over-block-text { position: absolute; bottom: 2rem; left: 2rem; right: 2rem; color: white; }
-    .over-block-text .big-text { font-family: 'Playfair Display', serif; font-size: 3.5rem; font-weight: 700; color: var(--bl); line-height: 1; }
-    .over-block-text p { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 0.5rem; }
-    .over-content .section-intro { margin-bottom: 2rem; }
-    .over-list { list-style: none; display: flex; flex-direction: column; gap: 0.75rem; }
-    .over-list li { display: flex; align-items: center; gap: 12px; font-size: 0.92rem; color: var(--text); }
-    .over-list li::before { content: ''; width: 20px; height: 20px; min-width: 20px; background: var(--bl); border-radius: 50%; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23ffffff'%3E%3Cpath fill-rule='evenodd' d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z' clip-rule='evenodd'/%3E%3C/svg%3E"); background-size: contain; }
-    #Contact { background: var(--bd); }
-    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.2fr; gap: 6rem; align-items: start; }
-    .contact-info .section-label { color: rgba(255,255,255,0.5); }
-    .contact-info .section-title { color: var(--white); }
-    .contact-info .section-intro { color: rgba(255,255,255,0.55); }
-    .contact-detail { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 1.25rem; }
-    .contact-item { display: flex; align-items: center; gap: 14px; }
-    .contact-item-icon { width: 40px; height: 40px; background: rgba(74,127,193,0.2); border: 1px solid rgba(74,127,193,0.4); border-radius: 8px; display: flex; align-items: center; justify-content: center; }
-    .contact-item-icon svg { width: 18px; height: 18px; color: var(--bl); }
-    .contact-item span { color: rgba(255,255,255,0.75); font-size: 0.92rem; }
-    .contact-item a { color: var(--bl); text-decoration: none; }
-    .contact-item a:hover { text-decoration: underline; }
-    .contact-form { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 2.5rem; }
+
+    /* SECTIONS */
+    section { padding: 90px 5%; }
+    .section-label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bl); font-weight: 600; margin-bottom: 0.75rem; }
+    h2.section-title { font-family: 'Lora', serif; font-size: clamp(1.8rem, 3.5vw, 2.5rem); color: var(--bd); line-height: 1.2; margin-bottom: 1.2rem; font-weight: 700; }
+    .section-intro { font-size: 1rem; color: var(--tm); line-height: 1.85; max-width: 600px; font-weight: 300; }
+
+    /* OVER MIJ */
+    #over { background: var(--white); }
+    .over-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .over-img { position: relative; height: 480px; }
+    .over-img-box { position: absolute; inset: 0; background: var(--bp); border-radius: 16px; overflow: hidden; border: 1px solid rgba(26,58,107,0.1); }
+    .over-img-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(74,127,193,0.4); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; border: 2px dashed rgba(74,127,193,0.2); border-radius: 16px; }
+    .over-img-placeholder svg { width: 36px; height: 36px; }
+    .over-content { padding-top: 1rem; }
+    .over-block { margin-bottom: 2rem; }
+    .over-block h3 { font-family: 'Lora', serif; font-size: 1.15rem; color: var(--bd); font-weight: 700; margin-bottom: 0.6rem; }
+    .over-block p { font-size: 0.95rem; color: var(--tm); line-height: 1.85; font-weight: 300; }
+    .over-values { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+    .over-value { background: var(--bp); border: 1px solid rgba(26,58,107,0.15); border-radius: 50px; padding: 6px 16px; font-size: 0.82rem; color: var(--bd); font-weight: 600; }
+
+    /* BEWINDVOERING */
+    #bewindvoering { background: var(--off); }
+    .bw-intro { max-width: 700px; margin-bottom: 3.5rem; }
+    .bw-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+    .bw-card { background: var(--white); border: 1px solid rgba(26,58,107,0.1); border-radius: 14px; padding: 2rem; transition: all 0.3s; }
+    .bw-card:hover { border-color: var(--bl); box-shadow: 0 8px 32px rgba(26,58,107,0.1); transform: translateY(-3px); }
+    .bw-card-num { font-family: 'Lora', serif; font-size: 0.8rem; color: var(--bl); font-style: italic; margin-bottom: 0.75rem; opacity: 0.7; }
+    .bw-card h3 { font-family: 'Lora', serif; font-size: 1.1rem; color: var(--bd); font-weight: 700; margin-bottom: 0.6rem; }
+    .bw-card p { font-size: 0.9rem; color: var(--tm); line-height: 1.75; font-weight: 300; }
+    .bw-icon { width: 44px; height: 44px; background: var(--bp); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem; transition: background 0.3s; }
+    .bw-card:hover .bw-icon { background: var(--bd); }
+    .bw-icon svg { width: 20px; height: 20px; color: var(--bd); transition: color 0.3s; }
+    .bw-card:hover .bw-icon svg { color: var(--white); }
+    .bw-quote { background: var(--bd); border-radius: 14px; padding: 2rem; color: var(--white); grid-column: span 2; }
+    .bw-quote p { font-family: 'Lora', serif; font-style: italic; font-size: 1.05rem; line-height: 1.75; color: rgba(255,255,255,0.9); }
+
+    /* MENTORSCHAP */
+    #mentorschap { background: var(--white); }
+    .mentor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+    .mentor-content { }
+    .mentor-list { list-style: none; display: flex; flex-direction: column; gap: 1.25rem; margin-top: 2rem; }
+    .mentor-list li { display: flex; align-items: flex-start; gap: 14px; padding: 1.25rem; background: var(--off); border-radius: 12px; border: 1px solid rgba(26,58,107,0.08); }
+    .mentor-list li .icon { width: 40px; height: 40px; min-width: 40px; background: var(--bp); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+    .mentor-list li .icon svg { width: 18px; height: 18px; color: var(--bd); }
+    .mentor-list li .text h4 { font-family: 'Lora', serif; font-size: 0.95rem; color: var(--bd); font-weight: 700; margin-bottom: 4px; }
+    .mentor-list li .text p { font-size: 0.88rem; color: var(--tm); line-height: 1.65; font-weight: 300; }
+    .mentor-aside { background: var(--bd); border-radius: 16px; padding: 2.5rem; color: var(--white); }
+    .mentor-aside h3 { font-family: 'Lora', serif; font-size: 1.3rem; color: var(--white); margin-bottom: 1rem; }
+    .mentor-aside p { font-size: 0.92rem; color: rgba(255,255,255,0.7); line-height: 1.8; font-weight: 300; margin-bottom: 1.5rem; }
+    .mentor-aside .aside-link { display: inline-flex; align-items: center; gap: 8px; background: var(--bl); color: var(--white); text-decoration: none; padding: 11px 22px; border-radius: var(--r); font-weight: 600; font-size: 0.88rem; transition: all 0.25s; }
+    .mentor-aside .aside-link:hover { background: #5a8fd1; }
+
+    /* CONTACT */
+    #Contact { background: var(--off); }
+    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.3fr; gap: 5rem; align-items: start; }
+    .contact-info .section-intro { margin-bottom: 2rem; }
+    .contact-item { display: flex; align-items: center; gap: 14px; margin-bottom: 1.25rem; }
+    .contact-item-icon { width: 44px; height: 44px; background: var(--bp); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+    .contact-item-icon svg { width: 18px; height: 18px; color: var(--bd); }
+    .contact-item span { color: var(--tm); font-size: 0.92rem; }
+    .contact-item a { color: var(--bd); text-decoration: none; font-weight: 600; }
+    .contact-form { background: var(--white); border-radius: 16px; padding: 2.5rem; box-shadow: 0 4px 32px rgba(26,58,107,0.08); border: 1px solid rgba(26,58,107,0.08); }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
     .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
-    .form-group label { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.5); font-weight: 500; }
-    .form-group input, .form-group textarea { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--r); color: var(--white); padding: 12px 16px; font-family: 'DM Sans', sans-serif; font-size: 0.92rem; transition: border-color 0.2s; outline: none; }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--bl); background: rgba(255,255,255,0.1); }
-    .form-group input::placeholder, .form-group textarea::placeholder { color: rgba(255,255,255,0.25); }
+    .form-group label { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tm); font-weight: 700; }
+    .form-group input, .form-group textarea { background: var(--off); border: 1.5px solid transparent; border-radius: var(--r); color: var(--text); padding: 12px 16px; font-family: 'Source Sans 3', sans-serif; font-size: 0.92rem; outline: none; transition: all 0.2s; }
+    .form-group input:focus, .form-group textarea:focus { border-color: var(--bd); background: var(--white); box-shadow: 0 0 0 4px rgba(26,58,107,0.08); }
     .form-group textarea { resize: vertical; min-height: 120px; }
-    .btn-submit { width: 100%; background: var(--bl); color: var(--white); border: none; padding: 14px; border-radius: var(--r); font-family: 'DM Sans', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; }
-    .btn-submit:hover { background: #5a8fd1; transform: translateY(-1px); }
-    footer { background: #0f2347; padding: 2rem 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border-top: 1px solid rgba(74,127,193,0.15); }
-    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.3); }
+    .btn-submit { width: 100%; background: var(--bd); color: var(--white); border: none; padding: 14px; border-radius: var(--r); font-family: 'Source Sans 3', sans-serif; font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.25s; }
+    .btn-submit:hover { background: var(--bm); transform: translateY(-1px); }
+
+    footer { background: var(--bd); padding: 2rem 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
     .footer-links { display: flex; gap: 1.5rem; list-style: none; }
-    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
-    .footer-links a:hover { color: var(--bl); }
+    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.4); text-decoration: none; }
+    .footer-links a:hover { color: var(--white); }
+
     @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
-    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .reveal.visible { opacity: 1; transform: none; }
-    @media (max-width: 1024px) { .over-grid { gap: 3rem; } .contact-wrapper { gap: 3rem; } .diensten-grid { grid-template-columns: 1fr 1fr; } .diensten-grid::after { content: ''; background: var(--white); } }
-    @media (max-width: 768px) { .nav-links { display: none; } .nav-toggle { display: flex; } #home { grid-template-columns: 1fr; padding-top: 100px; } .hero-right { display: none; } #home::before { display: none; } .diensten-grid { grid-template-columns: 1fr; } .over-grid { grid-template-columns: 1fr; } .over-visual { height: 240px; } .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; } .contact-form { padding: 1.5rem; } .form-row { grid-template-columns: 1fr; } section { padding: 70px 5%; } footer { flex-direction: column; text-align: center; } }
+
+    @media (max-width: 1024px) { .over-grid { gap: 3rem; } .mentor-grid { gap: 3rem; } .contact-wrapper { gap: 3rem; } .bw-grid { grid-template-columns: 1fr; } .bw-quote { grid-column: span 1; } }
+    @media (max-width: 768px) {
+      .nav-links { display: none; } .nav-toggle { display: flex; }
+      #home { grid-template-columns: 1fr; padding-top: 100px; } .hero-right { display: none; } #home::before { display: none; }
+      .over-grid { grid-template-columns: 1fr; } .over-img { height: 280px; }
+      .mentor-grid { grid-template-columns: 1fr; }
+      .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; } .contact-form { padding: 1.5rem; } .form-row { grid-template-columns: 1fr; }
+      section { padding: 65px 5%; }
+      footer { flex-direction: column; text-align: center; }
+    }
   </style>
 </head>
 <body>
   <nav>
-    <a href="#home" class="nav-logo"><img src="Logo.png" alt="BewindWijs" /></a>
+    <a href="#home" class="nav-logo"><img src="Logo_BewindWijs.png" alt="BewindWijs" /></a>
     <ul class="nav-links">
-      <li><a href="#Diensten">Diensten</a></li>
-      <li><a href="#over">Over ons</a></li>
+      <li><a href="#over">Over mij</a></li>
+      <li><a href="#bewindvoering">Bewindvoering</a></li>
+      <li><a href="#mentorschap">Mentorschap</a></li>
+      <li><a href="tarieven.html">Tarieven</a></li>
       <li><a href="#Contact" class="btn-nav">Contact</a></li>
     </ul>
     <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
   </nav>
   <div class="mobile-menu" id="mobileMenu">
-    <a href="#Diensten" onclick="closeMenu()">Diensten</a>
-    <a href="#over" onclick="closeMenu()">Over ons</a>
+    <a href="#over" onclick="closeMenu()">Over mij</a>
+    <a href="#bewindvoering" onclick="closeMenu()">Bewindvoering</a>
+    <a href="#mentorschap" onclick="closeMenu()">Mentorschap</a>
+    <a href="tarieven.html" onclick="closeMenu()">Tarieven</a>
     <a href="#Contact" onclick="closeMenu()">Contact</a>
   </div>
+
+  <!-- HERO -->
   <section id="home">
     <div class="hero-left">
       <div class="hero-tag"><div class="hero-tag-dot"></div><span>NBBI aangesloten · Rechtbank aangesteld</span></div>
       <h1 class="hero-title">Samen werken aan<br />een <em>betere toekomst</em></h1>
-      <p class="hero-sub">BewindWijs helpt u weer op het juiste spoor. Of het nu gaat om bewindvoering, inkomensbeheer of budgetcoaching — wij staan voor u klaar.</p>
+      <p class="hero-sub">Ik sta naast u in onzekere tijden. Met bijna acht jaar ervaring als bewindvoerder en professioneel mentor breng ik rust, overzicht en vertrouwen in situaties die complex of overweldigend kunnen voelen.</p>
       <a href="#Contact" class="hero-cta">Neem contact op <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
       <div class="hero-badges">
         <div class="badge"><span class="badge-dot"></span> Door Rechtbank aangesteld</div>
         <div class="badge"><span class="badge-dot"></span> Aangesloten bij NBBI</div>
-        <div class="badge"><span class="badge-dot"></span> Persoonlijke begeleiding</div>
+        <div class="badge"><span class="badge-dot"></span> Sinds maart 2025 ook mentor</div>
       </div>
     </div>
     <div class="hero-right">
       <div class="hero-img-box">
-        <!-- <img src="jouwfoto.jpg" alt="BewindWijs" /> -->
+        <!-- <img src="foto.jpg" alt="BewindWijs" /> -->
         <div class="hero-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Foto plaatsen</div>
       </div>
-      <div class="hero-badge">
-        <div class="hero-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
-        <div class="hero-badge-text"><strong>NBBI Gecertificeerd</strong><span>Door Rechtbank aangesteld</span></div>
+    </div>
+  </section>
+
+  <!-- OVER MIJ -->
+  <section id="over">
+    <div class="over-grid">
+      <div class="over-img reveal">
+        <div class="over-img-box">
+          <!-- <img src="foto-over.jpg" alt="Over mij" /> -->
+          <div class="over-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Foto plaatsen</div>
+        </div>
+      </div>
+      <div class="over-content reveal">
+        <div class="section-label">Over mij</div>
+        <h2 class="section-title">Een stevige basis in onzekere tijden</h2>
+
+        <div class="over-block">
+          <p>Ik ben 53 jaar, inmiddels bijna acht jaar bewindvoerder en sinds maart 2025 ook professioneel mentor. Met ruime ervaring in zowel financiële als persoonlijke begeleiding sta ik mensen bij die ondersteuning nodig hebben bij hun financiën, dagelijkse keuzes en zorgvraagstukken. Mijn doel is om rust, overzicht en vertrouwen te brengen in situaties die complex of overweldigend kunnen voelen.</p>
+        </div>
+
+        <div class="over-block">
+          <h3>Een achtergrond die zekerheid biedt</h3>
+          <p>Voordat ik bewindvoerder werd, werkte ik 15 jaar in de bancaire wereld. Daar heb ik niet alleen veel financiële kennis opgedaan, maar ook geleerd hoe belangrijk het is om helder te communiceren en zorgvuldig met iemands belangen om te gaan. Daarna heb ik drie jaar gewerkt als budgetbeheerder en budgetcoach, waarbij ik mensen hielp om weer grip te krijgen op hun financiële situatie. Die combinatie van ervaring vormt vandaag de basis van mijn werk: professioneel, deskundig en altijd met oog voor de mens.</p>
+        </div>
+
+        <div class="over-block">
+          <h3>Open, eerlijk en naast de cliënt</h3>
+          <p>Openheid en eerlijkheid vind ik essentieel. Ik kies bewust voor een manier van werken waarbij ik niet boven iemand ga staan, maar ernaast. Samen kijken we naar wat nodig is om stabiliteit te creëren en zorgen te verminderen. Dat doe ik met respect, duidelijkheid en een warme, betrokken benadering.</p>
+        </div>
+
+        <div class="over-block">
+          <h3>Samen werken aan stabiliteit en groei</h3>
+          <p>Of het nu gaat om het beschermen van financiële belangen, het nemen van verantwoordelijke beslissingen of het versterken van zelfredzaamheid: ik bied ondersteuning op maat. Betrouwbaar, zorgvuldig en mensgericht. Zodat cliënten zich gesteund voelen en weten dat ze er niet alleen voor staan.</p>
+        </div>
+
+        <div class="over-values">
+          <span class="over-value">15 jaar bancaire ervaring</span>
+          <span class="over-value">NBBI aangesloten</span>
+          <span class="over-value">Rechtbank aangesteld</span>
+          <span class="over-value">Professioneel mentor</span>
+        </div>
       </div>
     </div>
   </section>
-  <section id="Diensten">
-    <div class="diensten-header reveal"><div class="section-label">Wat wij bieden</div><h2 class="section-title">Onze diensten</h2><p class="section-intro">Drie kernservices volledig afgestemd op uw persoonlijke financiële situatie.</p></div>
-    <div class="diensten-grid reveal">
-      <div class="dienst-card"><div class="dienst-number">01</div><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div><h3>Bewindvoering</h3><p>Wij beheren uw financiën en zorgen dat uw rekeningen op tijd worden betaald. U hoeft zich geen zorgen meer te maken over uw geldzaken.</p></div>
-      <div class="dienst-card"><div class="dienst-number">02</div><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><h3>Inkomensbeheer</h3><p>Geheel of gedeeltelijk inkomensbeheer op maat. Wij zorgen voor een overzichtelijke verdeling van uw inkomsten en uitgaven.</p></div>
-      <div class="dienst-card"><div class="dienst-number">03</div><div class="dienst-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><h3>Budgetcoaching</h3><p>Wij coachen u om zelf grip te krijgen op uw financiën. Samen maken we een plan zodat u financieel zelfredzaam wordt.</p></div>
+
+  <!-- BEWINDVOERING -->
+  <section id="bewindvoering">
+    <div class="bw-intro reveal">
+      <div class="section-label">Bewindvoering</div>
+      <h2 class="section-title">Wat doet een bewindvoerder?</h2>
+      <p class="section-intro">Wanneer iemand door financiële of persoonlijke omstandigheden niet langer in staat is zijn eigen geldzaken te regelen, kan de rechtbank een bewindvoerder benoemen. Als bewindvoerder neem ik de verantwoordelijkheid over de financiële administratie, zodat er weer rust, overzicht en stabiliteit ontstaat.</p>
+    </div>
+    <div class="bw-grid reveal">
+      <div class="bw-card">
+        <div class="bw-card-num">één</div>
+        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 7H6a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-3M16 5l3 3-8 8H8v-3l8-8z"/></svg></div>
+        <h3>Financieel beheer en administratie</h3>
+        <p>Het beheren van alle inkomsten en uitgaven, betalen van de vaste lasten en zorgen dat financiële verplichtingen op tijd worden nagekomen. Hierdoor voorkomen we schulden of verdere financiële problemen.</p>
+      </div>
+      <div class="bw-card">
+        <div class="bw-card-num">twee</div>
+        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
+        <h3>Opstellen van een budgetplan</h3>
+        <p>Samen stellen we een realistisch budget op dat aansluit bij de persoonlijke situatie. Dit budget zorgt voor duidelijkheid: wat komt erin, wat gaat eruit en hoeveel leefgeld is verantwoord?</p>
+      </div>
+      <div class="bw-card">
+        <div class="bw-card-num">drie</div>
+        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <h3>Aanvragen en beheren van toeslagen</h3>
+        <p>Ik controleer welke toeslagen, subsidies of voorzieningen van toepassing zijn. Indien nodig help ik bij de aanvraag. Ook onderhoud ik contact met gemeenten, instanties en organisaties.</p>
+      </div>
+      <div class="bw-card">
+        <div class="bw-card-num">vier</div>
+        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+        <h3>Schuldenregeling en bemiddeling</h3>
+        <p>Bij schulden zorg ik voor overzicht en onderhandel ik met schuldeisers. Waar mogelijk zoek ik naar oplossingen zoals betalingsregelingen, schuldhulpverlening of trajecten via de gemeente.</p>
+      </div>
+      <div class="bw-card">
+        <div class="bw-card-num">vijf</div>
+        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg></div>
+        <h3>Bescherming en rechtmatig handelen</h3>
+        <p>Als bewindvoerder handel ik altijd volgens de regels van de rechtbank. Jaarlijks maak ik een rekening en verantwoording, zodat volledig inzichtelijk is wat er met de financiën is gebeurd. Transparantie en zorgvuldigheid staan hierbij voorop.</p>
+      </div>
+      <div class="bw-card">
+        <div class="bw-card-num">zes</div>
+        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+        <h3>Correspondentie en communicatie</h3>
+        <p>Alle financiële post komt bij mij binnen. Ik behandel deze, neem contact op met instanties en zorg dat u geen belastende correspondentie meer hoeft te verwerken.</p>
+      </div>
+      <div class="bw-quote">
+        <p>"Mijn werk stopt niet bij het beheren van geldzaken. Ik kijk vooruit: hoe kunnen we financiële stabiliteit behouden of verbeteren? Welke stappen kunnen op termijn helpen om weer zelfstandig te worden? Bewindvoering draait niet alleen om geld — het gaat vooral om rust, veiligheid en het gevoel dat er weer overzicht komt."</p>
+      </div>
     </div>
   </section>
-  <section id="over">
-    <div class="over-grid">
-      <div class="over-visual reveal"><div class="over-block-main"><div class="over-block-text"><div class="big-text">NBBI</div><p>Gecertificeerd & door de Rechtbank aangesteld</p></div></div><div class="over-block-accent"></div></div>
-      <div class="over-content reveal"><div class="section-label">Over ons</div><h2 class="section-title">Professioneel en betrouwbaar</h2><p class="section-intro">Wij zijn beide door de Rechtbank aangesteld als professioneel bewindvoerder en aangesloten bij de branchevereniging NBBI.</p><ul class="over-list"><li>Door de Rechtbank aangesteld als professioneel bewindvoerder</li><li>Aangesloten bij branchevereniging NBBI</li><li>Persoonlijke en betrokken begeleiding</li><li>Ervaren in bewindvoering, inkomensbeheer en budgetcoaching</li></ul></div>
+
+  <!-- MENTORSCHAP -->
+  <section id="mentorschap">
+    <div class="mentor-grid">
+      <div class="mentor-content reveal">
+        <div class="section-label">Mentorschap</div>
+        <h2 class="section-title">Wat doet een professioneel mentor?</h2>
+        <p class="section-intro" style="margin-bottom:2rem;">Een professioneel mentor wordt door de rechtbank benoemd wanneer iemand niet (volledig) in staat is om zelf beslissingen te nemen over zorg, begeleiding, welzijn of dagelijkse ondersteuning. Ik behartigt de persoonlijke belangen van de cliënt en zorgt ervoor dat deze de juiste zorg, aandacht en bescherming krijgt.</p>
+
+        <ul class="mentor-list">
+          <li>
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></div>
+            <div class="text"><h4>Belangenbehartiging in zorg en welzijn</h4><p>Ik vertegenwoordig de cliënt bij beslissingen rondom zorg, behandeling, begeleiding en dagelijkse ondersteuning. Ik zet me in voor passende zorg en kom op voor wensen, grenzen en behoeften van betrokkene.</p></div>
+          </li>
+          <li>
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div>
+            <div class="text"><h4>Overleg met zorgverleners en instanties</h4><p>Ik onderhoud actief contact met zorgverleners, begeleiders en behandelaren. Samen bespreken we wat de cliënt nodig heeft, welke aanpassingen nodig zijn en hoe de zorg zo goed mogelijk kan aansluiten op de persoonlijke situatie.</p></div>
+          </li>
+          <li>
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg></div>
+            <div class="text"><h4>Bewaken van kwaliteit van leven</h4><p>Als mentor let ik op hoe het écht met iemand gaat. Veiligheid, gezondheid, sociale contacten, daginvulling en welzijn zijn daarbij belangrijke thema's. Ik kijk niet alleen naar problemen, maar ook naar kansen om het leven prettiger en stabieler te maken.</p></div>
+          </li>
+          <li>
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div>
+            <div class="text"><h4>Regelmatig persoonlijk contact</h4><p>De cliënt wordt regelmatig door mij bezocht om te bespreken hoe het gaat, wensen te inventariseren en te zien of de zorg nog passend is. Door dichtbij te blijven, ontstaat vertrouwen en kan ik sneller reageren wanneer iets verandert.</p></div>
+          </li>
+          <li>
+            <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
+            <div class="text"><h4>Ondersteunen bij keuzes en beslissingen</h4><p>Ik help de cliënt bij het maken van keuzes rondom zorg en welzijn. Waar mogelijk ondersteun ik in plaats van over te nemen, zodat de cliënt zelf zoveel mogelijk regie behoudt.</p></div>
+          </li>
+        </ul>
+      </div>
+      <div class="reveal">
+        <div class="mentor-aside">
+          <h3>Respect, betrokkenheid en open communicatie</h3>
+          <p>Mentorschap draait niet alleen om regels en besluiten, maar vooral om menselijkheid. Door respectvol samen te werken en goed te luisteren, kunnen we samen zorgen voor een veilige, stabiele en waardige leefomgeving.</p>
+          <p>Sinds maart 2025 ben ik ook officieel aangesteld als professioneel mentor door de rechtbank. Dit is een aanvulling op mijn werk als bewindvoerder, waardoor ik cliënten op meerdere vlakken kan ondersteunen.</p>
+          <a href="#Contact" class="aside-link">Meer weten? Neem contact op <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+        </div>
+      </div>
     </div>
   </section>
+
+  <!-- CONTACT -->
   <section id="Contact">
     <div class="contact-wrapper">
-      <div class="contact-info reveal"><div class="section-label">Bereikbaarheid</div><h2 class="section-title">Neem contact op</h2><p class="section-intro">Per mail zijn wij 24 uur per dag bereikbaar. U ontvangt binnen 2 werkdagen een reactie.</p><div class="contact-detail"><div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><span><a href="mailto:info@bewindwijs.nl">info@bewindwijs.nl</a></span></div><div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Reactie binnen 2 werkdagen</span></div></div></div>
-      <div class="contact-form reveal"><form id="contactForm"><input type="hidden" name="access_key" value="0e93a4d9-2f36-476b-b6d7-f7f4bcc963f2" /><div class="form-row"><div class="form-group"><label>Naam</label><input type="text" name="name" placeholder="Uw naam" required /></div><div class="form-group"><label>E-mail</label><input type="email" name="email" placeholder="uw@email.nl" required /></div></div><div class="form-group"><label>Bericht</label><textarea name="message" placeholder="Hoe kunnen wij u helpen?" required></textarea></div><button type="submit" class="btn-submit">Verstuur bericht</button></form></div>
+      <div class="contact-info reveal">
+        <div class="section-label">Bereikbaarheid</div>
+        <h2 class="section-title">Neem contact op</h2>
+        <p class="section-intro">Per mail ben ik 24 uur per dag bereikbaar. U ontvangt binnen 2 werkdagen een reactie. Ik sta u graag te woord voor vragen over bewindvoering, mentorschap of de tarieven.</p>
+        <div class="contact-item" style="margin-top:2rem"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><span><a href="mailto:info@bewindwijs.nl">info@bewindwijs.nl</a></span></div>
+        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><span>Leusden</span></div>
+        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Reactie binnen 2 werkdagen</span></div>
+      </div>
+      <div class="contact-form reveal">
+        <form id="contactForm">
+          <input type="hidden" name="access_key" value="0e93a4d9-2f36-476b-b6d7-f7f4bcc963f2" />
+          <div class="form-row">
+            <div class="form-group"><label>Naam</label><input type="text" name="name" placeholder="Uw naam" required /></div>
+            <div class="form-group"><label>E-mail</label><input type="email" name="email" placeholder="uw@email.nl" required /></div>
+          </div>
+          <div class="form-group"><label>Onderwerp</label><input type="text" name="subject" placeholder="Waar gaat uw vraag over?" /></div>
+          <div class="form-group"><label>Bericht</label><textarea name="message" placeholder="Hoe kan ik u helpen?" required></textarea></div>
+          <button type="submit" class="btn-submit">Verstuur bericht</button>
+        </form>
+      </div>
     </div>
   </section>
-  <footer><p>© 2025 BewindWijs – Leusden</p><ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Klachtenregeling</a></li></ul></footer>
+
+  <footer>
+    <p>© 2025 BewindWijs – Leusden</p>
+    <ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Klachtenregeling</a></li></ul>
+  </footer>
+
   <script>
-    const toggle=document.getElementById('navToggle'),mobileMenu=document.getElementById('mobileMenu');
-    toggle.addEventListener('click',()=>{toggle.classList.toggle('open');mobileMenu.classList.toggle('open');});
-    function closeMenu(){toggle.classList.remove('open');mobileMenu.classList.remove('open');}
-    const reveals=document.querySelectorAll('.reveal');
-    new IntersectionObserver((entries)=>{entries.forEach((e,i)=>{if(e.isIntersecting){setTimeout(()=>e.target.classList.add('visible'),i*100);}});},{threshold:0.1}).observe && reveals.forEach(el=>new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});},{threshold:0.1}).observe(el));
-    document.getElementById('contactForm').addEventListener('submit',async function(e){e.preventDefault();const btn=this.querySelector('.btn-submit');btn.textContent='Versturen...';btn.disabled=true;const res=await fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(this)});const json=await res.json();if(json.success){btn.textContent='Verstuurd ✓';btn.style.background='#4caf50';this.reset();setTimeout(()=>{btn.textContent='Verstuur bericht';btn.style.background='';btn.disabled=false;},3000);}else{btn.textContent='Er ging iets mis';btn.disabled=false;}});
+    const toggle=document.getElementById('navToggle'),mm=document.getElementById('mobileMenu');
+    toggle.addEventListener('click',()=>{toggle.classList.toggle('open');mm.classList.toggle('open');});
+    function closeMenu(){toggle.classList.remove('open');mm.classList.remove('open');}
+    document.querySelectorAll('.reveal').forEach(el=>new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:0.1}).observe(el));
+    document.getElementById('contactForm').addEventListener('submit',async function(e){e.preventDefault();const btn=this.querySelector('.btn-submit');btn.textContent='Versturen...';btn.disabled=true;const r=await fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(this)});const j=await r.json();if(j.success){btn.textContent='Verstuurd ✓';btn.style.background='#4caf50';this.reset();setTimeout(()=>{btn.textContent='Verstuur bericht';btn.style.background='';btn.disabled=false;},3000);}else{btn.textContent='Er ging iets mis';btn.disabled=false;}});
   </script>
 </body>
 </html>
