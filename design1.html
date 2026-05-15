@@ -16,9 +16,9 @@
     body { font-family: 'Source Sans 3', sans-serif; background: var(--off); color: var(--text); overflow-x: hidden; }
 
     /* NAV */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,249,252,0.97); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 80px; border-bottom: 1px solid rgba(26,58,107,0.1); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,249,252,0.97); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 96px; border-bottom: 1px solid rgba(26,58,107,0.1); }
     .nav-logo { display: flex; align-items: center; text-decoration: none; }
-    .nav-logo img { height: 56px; width: auto; }
+    .nav-logo img { height: 76px; width: auto; }
     .nav-links { display: flex; gap: 1.8rem; list-style: none; }
     .nav-links a { color: var(--tm); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
     .nav-links a:hover { color: var(--bd); }
@@ -135,15 +135,61 @@
     .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s ease, transform 0.7s ease; }
     .reveal.visible { opacity: 1; transform: none; }
 
-    @media (max-width: 1024px) { .mentor-grid { gap: 3rem; } .contact-wrapper { gap: 3rem; } .bw-grid { grid-template-columns: 1fr 1fr; } .bw-quote { grid-column: span 2; } }
+    /* TABLET (768px - 1024px) */
+    @media (max-width: 1024px) {
+      nav { height: 80px; }
+      .nav-logo img { height: 60px; }
+      #home { padding: 100px 5% 60px; gap: 3rem; }
+      .bw-grid { grid-template-columns: 1fr 1fr; }
+      .bw-quote { grid-column: span 2; }
+      .contact-wrapper { gap: 3rem; }
+      [style*="grid-template-columns:1fr 1.3fr"] { grid-template-columns: 1fr !important; gap: 2rem !important; }
+      [style*="grid-template-columns:1fr 1.2fr"] { grid-template-columns: 1fr !important; gap: 2rem !important; }
+    }
+
+    /* MOBILE (max 768px) */
     @media (max-width: 768px) {
+      nav { height: 72px; padding: 0 4%; }
       .nav-logo img { height: 44px; }
-      .nav-links { display: none; } .nav-toggle { display: flex; }
-      #home { grid-template-columns: 1fr; padding-top: 100px; } .hero-right { display: none; } #home::before { display: none; }
-      .mentor-grid { grid-template-columns: 1fr; }
-      .contact-wrapper { grid-template-columns: 1fr; gap: 3rem; } .contact-form { padding: 1.5rem; } .form-row { grid-template-columns: 1fr; }
-      section { padding: 55px 5%; }
-      footer { flex-direction: column; text-align: center; }
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .mobile-menu { top: 72px; }
+
+      #home { grid-template-columns: 1fr; padding: 90px 4% 50px; gap: 0; }
+      .hero-right { display: none; }
+      #home::before { display: none; }
+      h1.hero-title { font-size: 2rem; }
+      .hero-sub { font-size: 0.95rem; }
+      .hero-badges { gap: 1rem; }
+      .badge { font-size: 0.75rem; }
+
+      section { padding: 50px 4%; }
+      h2.section-title { font-size: 1.7rem; }
+      .section-intro { font-size: 0.95rem; }
+
+      .over-content { max-width: 100%; }
+
+      .bw-grid { grid-template-columns: 1fr; }
+      .bw-quote { grid-column: span 1; }
+      .bw-card { padding: 1.25rem; }
+
+      [style*="grid-template-columns:1fr 1.3fr"] { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+      [style*="grid-template-columns:1fr 1.2fr"] { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+      .mentor-list { grid-template-columns: 1fr !important; }
+      .mentor-aside { grid-template-columns: 1fr !important; gap: 1rem !important; }
+
+      .contact-wrapper { grid-template-columns: 1fr; gap: 2rem; }
+      .contact-form { padding: 1.25rem; }
+      .form-row { grid-template-columns: 1fr; }
+
+      footer { flex-direction: column; text-align: center; gap: 0.75rem; }
+    }
+
+    /* SMALL MOBILE (max 400px) */
+    @media (max-width: 400px) {
+      h1.hero-title { font-size: 1.75rem; }
+      .hero-tag span { font-size: 0.65rem; }
+      .hero-cta { padding: 12px 22px; font-size: 0.88rem; }
     }
   </style>
 </head>
