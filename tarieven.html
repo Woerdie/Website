@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BewindWijs – Tarieven 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bd: #1a3a6b; --bm: #2a5298; --bl: #4a7fc1; --bp: #e8f0fb;
+      --white: #fff; --off: #f8f9fc; --text: #1a1e2e; --tm: #64748b; --r: 6px;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Source Sans 3', sans-serif; background: var(--off); color: var(--text); }
+
+    /* NAV — zelfde als design1 */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,249,252,0.97); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 72px; border-bottom: 1px solid rgba(26,58,107,0.1); }
+    .nav-logo { display: flex; align-items: center; text-decoration: none; }
+    .nav-logo img { height: 76px; width: auto; }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a { color: var(--tm); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--bd); }
+    .nav-links a.active { color: var(--bd); font-weight: 700; }
+    .nav-links a.btn-nav { background: var(--bd); color: var(--white); padding: 9px 22px; border-radius: var(--r); font-weight: 600; }
+    .nav-links a.btn-nav:hover { background: var(--bm); }
+    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--bd); border-radius: 2px; transition: all 0.3s; }
+    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .nav-toggle.open span:nth-child(2) { opacity: 0; }
+    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+    .mobile-menu { display: none; position: fixed; top: 72px; left: 0; right: 0; background: var(--off); border-top: 1px solid rgba(26,58,107,0.1); padding: 1.5rem 5%; z-index: 99; flex-direction: column; }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { color: var(--text); text-decoration: none; font-size: 1rem; padding: 1rem 0; border-bottom: 1px solid rgba(26,58,107,0.08); font-weight: 500; }
+    .mobile-menu a:last-child { border-bottom: none; }
+
+    /* HERO */
+    .page-hero { background: var(--bd); padding: 110px 5% 60px; position: relative; overflow: hidden; }
+    .page-hero::before { content: ''; position: absolute; right: -5%; top: 50%; transform: translateY(-50%); width: 40%; aspect-ratio: 1; border-radius: 50%; background: rgba(74,127,193,0.1); pointer-events: none; }
+    .page-hero-inner { position: relative; max-width: 700px; animation: fadeUp 0.8s ease both; }
+    .page-hero .label { font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(255,255,255,0.5); font-weight: 600; margin-bottom: 0.75rem; }
+    .page-hero h1 { font-family: 'Lora', serif; font-size: clamp(2rem, 4vw, 2.8rem); color: var(--white); font-weight: 700; margin-bottom: 1rem; line-height: 1.2; }
+    .page-hero p { color: rgba(255,255,255,0.7); font-size: 1rem; line-height: 1.8; font-weight: 300; }
+
+    /* CONTENT */
+    .content { max-width: 1100px; margin: 0 auto; padding: 60px 5%; }
+
+    /* NOTE */
+    .note { background: var(--bp); border: 1px solid rgba(26,58,107,0.15); border-radius: var(--r); padding: 1.25rem 1.5rem; margin-bottom: 3rem; font-size: 0.95rem; color: var(--bd); line-height: 1.7; }
+    .note strong { font-weight: 700; }
+
+    /* SECTION */
+    .tarief-section { margin-bottom: 3rem; }
+    .tarief-section-title {
+      font-family: 'Lora', serif; font-size: 1.3rem; color: var(--bd);
+      font-weight: 700; margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem; border-bottom: 2px solid var(--bp);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .tarief-section-title svg { width: 20px; height: 20px; color: var(--bl); flex-shrink: 0; }
+
+    /* TABLE */
+    .tarief-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: var(--r); overflow: hidden; box-shadow: 0 2px 16px rgba(26,58,107,0.06); border: 1px solid rgba(26,58,107,0.08); }
+    .tarief-table thead tr { background: var(--bd); }
+    .tarief-table thead th { padding: 13px 20px; text-align: left; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: rgba(255,255,255,0.8); }
+    .tarief-table thead th:last-child, .tarief-table thead th:nth-last-child(2) { text-align: right; }
+    .tarief-table tbody tr { border-bottom: 1px solid rgba(26,58,107,0.06); transition: background 0.15s; }
+    .tarief-table tbody tr:last-child { border-bottom: none; }
+    .tarief-table tbody tr:hover { background: var(--bp); }
+    .tarief-table tbody td { padding: 13px 20px; font-size: 0.92rem; color: var(--text); }
+    .tarief-table tbody td:last-child, .tarief-table tbody td:nth-last-child(2) { text-align: right; font-weight: 600; color: var(--bd); white-space: nowrap; }
+    .tarief-table tbody td.empty { color: var(--tm); font-size: 0.85rem; }
+
+    /* 2-COL GRID */
+    .tarief-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+
+    /* CTA */
+    .cta-section { background: var(--bd); border-radius: var(--r); padding: 3rem; display: grid; grid-template-columns: 1fr auto; gap: 2rem; align-items: center; margin-top: 1rem; }
+    .cta-section h2 { font-family: 'Lora', serif; font-size: 1.5rem; color: var(--white); margin-bottom: 0.5rem; }
+    .cta-section p { color: rgba(255,255,255,0.65); font-weight: 300; line-height: 1.7; font-size: 0.95rem; }
+    .cta-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--white); color: var(--bd); text-decoration: none; padding: 13px 28px; border-radius: var(--r); font-weight: 700; font-size: 0.9rem; transition: all 0.25s; white-space: nowrap; }
+    .cta-btn:hover { background: var(--bp); transform: translateY(-2px); }
+
+    footer { background: var(--bd); padding: 2rem 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-top: 60px; }
+    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
+    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
+    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.4); text-decoration: none; }
+    .footer-links a:hover { color: var(--white); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 768px) {
+      .nav-logo img { height: 44px; }
+      .nav-links { display: none; }
+      .nav-toggle { display: flex; }
+      .page-hero { padding: 90px 4% 50px; }
+      .content { padding: 40px 4%; }
+      .tarief-grid { grid-template-columns: 1fr; }
+      .tarief-table thead th:nth-last-child(2), .tarief-table tbody td:nth-last-child(2) { display: none; }
+      .cta-section { grid-template-columns: 1fr; gap: 1.5rem; }
+      footer { flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="design1.html" class="nav-logo"><img src="Logo_BewindWijs.png" alt="BewindWijs" /></a>
+    <ul class="nav-links">
+      <li><a href="design1.html#over">Over mij</a></li>
+      <li><a href="design1.html#bewindvoering">Bewindvoering</a></li>
+      <li><a href="design1.html#mentorschap">Mentorschap</a></li>
+      <li><a href="tarieven.html" class="active">Tarieven</a></li>
+      <li><a href="design1.html#Contact" class="btn-nav">Contact</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
+  </nav>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="design1.html#over" onclick="closeMenu()">Over mij</a>
+    <a href="design1.html#bewindvoering" onclick="closeMenu()">Bewindvoering</a>
+    <a href="design1.html#mentorschap" onclick="closeMenu()">Mentorschap</a>
+    <a href="tarieven.html" onclick="closeMenu()">Tarieven</a>
+    <a href="design1.html#Contact" onclick="closeMenu()">Contact</a>
+  </div>
+
+  <!-- HERO -->
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="label">BewindWijs – Leusden</div>
+      <h1>Tarieven 2026</h1>
+      <p>Hieronder vindt u een overzicht van de geldende tarieven voor bewindvoering, mentorschap en gecombineerde trajecten. Alle tarieven zijn vastgesteld door de rechtbank.</p>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <div class="note reveal">
+      <strong>Let op:</strong> De genoemde tarieven zijn de maximale bedragen zoals vastgesteld door de rechtbank. De kosten voor bewindvoering worden in de meeste gevallen vergoed via de bijzondere bijstand of het VTLB. Neem gerust contact op voor meer informatie over uw persoonlijke situatie.
+    </div>
+
+    <!-- BEWINDVOERING 1P -->
+    <div class="tarief-section reveal">
+      <div class="tarief-section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+        Bewindvoering – 1 persoon
+      </div>
+      <table class="tarief-table">
+        <thead><tr><th>Omschrijving</th><th>Per maand</th><th>Per jaar</th></tr></thead>
+        <tbody>
+          <tr><td>Standaard</td><td>€ 135,83</td><td>€ 1.630</td></tr>
+          <tr><td>Problematische schulden</td><td>€ 175,58</td><td>€ 2.107</td></tr>
+          <tr><td>Opstartkosten</td><td class="empty">–</td><td>€ 767</td></tr>
+          <tr><td>Opstartkosten met budgetbeheer</td><td class="empty">–</td><td>€ 574</td></tr>
+          <tr><td>Woningontruiming, verkoop of verhuizing (geen mentor)</td><td class="empty">–</td><td>€ 478</td></tr>
+          <tr><td>PGB-beheer</td><td>€ 59,83</td><td>€ 718</td></tr>
+          <tr><td>Opstellen eindrekening en verantwoording</td><td class="empty">–</td><td>€ 288</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- BEWINDVOERING 2P -->
+    <div class="tarief-section reveal">
+      <div class="tarief-section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Bewindvoering – 2 personen
+      </div>
+      <table class="tarief-table">
+        <thead><tr><th>Omschrijving</th><th>Per maand</th><th>Per jaar</th></tr></thead>
+        <tbody>
+          <tr><td>Standaard</td><td>€ 162,83</td><td>€ 1.954</td></tr>
+          <tr><td>Standaard 1P + Problematische schulden 1P</td><td>€ 186,91</td><td>€ 2.243</td></tr>
+          <tr><td>Problematische schulden 2P</td><td>€ 210,66</td><td>€ 2.528</td></tr>
+          <tr><td>Opstartkosten</td><td class="empty">–</td><td>€ 920</td></tr>
+          <tr><td>Opstartkosten met budgetbeheer 2P</td><td class="empty">–</td><td>€ 688</td></tr>
+          <tr><td>Opstartkosten met budgetbeheer 1P</td><td class="empty">–</td><td>€ 807</td></tr>
+          <tr><td>Woningontruiming, verkoop of verhuizing (geen mentor)</td><td class="empty">–</td><td>€ 478</td></tr>
+          <tr><td>PGB-beheer</td><td>€ 59,83</td><td>€ 718</td></tr>
+          <tr><td>Opstellen eindrekening en verantwoording</td><td class="empty">–</td><td>€ 346</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MENTORSCHAP 1P + 2P -->
+    <div class="tarief-grid reveal">
+      <div class="tarief-section">
+        <div class="tarief-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+          Mentorschap – 1 persoon
+        </div>
+        <table class="tarief-table">
+          <thead><tr><th>Omschrijving</th><th>Per maand</th><th>Per jaar</th></tr></thead>
+          <tbody>
+            <tr><td>Standaard</td><td>€ 135,83</td><td>€ 1.630</td></tr>
+            <tr><td>Psychische problemen (18–23 jaar)</td><td>€ 175,58</td><td>€ 2.107</td></tr>
+            <tr><td>Opstartkosten</td><td class="empty">–</td><td>€ 767</td></tr>
+            <tr><td>Verhuizing</td><td class="empty">–</td><td>€ 478</td></tr>
+            <tr><td>PGB-beheer</td><td>€ 59,83</td><td>€ 718</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="tarief-section">
+        <div class="tarief-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Mentorschap – 2 personen
+        </div>
+        <table class="tarief-table">
+          <thead><tr><th>Omschrijving</th><th>Per maand</th><th>Per jaar</th></tr></thead>
+          <tbody>
+            <tr><td>Standaard</td><td>€ 244,41</td><td>€ 2.933</td></tr>
+            <tr><td>Standaard 1P + Psychische problemen 1P</td><td>€ 280,08</td><td>€ 3.361</td></tr>
+            <tr><td>Psychische problemen 2P</td><td>€ 316,16</td><td>€ 3.794</td></tr>
+            <tr><td>Opstartkosten</td><td class="empty">–</td><td>€ 1.380</td></tr>
+            <tr><td>Verhuizing</td><td class="empty">–</td><td>€ 478</td></tr>
+            <tr><td>PGB-beheer</td><td>€ 59,83</td><td>€ 718</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- BEWIND + MENTORSCHAP 1P -->
+    <div class="tarief-section reveal">
+      <div class="tarief-section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        Bewind én Mentorschap – 1 persoon
+      </div>
+      <table class="tarief-table">
+        <thead><tr><th>Omschrijving</th><th>Per maand</th><th>Per jaar</th></tr></thead>
+        <tbody>
+          <tr><td>Standaard</td><td>€ 244,41</td><td>€ 2.933</td></tr>
+          <tr><td>Problematische schulden</td><td>€ 280,08</td><td>€ 3.361</td></tr>
+          <tr><td>Psychische problemen (18–23 jaar)</td><td>€ 280,08</td><td>€ 3.361</td></tr>
+          <tr><td>Schulden + Psychische problemen</td><td>€ 316,16</td><td>€ 3.794</td></tr>
+          <tr><td>Opstartkosten</td><td class="empty">–</td><td>€ 1.380</td></tr>
+          <tr><td>Opstartkosten met budgetbeheer</td><td class="empty">–</td><td>€ 1.207</td></tr>
+          <tr><td>Woningontruiming, verkoop of verhuizing</td><td class="empty">–</td><td>€ 478</td></tr>
+          <tr><td>PGB-beheer</td><td>€ 59,83</td><td>€ 718</td></tr>
+          <tr><td>Opstellen eindrekening en verantwoording</td><td class="empty">–</td><td>€ 288</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- BEWIND + MENTORSCHAP 2P -->
+    <div class="tarief-section reveal">
+      <div class="tarief-section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        Bewind én Mentorschap – 2 personen
+      </div>
+      <table class="tarief-table">
+        <thead><tr><th>Omschrijving</th><th>Per maand</th><th>Per jaar</th></tr></thead>
+        <tbody>
+          <tr><td>Standaard</td><td>€ 352,91</td><td>€ 4.235</td></tr>
+          <tr><td>Standaard 1P + Schulden 1P</td><td>€ 372,91</td><td>€ 4.475</td></tr>
+          <tr><td>Standaard 1P + Psychische problemen 1P</td><td>€ 384,83</td><td>€ 4.618</td></tr>
+          <tr><td>Schulden 1P + Psychische problemen 1P</td><td>€ 404,75</td><td>€ 4.857</td></tr>
+          <tr><td>Schulden 2P + Psychische problemen 1P</td><td>€ 424,58</td><td>€ 5.095</td></tr>
+          <tr><td>Psychische problemen 2P</td><td>€ 416,91</td><td>€ 5.003</td></tr>
+          <tr><td>Schulden 1P + Psychische problemen 2P</td><td>€ 436,75</td><td>€ 5.241</td></tr>
+          <tr><td>Schulden 2P + Psychische problemen 2P</td><td>€ 456,75</td><td>€ 5.481</td></tr>
+          <tr><td>Opstartkosten</td><td class="empty">–</td><td>€ 1.993</td></tr>
+          <tr><td>Opstartkosten met budgetbeheer 2P</td><td class="empty">–</td><td>€ 1.800</td></tr>
+          <tr><td>Opstartkosten met budgetbeheer 1P</td><td class="empty">–</td><td>€ 1.896</td></tr>
+          <tr><td>Woningontruiming, verkoop of verhuizing</td><td class="empty">–</td><td>€ 478</td></tr>
+          <tr><td>PGB-beheer</td><td>€ 59,83</td><td>€ 718</td></tr>
+          <tr><td>Opstellen eindrekening en verantwoording</td><td class="empty">–</td><td>€ 346</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ALGEMEEN -->
+    <div class="tarief-section reveal">
+      <div class="tarief-section-title">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Algemene kosten
+      </div>
+      <table class="tarief-table">
+        <thead><tr><th>Omschrijving</th><th>Per maand</th><th>Per jaar</th></tr></thead>
+        <tbody>
+          <tr><td>Bankkosten 1 persoon</td><td class="empty">–</td><td>€ 12,50</td></tr>
+          <tr><td>Bankkosten 2 personen</td><td class="empty">–</td><td>€ 25,00</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CTA -->
+    <div class="cta-section reveal">
+      <div>
+        <h2>Heeft u vragen over de tarieven?</h2>
+        <p>De kosten voor bewindvoering worden in de meeste gevallen vergoed. Neem gerust contact op voor een persoonlijk gesprek over uw situatie.</p>
+      </div>
+      <a href="design1.html#Contact" class="cta-btn">Neem contact op <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+    </div>
+
+  </div>
+
+  <footer>
+    <p>© 2025 BewindWijs – Leusden</p>
+    <ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Klachtenregeling</a></li></ul>
+  </footer>
+
+  <script>
+    const toggle=document.getElementById('navToggle'),mm=document.getElementById('mobileMenu');
+    toggle.addEventListener('click',()=>{toggle.classList.toggle('open');mm.classList.toggle('open');});
+    function closeMenu(){toggle.classList.remove('open');mm.classList.remove('open');}
+    document.querySelectorAll('.reveal').forEach(el=>new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:0.1}).observe(el));
+  </script>
+</body>
+</html>
