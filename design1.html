@@ -16,7 +16,7 @@
     body { font-family: 'Source Sans 3', sans-serif; background: var(--off); color: var(--text); overflow-x: hidden; }
 
     /* NAV */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,249,252,0.97); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 96px; border-bottom: 1px solid rgba(26,58,107,0.1); }
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,249,252,0.97); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 72px; border-bottom: 1px solid rgba(26,58,107,0.1); }
     .nav-logo { display: flex; align-items: center; text-decoration: none; }
     .nav-logo img { height: 76px; width: auto; }
     .nav-links { display: flex; gap: 1.8rem; list-style: none; }
@@ -35,7 +35,7 @@
     .mobile-menu a:last-child { border-bottom: none; }
 
     /* HERO */
-    #home { min-height: 100vh; background: var(--bd); display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 100px 5% 60px; gap: 4rem; position: relative; overflow: hidden; }
+    #home { min-height: 100vh; background: var(--bd); display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 90px 5% 60px; gap: 4rem; position: relative; overflow: hidden; scroll-margin-top: 0; }
     #home::before { content: ''; position: absolute; right: -5%; top: 50%; transform: translateY(-50%); width: 55%; aspect-ratio: 1; border-radius: 50%; background: rgba(74,127,193,0.1); pointer-events: none; }
     .hero-left { position: relative; animation: fadeUp 0.9s ease both; }
     .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; padding: 7px 16px; margin-bottom: 2rem; }
@@ -57,7 +57,7 @@
     .hero-img-placeholder svg { width: 36px; height: 36px; }
 
     /* SECTIONS */
-    section { padding: 70px 5%; }
+    section { padding: 70px 5%; scroll-margin-top: 72px; }
     .section-label { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bl); font-weight: 600; margin-bottom: 0.75rem; }
     h2.section-title { font-family: 'Lora', serif; font-size: clamp(2rem, 3.5vw, 2.8rem); color: var(--bd); line-height: 1.2; margin-bottom: 1.2rem; font-weight: 700; }
     .section-intro { font-size: 1.05rem; color: var(--tm); line-height: 1.85; max-width: 700px; font-weight: 300; }
