@@ -83,13 +83,14 @@
     .bw-card:hover { border-color: var(--bl); box-shadow: 0 8px 32px rgba(26,58,107,0.1); transform: translateY(-3px); }
     .bw-card-num { font-family: 'Lora', serif; font-size: 0.82rem; color: var(--bl); font-style: italic; margin-bottom: 0.6rem; opacity: 0.7; }
     .bw-card h3 { font-family: 'Lora', serif; font-size: 1.15rem; color: var(--bd); font-weight: 700; margin-bottom: 0.5rem; }
-    .bw-card p { font-size: 0.95rem; color: var(--tm); line-height: 1.75; font-weight: 300; }
+    .bw-card p { font-size: 0.95rem; color: var(--text); line-height: 1.75; font-weight: 300; }
     .bw-icon { width: 44px; height: 44px; background: var(--bp); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem; transition: background 0.3s; }
     .bw-card:hover .bw-icon { background: var(--bd); }
     .bw-icon svg { width: 20px; height: 20px; color: var(--bd); transition: color 0.3s; }
     .bw-card:hover .bw-icon svg { color: var(--white); }
-    .bw-quote { background: var(--bd); border-radius: 14px; padding: 2rem; color: var(--white); grid-column: span 3; }
-    .bw-quote p { font-family: 'Lora', serif; font-style: italic; font-size: 1.1rem; line-height: 1.75; color: rgba(255,255,255,0.9); }
+    .bw-quote { background: var(--bd); border-radius: 14px; padding: 2.5rem 3rem; color: var(--white); grid-column: span 3; position: relative; overflow: hidden; }
+    .bw-quote::before { content: '\201C'; font-family: 'Lora', serif; font-size: 8rem; color: rgba(255,255,255,0.08); position: absolute; top: -1rem; left: 1.5rem; line-height: 1; pointer-events: none; }
+    .bw-quote p { font-family: 'Lora', serif; font-style: italic; font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.92); position: relative; max-width: 900px; }
 
     /* MENTORSCHAP */
     #mentorschap { background: var(--white); }
