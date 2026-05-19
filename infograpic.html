@@ -1,223 +1,247 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
 <meta charset="utf-8">
-<title>Fietser — let op in het verkeer</title>
+<title>Veilig op de fiets naar de basisschool</title>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'Arial',sans-serif;background:#f5f5f0;}
-  .page{width:900px;margin:0 auto;background:#fff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Arial',sans-serif;}
+.page{width:860px;margin:0 auto;}
 
-  .topbar{background:#6ab023;padding:18px 28px;display:flex;align-items:center;gap:16px;}
-  .topbar-logo{width:36px;height:36px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;}
-  .topbar-logo svg{width:22px;height:22px;}
-  .topbar h1{color:#fff;font-size:22px;font-weight:700;letter-spacing:.5px;}
-  .topbar p{color:#d4f0a0;font-size:13px;margin-top:2px;}
+.topbar{background:#0099cc;padding:20px 28px 16px;display:flex;justify-content:space-between;align-items:flex-end;}
+.topbar-left h1{color:#fff;font-size:28px;font-weight:900;line-height:1.15;}
+.topbar-left p{color:#b3e5f7;font-size:13px;margin-top:6px;max-width:520px;line-height:1.5;}
+.topbar-right .brand{color:#fff;font-size:22px;font-weight:900;font-style:italic;}
+.topbar-right .brand span{color:#f7c948;}
 
-  .main{display:grid;grid-template-columns:260px 1fr;gap:0;}
+.stat-band{display:grid;grid-template-columns:repeat(4,1fr);background:#006fa3;}
+.sb{padding:14px 10px;text-align:center;border-right:1px solid rgba(255,255,255,0.15);}
+.sb:last-child{border:none;}
+.sb .big{font-size:30px;font-weight:900;color:#f7c948;line-height:1;}
+.sb .lbl{font-size:10px;color:#b3e5f7;margin-top:4px;line-height:1.35;}
 
-  .left{background:#6ab023;padding:24px 22px 28px;position:relative;min-height:620px;}
-  .left h2{color:#fff;font-size:36px;font-weight:900;line-height:1.1;margin-bottom:6px;}
-  .left p{color:#d4f0a0;font-size:14px;line-height:1.5;margin-bottom:18px;}
-  .left-bike{margin-top:20px;text-align:center;}
-  .left-bike svg{width:200px;height:130px;}
-  .stat-pill{background:rgba(255,255,255,0.18);border-radius:30px;padding:8px 16px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
-  .stat-pill .num{font-size:24px;font-weight:900;color:#fff;}
-  .stat-pill .lbl{font-size:11px;color:#d4f0a0;line-height:1.3;}
+.body{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#f4f9fc;}
+.col{padding:18px 18px 14px;}
+.sec-title{font-size:11px;font-weight:700;color:#fff;background:#0099cc;padding:5px 12px;border-radius:3px;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:inline-block;}
+.sec-title.dark{background:#006fa3;}
 
-  .right{background:#fff;padding:0;}
+.bar-wrap{margin-bottom:10px;}
+.bar-label{font-size:12px;color:#1a4a5e;margin-bottom:3px;display:flex;justify-content:space-between;}
+.bar-label span{font-weight:700;color:#0099cc;}
+.bar-track{background:#d0eaf5;border-radius:4px;height:14px;width:100%;}
+.bar-fill{height:14px;border-radius:4px;background:#0099cc;}
+.bar-fill.y{background:#f7c948;}
+.bar-fill.r{background:#e05c5c;}
+.bar-fill.g{background:#4ab87a;}
 
-  .stats-row{display:grid;grid-template-columns:repeat(4,1fr);background:#f0f7e0;}
-  .stat-box{padding:16px 14px;border-right:2px solid #d8edaa;text-align:center;}
-  .stat-box:last-child{border-right:none;}
-  .stat-box .big{font-size:28px;font-weight:900;color:#6ab023;line-height:1;}
-  .stat-box .sub{font-size:11px;color:#555;margin-top:4px;line-height:1.3;}
+.donut-row{display:flex;gap:16px;align-items:center;margin-bottom:10px;}
+.donut-legend .li{display:flex;align-items:center;gap:7px;margin-bottom:6px;}
+.donut-legend .dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;}
+.donut-legend span{font-size:11px;color:#1a4a5e;line-height:1.35;}
+.donut-legend strong{color:#006fa3;}
 
-  .section{padding:16px 20px 8px;}
-  .sec-title{font-size:12px;font-weight:700;color:#6ab023;text-transform:uppercase;letter-spacing:.08em;border-bottom:2px solid #6ab023;padding-bottom:4px;margin-bottom:12px;}
+.effect-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px;}
+.effect-card{background:#fff;border-radius:8px;padding:10px 12px;border-left:4px solid #0099cc;}
+.effect-card.y{border-color:#f7c948;}
+.effect-card.g{border-color:#4ab87a;}
+.effect-card.r{border-color:#e05c5c;}
+.effect-card p{font-size:11px;color:#1a4a5e;line-height:1.45;}
+.effect-card .ehead{font-size:12px;font-weight:700;color:#006fa3;margin-bottom:3px;}
 
-  .gevaren-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;padding:0 20px 14px;}
-  .gevaar{border-radius:10px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;}
-  .gevaar .icon-circle{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-  .gevaar .icon-circle svg{width:22px;height:22px;}
-  .gevaar h3{font-size:13px;font-weight:700;margin-bottom:3px;}
-  .gevaar p{font-size:11px;line-height:1.45;}
-  .g-red{background:#fee8e8;} .g-red .icon-circle{background:#e24b4a;} .g-red h3{color:#a32d2d;} .g-red p{color:#c0392b;}
-  .g-amber{background:#fef3d8;} .g-amber .icon-circle{background:#f0a500;} .g-amber h3{color:#7a4f00;} .g-amber p{color:#9a6200;}
-  .g-blue{background:#e6f1fb;} .g-blue .icon-circle{background:#378add;} .g-blue h3{color:#0c447c;} .g-blue p{color:#185fa5;}
-  .g-purple{background:#eeedfe;} .g-purple .icon-circle{background:#7f77dd;} .g-purple h3{color:#3c3489;} .g-purple p{color:#534ab7;}
+.gemeente-item{display:flex;gap:10px;align-items:flex-start;background:#fff;border-radius:7px;padding:9px 11px;margin-bottom:7px;}
+.gemeente-item .gi-icon{width:28px;height:28px;border-radius:50%;background:#0099cc;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gemeente-item .gi-icon svg{width:16px;height:16px;}
+.gemeente-item p{font-size:11px;color:#1a4a5e;line-height:1.45;}
 
-  .bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:0;}
-  .regels{background:#2c2c2a;padding:16px 20px 18px;}
-  .regels .sec-title{color:#6ab023;border-color:#6ab023;}
-  .regel-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:9px;}
-  .regel-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;margin-top:3px;}
-  .regel-item p{font-size:12px;color:#d3d1c7;line-height:1.45;}
-  .regel-item p strong{color:#f1efe8;}
+.tip-bubble{background:#f7c948;border-radius:50%;width:130px;height:130px;display:flex;align-items:center;justify-content:center;text-align:center;padding:14px;margin:10px auto 0;}
+.tip-bubble p{font-size:10px;color:#5a3e00;line-height:1.4;font-weight:700;}
 
-  .donut-section{background:#f0f7e0;padding:16px 20px 18px;}
-  .donut-section .sec-title{color:#3b6d11;border-color:#3b6d11;}
-  .donut-wrap{display:flex;align-items:center;gap:18px;margin-top:4px;}
-  .donut-wrap svg{flex-shrink:0;}
-  .legend{flex:1;}
-  .leg-item{display:flex;align-items:center;gap:7px;margin-bottom:7px;}
-  .leg-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;}
-  .leg-item span{font-size:11px;color:#3b6d11;line-height:1.3;}
+.fullrow{grid-column:1/-1;}
 
-  .footer{background:#6ab023;padding:10px 28px;display:flex;justify-content:space-between;align-items:center;}
-  .footer p{color:#d4f0a0;font-size:11px;}
-  .footer strong{color:#fff;}
+.gauge-section{background:#fff;padding:14px 18px;border-top:3px solid #0099cc;}
+.gauge-title{font-size:11px;font-weight:700;color:#0099cc;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;}
+.gauge-row{display:flex;gap:18px;align-items:flex-end;justify-content:space-around;}
+.gauge-bar{text-align:center;}
+.gauge-bar .gb-val{font-size:18px;font-weight:900;color:#0099cc;line-height:1;}
+.gauge-bar .gb-lbl{font-size:10px;color:#555;margin-top:3px;line-height:1.3;}
+.gb-vis{display:flex;align-items:flex-end;justify-content:center;height:60px;margin-bottom:4px;}
+.gb-rect{width:26px;border-radius:3px 3px 0 0;}
+
+.footer{background:#006fa3;padding:10px 24px;display:flex;justify-content:space-between;align-items:center;}
+.footer p{color:#b3e5f7;font-size:10px;}
 </style>
 </head>
 <body>
 <div class="page">
 
-  <div class="topbar">
-    <div class="topbar-logo">
-      <svg viewBox="0 0 24 24" fill="none" stroke="#6ab023" stroke-width="2.5" stroke-linecap="round">
-        <circle cx="12" cy="12" r="3"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/>
-        <path d="M12 9V5M5 15l4-5M19 15l-4-5M5 15h14"/>
-      </svg>
-    </div>
-    <div>
-      <h1>Fietsers — let op in het verkeer</h1>
-      <p>Je hebt doorgang, maar alertheid is altijd vereist</p>
-    </div>
+<div class="topbar">
+  <div class="topbar-left">
+    <h1>'Veilig op de fiets naar de basisschool'</h1>
+    <p>Fietsen zorgt voor beweging, zelfstandigheid en mobiliteit. Maar het aantal kinderen dat fietst naar school neemt af — tijd voor actie.</p>
   </div>
+  <div class="topbar-right">
+    <div class="brand">Tour <span>de</span><br>Force</div>
+  </div>
+</div>
 
-  <div class="main">
-    <div class="left">
-      <h2>Veilig fietsen begint bij jou</h2>
-      <p>Nederland telt ruim 23 miljoen fietsen. Elk jaar zijn fietsers betrokken bij duizenden verkeersongevallen — vaak vermijdbaar.</p>
+<div class="stat-band">
+  <div class="sb"><div class="big">33%</div><div class="lbl">fietst nooit<br>naar school</div></div>
+  <div class="sb"><div class="big">48%</div><div class="lbl">in achterstandswijken<br>fietst nooit</div></div>
+  <div class="sb"><div class="big">46%</div><div class="lbl">rijkere wijken:<br>auto naar school</div></div>
+  <div class="sb"><div class="big">64%</div><div class="lbl">ouders vindt route<br>veilig genoeg</div></div>
+</div>
 
-      <div class="stat-pill">
-        <div class="num">23M</div>
-        <div class="lbl">fietsen in<br>Nederland</div>
-      </div>
-      <div class="stat-pill">
-        <div class="num">58.000</div>
-        <div class="lbl">fietsers gewond<br>per jaar</div>
-      </div>
-      <div class="stat-pill">
-        <div class="num">77%</div>
-        <div class="lbl">ongelukken<br>zijn vermijdbaar</div>
-      </div>
-
-      <div class="left-bike">
-        <svg viewBox="0 0 200 130" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="90" r="32" fill="none" stroke="#fff" stroke-width="6"/>
-          <circle cx="150" cy="90" r="32" fill="none" stroke="#fff" stroke-width="6"/>
-          <circle cx="50" cy="90" r="5" fill="#fff"/>
-          <circle cx="150" cy="90" r="5" fill="#fff"/>
-          <polyline points="50,90 80,45 120,45 150,90" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-          <line x1="50" y1="90" x2="80" y2="45" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
-          <polyline points="100,45 100,28 120,28" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
-          <line x1="112" y1="28" x2="130" y2="28" stroke="#fff" stroke-width="5" stroke-linecap="round"/>
-          <circle cx="100" cy="21" r="10" fill="#d4f0a0"/>
-          <ellipse cx="100" cy="16" rx="8" ry="5" fill="#fff"/>
-          <line x1="80" y1="45" x2="100" y2="45" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+<div class="body">
+  <div class="col">
+    <div class="sec-title">Onderzoeksresultaten</div>
+    <div class="bar-wrap">
+      <div class="bar-label">Fietst nooit naar school <span>33%</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:33%;"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label">Achterstandswijk: fietst nooit <span>48%</span></div>
+      <div class="bar-track"><div class="bar-fill r" style="width:48%;"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label">Heeft geen fiets <span>12%</span></div>
+      <div class="bar-track"><div class="bar-fill r" style="width:12%;"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label">Matig/slecht onderhouden fiets <span>27%</span></div>
+      <div class="bar-track"><div class="bar-fill y" style="width:27%;"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label">Fietst ook nooit buiten school <span>18%</span></div>
+      <div class="bar-track"><div class="bar-fill y" style="width:18%;"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label">Rijkere wijk: met auto naar school <span>46%</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:46%;"></div></div>
+    </div>
+    <div class="bar-wrap">
+      <div class="bar-label">Ouders: veilige route aanwezig <span>64%</span></div>
+      <div class="bar-track"><div class="bar-fill g" style="width:64%;"></div></div>
+    </div>
+    <div style="margin-top:16px;">
+      <div class="sec-title dark">Bewegingsnorm kinderen</div>
+      <div class="donut-row" style="margin-top:8px;">
+        <svg width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="34" fill="none" stroke="#d0eaf5" stroke-width="16"/>
+          <circle cx="45" cy="45" r="34" fill="none" stroke="#e05c5c" stroke-width="16" stroke-dasharray="107 107" stroke-dashoffset="0"/>
+          <circle cx="45" cy="45" r="34" fill="none" stroke="#4ab87a" stroke-width="16" stroke-dasharray="107 107" stroke-dashoffset="-107"/>
+          <circle cx="45" cy="45" r="24" fill="#f4f9fc"/>
+          <text x="45" y="48" text-anchor="middle" font-size="13" font-weight="900" fill="#0099cc" font-family="Arial">50%</text>
         </svg>
-      </div>
-    </div>
-
-    <div class="right">
-      <div class="stats-row">
-        <div class="stat-box"><div class="big">1 op 3</div><div class="sub">fietsers kijkt<br>op telefoon</div></div>
-        <div class="stat-box"><div class="big">40%</div><div class="sub">ongelukken bij<br>kruispunten</div></div>
-        <div class="stat-box"><div class="big">1,5 m</div><div class="sub">veilige afstand<br>tot geparkeerde auto</div></div>
-        <div class="stat-box"><div class="big">5 sec</div><div class="sub">reactietijd bij<br>80 km/u vrachtwagen</div></div>
-      </div>
-
-      <div class="section">
-        <div class="sec-title">Gevaarlijke situaties</div>
-      </div>
-      <div class="gevaren-grid">
-        <div class="gevaar g-red">
-          <div class="icon-circle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
-              <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
-            </svg>
-          </div>
-          <div><h3>Dode hoek vrachtwagen</h3><p>Rechtsafslaande vrachtwagens zien fietsers niet. Stop altijd en wacht.</p></div>
-        </div>
-        <div class="gevaar g-amber">
-          <div class="icon-circle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
-              <path d="M5 17H3a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2v3"/><rect x="9" y="11" width="14" height="10" rx="2"/><circle cx="12" cy="16" r="1"/>
-            </svg>
-          </div>
-          <div><h3>Openend autoportier</h3><p>Houd 1,5 meter afstand van geparkeerde auto's — portieren openen plotseling.</p></div>
-        </div>
-        <div class="gevaar g-blue">
-          <div class="icon-circle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-          </div>
-          <div><h3>Voetgangers op fietspad</h3><p>Voetgangers stappen onverwacht op het pad. Remmen en bellen op tijd.</p></div>
-        </div>
-        <div class="gevaar g-purple">
-          <div class="icon-circle">
-            <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round">
-              <rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/>
-            </svg>
-          </div>
-          <div><h3>Telefoon tijdens rijden</h3><p>Geen telefoon of oortjes. 1 seconde afleiding = 15 meter blind rijden.</p></div>
+        <div class="donut-legend">
+          <div class="li"><div class="dot" style="background:#e05c5c;"></div><span><strong>50%</strong> haalt beweegnorm NIET</span></div>
+          <div class="li"><div class="dot" style="background:#4ab87a;"></div><span><strong>50%</strong> haalt beweegnorm wél</span></div>
+          <div class="li" style="margin-top:6px;"><span style="font-size:10px;color:#555;">Norm = 1 uur matig intensief bewegen per dag</span></div>
         </div>
       </div>
-
-      <div class="bottom-row">
-        <div class="regels">
-          <div class="sec-title">Verkeersregels</div>
-          <div class="regel-item">
-            <div class="regel-dot" style="background:#6ab023;"></div>
-            <p><strong>Fietspad gebruiken</strong> waar aanwezig — op rijbaan uiterst rechts.</p>
-          </div>
-          <div class="regel-item">
-            <div class="regel-dot" style="background:#6ab023;"></div>
-            <p><strong>Richting aangeven</strong> met arm bij afslaan, ook met voorrang.</p>
-          </div>
-          <div class="regel-item">
-            <div class="regel-dot" style="background:#f0a500;"></div>
-            <p><strong>Eigen controle</strong> — controleer altijd zelf of weg vrij is.</p>
-          </div>
-          <div class="regel-item">
-            <div class="regel-dot" style="background:#f0a500;"></div>
-            <p><strong>Verlichting</strong> — verplicht bij duisternis of mist.</p>
-          </div>
-          <div class="regel-item">
-            <div class="regel-dot" style="background:#e24b4a;"></div>
-            <p><strong>Rood = stop</strong> — ook als het rustig lijkt op het kruispunt.</p>
-          </div>
-        </div>
-
-        <div class="donut-section">
-          <div class="sec-title">Oorzaak fietsongeval</div>
-          <div class="donut-wrap">
-            <svg width="100" height="100" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="38" fill="none" stroke="#e24b4a" stroke-width="18" stroke-dasharray="95 144" stroke-dashoffset="0"/>
-              <circle cx="50" cy="50" r="38" fill="none" stroke="#f0a500" stroke-width="18" stroke-dasharray="57 144" stroke-dashoffset="-95"/>
-              <circle cx="50" cy="50" r="38" fill="none" stroke="#378add" stroke-width="18" stroke-dasharray="43 144" stroke-dashoffset="-152"/>
-              <circle cx="50" cy="50" r="38" fill="none" stroke="#d3d1c7" stroke-width="18" stroke-dasharray="44 144" stroke-dashoffset="-195"/>
-              <circle cx="50" cy="50" r="26" fill="#f0f7e0"/>
-            </svg>
-            <div class="legend">
-              <div class="leg-item"><div class="leg-dot" style="background:#e24b4a;"></div><span><strong>40%</strong> geen voorrang geven</span></div>
-              <div class="leg-item"><div class="leg-dot" style="background:#f0a500;"></div><span><strong>24%</strong> afleiding / telefoon</span></div>
-              <div class="leg-item"><div class="leg-dot" style="background:#378add;"></div><span><strong>18%</strong> dode hoek</span></div>
-              <div class="leg-item"><div class="leg-dot" style="background:#d3d1c7;"></div><span><strong>18%</strong> overige oorzaken</span></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
     </div>
   </div>
 
-  <div class="footer">
-    <p>Ontwerp gebaseerd op rijkswijd fietsonderzoek 2023</p>
-    <p><strong>Veilig fietsen = zien én gezien worden</strong></p>
+  <div class="col">
+    <div class="sec-title">Positieve effecten van fietsen</div>
+    <div class="effect-grid">
+      <div class="effect-card"><div class="ehead">Verkeersleren</div><p>Kinderen leren beter deelnemen aan het verkeer — nu én in de toekomst.</p></div>
+      <div class="effect-card y"><div class="ehead" style="color:#8a6000;">Zelfstandigheid</div><p>Kinderen worden mobieler en hoeven minder door ouders gebracht te worden.</p></div>
+      <div class="effect-card g"><div class="ehead" style="color:#276644;">Minder auto's</div><p>Minder auto's rond school = betere verkeersveiligheid voor iedereen.</p></div>
+      <div class="effect-card r"><div class="ehead" style="color:#8a2222;">Meer beweging</div><p>Dagelijks fietsen helpt kinderen hun beweegnorm te halen.</p></div>
+    </div>
+    <div style="margin-top:14px;">
+      <div class="sec-title dark">Hoe komen kinderen naar school?</div>
+      <div class="donut-row" style="margin-top:8px;">
+        <svg width="90" height="90" viewBox="0 0 90 90">
+          <circle cx="45" cy="45" r="34" fill="none" stroke="#d0eaf5" stroke-width="16"/>
+          <circle cx="45" cy="45" r="34" fill="none" stroke="#0099cc" stroke-width="16" stroke-dasharray="72 142" stroke-dashoffset="0"/>
+          <circle cx="45" cy="45" r="34" fill="none" stroke="#f7c948" stroke-width="16" stroke-dasharray="40 142" stroke-dashoffset="-72"/>
+          <circle cx="45" cy="45" r="34" fill="none" stroke="#e05c5c" stroke-width="16" stroke-dasharray="30 142" stroke-dashoffset="-112"/>
+          <circle cx="45" cy="45" r="24" fill="#f4f9fc"/>
+        </svg>
+        <div class="donut-legend">
+          <div class="li"><div class="dot" style="background:#0099cc;"></div><span><strong>~50%</strong> lopend</span></div>
+          <div class="li"><div class="dot" style="background:#f7c948;"></div><span><strong>~28%</strong> per fiets</span></div>
+          <div class="li"><div class="dot" style="background:#e05c5c;"></div><span><strong>~22%</strong> per auto</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="tip-bubble">
+      <p>Tip! Integrale aanpak: niet alleen fietsen door kinderen maar ook door ouders vergroot de kans op succes!</p>
+    </div>
   </div>
+
+  <div class="col fullrow" style="padding:0;">
+    <div style="background:#e8f4fb;padding:14px 18px 16px;">
+      <div class="sec-title" style="background:#006fa3;">Wat kunnen gemeenten &amp; provincies doen?</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:6px;">
+        <div class="gemeente-item">
+          <div class="gi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="5" cy="17" r="2"/><circle cx="19" cy="17" r="2"/><path d="M12 9V5M5 15l4-5M19 15l-4-5M5 15h14"/></svg></div>
+          <p><strong>Ontmoedig autogebruik</strong> — duidelijke verkeersregels en overzichtelijke situaties rond school.</p>
+        </div>
+        <div class="gemeente-item">
+          <div class="gi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M3 12h18M3 6h18M3 18h12"/></svg></div>
+          <p><strong>Veilige fietsroutes</strong> — duidelijke paden richting scholen met veilige kruisingen.</p>
+        </div>
+        <div class="gemeente-item">
+          <div class="gi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 21 12 17.77 5.82 21 7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+          <p><strong>Fietsles &amp; verkeersexamen</strong> — op basisscholen voor meer kennis en zelfvertrouwen.</p>
+        </div>
+        <div class="gemeente-item">
+          <div class="gi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+          <p><strong>Ouders betrekken</strong> — gedragscampagnes stimuleren lopend en fietsend naar school.</p>
+        </div>
+        <div class="gemeente-item">
+          <div class="gi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+          <p><strong>Fietsondersteuning</strong> — helpen bij aanschaffen en onderhouden van fietsen voor gezinnen.</p>
+        </div>
+        <div class="gemeente-item">
+          <div class="gi-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+          <p><strong>Vrijwilligers</strong> — laat ervaringsdeskundigen meedraaien, maak fietsstimulering fun!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="gauge-section">
+  <div class="gauge-title">Vergelijking: fietsgedrag per wijk</div>
+  <div class="gauge-row">
+    <div class="gauge-bar">
+      <div class="gb-vis"><div class="gb-rect" style="height:48px;background:#0099cc;"></div></div>
+      <div class="gb-val">33%</div><div class="gb-lbl">Fietst nooit<br>(gemiddeld)</div>
+    </div>
+    <div class="gauge-bar">
+      <div class="gb-vis"><div class="gb-rect" style="height:60px;background:#e05c5c;"></div></div>
+      <div class="gb-val">48%</div><div class="gb-lbl">Fietst nooit<br>(achterstandswijk)</div>
+    </div>
+    <div class="gauge-bar">
+      <div class="gb-vis"><div class="gb-rect" style="height:17px;background:#e05c5c;"></div></div>
+      <div class="gb-val">12%</div><div class="gb-lbl">Heeft geen<br>fiets</div>
+    </div>
+    <div class="gauge-bar">
+      <div class="gb-vis"><div class="gb-rect" style="height:39px;background:#f7c948;"></div></div>
+      <div class="gb-val">27%</div><div class="gb-lbl">Slechte/matige<br>fiets</div>
+    </div>
+    <div class="gauge-bar">
+      <div class="gb-vis"><div class="gb-rect" style="height:57px;background:#f7c948;"></div></div>
+      <div class="gb-val">46%</div><div class="gb-lbl">Auto naar school<br>(rijke wijk)</div>
+    </div>
+    <div class="gauge-bar">
+      <div class="gb-vis"><div class="gb-rect" style="height:80px;background:#4ab87a;"></div></div>
+      <div class="gb-val">64%</div><div class="gb-lbl">Ouders: route<br>is veilig</div>
+    </div>
+    <div class="gauge-bar">
+      <div class="gb-vis"><div class="gb-rect" style="height:60px;background:#e05c5c;"></div></div>
+      <div class="gb-val">50%</div><div class="gb-lbl">Haalt bewegings-<br>norm niet</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Bron: Tour de Force onderzoek — fietsberaad.nl | tourdeforce.nl | vvn.nl</p>
+  <p style="color:#fff;font-weight:700;">Meer info: tourdeforce.nl</p>
+</div>
 
 </div>
 </body>
