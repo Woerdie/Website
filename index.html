@@ -1,390 +1,250 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BewindWijs – Samen werken aan een betere toekomst</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bd: #1a3a6b; --bm: #2a5298; --bl: #4a7fc1; --bp: #e8f0fb;
-      --white: #fff; --off: #eef0f5; --cream: #f7f4ee;
-      --text: #1a1e2e; --tm: #64748b; --r: 6px;
-    }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Source Sans 3', sans-serif; background: var(--off); color: var(--text); overflow-x: hidden; }
-
-    /* NAV */
-    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(248,249,252,0.97); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: space-between; padding: 0 5%; height: 72px; border-bottom: 1px solid rgba(26,58,107,0.1); }
-    .nav-logo { display: flex; align-items: center; text-decoration: none; }
-    .nav-logo img { height: 76px; width: auto; }
-    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
-    .nav-links a { color: var(--tm); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: color 0.2s; }
-    .nav-links a:hover { color: var(--bd); }
-    .nav-links a.btn-nav { background: var(--bd); color: var(--white); padding: 9px 22px; border-radius: var(--r); font-weight: 600; }
-    .nav-links a.btn-nav:hover { background: var(--bm); }
-    .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
-    .nav-toggle span { display: block; width: 24px; height: 2px; background: var(--bd); border-radius: 2px; transition: all 0.3s; }
-    .nav-toggle.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-    .nav-toggle.open span:nth-child(2) { opacity: 0; }
-    .nav-toggle.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-    .mobile-menu { display: none; position: fixed; top: 72px; left: 0; right: 0; background: var(--off); border-top: 1px solid rgba(26,58,107,0.1); padding: 1.5rem 5%; z-index: 99; flex-direction: column; }
-    .mobile-menu.open { display: flex; }
-    .mobile-menu a { color: var(--text); text-decoration: none; font-size: 1rem; padding: 1rem 0; border-bottom: 1px solid rgba(26,58,107,0.08); font-weight: 500; }
-    .mobile-menu a:last-child { border-bottom: none; }
-
-    /* HERO */
-    #home { min-height: 100vh; background: var(--bd); display: grid; grid-template-columns: 1fr 1fr; align-items: center; padding: 90px 5% 60px; gap: 4rem; position: relative; overflow: hidden; scroll-margin-top: 0; }
-    #home::before { content: ''; position: absolute; right: -5%; top: 50%; transform: translateY(-50%); width: 55%; aspect-ratio: 1; border-radius: 50%; background: rgba(74,127,193,0.1); pointer-events: none; }
-    .hero-left { position: relative; animation: fadeUp 0.9s ease both; }
-    .hero-tag { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 50px; padding: 7px 16px; margin-bottom: 2rem; }
-    .hero-tag-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--bl); }
-    .hero-tag span { font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.7); font-weight: 600; }
-    h1.hero-title { font-family: 'Lora', serif; font-size: clamp(2.2rem, 4.5vw, 3.6rem); color: var(--white); line-height: 1.15; margin-bottom: 1.5rem; font-weight: 700; }
-    h1.hero-title em { font-style: italic; color: var(--bl); }
-    .hero-sub { font-size: 1rem; color: rgba(255,255,255,0.75); line-height: 1.85; max-width: 460px; margin-bottom: 2.5rem; font-weight: 300; }
-    .hero-cta { display: inline-flex; align-items: center; gap: 10px; background: var(--white); color: var(--bd); text-decoration: none; padding: 14px 30px; border-radius: var(--r); font-weight: 700; font-size: 0.95rem; transition: all 0.25s; }
-    .hero-cta:hover { background: var(--bp); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
-    .hero-cta svg { width: 16px; height: 16px; }
-    .hero-badges { margin-top: 2.5rem; display: flex; gap: 1.5rem; flex-wrap: wrap; }
-    .badge { display: flex; align-items: center; gap: 8px; color: rgba(255,255,255,0.6); font-size: 0.8rem; }
-    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bl); }
-    .hero-right { position: relative; height: 500px; animation: fadeUp 0.9s 0.15s ease both; }
-    .hero-img-box { position: absolute; inset: 0; background: rgba(255,255,255,0.08); border-radius: 16px 60px 16px 60px; overflow: hidden; border: 1px solid rgba(255,255,255,0.15); }
-    .hero-img-box img { width: 100%; height: 100%; object-fit: cover; }
-    .hero-img-placeholder { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: rgba(255,255,255,0.25); font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; border: 2px dashed rgba(255,255,255,0.2); border-radius: 16px 60px 16px 60px; }
-    .hero-img-placeholder svg { width: 36px; height: 36px; }
-
-    /* SECTIONS */
-    section { padding: 70px 5%; scroll-margin-top: 72px; }
-    .section-label { font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--bl); font-weight: 600; margin-bottom: 0.75rem; }
-    h2.section-title { font-family: 'Lora', serif; font-size: clamp(2rem, 3.5vw, 2.8rem); color: var(--bd); line-height: 1.2; margin-bottom: 1.2rem; font-weight: 700; }
-    .section-intro { font-size: 1.05rem; color: var(--tm); line-height: 1.85; max-width: 700px; font-weight: 300; }
-
-    /* OVER MIJ */
-    #over { background: var(--white); }
-    .over-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 5rem; align-items: start; margin-top: 1.5rem; }
-    .over-left { }
-    .over-intro { font-size: 1.05rem; color: var(--text); line-height: 1.85; font-weight: 400; }
-    .over-right { }
-    .over-block { margin-bottom: 1.75rem; padding-bottom: 1.75rem; border-bottom: 1px solid rgba(26,58,107,0.08); }
-    .over-block:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-    .over-block h3 { font-family: 'Lora', serif; font-size: 1.1rem; color: var(--bd); font-weight: 700; margin-bottom: 0.5rem; }
-    .over-block p { font-size: 0.97rem; color: var(--text); line-height: 1.85; font-weight: 300; }
-    .over-values { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 2rem; }
-    .over-value { background: var(--bp); border: 1px solid rgba(26,58,107,0.15); border-radius: 6px; padding: 8px 14px; font-size: 0.85rem; color: var(--bd); font-weight: 600; }
-
-    /* BEWINDVOERING */
-    #bewindvoering { background: var(--off); }
-    .bw-intro { max-width: 800px; margin-bottom: 2.5rem; }
-    .bw-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
-    .bw-card { background: var(--white); border: 1px solid rgba(26,58,107,0.1); border-radius: 14px; padding: 1.75rem; transition: all 0.3s; }
-    .bw-card:hover { border-color: var(--bl); box-shadow: 0 8px 32px rgba(26,58,107,0.1); transform: translateY(-3px); }
-    .bw-card-num { font-family: 'Lora', serif; font-size: 0.82rem; color: var(--bl); font-style: italic; margin-bottom: 0.6rem; opacity: 0.7; }
-    .bw-card h3 { font-family: 'Lora', serif; font-size: 1.15rem; color: var(--bd); font-weight: 700; margin-bottom: 0.5rem; }
-    .bw-card p { font-size: 0.95rem; color: var(--text); line-height: 1.75; font-weight: 300; }
-    .bw-icon { width: 44px; height: 44px; background: var(--bp); border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 0.75rem; transition: background 0.3s; }
-    .bw-card:hover .bw-icon { background: var(--bd); }
-    .bw-icon svg { width: 20px; height: 20px; color: var(--bd); transition: color 0.3s; }
-    .bw-card:hover .bw-icon svg { color: var(--white); }
-    .bw-quote { background: var(--bd); border-radius: 14px; padding: 2.5rem 3rem; color: var(--white); grid-column: span 3; position: relative; overflow: hidden; }
-    .bw-quote::before { content: '\201C'; font-family: 'Lora', serif; font-size: 8rem; color: rgba(255,255,255,0.08); position: absolute; top: -1rem; left: 1.5rem; line-height: 1; pointer-events: none; }
-    .bw-quote p { font-family: 'Lora', serif; font-style: italic; font-size: 1.1rem; line-height: 1.8; color: rgba(255,255,255,0.92); position: relative; max-width: 900px; }
-
-    /* MENTORSCHAP */
-    #mentorschap { background: var(--white); }
-    .mentor-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 4rem; align-items: start; }
-    .mentor-list { list-style: none; display: flex; flex-direction: column; gap: 0; margin-top: 0; border: 1px solid rgba(26,58,107,0.1); border-radius: 14px; overflow: hidden; }
-    .mentor-list li { display: flex; align-items: flex-start; gap: 14px; padding: 1.1rem 1.25rem; background: var(--white); border-bottom: 1px solid rgba(26,58,107,0.07); transition: background 0.2s; }
-    .mentor-list li:last-child { border-bottom: none; }
-    .mentor-list li:hover { background: var(--bp); }
-    .mentor-list li .icon { width: 32px; height: 32px; min-width: 32px; background: var(--bp); border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-top: 2px; }
-    .mentor-list li:hover .icon { background: var(--bd); }
-    .mentor-list li .icon svg { width: 15px; height: 15px; color: var(--bd); transition: color 0.2s; }
-    .mentor-list li:hover .icon svg { color: var(--white); }
-    .mentor-list li .text h4 { font-family: 'Lora', serif; font-size: 0.95rem; color: var(--bd); font-weight: 700; margin-bottom: 2px; }
-    .mentor-list li .text p { font-size: 0.88rem; color: var(--tm); line-height: 1.55; font-weight: 300; }
-    .mentor-aside { background: var(--bd); border-radius: 16px; padding: 2rem; color: var(--white); margin-top: 1.5rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: center; }
-    .mentor-aside h3 { font-family: 'Lora', serif; font-size: 1.3rem; color: var(--white); margin-bottom: 1rem; }
-    .mentor-aside p { font-size: 0.95rem; color: rgba(255,255,255,0.7); line-height: 1.8; font-weight: 300; margin-bottom: 1.25rem; }
-    .mentor-aside .aside-link { display: inline-flex; align-items: center; gap: 8px; background: var(--bl); color: var(--white); text-decoration: none; padding: 11px 22px; border-radius: var(--r); font-weight: 600; font-size: 0.9rem; transition: all 0.25s; }
-    .mentor-aside .aside-link:hover { background: #5a8fd1; }
-
-    /* CONTACT */
-    #Contact { background: var(--off); }
-    .contact-wrapper { display: grid; grid-template-columns: 1fr 1.3fr; gap: 4rem; align-items: start; }
-    .contact-info .section-intro { margin-bottom: 1.75rem; font-size: 1.05rem; }
-    .contact-item { display: flex; align-items: center; gap: 14px; margin-bottom: 1rem; }
-    .contact-item-icon { width: 44px; height: 44px; background: var(--bp); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-    .contact-item-icon svg { width: 18px; height: 18px; color: var(--bd); }
-    .contact-item span { color: var(--tm); font-size: 0.95rem; }
-    .contact-item a { color: var(--bd); text-decoration: none; font-weight: 600; }
-    .contact-form { background: var(--white); border-radius: 16px; padding: 2.5rem; box-shadow: 0 4px 32px rgba(26,58,107,0.08); border: 1px solid rgba(26,58,107,0.08); }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-    .form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
-    .form-group label { font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--tm); font-weight: 700; }
-    .form-group input, .form-group textarea { background: var(--off); border: 1.5px solid transparent; border-radius: var(--r); color: var(--text); padding: 12px 16px; font-family: 'Source Sans 3', sans-serif; font-size: 0.95rem; outline: none; transition: all 0.2s; }
-    .form-group input:focus, .form-group textarea:focus { border-color: var(--bd); background: var(--white); box-shadow: 0 0 0 4px rgba(26,58,107,0.08); }
-    .form-group textarea { resize: vertical; min-height: 120px; }
-    .btn-submit { width: 100%; background: var(--bd); color: var(--white); border: none; padding: 14px; border-radius: var(--r); font-family: 'Source Sans 3', sans-serif; font-weight: 700; font-size: 1rem; cursor: pointer; transition: all 0.25s; }
-    .btn-submit:hover { background: var(--bm); transform: translateY(-1px); }
-
-    footer { background: var(--bd); padding: 2rem 5%; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-    footer p { font-size: 0.8rem; color: rgba(255,255,255,0.4); }
-    .footer-links { display: flex; gap: 1.5rem; list-style: none; }
-    .footer-links a { font-size: 0.8rem; color: rgba(255,255,255,0.4); text-decoration: none; }
-    .footer-links a:hover { color: var(--white); }
-
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: none; } }
-    .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.7s ease, transform 0.7s ease; }
-    .reveal.visible { opacity: 1; transform: none; }
-
-    /* TABLET (768px - 1024px) */
-    @media (max-width: 1024px) {
-      nav { height: 80px; }
-      .nav-logo img { height: 60px; }
-      #home { padding: 100px 5% 60px; gap: 3rem; }
-      .bw-grid { grid-template-columns: 1fr 1fr; }
-      .bw-quote { grid-column: span 2; }
-      .contact-wrapper { gap: 3rem; }
-      [style*="grid-template-columns:1fr 1.3fr"] { grid-template-columns: 1fr !important; gap: 2rem !important; }
-      [style*="grid-template-columns:1fr 1.2fr"] { grid-template-columns: 1fr !important; gap: 2rem !important; }
-    }
-
-    /* MOBILE (max 768px) */
-    @media (max-width: 768px) {
-      nav { height: 72px; padding: 0 4%; }
-      .nav-logo img { height: 44px; }
-      .nav-links { display: none; }
-      .nav-toggle { display: flex; }
-      .mobile-menu { top: 72px; }
-
-      #home { grid-template-columns: 1fr; padding: 90px 4% 50px; gap: 0; }
-      .hero-right { display: none; }
-      #home::before { display: none; }
-      h1.hero-title { font-size: 2rem; }
-      .hero-sub { font-size: 0.95rem; }
-      .hero-badges { gap: 1rem; }
-      .badge { font-size: 0.75rem; }
-
-      section { padding: 50px 4%; }
-      h2.section-title { font-size: 1.7rem; }
-      .section-intro { font-size: 0.95rem; }
-
-      .over-grid { grid-template-columns: 1fr; gap: 2rem; }
-      .over-content { max-width: 100%; }
-
-      .bw-grid { grid-template-columns: 1fr; }
-      .bw-quote { grid-column: span 1; }
-      .bw-card { padding: 1.25rem; }
-
-      [style*="grid-template-columns:1fr 1.3fr"] { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
-      [style*="grid-template-columns:1fr 1.2fr"] { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
-      .mentor-list { grid-template-columns: 1fr !important; }
-      .mentor-aside { grid-template-columns: 1fr !important; gap: 1rem !important; }
-
-      .contact-wrapper { grid-template-columns: 1fr; gap: 2rem; }
-      .contact-form { padding: 1.25rem; }
-      .form-row { grid-template-columns: 1fr; }
-
-      footer { flex-direction: column; text-align: center; gap: 0.75rem; }
-    }
-
-    /* SMALL MOBILE (max 400px) */
-    @media (max-width: 400px) {
-      h1.hero-title { font-size: 1.75rem; }
-      .hero-tag span { font-size: 0.65rem; }
-      .hero-cta { padding: 12px 22px; font-size: 0.88rem; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wanneer kunnen we wat drinken?</title>
+<style>
+  :root{
+    --bg:#f4f1ea;
+    --card:#ffffff;
+    --ink:#2c2620;
+    --muted:#7a7066;
+    --accent:#c2703d;
+    --accent-soft:#f7e8dd;
+    --line:#e7e0d4;
+    --good:#3d8a5f;
+    --shadow:0 4px 20px rgba(60,45,30,.08);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:640px;margin:0 auto;padding:24px 18px 80px}
+  header{text-align:center;margin:18px 0 28px}
+  header h1{font-size:1.7rem;margin:0 0 6px;letter-spacing:-.02em}
+  header p{color:var(--muted);margin:0;font-size:.98rem}
+  .card{
+    background:var(--card);border:1px solid var(--line);border-radius:16px;
+    padding:22px;margin-bottom:20px;box-shadow:var(--shadow);
+  }
+  .card h2{font-size:1.05rem;margin:0 0 14px;display:flex;align-items:center;gap:8px}
+  label{display:block;font-size:.85rem;color:var(--muted);margin:0 0 6px;font-weight:600}
+  input[type=text],input[type=date]{
+    width:100%;padding:12px 14px;font-size:1rem;border:1px solid var(--line);
+    border-radius:10px;background:#fbfaf7;color:var(--ink);font-family:inherit;
+  }
+  input:focus{outline:none;border-color:var(--accent);background:#fff}
+  .row{display:flex;gap:10px;align-items:flex-end}
+  .row > div{flex:1}
+  button{
+    font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;
+    border:none;border-radius:10px;padding:12px 18px;transition:transform .05s,filter .15s;
+  }
+  button:active{transform:translateY(1px)}
+  .btn-add{background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+  .btn-add:hover{filter:brightness(.97)}
+  .btn-save{background:var(--accent);color:#fff;width:100%;margin-top:16px;padding:14px}
+  .btn-save:hover{filter:brightness(1.05)}
+  .btn-save:disabled{opacity:.5;cursor:not-allowed}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;min-height:4px}
+  .chip{
+    display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);
+    color:var(--accent);padding:7px 12px;border-radius:999px;font-size:.9rem;font-weight:600;
+  }
+  .chip button{background:none;padding:0;color:var(--accent);font-size:1.1rem;line-height:1;opacity:.7}
+  .chip button:hover{opacity:1}
+  .empty{color:var(--muted);font-size:.9rem;font-style:italic;margin-top:12px}
+  /* results */
+  .result{
+    display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);
+  }
+  .result:last-child{border-bottom:none}
+  .rank{
+    flex:none;width:34px;height:34px;border-radius:9px;background:#f1ece2;color:var(--muted);
+    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;
+  }
+  .result.top .rank{background:var(--good);color:#fff}
+  .result-main{flex:1;min-width:0}
+  .result-date{font-weight:600}
+  .result-names{font-size:.82rem;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis}
+  .count{
+    flex:none;background:var(--accent-soft);color:var(--accent);font-weight:700;
+    padding:5px 12px;border-radius:999px;font-size:.9rem;
+  }
+  .result.top .count{background:var(--good);color:#fff}
+  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+  .btn-refresh{background:none;color:var(--muted);font-size:.85rem;padding:6px 8px}
+  .btn-refresh:hover{color:var(--accent)}
+  .toast{
+    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
+    background:var(--ink);color:#fff;padding:12px 22px;border-radius:10px;font-size:.92rem;
+    opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--shadow);z-index:10;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .toast.err{background:#a23b2d}
+  .config-warn{
+    background:#fff3cd;border:1px solid #f0d68a;color:#7a5d10;border-radius:12px;
+    padding:16px;margin-bottom:20px;font-size:.9rem;
+  }
+  .config-warn code{background:#fff;padding:2px 6px;border-radius:5px;font-size:.85em}
+</style>
 </head>
 <body>
-  <nav>
-    <a href="#home" class="nav-logo"><img src="Logo_BewindWijs.png" alt="BewindWijs" /></a>
-    <ul class="nav-links">
-      <li><a href="#over">Over mij</a></li>
-      <li><a href="#bewindvoering">Bewindvoering</a></li>
-      <li><a href="#mentorschap">Mentorschap</a></li>
-      <li><a href="tarieven.html">Tarieven</a></li>
-      <li><a href="#Contact" class="btn-nav">Contact</a></li>
-    </ul>
-    <button class="nav-toggle" id="navToggle"><span></span><span></span><span></span></button>
-  </nav>
-  <div class="mobile-menu" id="mobileMenu">
-    <a href="#over" onclick="closeMenu()">Over mij</a>
-    <a href="#bewindvoering" onclick="closeMenu()">Bewindvoering</a>
-    <a href="#mentorschap" onclick="closeMenu()">Mentorschap</a>
-    <a href="tarieven.html" onclick="closeMenu()">Tarieven</a>
-    <a href="#Contact" onclick="closeMenu()">Contact</a>
+<div class="wrap">
+  <header>
+    <h1>🍻 Wanneer kunnen we wat drinken?</h1>
+    <p>Vul je naam in, kies de dagen dat jij kan, en zie waar de meeste mensen kunnen.</p>
+  </header>
+
+  <div id="configWarn" class="config-warn" style="display:none">
+    ⚠️ Nog niet ingesteld: vul bovenin het bestand je <code>SUPABASE_URL</code> en <code>SUPABASE_ANON_KEY</code> in.
   </div>
 
-  <!-- HERO -->
-  <section id="home">
-    <div class="hero-left">
-      <div class="hero-tag"><div class="hero-tag-dot"></div><span>NBBI aangesloten · Rechtbank aangesteld</span></div>
-      <h1 class="hero-title">Samen werken aan<br />een <em>betere toekomst</em></h1>
-      <p class="hero-sub">Ik sta naast u in onzekere tijden. Met bijna acht jaar ervaring als bewindvoerder en professioneel mentor breng ik rust, overzicht en vertrouwen in situaties die complex of overweldigend kunnen voelen.</p>
-      <a href="#Contact" class="hero-cta">Neem contact op <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
-      <div class="hero-badges">
-        <div class="badge"><span class="badge-dot"></span> Door Rechtbank aangesteld</div>
-        <div class="badge"><span class="badge-dot"></span> Aangesloten bij NBBI</div>
-        <div class="badge"><span class="badge-dot"></span> Sinds maart 2025 ook mentor</div>
-      </div>
-    </div>
-    <div class="hero-right">
-      <div class="hero-img-box">
-        <!-- <img src="foto.jpg" alt="BewindWijs" /> -->
-        <div class="hero-img-placeholder"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>Foto plaatsen</div>
-      </div>
-    </div>
-  </section>
+  <!-- INVOER -->
+  <div class="card">
+    <h2>✏️ Jouw beschikbaarheid</h2>
+    <label for="naam">Je naam</label>
+    <input type="text" id="naam" placeholder="bijv. Daan" autocomplete="off">
 
-  <!-- OVER MIJ -->
-  <section id="over">
-    <div class="reveal">
-      <div class="section-label">Over mij</div>
-      <div class="over-grid">
-        <!-- Links: titel + intro -->
-        <div class="over-left">
-          <h2 class="section-title">Een stevige basis in onzekere tijden</h2>
-          <p class="over-intro">Ik ben 53 jaar, inmiddels bijna acht jaar bewindvoerder en sinds maart 2025 ook professioneel mentor. Met ruime ervaring in zowel financiële als persoonlijke begeleiding sta ik mensen bij die ondersteuning nodig hebben bij hun financiën, dagelijkse keuzes en zorgvraagstukken.</p>
-          <p class="over-intro" style="margin-top:1rem;">Mijn doel is om rust, overzicht en vertrouwen te brengen in situaties die complex of overweldigend kunnen voelen.</p>
-          <div class="over-values">
-            <span class="over-value">✓ 15 jaar bancaire ervaring</span>
-            <span class="over-value">✓ NBBI aangesloten</span>
-            <span class="over-value">✓ Rechtbank aangesteld</span>
-            <span class="over-value">✓ Professioneel mentor</span>
-          </div>
+    <div style="margin-top:16px">
+      <label for="datum">Een dag dat jij kan</label>
+      <div class="row">
+        <div><input type="date" id="datum"></div>
+        <button class="btn-add" id="addBtn">+ Toevoegen</button>
+      </div>
+    </div>
+
+    <div class="chips" id="chips"></div>
+    <div class="empty" id="chipsEmpty">Nog geen dagen gekozen.</div>
+
+    <button class="btn-save" id="saveBtn">Opslaan</button>
+  </div>
+
+  <!-- RESULTATEN -->
+  <div class="card">
+    <div class="toolbar">
+      <h2 style="margin:0">📊 Beste dagen</h2>
+      <button class="btn-refresh" id="refreshBtn">↻ Vernieuwen</button>
+    </div>
+    <div id="results"></div>
+    <div class="empty" id="resultsEmpty">Nog niemand heeft iets ingevuld.</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  // ======================================================
+  //  HIER JE EIGEN GEGEVENS INVULLEN (zie uitleg in de chat)
+  // ======================================================
+  const SUPABASE_URL = "VUL_HIER_JE_PROJECT_URL_IN";
+  const SUPABASE_ANON_KEY = "VUL_HIER_JE_ANON_KEY_IN";
+  // ======================================================
+
+  const configured =
+    SUPABASE_URL && !SUPABASE_URL.includes("VUL_HIER") &&
+    SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes("VUL_HIER");
+
+  let db = null;
+  if (configured) db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  else document.getElementById("configWarn").style.display = "block";
+
+  const gekozen = new Set();
+
+  // ---- helpers ----
+  const $ = id => document.getElementById(id);
+  function toast(msg, isErr){
+    const t = $("toast"); t.textContent = msg;
+    t.className = "toast show" + (isErr ? " err" : "");
+    setTimeout(()=> t.className = "toast", 2600);
+  }
+  function fmtDate(iso){
+    const d = new Date(iso + "T00:00:00");
+    return d.toLocaleDateString("nl-NL", {weekday:"long", day:"numeric", month:"long"});
+  }
+
+  // ---- chips (gekozen dagen) ----
+  function renderChips(){
+    const box = $("chips"); box.innerHTML = "";
+    const arr = [...gekozen].sort();
+    $("chipsEmpty").style.display = arr.length ? "none" : "block";
+    arr.forEach(iso=>{
+      const c = document.createElement("span");
+      c.className = "chip";
+      c.innerHTML = `${fmtDate(iso)} <button title="verwijder">×</button>`;
+      c.querySelector("button").onclick = ()=>{ gekozen.delete(iso); renderChips(); };
+      box.appendChild(c);
+    });
+  }
+  $("addBtn").onclick = ()=>{
+    const v = $("datum").value;
+    if(!v){ toast("Kies eerst een datum.", true); return; }
+    gekozen.add(v); $("datum").value = ""; renderChips();
+  };
+
+  // ---- opslaan ----
+  $("saveBtn").onclick = async ()=>{
+    if(!configured){ toast("Supabase is nog niet ingesteld.", true); return; }
+    const naam = $("naam").value.trim();
+    if(!naam){ toast("Vul eerst je naam in.", true); return; }
+    if(gekozen.size === 0){ toast("Kies minstens één dag.", true); return; }
+
+    const btn = $("saveBtn"); btn.disabled = true; btn.textContent = "Bezig met opslaan...";
+    const rows = [...gekozen].map(datum => ({ naam, datum }));
+    const { error } = await db.from("beschikbaarheid").insert(rows);
+    btn.disabled = false; btn.textContent = "Opslaan";
+
+    if(error){ toast("Er ging iets mis bij het opslaan.", true); console.error(error); return; }
+    toast("Opgeslagen! Bedankt 🎉");
+    gekozen.clear(); renderChips();
+    laadResultaten();
+  };
+
+  // ---- resultaten ophalen + ranglijst ----
+  async function laadResultaten(){
+    if(!configured) return;
+    const { data, error } = await db.from("beschikbaarheid").select("naam, datum");
+    if(error){ console.error(error); return; }
+
+    // groeperen per datum
+    const perDag = {};
+    data.forEach(r=>{
+      if(!perDag[r.datum]) perDag[r.datum] = new Set();
+      perDag[r.datum].add(r.naam);
+    });
+
+    const lijst = Object.entries(perDag)
+      .map(([datum, namen]) => ({ datum, namen:[...namen] }))
+      .sort((a,b)=> b.namen.length - a.namen.length || a.datum.localeCompare(b.datum));
+
+    const box = $("results"); box.innerHTML = "";
+    $("resultsEmpty").style.display = lijst.length ? "none" : "block";
+
+    const maxAantal = lijst.length ? lijst[0].namen.length : 0;
+    lijst.forEach((item, i)=>{
+      const isTop = item.namen.length === maxAantal && maxAantal > 0;
+      const div = document.createElement("div");
+      div.className = "result" + (isTop ? " top" : "");
+      div.innerHTML = `
+        <div class="rank">${i+1}</div>
+        <div class="result-main">
+          <div class="result-date">${fmtDate(item.datum)}</div>
+          <div class="result-names">${item.namen.join(", ")}</div>
         </div>
-        <!-- Rechts: 3 subkopjes -->
-        <div class="over-right">
-          <div class="over-block">
-            <h3>Een achtergrond die zekerheid biedt</h3>
-            <p>Voordat ik bewindvoerder werd, werkte ik 15 jaar in de bancaire wereld. Daar heb ik geleerd hoe belangrijk het is om helder te communiceren en zorgvuldig met iemands belangen om te gaan. Daarna drie jaar als budgetbeheerder en budgetcoach — die combinatie vormt de basis van mijn werk: professioneel, deskundig en altijd met oog voor de mens.</p>
-          </div>
-          <div class="over-block">
-            <h3>Open, eerlijk en naast de cliënt</h3>
-            <p>Openheid en eerlijkheid vind ik essentieel. Ik kies bewust voor een manier van werken waarbij ik niet boven iemand ga staan, maar ernaast. Samen kijken we naar wat nodig is om stabiliteit te creëren en zorgen te verminderen.</p>
-          </div>
-          <div class="over-block" style="margin-bottom:0">
-            <h3>Samen werken aan stabiliteit en groei</h3>
-            <p>Of het nu gaat om het beschermen van financiële belangen, het nemen van verantwoordelijke beslissingen of het versterken van zelfredzaamheid: ik bied ondersteuning op maat. Betrouwbaar, zorgvuldig en mensgericht.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+        <div class="count">${item.namen.length} ${item.namen.length===1?"persoon":"personen"}</div>`;
+      box.appendChild(div);
+    });
+  }
 
-  <!-- BEWINDVOERING -->
-  <section id="bewindvoering">
-    <div class="bw-intro reveal">
-      <div class="section-label">Bewindvoering</div>
-      <h2 class="section-title">Wat doet een bewindvoerder?</h2>
-      <p class="section-intro">Wanneer iemand door financiële of persoonlijke omstandigheden niet langer in staat is zijn eigen geldzaken te regelen, kan de rechtbank een bewindvoerder benoemen. Als bewindvoerder neem ik de verantwoordelijkheid over de financiële administratie, zodat er weer rust, overzicht en stabiliteit ontstaat.</p>
-    </div>
-    <div class="bw-grid reveal">
-      <div class="bw-card">
-        
-        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 7H6a2 2 0 00-2 2v9a2 2 0 002 2h9a2 2 0 002-2v-3M16 5l3 3-8 8H8v-3l8-8z"/></svg></div>
-        <h3>Financieel beheer en administratie</h3>
-        <p>Het beheren van alle inkomsten en uitgaven, betalen van de vaste lasten en zorgen dat financiële verplichtingen op tijd worden nagekomen. Hierdoor voorkomen we schulden of verdere financiële problemen.</p>
-      </div>
-      <div class="bw-card">
-        
-        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
-        <h3>Opstellen van een budgetplan</h3>
-        <p>Samen stellen we een realistisch budget op dat aansluit bij de persoonlijke situatie. Dit budget zorgt voor duidelijkheid: wat komt erin, wat gaat eruit en hoeveel leefgeld is verantwoord?</p>
-      </div>
-      <div class="bw-card">
-        
-        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-        <h3>Aanvragen en beheren van toeslagen</h3>
-        <p>Ik controleer welke toeslagen, subsidies of voorzieningen van toepassing zijn. Indien nodig help ik bij de aanvraag. Ook onderhoud ik contact met gemeenten, instanties en organisaties.</p>
-      </div>
-      <div class="bw-card">
-        
-        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-        <h3>Schuldenregeling en bemiddeling</h3>
-        <p>Bij schulden zorg ik voor overzicht en onderhandel ik met schuldeisers. Waar mogelijk zoek ik naar oplossingen zoals betalingsregelingen, schuldhulpverlening of trajecten via de gemeente.</p>
-      </div>
-      <div class="bw-card">
-        
-        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/></svg></div>
-        <h3>Bescherming en rechtmatig handelen</h3>
-        <p>Als bewindvoerder handel ik altijd volgens de regels van de rechtbank. Jaarlijks maak ik een rekening en verantwoording, zodat volledig inzichtelijk is wat er met de financiën is gebeurd. Transparantie en zorgvuldigheid staan hierbij voorop.</p>
-      </div>
-      <div class="bw-card">
-        
-        <div class="bw-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
-        <h3>Correspondentie en communicatie</h3>
-        <p>Alle financiële post komt bij mij binnen. Ik behandel deze, neem contact op met instanties en zorg dat u geen belastende correspondentie meer hoeft te verwerken.</p>
-      </div>
-      <div class="bw-quote">
-        <p>"Mijn werk stopt niet bij het beheren van geldzaken. Ik kijk vooruit: hoe kunnen we financiële stabiliteit behouden of verbeteren? Welke stappen kunnen op termijn helpen om weer zelfstandig te worden? Bewindvoering draait niet alleen om geld — het gaat vooral om rust, veiligheid en het gevoel dat er weer overzicht komt."</p>
-      </div>
-    </div>
-  </section>
+  $("refreshBtn").onclick = laadResultaten;
 
-  <!-- MENTORSCHAP -->
-  <section id="mentorschap">
-    <div class="reveal" style="display:grid;grid-template-columns:1fr 1.3fr;gap:3rem;align-items:start;">
-      <div>
-        <div class="section-label">Mentorschap</div>
-        <h2 class="section-title">Wat doet een professioneel mentor?</h2>
-        <p class="section-intro">Een professioneel mentor wordt door de rechtbank benoemd wanneer iemand niet (volledig) in staat is om zelf beslissingen te nemen over zorg, begeleiding, welzijn of dagelijkse ondersteuning. Ik behartigt de persoonlijke belangen van de cliënt en zorgt ervoor dat deze de juiste zorg, aandacht en bescherming krijgt.</p>
-      </div>
-      <ul class="mentor-list">
-        <li><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg></div><div class="text"><h4>Belangenbehartiging in zorg en welzijn</h4><p>Ik vertegenwoordig de cliënt bij beslissingen rondom zorg, behandeling, begeleiding en dagelijkse ondersteuning. Ik zet me in voor passende zorg en kom op voor wensen, grenzen en behoeften.</p></div></li>
-        <li><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><div class="text"><h4>Overleg met zorgverleners en instanties</h4><p>Ik onderhoud actief contact met zorgverleners, begeleiders en behandelaren over wat de cliënt nodig heeft en hoe de zorg het beste kan aansluiten.</p></div></li>
-        <li><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/></svg></div><div class="text"><h4>Bewaken van kwaliteit van leven</h4><p>Als mentor let ik op hoe het écht met iemand gaat. Veiligheid, gezondheid, sociale contacten en welzijn zijn daarbij belangrijke thema's.</p></div></li>
-        <li><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></div><div class="text"><h4>Regelmatig persoonlijk contact</h4><p>De cliënt wordt regelmatig bezocht. Door dichtbij te blijven ontstaat vertrouwen en kan ik snel reageren wanneer iets verandert.</p></div></li>
-        <li><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><div class="text"><h4>Ondersteunen bij keuzes en beslissingen</h4><p>Ik help de cliënt bij keuzes rondom zorg en welzijn. Waar mogelijk ondersteun ik in plaats van over te nemen, zodat de cliënt zelf regie behoudt.</p></div></li>
-      </ul>
-    </div>
-    <div class="bw-quote reveal" style="margin-top:1.5rem;">
-      <p>"Mentorschap draait niet alleen om regels en besluiten, maar vooral om menselijkheid. Door respectvol samen te werken en goed te luisteren, zorgen we samen voor een veilige, stabiele en waardige leefomgeving. Sinds maart 2025 ben ik ook officieel aangesteld als professioneel mentor door de rechtbank — een aanvulling waardoor ik cliënten op meerdere vlakken kan ondersteunen."</p>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="Contact">
-    <div class="contact-wrapper">
-      <div class="contact-info reveal">
-        <div class="section-label">Bereikbaarheid</div>
-        <h2 class="section-title">Neem contact op</h2>
-        <p class="section-intro">Per mail ben ik 24 uur per dag bereikbaar. U ontvangt binnen 2 werkdagen een reactie. Ik sta u graag te woord voor vragen over bewindvoering, mentorschap of de tarieven.</p>
-        <div class="contact-item" style="margin-top:2rem"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div><span><a href="mailto:info@bewindwijs.nl">info@bewindwijs.nl</a></span></div>
-        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></div><span>Leusden</span></div>
-        <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div><span>Reactie binnen 2 werkdagen</span></div>
-      </div>
-      <div class="contact-form reveal">
-        <form id="contactForm">
-          <input type="hidden" name="access_key" value="0e93a4d9-2f36-476b-b6d7-f7f4bcc963f2" />
-          <div class="form-row">
-            <div class="form-group"><label>Naam</label><input type="text" name="name" placeholder="Uw naam" required /></div>
-            <div class="form-group"><label>E-mail</label><input type="email" name="email" placeholder="uw@email.nl" required /></div>
-          </div>
-          <div class="form-group"><label>Onderwerp</label><input type="text" name="subject" placeholder="Waar gaat uw vraag over?" /></div>
-          <div class="form-group"><label>Bericht</label><textarea name="message" placeholder="Hoe kan ik u helpen?" required></textarea></div>
-          <button type="submit" class="btn-submit">Verstuur bericht</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <footer>
-    <p>© <span id="year"></span> BewindWijs – Leusden</p>
-    <ul class="footer-links"><li><a href="#">Privacy</a></li><li><a href="#">Klachtenregeling</a></li></ul>
-  </footer>
-
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
-    const toggle=document.getElementById('navToggle'),mm=document.getElementById('mobileMenu');
-    toggle.addEventListener('click',()=>{toggle.classList.toggle('open');mm.classList.toggle('open');});
-    function closeMenu(){toggle.classList.remove('open');mm.classList.remove('open');}
-    document.querySelectorAll('.reveal').forEach(el=>new IntersectionObserver(e=>{e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('visible');});},{threshold:0.1}).observe(el));
-    document.getElementById('contactForm').addEventListener('submit',async function(e){e.preventDefault();const btn=this.querySelector('.btn-submit');btn.textContent='Versturen...';btn.disabled=true;const r=await fetch('https://api.web3forms.com/submit',{method:'POST',body:new FormData(this)});const j=await r.json();if(j.success){btn.textContent='Verstuurd ✓';btn.style.background='#4caf50';this.reset();setTimeout(()=>{btn.textContent='Verstuur bericht';btn.style.background='';btn.disabled=false;},3000);}else{btn.textContent='Er ging iets mis';btn.disabled=false;}});
-  </script>
+  // init
+  renderChips();
+  laadResultaten();
+</script>
 </body>
 </html>
