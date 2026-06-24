@@ -158,19 +158,9 @@
   }
 
   function sortDatumsPerMaand(datums){
-    const vandaag = vandaagStart();
-    return [...datums].sort((a,b) => {
-      const da = parseDatum(a);
-      const db = parseDatum(b);
-      const aOud = da < vandaag;
-      const bOud = db < vandaag;
-
-      // Eerst vandaag/toekomst, daarna oude datums onderaan.
-      if(aOud !== bOud) return aOud ? 1 : -1;
-
-      // Binnen die groep gewoon per maand en dag oplopend.
-      return da - db;
-    });
+    // Gewoon echte datumvolgorde: eerst juni, daarna juli, daarna augustus, enz.
+    // Dus NIET meer oude datums onderaan zetten.
+    return [...datums].sort((a,b) => parseDatum(a) - parseDatum(b));
   }
   function tierVan(count){ const r = maxAantal ? count/maxAantal : 0; if(r >= 0.66) return "green"; if(r >= 0.34) return "orange"; return "red"; }
 
@@ -219,7 +209,7 @@
     if(namen.length === 0){ showRemoveError("Er zijn nog geen namen opgeslagen."); return; }
     namen.forEach(naam => {
       const b = document.createElement("button"); b.className = "name-choice"; b.textContent = naam; b.dataset.naam = naam;
-      b.onclick = () => { $("removeNaam").value = naam; markeerGekozenNaam(naam); laadDagenVoorNaam(); };
+      b.onclick = () => { hideRemoveError(); $("removeNaam").value = naam; markeerGekozenNaam(naam); laadDagenVoorNaam(); };
       $("nameChoicesList").appendChild(b);
     });
     $("nameChoicesBox").classList.add("open");
@@ -245,6 +235,7 @@
     markeerGekozenNaam(gevondenNaam);
     const datums = sortDatumsPerMaand([...new Set(alleRijen.filter(r => norm(r.naam) === norm(gevondenNaam)).map(r => r.datum))]);
     if(datums.length === 0){ showRemoveError(`Er zijn geen dagen gevonden voor "${gevondenNaam}".`); return; }
+    hideRemoveError();
     removeNaamGevonden = gevondenNaam; const list = $("removeDaysList"); list.innerHTML = "";
     let laatsteMaand = "";
     datums.forEach(datum => {
@@ -275,7 +266,11 @@
     const {data,error} = await db.from("beschikbaarheid").delete().eq("naam", removeNaamGevonden).in("datum", gekozenVoorVerwijderen).select();
     btn.disabled = false; btn.textContent = "Geselecteerde dagen verwijderen";
     if(error){ showRemoveError("Verwijderen lukte niet."); console.error(error); return; }
-    if(!data || data.length === 0){ showRemoveError("Er is niets verwijderd. Klik opnieuw op de naam om de actuele lijst te laden."); return; }
+    if(!data || data.length === 0){
+      showRemoveError("Er is niets verwijderd. De lijst is opnieuw geladen; kies de datum nog een keer.");
+      laadDagenVoorNaam();
+      return;
+    }
     $("removeModal").classList.remove("open"); toast(`${data.length} ${data.length === 1 ? "dag" : "dagen"} van ${removeNaamGevonden} verwijderd.`);
     gekozen.clear(); renderCalendar(); updateSelected(); laadResultaten();
   };
