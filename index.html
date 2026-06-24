@@ -9,19 +9,19 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg1:#f6efe4;
-    --bg2:#efe4d3;
-    --card:#fffdf9;
-    --ink:#2a2118;
-    --muted:#8a7d6c;
-    --accent:#bd5d34;
-    --accent-2:#d98a4f;
-    --accent-soft:#f8e7d8;
-    --line:#ece2d3;
-    --good:#3f8a5e;
-    --good-soft:#e3f0e8;
-    --shadow:0 10px 34px rgba(70,45,20,.10);
-    --shadow-sm:0 3px 12px rgba(70,45,20,.07);
+    --bg1:#1c1713;
+    --bg2:#15110e;
+    --card:#262019;
+    --card-2:#2e271f;
+    --ink:#f2eae0;
+    --muted:#a89a87;
+    --accent:#e08a4f;
+    --accent-2:#d9743a;
+    --accent-soft:#3a2a1d;
+    --line:#3a3128;
+    --good:#5bb583;
+    --good-soft:#243a30;
+    --shadow:0 14px 40px rgba(0,0,0,.45);
   }
   *{box-sizing:border-box}
   html,body{margin:0}
@@ -29,7 +29,7 @@
     font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
     color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;
     background:
-      radial-gradient(1200px 500px at 50% -200px, rgba(217,138,79,.18), transparent 60%),
+      radial-gradient(1100px 480px at 50% -180px, rgba(224,138,79,.22), transparent 62%),
       linear-gradient(160deg, var(--bg1), var(--bg2));
     background-attachment:fixed;min-height:100vh;
   }
@@ -55,16 +55,17 @@
     display:flex;align-items:center;gap:9px;
   }
   .step{
-    font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#fff;background:var(--accent);
+    font-family:'Inter',sans-serif;font-size:.7rem;font-weight:700;color:#fff;background:var(--accent-2);
     width:22px;height:22px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
   }
 
   label{display:block;font-size:.82rem;color:var(--muted);margin:0 0 7px;font-weight:600}
   input[type=text]{
     width:100%;padding:13px 15px;font-size:1rem;border:1.5px solid var(--line);
-    border-radius:12px;background:#fcf9f4;color:var(--ink);font-family:inherit;transition:.15s;
+    border-radius:12px;background:var(--card-2);color:var(--ink);font-family:inherit;transition:.15s;
   }
-  input[type=text]:focus{outline:none;border-color:var(--accent);background:#fff;box-shadow:0 0 0 4px rgba(189,93,52,.1)}
+  input[type=text]::placeholder{color:#7d7160}
+  input[type=text]:focus{outline:none;border-color:var(--accent);background:#332b22;box-shadow:0 0 0 4px rgba(224,138,79,.15)}
 
   /* ---- kalender ---- */
   .cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
@@ -72,7 +73,7 @@
   .cal-nav{display:flex;gap:8px}
   .cal-nav button{
     width:36px;height:36px;padding:0;border-radius:10px;border:1.5px solid var(--line);
-    background:#fff;color:var(--ink);font-size:1.1rem;display:flex;align-items:center;justify-content:center;
+    background:var(--card-2);color:var(--ink);font-size:1.1rem;display:flex;align-items:center;justify-content:center;
     cursor:pointer;transition:.15s;
   }
   .cal-nav button:hover{border-color:var(--accent);color:var(--accent)}
@@ -82,19 +83,18 @@
     text-transform:uppercase;letter-spacing:.04em;padding-bottom:4px;
   }
   .cal-day{
-    aspect-ratio:1/1;border:none;background:#f7f1e8;border-radius:12px;cursor:pointer;
+    aspect-ratio:1/1;border:none;background:var(--card-2);border-radius:12px;cursor:pointer;
     font-family:inherit;font-size:.95rem;font-weight:600;color:var(--ink);
     display:flex;align-items:center;justify-content:center;transition:transform .08s,background .15s,color .15s,box-shadow .15s;
-    position:relative;
   }
   .cal-day:hover:not(.disabled):not(.selected){background:var(--accent-soft);color:var(--accent)}
   .cal-day.selected{
     background:linear-gradient(150deg,var(--accent),var(--accent-2));color:#fff;
-    box-shadow:0 4px 12px rgba(189,93,52,.35);transform:translateY(-1px);
+    box-shadow:0 4px 14px rgba(224,138,79,.4);transform:translateY(-1px);
   }
-  .cal-day.today:not(.selected){box-shadow:inset 0 0 0 2px var(--accent-2)}
+  .cal-day.today:not(.selected){box-shadow:inset 0 0 0 2px var(--accent)}
   .cal-day.empty{background:none;cursor:default}
-  .cal-day.disabled{color:#c9bfb1;background:#faf6ef;cursor:not-allowed}
+  .cal-day.disabled{color:#5f564a;background:#221d17;cursor:not-allowed}
 
   .selected-bar{
     margin-top:18px;padding-top:16px;border-top:1px dashed var(--line);
@@ -107,12 +107,12 @@
 
   button.btn-save{
     font-family:inherit;font-size:1.02rem;font-weight:700;cursor:pointer;border:none;border-radius:14px;
-    background:linear-gradient(150deg,var(--accent),var(--accent-2));color:#fff;width:100%;margin-top:18px;
-    padding:15px;box-shadow:0 6px 18px rgba(189,93,52,.3);transition:transform .06s,filter .15s;
+    background:linear-gradient(150deg,var(--accent),var(--accent-2));color:#1c1713;width:100%;margin-top:18px;
+    padding:15px;box-shadow:0 8px 22px rgba(224,138,79,.32);transition:transform .06s,filter .15s;
   }
-  button.btn-save:hover{filter:brightness(1.04)}
+  button.btn-save:hover{filter:brightness(1.06)}
   button.btn-save:active{transform:translateY(1px)}
-  button.btn-save:disabled{opacity:.55;cursor:not-allowed;filter:grayscale(.2)}
+  button.btn-save:disabled{opacity:.5;cursor:not-allowed;filter:grayscale(.3)}
 
   /* ---- resultaten ---- */
   .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -121,10 +121,10 @@
   .result{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid var(--line)}
   .result:last-child{border-bottom:none}
   .rank{
-    flex:none;width:36px;height:36px;border-radius:11px;background:#f1ece2;color:var(--muted);
+    flex:none;width:36px;height:36px;border-radius:11px;background:#33291f;color:var(--muted);
     display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.92rem;
   }
-  .result.top .rank{background:var(--good);color:#fff;box-shadow:0 3px 10px rgba(63,138,94,.3)}
+  .result.top .rank{background:var(--good);color:#15110e;box-shadow:0 3px 12px rgba(91,181,131,.35)}
   .result-main{flex:1;min-width:0}
   .result-date{font-weight:600;text-transform:capitalize}
   .result-names{font-size:.82rem;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -135,14 +135,14 @@
 
   .toast{
     position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
-    background:var(--ink);color:#fff;padding:13px 24px;border-radius:12px;font-size:.92rem;font-weight:500;
-    opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--shadow);z-index:10;
+    background:#0e0b09;color:#fff;padding:13px 24px;border-radius:12px;font-size:.92rem;font-weight:500;
+    opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--shadow);z-index:10;border:1px solid var(--line);
   }
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .toast.err{background:#a4392b}
+  .toast.err{background:#5a241b;border-color:#7a3327}
 
-  .config-warn{background:#fff3cd;border:1px solid #f0d68a;color:#7a5d10;border-radius:14px;padding:16px;margin-bottom:20px;font-size:.9rem}
-  .config-warn code{background:#fff;padding:2px 6px;border-radius:5px;font-size:.85em}
+  .config-warn{background:#3a2f12;border:1px solid #6b5a22;color:#e7d49a;border-radius:14px;padding:16px;margin-bottom:20px;font-size:.9rem}
+  .config-warn code{background:#241d0c;padding:2px 6px;border-radius:5px;font-size:.85em}
 
   footer{text-align:center;color:var(--muted);font-size:.8rem;margin-top:10px}
 </style>
@@ -162,7 +162,7 @@
   <!-- INVOER -->
   <div class="card">
     <h2><span class="step">1</span> Je naam</h2>
-    <input type="text" id="naam" placeholder="bijv. Daan" autocomplete="off">
+    <input type="text" id="naam" placeholder="bijv. vader Daan" autocomplete="off">
 
     <h2 style="margin-top:24px"><span class="step">2</span> Kies je dagen</h2>
     <div class="cal-head">
@@ -215,7 +215,7 @@
   else document.getElementById("configWarn").style.display = "block";
 
   const $ = id => document.getElementById(id);
-  const gekozen = new Set();           // ISO-datums (YYYY-MM-DD)
+  const gekozen = new Set();
   const MAANDEN = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
   const DOW = ["ma","di","wo","do","vr","za","zo"];
 
@@ -235,15 +235,12 @@
     return d.toLocaleDateString("nl-NL",{weekday:"long",day:"numeric",month:"long"});
   }
 
-  // ---- kalender renderen ----
   function renderCalendar(){
     $("calTitle").textContent = `${MAANDEN[viewMonth]} ${viewYear}`;
     const grid=$("calGrid"); grid.innerHTML="";
-
     DOW.forEach(d=>{ const el=document.createElement("div"); el.className="cal-dow"; el.textContent=d; grid.appendChild(el); });
 
-    // maandag = 0
-    let firstDow = new Date(viewYear, viewMonth, 1).getDay(); // 0=zo
+    let firstDow = new Date(viewYear, viewMonth, 1).getDay();
     firstDow = (firstDow+6)%7;
     const daysInMonth = new Date(viewYear, viewMonth+1, 0).getDate();
     const tISO = todayISO();
@@ -275,7 +272,6 @@
   $("nextBtn").onclick = ()=>{ viewMonth++; if(viewMonth>11){viewMonth=0;viewYear++;} renderCalendar(); };
   $("clearBtn").onclick = ()=>{ gekozen.clear(); renderCalendar(); updateSelected(); };
 
-  // ---- opslaan ----
   $("saveBtn").onclick = async ()=>{
     if(!configured){ toast("Supabase is nog niet ingesteld.", true); return; }
     const naam = $("naam").value.trim();
@@ -293,7 +289,6 @@
     laadResultaten();
   };
 
-  // ---- resultaten + ranglijst ----
   async function laadResultaten(){
     if(!configured) return;
     const {data,error}=await db.from("beschikbaarheid").select("naam, datum");
@@ -326,257 +321,7 @@
   }
   $("refreshBtn").onclick = laadResultaten;
 
-  // init
   renderCalendar(); updateSelected(); laadResultaten();
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="nl">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wanneer kunnen we wat drinken?</title>
-<style>
-  :root{
-    --bg:#f4f1ea;
-    --card:#ffffff;
-    --ink:#2c2620;
-    --muted:#7a7066;
-    --accent:#c2703d;
-    --accent-soft:#f7e8dd;
-    --line:#e7e0d4;
-    --good:#3d8a5f;
-    --shadow:0 4px 20px rgba(60,45,30,.08);
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-    background:var(--bg);color:var(--ink);line-height:1.5;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:640px;margin:0 auto;padding:24px 18px 80px}
-  header{text-align:center;margin:18px 0 28px}
-  header h1{font-size:1.7rem;margin:0 0 6px;letter-spacing:-.02em}
-  header p{color:var(--muted);margin:0;font-size:.98rem}
-  .card{
-    background:var(--card);border:1px solid var(--line);border-radius:16px;
-    padding:22px;margin-bottom:20px;box-shadow:var(--shadow);
-  }
-  .card h2{font-size:1.05rem;margin:0 0 14px;display:flex;align-items:center;gap:8px}
-  label{display:block;font-size:.85rem;color:var(--muted);margin:0 0 6px;font-weight:600}
-  input[type=text],input[type=date]{
-    width:100%;padding:12px 14px;font-size:1rem;border:1px solid var(--line);
-    border-radius:10px;background:#fbfaf7;color:var(--ink);font-family:inherit;
-  }
-  input:focus{outline:none;border-color:var(--accent);background:#fff}
-  .row{display:flex;gap:10px;align-items:flex-end}
-  .row > div{flex:1}
-  button{
-    font-family:inherit;font-size:1rem;font-weight:600;cursor:pointer;
-    border:none;border-radius:10px;padding:12px 18px;transition:transform .05s,filter .15s;
-  }
-  button:active{transform:translateY(1px)}
-  .btn-add{background:var(--accent-soft);color:var(--accent);white-space:nowrap}
-  .btn-add:hover{filter:brightness(.97)}
-  .btn-save{background:var(--accent);color:#fff;width:100%;margin-top:16px;padding:14px}
-  .btn-save:hover{filter:brightness(1.05)}
-  .btn-save:disabled{opacity:.5;cursor:not-allowed}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;min-height:4px}
-  .chip{
-    display:inline-flex;align-items:center;gap:7px;background:var(--accent-soft);
-    color:var(--accent);padding:7px 12px;border-radius:999px;font-size:.9rem;font-weight:600;
-  }
-  .chip button{background:none;padding:0;color:var(--accent);font-size:1.1rem;line-height:1;opacity:.7}
-  .chip button:hover{opacity:1}
-  .empty{color:var(--muted);font-size:.9rem;font-style:italic;margin-top:12px}
-  /* results */
-  .result{
-    display:flex;align-items:center;gap:14px;padding:12px 0;border-bottom:1px solid var(--line);
-  }
-  .result:last-child{border-bottom:none}
-  .rank{
-    flex:none;width:34px;height:34px;border-radius:9px;background:#f1ece2;color:var(--muted);
-    display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.9rem;
-  }
-  .result.top .rank{background:var(--good);color:#fff}
-  .result-main{flex:1;min-width:0}
-  .result-date{font-weight:600}
-  .result-names{font-size:.82rem;color:var(--muted);margin-top:2px;overflow:hidden;text-overflow:ellipsis}
-  .count{
-    flex:none;background:var(--accent-soft);color:var(--accent);font-weight:700;
-    padding:5px 12px;border-radius:999px;font-size:.9rem;
-  }
-  .result.top .count{background:var(--good);color:#fff}
-  .toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-  .btn-refresh{background:none;color:var(--muted);font-size:.85rem;padding:6px 8px}
-  .btn-refresh:hover{color:var(--accent)}
-  .toast{
-    position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);
-    background:var(--ink);color:#fff;padding:12px 22px;border-radius:10px;font-size:.92rem;
-    opacity:0;pointer-events:none;transition:.25s;box-shadow:var(--shadow);z-index:10;
-  }
-  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .toast.err{background:#a23b2d}
-  .config-warn{
-    background:#fff3cd;border:1px solid #f0d68a;color:#7a5d10;border-radius:12px;
-    padding:16px;margin-bottom:20px;font-size:.9rem;
-  }
-  .config-warn code{background:#fff;padding:2px 6px;border-radius:5px;font-size:.85em}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <header>
-    <h1>🍻 Wanneer kunnen we wat drinken?</h1>
-    <p>Vul je naam in, kies de dagen dat jij kan, en zie waar de meeste mensen kunnen.</p>
-  </header>
-
-  <div id="configWarn" class="config-warn" style="display:none">
-    ⚠️ Nog niet ingesteld: vul bovenin het bestand je <code>SUPABASE_URL</code> en <code>SUPABASE_ANON_KEY</code> in.
-  </div>
-
-  <!-- INVOER -->
-  <div class="card">
-    <h2>✏️ Jouw beschikbaarheid</h2>
-    <label for="naam">Je naam</label>
-    <input type="text" id="naam" placeholder="bijv. Daan" autocomplete="off">
-
-    <div style="margin-top:16px">
-      <label for="datum">Een dag dat jij kan</label>
-      <div class="row">
-        <div><input type="date" id="datum"></div>
-        <button class="btn-add" id="addBtn">+ Toevoegen</button>
-      </div>
-    </div>
-
-    <div class="chips" id="chips"></div>
-    <div class="empty" id="chipsEmpty">Nog geen dagen gekozen.</div>
-
-    <button class="btn-save" id="saveBtn">Opslaan</button>
-  </div>
-
-  <!-- RESULTATEN -->
-  <div class="card">
-    <div class="toolbar">
-      <h2 style="margin:0">📊 Beste dagen</h2>
-      <button class="btn-refresh" id="refreshBtn">↻ Vernieuwen</button>
-    </div>
-    <div id="results"></div>
-    <div class="empty" id="resultsEmpty">Nog niemand heeft iets ingevuld.</div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-  // ======================================================
-  //  JE EIGEN GEGEVENS (ingevuld)
-  // ======================================================
-  const SUPABASE_URL = "https://rdlkdglzfjniwamumucb.supabase.co";
-  const SUPABASE_ANON_KEY = "sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
-  // ======================================================
-
-  const configured =
-    SUPABASE_URL && !SUPABASE_URL.includes("VUL_HIER") &&
-    SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.includes("VUL_HIER");
-
-  let db = null;
-  if (configured) db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-  else document.getElementById("configWarn").style.display = "block";
-
-  const gekozen = new Set();
-
-  // ---- helpers ----
-  const $ = id => document.getElementById(id);
-  function toast(msg, isErr){
-    const t = $("toast"); t.textContent = msg;
-    t.className = "toast show" + (isErr ? " err" : "");
-    setTimeout(()=> t.className = "toast", 2600);
-  }
-  function fmtDate(iso){
-    const d = new Date(iso + "T00:00:00");
-    return d.toLocaleDateString("nl-NL", {weekday:"long", day:"numeric", month:"long"});
-  }
-
-  // ---- chips (gekozen dagen) ----
-  function renderChips(){
-    const box = $("chips"); box.innerHTML = "";
-    const arr = [...gekozen].sort();
-    $("chipsEmpty").style.display = arr.length ? "none" : "block";
-    arr.forEach(iso=>{
-      const c = document.createElement("span");
-      c.className = "chip";
-      c.innerHTML = `${fmtDate(iso)} <button title="verwijder">×</button>`;
-      c.querySelector("button").onclick = ()=>{ gekozen.delete(iso); renderChips(); };
-      box.appendChild(c);
-    });
-  }
-  $("addBtn").onclick = ()=>{
-    const v = $("datum").value;
-    if(!v){ toast("Kies eerst een datum.", true); return; }
-    gekozen.add(v); $("datum").value = ""; renderChips();
-  };
-
-  // ---- opslaan ----
-  $("saveBtn").onclick = async ()=>{
-    if(!configured){ toast("Supabase is nog niet ingesteld.", true); return; }
-    const naam = $("naam").value.trim();
-    if(!naam){ toast("Vul eerst je naam in.", true); return; }
-    if(gekozen.size === 0){ toast("Kies minstens één dag.", true); return; }
-
-    const btn = $("saveBtn"); btn.disabled = true; btn.textContent = "Bezig met opslaan...";
-    const rows = [...gekozen].map(datum => ({ naam, datum }));
-    const { error } = await db.from("beschikbaarheid").insert(rows);
-    btn.disabled = false; btn.textContent = "Opslaan";
-
-    if(error){ toast("Er ging iets mis bij het opslaan.", true); console.error(error); return; }
-    toast("Opgeslagen! Bedankt 🎉");
-    gekozen.clear(); renderChips();
-    laadResultaten();
-  };
-
-  // ---- resultaten ophalen + ranglijst ----
-  async function laadResultaten(){
-    if(!configured) return;
-    const { data, error } = await db.from("beschikbaarheid").select("naam, datum");
-    if(error){ console.error(error); return; }
-
-    // groeperen per datum
-    const perDag = {};
-    data.forEach(r=>{
-      if(!perDag[r.datum]) perDag[r.datum] = new Set();
-      perDag[r.datum].add(r.naam);
-    });
-
-    const lijst = Object.entries(perDag)
-      .map(([datum, namen]) => ({ datum, namen:[...namen] }))
-      .sort((a,b)=> b.namen.length - a.namen.length || a.datum.localeCompare(b.datum));
-
-    const box = $("results"); box.innerHTML = "";
-    $("resultsEmpty").style.display = lijst.length ? "none" : "block";
-
-    const maxAantal = lijst.length ? lijst[0].namen.length : 0;
-    lijst.forEach((item, i)=>{
-      const isTop = item.namen.length === maxAantal && maxAantal > 0;
-      const div = document.createElement("div");
-      div.className = "result" + (isTop ? " top" : "");
-      div.innerHTML = `
-        <div class="rank">${i+1}</div>
-        <div class="result-main">
-          <div class="result-date">${fmtDate(item.datum)}</div>
-          <div class="result-names">${item.namen.join(", ")}</div>
-        </div>
-        <div class="count">${item.namen.length} ${item.namen.length===1?"persoon":"personen"}</div>`;
-      box.appendChild(div);
-    });
-  }
-
-  $("refreshBtn").onclick = laadResultaten;
-
-  // init
-  renderChips();
-  laadResultaten();
 </script>
 </body>
 </html>
