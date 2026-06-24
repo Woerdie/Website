@@ -370,7 +370,18 @@
   .modal-overlay{position:fixed;inset:0;background:rgba(35,25,15,.48);display:none;align-items:center;justify-content:center;z-index:50;padding:20px;backdrop-filter:blur(2px)}
   .modal-overlay.open{display:flex}
 
-  .modal{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;max-width:430px;width:100%;box-shadow:var(--shadow);animation:pop .15s ease;max-height:90vh;overflow:auto}
+  .modal{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:22px;
+    max-width:440px;
+    width:100%;
+    box-shadow:var(--shadow);
+    animation:pop .15s ease;
+    max-height:92dvh;
+    overflow:auto;
+  }
 
   @keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
 
@@ -379,8 +390,27 @@
 
   .modal-label{display:block;font-size:.82rem;font-weight:700;color:var(--muted);margin-bottom:7px}
 
-  .modal-actions{display:flex;gap:10px;margin-top:16px}
-  .modal-actions button{flex:1;font-family:inherit;font-size:.9rem;font-weight:700;cursor:pointer;border:none;border-radius:12px;padding:13px;touch-action:manipulation}
+  .modal-actions{
+    display:flex;
+    gap:10px;
+    margin:18px -22px -22px;
+    padding:14px 22px 16px;
+    background:linear-gradient(180deg, rgba(255,253,249,.82), var(--card));
+    border-top:1px solid var(--line);
+    position:sticky;
+    bottom:-22px;
+  }
+  .modal-actions button{
+    flex:1;
+    font-family:inherit;
+    font-size:.9rem;
+    font-weight:800;
+    cursor:pointer;
+    border:none;
+    border-radius:13px;
+    padding:14px 13px;
+    touch-action:manipulation;
+  }
 
   .btn-cancel{background:var(--card-2);color:var(--ink);border:1.5px solid var(--line)!important}
   .btn-confirm{background:linear-gradient(150deg,var(--t-red),#d9603f);color:#fff}
@@ -404,44 +434,57 @@
     margin-top:16px;
     border-top:1px dashed var(--line);
     padding-top:14px;
-    max-height:310px;
+    max-height:360px;
     overflow:auto;
+    padding-right:3px;
   }
   .date-checklist.open{display:block}
 
   .date-help{
-    margin:0 0 10px;
+    margin:0 0 12px;
     color:var(--muted);
-    font-size:.86rem;
+    font-size:.88rem;
+    line-height:1.35;
   }
 
   .date-list-grid{
     display:grid;
-    gap:9px;
+    gap:11px;
   }
 
   .check-row{
     display:grid;
-    grid-template-columns:auto 1fr auto;
+    grid-template-columns:34px 1fr auto;
     align-items:center;
-    gap:12px;
-    padding:12px;
+    gap:13px;
+    padding:14px 12px;
     border:1.5px solid var(--line);
-    border-radius:14px;
+    border-left:5px solid #d7cbbb;
+    border-radius:16px;
     background:#fff;
     cursor:pointer;
     transition:.15s;
+    box-shadow:0 3px 12px rgba(120,85,40,.06);
   }
 
   .check-row:hover{
     border-color:var(--accent);
-    background:var(--accent-soft);
+    background:#fffaf5;
+    transform:translateY(-1px);
   }
 
   .check-row input{
-    width:21px;
-    height:21px;
+    width:24px;
+    height:24px;
     accent-color:var(--accent);
+    margin:0;
+  }
+
+  .check-row.selected-for-remove{
+    border-left-color:var(--accent);
+    border-color:#e3b28f;
+    background:#fff8f2;
+    box-shadow:0 5px 16px rgba(194,99,47,.13);
   }
 
   .date-main{
@@ -451,37 +494,33 @@
   }
 
   .check-date{
-    font-weight:800;
+    font-weight:850;
     text-transform:capitalize;
-    font-size:.98rem;
-    line-height:1.2;
+    font-size:1.02rem;
+    line-height:1.16;
+    color:var(--ink);
   }
 
   .check-subdate{
     color:var(--muted);
-    font-size:.78rem;
-    margin-top:2px;
+    font-size:.82rem;
+    margin-top:4px;
+    font-weight:600;
   }
 
   .date-action{
     font-size:.74rem;
-    font-weight:800;
-    color:var(--t-red);
-    background:var(--t-red-soft);
-    padding:5px 9px;
+    font-weight:850;
+    color:var(--muted);
+    background:var(--card-2);
+    padding:7px 10px;
     border-radius:999px;
     white-space:nowrap;
   }
 
-  .check-row:has(input:not(:checked)){
-    opacity:.58;
-    background:var(--card-2);
-    border-style:dashed;
-  }
-
-  .check-row:has(input:not(:checked)) .date-action{
-    color:var(--muted);
-    background:#fff;
+  .check-row.selected-for-remove .date-action{
+    color:var(--t-red);
+    background:var(--t-red-soft);
   }
 
   @media (max-width:360px){
@@ -589,7 +628,7 @@
     </div>
 
     <div class="date-checklist" id="removeDaysBox">
-      <p class="date-help">Vink aan wat weg moet. Haal het vinkje weg als die datum moet blijven staan.</p>
+      <p class="date-help">Klik de dag(en) aan die je wilt verwijderen. Niet aangeklikte dagen blijven gewoon staan.</p>
       <div class="date-list-grid" id="removeDaysList"></div>
     </div>
 
@@ -681,6 +720,25 @@
   function hideRemoveError(){
     $("removeError").textContent = "";
     $("removeError").classList.remove("show");
+  }
+
+
+  function datumWaarde(iso){
+    const clean = String(iso).slice(0, 10);
+    const parts = clean.split("-").map(Number);
+    return new Date(parts[0], parts[1] - 1, parts[2]).getTime();
+  }
+
+  function sorteerDatumsVanafNu(a, b){
+    const vandaag = todayISO();
+    const aOud = String(a).slice(0, 10) < vandaag;
+    const bOud = String(b).slice(0, 10) < vandaag;
+
+    if(aOud !== bOud){
+      return aOud ? 1 : -1;
+    }
+
+    return datumWaarde(a) - datumWaarde(b);
   }
 
   function fmtDate(iso){
@@ -875,6 +933,12 @@
 
   $("loadRemoveDaysBtn").onclick = laadDagenVoorNaam;
 
+  $("removeNaam").addEventListener("input", () => {
+    hideRemoveError();
+    resetRemoveDays();
+    removeNaamGevonden = "";
+  });
+
   function resetRemoveDays(){
     $("removeDaysBox").classList.remove("open");
     $("removeDaysList").innerHTML = "";
@@ -971,8 +1035,8 @@
     const datums = [...new Set(
       alleRijen
         .filter(r => norm(r.naam) === norm(gevondenNaam))
-        .map(r => r.datum)
-    )].sort();
+        .map(r => String(r.datum).slice(0, 10))
+    )].sort(sorteerDatumsVanafNu);
 
     if(datums.length === 0){
       showRemoveError(`Er zijn geen dagen gevonden voor "${gevondenNaam}".`);
@@ -989,19 +1053,41 @@
       label.className = "check-row";
 
       label.innerHTML = `
-        <input type="checkbox" class="remove-date-check" value="${esc(datum)}" checked>
+        <input type="checkbox" class="remove-date-check" value="${esc(datum)}">
         <span class="date-main">
           <span class="check-date">${fmtDayName(datum)} ${fmtDayMonth(datum)}</span>
           <span class="check-subdate">${fmtYear(datum)}</span>
         </span>
-        <span class="date-action">verwijderen</span>
+        <span class="date-action">blijft staan</span>
       `;
+
+      const check = label.querySelector(".remove-date-check");
+      const action = label.querySelector(".date-action");
+
+      function updateCardState(){
+        hideRemoveError();
+
+        if(check.checked){
+          label.classList.add("selected-for-remove");
+          action.textContent = "wordt verwijderd";
+        } else {
+          label.classList.remove("selected-for-remove");
+          action.textContent = "blijft staan";
+        }
+
+        const aantal = [...document.querySelectorAll(".remove-date-check")].filter(c => c.checked).length;
+        $("confirmRemoveBtn").disabled = aantal === 0;
+      }
+
+      check.addEventListener("change", updateCardState);
+      updateCardState();
 
       list.appendChild(label);
     });
 
+    hideRemoveError();
     $("removeDaysBox").classList.add("open");
-    $("confirmRemoveBtn").disabled = false;
+    $("confirmRemoveBtn").disabled = true;
   }
 
   $("confirmRemoveBtn").onclick = async () => {
@@ -1041,7 +1127,7 @@
     }
 
     if(!data || data.length === 0){
-      showRemoveError("Er zijn geen dagen verwijderd.");
+      showRemoveError("Er is niets verwijderd. Waarschijnlijk waren deze dagen al weg. Klik opnieuw op de naam om de actuele lijst te laden.");
       return;
     }
 
