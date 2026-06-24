@@ -3,117 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>daanwoerdman.nl</title>
+<title>Daan Woerdman</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg1:#faf4ea; --bg2:#f1e7d7;
-    --card:#fffdf9; --card-2:#f6efe4;
-    --ink:#352b20; --muted:#8c8071;
-    --accent:#c2632f; --accent-2:#dd8542; --accent-soft:#f8e7d6;
-    --line:#ebe0cf;
-    --shadow:0 8px 26px rgba(120,85,40,.10);
-    --shadow-sm:0 3px 10px rgba(120,85,40,.07);
+    --cream:#f7f3ea;
+    --cream-2:#efe9db;
+    --paper:#ffffff;
+    --navy:#16263f;
+    --navy-2:#1f3a5f;
+    --ink:#1b2a44;
+    --muted:#6a7484;
+    --gold:#b88a3e;
+    --gold-2:#cda44b;
+    --gold-soft:#f3ead6;
+    --line:#e7dfce;
+    --shadow:0 10px 34px rgba(22,38,63,.10);
+    --shadow-sm:0 3px 12px rgba(22,38,63,.07);
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;overflow-x:hidden}
-  body{font-family:'Inter',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
-    color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
-    background:radial-gradient(1100px 480px at 50% -180px, rgba(221,133,66,.18), transparent 62%),linear-gradient(160deg, var(--bg1), var(--bg2));
+  body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+    background:radial-gradient(1100px 460px at 50% -200px, rgba(184,138,62,.14), transparent 60%),linear-gradient(165deg,var(--cream),var(--cream-2));
     background-attachment:fixed;min-height:100vh;}
-  .wrap{max-width:600px;margin:0 auto;padding:clamp(28px,7vw,52px) clamp(14px,4vw,18px) 80px;}
+  .wrap{max-width:620px;margin:0 auto;padding:clamp(34px,8vw,64px) clamp(16px,4.5vw,20px) 80px;}
 
-  header{text-align:center;margin:8px 0 30px}
-  .badge{display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:6px 14px;border-radius:999px;margin-bottom:16px;}
-  header h1{font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.9rem,8vw,2.6rem);line-height:1.1;margin:0 0 10px;letter-spacing:-.015em;}
-  header p{color:var(--muted);margin:0;font-size:clamp(.95rem,3.8vw,1.05rem);max-width:38ch;margin-inline:auto}
+  header{text-align:center;margin:0 0 14px}
+  .mono{width:62px;height:62px;border-radius:50%;margin:0 auto 18px;display:flex;align-items:center;justify-content:center;
+    background:var(--navy);color:var(--gold);font-family:'Playfair Display',serif;font-weight:700;font-size:1.5rem;letter-spacing:.02em;
+    box-shadow:0 8px 22px rgba(22,38,63,.22);border:2px solid var(--gold);}
+  header h1{font-family:'Playfair Display',serif;font-weight:600;font-size:clamp(2rem,8vw,2.7rem);line-height:1.08;margin:0 0 8px;letter-spacing:-.01em;color:var(--navy)}
+  header p{color:var(--muted);margin:0;font-size:clamp(.96rem,3.8vw,1.06rem);max-width:42ch;margin-inline:auto}
+  .rule{width:46px;height:3px;background:var(--gold);border-radius:3px;margin:22px auto 0;opacity:.85}
 
-  .section-label{font-size:.74rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:30px 4px 12px;}
+  .section-label{font-size:.72rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:.14em;margin:38px 4px 14px;}
 
-  /* uitgelicht blok */
-  .feature{display:flex;align-items:center;gap:16px;text-decoration:none;color:#fff;
-    background:linear-gradient(150deg,var(--accent),var(--accent-2));border-radius:20px;
-    padding:22px;box-shadow:0 12px 30px rgba(194,99,47,.30);transition:transform .12s,box-shadow .12s;}
-  .feature:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(194,99,47,.36)}
-  .feature .ficon{font-size:2.1rem;flex:none;line-height:1}
+  /* ---- uitgelicht: BewindWijs ---- */
+  .feature{position:relative;display:block;text-decoration:none;color:#fff;border-radius:22px;overflow:hidden;
+    background:linear-gradient(150deg,var(--navy-2),var(--navy));box-shadow:0 16px 40px rgba(22,38,63,.28);
+    transition:transform .14s,box-shadow .14s;border:1px solid rgba(205,164,75,.25);margin-bottom:12px}
+  .feature:hover{transform:translateY(-3px);box-shadow:0 22px 50px rgba(22,38,63,.34)}
+  .feature::before{content:"";position:absolute;inset:0;background:radial-gradient(420px 200px at 88% -20%, rgba(205,164,75,.30), transparent 60%);pointer-events:none}
+  .feature .inner{position:relative;display:flex;align-items:center;gap:18px;padding:26px 24px}
+  .feature .ficon{flex:none;width:56px;height:56px;border-radius:15px;display:flex;align-items:center;justify-content:center;
+    background:rgba(205,164,75,.16);border:1px solid rgba(205,164,75,.4);font-size:1.7rem}
   .feature .ftext{flex:1;min-width:0}
-  .feature h3{font-family:'Fraunces',serif;font-weight:600;font-size:1.25rem;margin:0 0 3px}
-  .feature p{margin:0;font-size:.9rem;opacity:.92}
-  .feature .arrow{font-size:1.4rem;flex:none;opacity:.85}
+  .feature .tag{display:inline-block;font-size:.66rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px}
+  .feature h3{font-family:'Playfair Display',serif;font-weight:600;font-size:1.5rem;margin:0 0 4px;line-height:1.1}
+  .feature p{margin:0;font-size:.92rem;opacity:.82}
+  .feature .arrow{flex:none;font-size:1.5rem;color:var(--gold)}
 
-  /* gewone lijst-kaarten */
-  .tile{display:flex;align-items:center;gap:15px;text-decoration:none;color:var(--ink);
-    background:var(--card);border:1px solid var(--line);border-radius:16px;padding:17px 19px;
-    margin-bottom:12px;box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s,border-color .12s;}
-  .tile:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#e0d2bd}
-  .tile .ticon{font-size:1.5rem;flex:none;width:46px;height:46px;border-radius:13px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center}
+  /* ---- lijst-kaarten ---- */
+  .tile{display:flex;align-items:center;gap:16px;text-decoration:none;color:var(--ink);
+    background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:18px 20px;margin-bottom:12px;
+    box-shadow:var(--shadow-sm);transition:transform .12s,box-shadow .12s,border-color .12s;}
+  .tile:hover{transform:translateY(-2px);box-shadow:var(--shadow);border-color:#dccba6}
+  .tile .ticon{flex:none;width:48px;height:48px;border-radius:13px;background:var(--gold-soft);color:var(--gold);display:flex;align-items:center;justify-content:center;font-size:1.4rem}
   .tile .ttext{flex:1;min-width:0}
-  .tile h3{font-weight:700;font-size:1.02rem;margin:0 0 2px}
-  .tile p{margin:0;font-size:.85rem;color:var(--muted)}
-  .tile .arrow{font-size:1.25rem;color:var(--muted);flex:none;transition:.15s}
-  .tile:hover .arrow{color:var(--accent);transform:translateX(2px)}
+  .tile h3{font-family:'Playfair Display',serif;font-weight:600;font-size:1.1rem;margin:0 0 2px;color:var(--navy)}
+  .tile p{margin:0;font-size:.86rem;color:var(--muted)}
+  .tile .arrow{flex:none;font-size:1.3rem;color:#c9bda2;transition:.15s}
+  .tile:hover .arrow{color:var(--gold);transform:translateX(3px)}
 
-  footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:34px;padding:0 6px}
-  footer a{color:var(--accent);text-decoration:none}
+  footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:40px;padding:0 6px;border-top:1px solid var(--line);padding-top:22px}
+  footer a{color:var(--gold);text-decoration:none}
   footer a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <span class="badge">daanwoerdman.nl</span>
-    <h1>Welkom</h1>
-    <p>Een verzamelplek voor mijn projecten en handige tools.</p>
+    <div class="mono">DW</div>
+    <h1>Daan Woerdman</h1>
+    <p>Welkom op mijn persoonlijke pagina — diensten en handige tools op één plek.</p>
+    <div class="rule"></div>
   </header>
 
-  <!-- ====== UITGELICHT: BORRELPLANNER ====== -->
-  <div class="section-label">Uitgelicht</div>
-  <a class="feature" href="borrelplanner.html">
-    <span class="ficon">🍻</span>
-    <span class="ftext">
+  <!-- ====== DIENSTEN ====== -->
+  <div class="section-label">Diensten</div>
+
+  <a class="feature" href="bewindwijs.html">
+    <span class="inner">
+      <span class="ficon">⚖️</span>
+      <span class="ftext">
+        <span class="tag">BewindWijs</span>
+        <h3>Professionele bewindvoering</h3>
+        <p>Heldere, betrouwbare begeleiding bij het beheren van financiën.</p>
+      </span>
+      <span class="arrow">›</span>
+    </span>
+  </a>
+
+  <a class="tile" href="borrelplanner.html">
+    <span class="ticon">🍻</span>
+    <span class="ttext">
       <h3>Borrelplanner</h3>
       <p>Kies samen de beste dag om wat te drinken.</p>
     </span>
     <span class="arrow">›</span>
   </a>
 
-  <!-- ====== OVERIGE INFO / LINKS ======
-       Wil je een item toevoegen? Kopieer één <a class="tile"> ... </a> blok
-       hieronder, en pas het icoon (emoji), de titel, de tekst en de href (link) aan.
-       Verwijzen naar een andere pagina op je site? Gebruik bijv. href="overmij.html".
-       Een externe link? Gebruik href="https://..." en voeg target="_blank" toe. -->
-  <div class="section-label">Meer</div>
-
-  <a class="tile" href="#">
-    <span class="ticon">👤</span>
-    <span class="ttext">
-      <h3>Over mij</h3>
-      <p>Wie ik ben en wat ik doe.</p>
-    </span>
-    <span class="arrow">›</span>
-  </a>
-
-  <a class="tile" href="#">
-    <span class="ticon">🛠️</span>
-    <span class="ttext">
-      <h3>Projecten</h3>
-      <p>Dingen die ik gemaakt heb.</p>
-    </span>
-    <span class="arrow">›</span>
-  </a>
-
-  <a class="tile" href="#">
-    <span class="ticon">✉️</span>
-    <span class="ttext">
-      <h3>Contact</h3>
-      <p>Stuur me een bericht.</p>
-    </span>
-    <span class="arrow">›</span>
-  </a>
-
-  <footer>© <span id="jaar"></span> daanwoerdman.nl</footer>
+  <footer>© <span id="jaar"></span> Daan Woerdman · <a href="bewindwijs.html">BewindWijs</a></footer>
 </div>
 <script>document.getElementById("jaar").textContent=new Date().getFullYear();</script>
 </body>
