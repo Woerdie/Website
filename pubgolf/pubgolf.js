@@ -56,7 +56,6 @@ const endGameBtn = document.getElementById("end-game-btn");
 const holeSelect = document.getElementById("hole-select");
 const scoreList = document.getElementById("score-list");
 const saveScoresBtn = document.getElementById("save-scores-btn");
-const standingsList = document.getElementById("standings-list");
 
 const toastContainer = document.getElementById("toast-container");
 const modalBackdrop = document.getElementById("modal-backdrop");
@@ -384,7 +383,7 @@ async function shareGame(url) {
       });
       return;
     } catch {
-      // gebruiker annuleerde delen
+      // delen geannuleerd
     }
   }
 
@@ -1323,8 +1322,6 @@ async function endGame() {
 }
 
 function renderStandings() {
-  standingsList.innerHTML = "";
-
   if (scorecardTable) {
     scorecardTable.innerHTML = "";
   }
@@ -1333,24 +1330,6 @@ function renderStandings() {
 
   renderLeaderBox();
   renderScorecard();
-
-  const standings = getStandings();
-
-  standings.forEach((item, index) => {
-    const standing = document.createElement("div");
-    standing.className = "standing-item";
-
-    standing.innerHTML = `
-      <span class="standing-rank">${index + 1}</span>
-      <span class="standing-main">
-        <strong>${escapeHtml(item.name)}</strong>
-        ${item.sub ? `<div class="score-meta">${escapeHtml(item.sub)}</div>` : ""}
-      </span>
-      <span class="standing-score">${item.total}</span>
-    `;
-
-    standingsList.appendChild(standing);
-  });
 }
 
 function renderLeaderBox() {
@@ -1386,6 +1365,9 @@ function getStandings() {
       return {
         name: player.name,
         sub: "",
+        playerIds: [player.id],
+        teamId: null,
+        handicap: 0,
         total
       };
     }).sort((a, b) => a.total - b.total);
@@ -1411,7 +1393,10 @@ function getStandings() {
 
     return {
       name: team.name,
-      sub: `${teamPlayers.map(player => player.name).join(", ")}${handicap !== 0 ? ` · handicap ${handicap > 0 ? "+" : ""}${handicap}` : ""}`,
+      sub: teamPlayers.map(player => player.name).join(", "),
+      playerIds,
+      teamId: team.id,
+      handicap,
       total: scoreTotal + handicap
     };
   }).sort((a, b) => a.total - b.total);
@@ -1426,35 +1411,13 @@ function renderScorecard() {
     holes.push(i);
   }
 
-  let rows = [];
-
-  if (!needsTeams()) {
-    rows = players.map(player => ({
-      name: player.name,
-      sub: "",
-      playerIds: [player.id],
-      teamId: null,
-      handicap: 0
-    }));
-  } else {
-    rows = teams.map(team => {
-      const teamPlayers = players.filter(player => player.team_id === team.id);
-
-      return {
-        name: team.name,
-        sub: teamPlayers.map(player => player.name).join(", "),
-        playerIds: teamPlayers.map(player => player.id),
-        teamId: team.id,
-        handicap: Number(team.handicap || 0)
-      };
-    });
-  }
+  const rows = getStandings();
 
   const headerCells = holes
     .map(hole => `<th>H${hole}</th>`)
     .join("");
 
-  const bodyRows = rows.map(row => {
+  const bodyRows = rows.map((row, index) => {
     const holeCells = holes.map(hole => {
       const holeScores = scores.filter(score => {
         if (Number(score.hole_number) !== Number(hole)) return false;
@@ -1475,19 +1438,18 @@ function renderScorecard() {
       return `<td>${hasScore ? holeTotal : "-"}</td>`;
     }).join("");
 
-    const total = holeCells.includes("</td>")
-      ? calculateRowTotal(row)
-      : 0;
-
     return `
       <tr>
         <th class="scorecard-name">
-          ${escapeHtml(row.name)}
-          ${row.sub ? `<small>${escapeHtml(row.sub)}</small>` : ""}
-          ${row.handicap !== 0 ? `<small>Handicap: ${row.handicap > 0 ? "+" : ""}${row.handicap}</small>` : ""}
+          <span class="scorecard-rank">${index + 1}</span>
+          <span class="scorecard-player">
+            ${escapeHtml(row.name)}
+            ${row.sub ? `<small>${escapeHtml(row.sub)}</small>` : ""}
+            ${row.handicap !== 0 ? `<small>Handicap: ${row.handicap > 0 ? "+" : ""}${row.handicap}</small>` : ""}
+          </span>
         </th>
         ${holeCells}
-        <td class="scorecard-total">${total}</td>
+        <td class="scorecard-total">${row.total}</td>
       </tr>
     `;
   }).join("");
@@ -1497,7 +1459,7 @@ function renderScorecard() {
       <table>
         <thead>
           <tr>
-            <th>Naam</th>
+            <th>Stand</th>
             ${headerCells}
             <th>Totaal</th>
           </tr>
@@ -1508,22 +1470,6 @@ function renderScorecard() {
       </table>
     </div>
   `;
-}
-
-function calculateRowTotal(row) {
-  let total = 0;
-
-  if (useTeamScoreMode()) {
-    total = scores
-      .filter(score => score.team_id === row.teamId)
-      .reduce((sum, score) => sum + Number(score.score) + Number(score.bonus || 0), 0);
-  } else {
-    total = scores
-      .filter(score => row.playerIds.includes(score.player_id))
-      .reduce((sum, score) => sum + Number(score.score) + Number(score.bonus || 0), 0);
-  }
-
-  return total + Number(row.handicap || 0);
 }
 
 function showToast(message, type = "success") {
