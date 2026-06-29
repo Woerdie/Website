@@ -1,19 +1,43 @@
+/* Pubgolf scorekaart - opgefriste, strakke stijl
+   Alle class-namen en id's zijn gelijk gebleven aan de oude versie,
+   zodat de HTML en JS ongewijzigd blijven werken. */
+
 :root {
-  --bg: #f3f7ed;
-  --card: rgba(255, 255, 255, 0.96);
-  --green: #2f6f3e;
-  --green-dark: #143d22;
-  --green-soft: #e7f2df;
-  --green-line: #c8dfba;
-  --gold: #c99a3f;
-  --gold-soft: #fff3d7;
-  --ink: #172033;
-  --muted: #6d7582;
-  --line: #dfe6d6;
-  --danger: #b44242;
-  --danger-soft: #fff1f1;
-  --shadow: 0 18px 45px rgba(23, 32, 51, 0.12);
-  --shadow-sm: 0 6px 18px rgba(23, 32, 51, 0.08);
+  /* Kleuren */
+  --bg: #f6f7f3;
+  --surface: #ffffff;
+  --surface-2: #f3f6ef;
+  --fairway: #1f7a43;
+  --fairway-strong: #18653a;
+  --fairway-dark: #0f4527;
+  --fairway-line: #d6e7d8;
+  --flag: #c9882c;
+  --flag-soft: #fbefd6;
+  --flag-line: #ecd6a6;
+  --ink: #16221b;
+  --muted: #5f6b62;
+  --line: #e6e9e1;
+  --danger: #bf403e;
+  --danger-soft: #fbecec;
+  --danger-line: #ecc4c4;
+
+  /* Schaduw, rustig en gelaagd */
+  --shadow-sm: 0 1px 2px rgba(20, 32, 26, 0.06);
+  --shadow: 0 1px 2px rgba(20, 32, 26, 0.05), 0 10px 26px rgba(20, 32, 26, 0.07);
+  --shadow-lg: 0 1px 2px rgba(20, 32, 26, 0.05), 0 24px 60px rgba(20, 32, 26, 0.16);
+
+  /* Radii */
+  --r-lg: 18px;
+  --r-md: 12px;
+  --r-sm: 10px;
+  --r-pill: 999px;
+
+  /* Focus */
+  --ring: 0 0 0 4px rgba(31, 122, 67, 0.18);
+
+  /* Lettertypes */
+  --font-display: "Space Grotesk", system-ui, "Segoe UI", sans-serif;
+  --font-body: "Inter", system-ui, "Segoe UI", Arial, sans-serif;
 }
 
 * {
@@ -27,19 +51,20 @@ body {
 }
 
 body {
-  font-family: Arial, sans-serif;
+  font-family: var(--font-body);
   color: var(--ink);
   background:
-    radial-gradient(900px 420px at 50% -180px, rgba(47, 111, 62, 0.22), transparent 62%),
-    radial-gradient(600px 300px at 100% 10%, rgba(201, 154, 63, 0.14), transparent 55%),
-    linear-gradient(160deg, #faf8ef, var(--bg));
+    radial-gradient(1100px 360px at 50% -240px, rgba(31, 122, 67, 0.10), transparent 70%),
+    var(--bg);
   background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .app {
   width: min(1080px, 100%);
   margin: 0 auto;
-  padding: 26px 18px 90px;
+  padding: 28px 18px 96px;
 }
 
 /* Header */
@@ -47,46 +72,46 @@ body {
 .app-header {
   position: relative;
   text-align: center;
-  margin-bottom: 28px;
-  padding: 12px 0 6px;
+  margin-bottom: 32px;
+  padding: 8px 0 4px;
 }
 
 .back-link {
   position: absolute;
   left: 0;
-  top: 14px;
+  top: 10px;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  color: var(--green-dark);
+  color: var(--fairway-dark);
   text-decoration: none;
-  font-weight: 800;
-  background: rgba(255, 255, 255, 0.86);
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: var(--surface);
   border: 1px solid var(--line);
-  border-radius: 999px;
-  padding: 9px 14px;
+  border-radius: var(--r-pill);
+  padding: 9px 15px;
   box-shadow: var(--shadow-sm);
+  transition: border-color 0.15s ease, background 0.15s ease;
 }
 
 .back-link:hover {
-  background: #ffffff;
-  border-color: var(--green-line);
+  background: var(--surface-2);
+  border-color: var(--fairway-line);
 }
 
 .logo {
-  width: 72px;
-  height: 72px;
-  margin: 0 auto 14px;
-  border-radius: 24px;
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background:
-    radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.35), transparent 35%),
-    linear-gradient(145deg, #3c8b4e, var(--green-dark));
+  background: linear-gradient(160deg, #2a945a, var(--fairway-dark));
   color: #ffffff;
-  font-size: 2.15rem;
-  box-shadow: 0 18px 35px rgba(47, 111, 62, 0.28);
+  font-size: 1.95rem;
+  box-shadow: 0 10px 24px rgba(15, 69, 39, 0.28);
 }
 
 h1,
@@ -97,22 +122,24 @@ p {
 }
 
 h1 {
-  margin-bottom: 8px;
-  color: var(--green-dark);
-  font-size: clamp(2rem, 7vw, 3.25rem);
-  line-height: 1.02;
-  letter-spacing: -0.04em;
+  margin-bottom: 10px;
+  font-family: var(--font-display);
+  color: var(--fairway-dark);
+  font-size: clamp(2rem, 6vw, 3rem);
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  font-weight: 700;
 }
 
 .app-header p {
-  max-width: 56ch;
+  max-width: 52ch;
   margin: 0 auto;
   color: var(--muted);
   font-size: 1rem;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
-/* Main desktop layout */
+/* Desktop layout */
 
 main {
   display: grid;
@@ -122,11 +149,10 @@ main {
 }
 
 .card {
-  background: var(--card);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(200, 223, 186, 0.85);
-  border-radius: 26px;
-  padding: 24px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 26px;
   box-shadow: var(--shadow);
 }
 
@@ -148,11 +174,11 @@ main {
   display: none !important;
 }
 
-/* Sections */
+/* Sectiekop */
 
 .section-top {
-  margin-bottom: 20px;
-  padding-bottom: 14px;
+  margin-bottom: 22px;
+  padding-bottom: 16px;
   border-bottom: 1px solid var(--line);
 }
 
@@ -170,86 +196,107 @@ main {
 .step {
   display: inline-flex;
   align-items: center;
-  margin-bottom: 8px;
-  color: var(--gold);
-  background: var(--gold-soft);
-  border: 1px solid #f0dba8;
-  border-radius: 999px;
-  padding: 5px 11px;
-  font-size: 0.72rem;
-  font-weight: 900;
+  margin-bottom: 10px;
+  color: var(--fairway-strong);
+  background: var(--surface-2);
+  border: 1px solid var(--fairway-line);
+  border-radius: var(--r-pill);
+  padding: 4px 11px;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.1em;
 }
 
 h2 {
   margin-bottom: 0;
-  color: var(--green-dark);
-  font-size: 1.45rem;
-  letter-spacing: -0.02em;
+  font-family: var(--font-display);
+  color: var(--fairway-dark);
+  font-size: 1.4rem;
+  letter-spacing: -0.01em;
+  font-weight: 600;
 }
 
 .hint {
-  margin: 13px 0 0;
+  margin: 14px 0 0;
   color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.45;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
-/* Forms */
+/* Formulieren */
 
 label {
   display: block;
-  margin: 15px 0 7px;
-  font-weight: 800;
-  color: var(--green-dark);
+  margin: 16px 0 7px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: var(--fairway-dark);
 }
 
 input,
 select {
   width: 100%;
-  min-height: 50px;
+  min-height: 48px;
   padding: 12px 14px;
   border: 1px solid var(--line);
-  border-radius: 16px;
+  border-radius: var(--r-md);
   font-size: 1rem;
+  font-family: inherit;
   color: var(--ink);
-  background: #ffffff;
+  background: var(--surface);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+input::placeholder {
+  color: #9aa39a;
 }
 
 input:focus,
 select:focus {
-  outline: 4px solid rgba(47, 111, 62, 0.14);
-  border-color: var(--green);
+  outline: none;
+  border-color: var(--fairway);
+  box-shadow: var(--ring);
 }
 
-/* Buttons */
+/* Knoppen */
 
 button {
   width: 100%;
-  min-height: 50px;
+  min-height: 48px;
   margin-top: 18px;
   padding: 13px 18px;
-  border: 0;
-  border-radius: 16px;
-  background: linear-gradient(145deg, #3d8a4f, var(--green));
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  background: var(--fairway);
   color: #ffffff;
-  font-size: 1rem;
-  font-weight: 900;
+  font-size: 0.98rem;
+  font-weight: 600;
+  font-family: inherit;
   cursor: pointer;
-  box-shadow: 0 10px 22px rgba(47, 111, 62, 0.20);
+  box-shadow: var(--shadow-sm);
+  transition: background 0.15s ease, transform 0.05s ease, box-shadow 0.15s ease;
 }
 
 button:hover {
-  background: linear-gradient(145deg, #347945, var(--green-dark));
+  background: var(--fairway-strong);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
 }
 
 .secondary-btn {
-  background: linear-gradient(145deg, #26334d, #111827);
+  background: var(--fairway-dark);
 }
 
 .secondary-btn:hover {
-  background: linear-gradient(145deg, #1f2a40, #0f1726);
+  background: #0c3a20;
 }
 
 .small-action-btn {
@@ -264,26 +311,27 @@ button:hover {
 .danger-outline-btn {
   width: auto;
   min-height: 38px;
-  padding: 9px 13px;
+  padding: 9px 14px;
   margin: 0;
-  border-radius: 999px;
-  background: #ffffff;
-  color: var(--green-dark);
-  border: 1px solid var(--green-line);
+  border-radius: var(--r-pill);
+  background: var(--surface);
+  color: var(--fairway-dark);
+  border: 1px solid var(--fairway-line);
   box-shadow: none;
-  font-size: 0.88rem;
+  font-size: 0.86rem;
+  font-weight: 600;
 }
 
 .small-secondary-btn:hover,
 .outline-btn:hover {
-  background: var(--green-soft);
-  color: var(--green-dark);
+  background: var(--surface-2);
+  color: var(--fairway-dark);
   box-shadow: none;
 }
 
 .danger-outline-btn {
   color: var(--danger);
-  border-color: #e0b4b4;
+  border-color: var(--danger-line);
 }
 
 .danger-outline-btn:hover {
@@ -292,15 +340,14 @@ button:hover {
   box-shadow: none;
 }
 
-/* Active game and leader */
+/* Actief spel en leider */
 
 .active-game-box,
 .leader-box {
-  padding: 16px;
-  border-radius: 18px;
-  background:
-    linear-gradient(145deg, rgba(231, 242, 223, 0.95), rgba(255, 255, 255, 0.95));
-  border: 1px solid var(--green-line);
+  padding: 16px 18px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  border: 1px solid var(--fairway-line);
   margin-bottom: 18px;
 }
 
@@ -314,61 +361,69 @@ button:hover {
 
 .active-game-box strong,
 .leader-box strong {
-  color: var(--green-dark);
+  font-family: var(--font-display);
+  color: var(--fairway-dark);
   font-size: 1.05rem;
+  font-weight: 600;
 }
 
 .active-game-box span,
 .leader-box small {
   color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.4;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  margin-top: 3px;
+}
+
+.leader-box {
+  background: var(--flag-soft);
+  border-color: var(--flag-line);
 }
 
 .leader-box span {
-  color: var(--gold);
-  font-size: 0.75rem;
-  font-weight: 900;
+  color: var(--flag);
+  font-size: 0.72rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
-/* Share box */
+/* Deellink */
 
 .mini-share-box {
   flex: none;
   min-width: 150px;
   max-width: 220px;
-  padding: 10px 12px;
-  border: 1px solid var(--green-line);
-  border-radius: 14px;
-  background: var(--green-soft);
+  padding: 11px 13px;
+  border: 1px solid var(--fairway-line);
+  border-radius: var(--r-sm);
+  background: var(--surface-2);
   text-align: left;
 }
 
 .mini-share-box span {
   display: block;
   color: var(--muted);
-  font-size: 0.72rem;
-  font-weight: 900;
+  font-size: 0.7rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .mini-share-box a {
   display: block;
-  color: var(--green-dark);
-  font-weight: 900;
+  color: var(--fairway-dark);
+  font-weight: 600;
   text-decoration: none;
   font-size: 0.9rem;
-  margin-top: 2px;
+  margin-top: 3px;
 }
 
 .mini-share-box a:hover {
   text-decoration: underline;
 }
 
-/* Settings and add player */
+/* Instellingen en speler toevoegen */
 
 .settings-row {
   display: grid;
@@ -376,10 +431,10 @@ button:hover {
   gap: 12px;
   align-items: end;
   margin-bottom: 16px;
-  padding: 14px;
+  padding: 16px;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  background: #ffffff;
+  border-radius: var(--r-md);
+  background: var(--surface);
 }
 
 .inline-form {
@@ -395,7 +450,7 @@ button:hover {
   white-space: nowrap;
 }
 
-/* Lists */
+/* Lijsten */
 
 .list,
 .score-list,
@@ -411,10 +466,10 @@ button:hover {
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 14px;
+  padding: 14px 16px;
   border: 1px solid var(--line);
-  border-radius: 16px;
-  background: #ffffff;
+  border-radius: var(--r-md);
+  background: var(--surface);
   margin-bottom: 10px;
   box-shadow: var(--shadow-sm);
 }
@@ -423,17 +478,18 @@ button:hover {
 .score-item strong,
 .standing-item strong {
   color: var(--ink);
+  font-weight: 600;
 }
 
 .player-team,
 .score-meta {
   color: var(--muted);
-  font-size: 0.86rem;
-  margin-top: 2px;
-  line-height: 1.35;
+  font-size: 0.85rem;
+  margin-top: 3px;
+  line-height: 1.4;
 }
 
-/* Player edit buttons */
+/* Speler bewerken */
 
 .player-edit-item {
   align-items: center;
@@ -457,32 +513,42 @@ button:hover {
   width: auto !important;
   min-height: 34px !important;
   margin-top: 0 !important;
-  padding: 7px 12px !important;
-  border-radius: 999px;
-  font-size: 0.78rem !important;
+  padding: 7px 13px !important;
+  border-radius: var(--r-pill);
+  font-size: 0.8rem !important;
+  font-weight: 600;
   box-shadow: none !important;
 }
 
 .tiny-btn {
   min-width: 96px;
   max-width: 120px;
+  background: var(--surface-2);
+  color: var(--fairway-dark);
+  border: 1px solid var(--fairway-line);
+}
+
+.tiny-btn:hover {
+  background: #e7efe1;
 }
 
 .danger-tiny-btn {
-  background: var(--danger);
+  background: var(--danger-soft) !important;
+  color: var(--danger) !important;
+  border: 1px solid var(--danger-line) !important;
 }
 
 .danger-tiny-btn:hover {
-  background: #8f3030;
+  background: #f6dede !important;
 }
 
-/* Saved games */
+/* Opgeslagen games */
 
 .saved-game-btn {
   width: 100%;
   margin-top: 0;
   margin-bottom: 10px;
-  background: #ffffff;
+  background: var(--surface);
   color: var(--ink);
   border: 1px solid var(--line);
   text-align: left;
@@ -490,8 +556,9 @@ button:hover {
 }
 
 .saved-game-btn:hover {
-  background: var(--green-soft);
-  color: var(--green-dark);
+  background: var(--surface-2);
+  color: var(--ink);
+  border-color: var(--fairway-line);
 }
 
 .game-row strong,
@@ -499,14 +566,20 @@ button:hover {
   display: block;
 }
 
-.game-row span {
-  color: var(--muted);
-  font-size: 0.88rem;
-  margin-top: 3px;
-  line-height: 1.35;
+.game-row strong {
+  font-family: var(--font-display);
+  font-weight: 600;
 }
 
-/* Team choice */
+.game-row span {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 4px;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+/* Teamkeuze */
 
 .team-choice-actions {
   display: grid;
@@ -519,23 +592,22 @@ button:hover {
   margin-top: 0;
 }
 
-/* Manual team builder */
+/* Zelf teams kiezen */
 
 .manual-team-builder {
   margin-top: 18px;
 }
 
 .manual-builder-box {
-  padding: 18px;
-  border: 1px solid var(--green-line);
-  border-radius: 22px;
-  background:
-    linear-gradient(145deg, rgba(231, 242, 223, 0.85), rgba(255, 255, 255, 0.95));
+  padding: 20px;
+  border: 1px solid var(--fairway-line);
+  border-radius: var(--r-lg);
+  background: var(--surface-2);
   box-shadow: var(--shadow-sm);
 }
 
 .manual-builder-top {
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .manual-builder-top p {
@@ -550,10 +622,10 @@ button:hover {
 }
 
 .manual-team-card {
-  padding: 14px;
+  padding: 16px;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  background: #ffffff;
+  border-radius: var(--r-md);
+  background: var(--surface);
 }
 
 .manual-team-card label:first-child {
@@ -570,24 +642,24 @@ button:hover {
   grid-template-columns: minmax(0, 1fr) 220px;
   gap: 12px;
   align-items: center;
-  padding: 12px;
+  padding: 12px 14px;
   border: 1px solid var(--line);
-  border-radius: 16px;
-  background: #ffffff;
+  border-radius: var(--r-md);
+  background: var(--surface);
 }
 
 .manual-player-row strong {
   color: var(--ink);
+  font-weight: 600;
 }
 
-/* Team cards */
+/* Teamkaarten */
 
 .team-card {
-  padding: 16px;
-  border: 1px solid var(--green-line);
-  border-radius: 18px;
-  background:
-    linear-gradient(145deg, rgba(231, 242, 223, 0.95), rgba(255, 255, 255, 0.95));
+  padding: 16px 18px;
+  border: 1px solid var(--fairway-line);
+  border-radius: var(--r-md);
+  background: var(--surface-2);
   margin-bottom: 10px;
   box-shadow: var(--shadow-sm);
 }
@@ -599,33 +671,35 @@ button:hover {
 }
 
 .team-card strong {
-  color: var(--green-dark);
+  font-family: var(--font-display);
+  color: var(--fairway-dark);
+  font-weight: 600;
   margin-bottom: 5px;
 }
 
 .team-card span {
   color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.4;
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
 
 .team-card small {
-  margin-top: 5px;
-  color: var(--gold);
-  font-weight: 900;
+  margin-top: 6px;
+  color: var(--flag);
+  font-weight: 600;
 }
 
-/* Danger zone */
+/* Gevaarzone */
 
 .danger-zone {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  margin-top: 18px;
+  margin-top: 20px;
   flex-wrap: wrap;
 }
 
-/* Score input layout */
+/* Scores invullen */
 
 .score-control-item {
   display: grid;
@@ -648,12 +722,21 @@ button:hover {
   width: 86px;
   min-height: 42px;
   text-align: center;
-  font-weight: 900;
+  font-weight: 700;
 }
 
 .score-step-btn {
   min-width: 38px;
   width: 38px !important;
+  background: var(--surface-2);
+  color: var(--fairway-dark);
+  border: 1px solid var(--fairway-line);
+  font-size: 1.1rem !important;
+  line-height: 1;
+}
+
+.score-step-btn:hover {
+  background: #e7efe1;
 }
 
 .bonus-control {
@@ -662,7 +745,10 @@ button:hover {
 
 .bonus-control label {
   margin: 0 0 5px;
-  font-size: 0.75rem;
+  font-size: 0.74rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .bonus-control input {
@@ -670,7 +756,7 @@ button:hover {
   text-align: center;
 }
 
-/* Scorecard */
+/* Scorekaart */
 
 .standings-title {
   margin-top: 26px;
@@ -684,8 +770,8 @@ button:hover {
   width: 100%;
   overflow-x: auto;
   border: 1px solid var(--line);
-  border-radius: 18px;
-  background: #ffffff;
+  border-radius: var(--r-md);
+  background: var(--surface);
   box-shadow: var(--shadow-sm);
 }
 
@@ -700,13 +786,16 @@ button:hover {
   padding: 12px 10px;
   border-bottom: 1px solid var(--line);
   text-align: center;
-  font-size: 0.92rem;
+  font-size: 0.9rem;
 }
 
 .scorecard-scroll thead th {
-  background: var(--green-soft);
-  color: var(--green-dark);
-  font-weight: 900;
+  background: var(--surface-2);
+  color: var(--fairway-dark);
+  font-weight: 700;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
 .scorecard-scroll tbody tr:last-child th,
@@ -718,7 +807,7 @@ button:hover {
   position: sticky;
   left: 0;
   z-index: 2;
-  background: #ffffff;
+  background: var(--surface);
   text-align: left !important;
   min-width: 170px;
 }
@@ -727,30 +816,31 @@ button:hover {
   display: block;
   margin-top: 3px;
   color: var(--muted);
-  font-size: 0.75rem;
+  font-size: 0.74rem;
+  font-weight: 400;
 }
 
 .scorecard-total,
 .standing-score {
-  font-weight: 900;
-  color: var(--green-dark);
-  background: var(--gold-soft);
+  font-weight: 700;
+  color: var(--fairway-dark);
+  background: var(--flag-soft);
 }
 
-/* Standings */
+/* Stand */
 
 .standing-rank {
   flex: none;
   width: 38px;
   height: 38px;
-  border-radius: 999px;
-  background: var(--green-soft);
-  color: var(--green-dark);
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--fairway-dark);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  border: 1px solid var(--green-line);
+  font-weight: 700;
+  border: 1px solid var(--fairway-line);
 }
 
 .standing-main {
@@ -759,14 +849,23 @@ button:hover {
 }
 
 .standing-score {
-  border: 1px solid var(--green-line);
-  border-radius: 999px;
-  padding: 6px 13px;
+  border: 1px solid var(--flag-line);
+  border-radius: var(--r-pill);
+  padding: 6px 14px;
 }
 
 .error {
   color: var(--danger);
-  font-weight: 800;
+  font-weight: 600;
+}
+
+/* Navigatieknoppen boven de scores */
+
+.score-nav-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
 }
 
 /* Toast */
@@ -786,25 +885,25 @@ button:hover {
 
 .toast {
   padding: 14px 16px;
-  border-radius: 16px;
-  background: #ffffff;
-  color: var(--ink);
-  border: 1px solid var(--line);
-  box-shadow: 0 16px 35px rgba(23, 32, 51, 0.18);
-  font-weight: 800;
+  border-radius: var(--r-md);
+  background: var(--ink);
+  color: #ffffff;
+  border: 1px solid transparent;
+  box-shadow: var(--shadow-lg);
+  font-weight: 600;
+  font-size: 0.92rem;
   text-align: center;
   animation: toastIn 0.22s ease-out;
 }
 
 .toast-success {
-  border-color: var(--green-line);
-  background: var(--green-soft);
-  color: var(--green-dark);
+  background: var(--fairway-dark);
+  color: #ffffff;
 }
 
 .toast-error {
-  border-color: #e0b4b4;
-  background: var(--danger-soft);
+  background: #fff;
+  border-color: var(--danger-line);
   color: var(--danger);
 }
 
@@ -841,44 +940,46 @@ button:hover {
   align-items: center;
   justify-content: center;
   padding: 18px;
-  background: rgba(10, 20, 12, 0.42);
-  backdrop-filter: blur(5px);
+  background: rgba(15, 28, 20, 0.45);
+  backdrop-filter: blur(3px);
 }
 
 .custom-modal {
-  width: min(430px, 100%);
-  padding: 26px;
-  border-radius: 26px;
-  background: #ffffff;
-  border: 1px solid var(--green-line);
-  box-shadow: 0 28px 70px rgba(23, 32, 51, 0.28);
+  width: min(420px, 100%);
+  padding: 28px;
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-lg);
   text-align: center;
   animation: modalIn 0.2s ease-out;
 }
 
 .modal-icon {
-  width: 58px;
-  height: 58px;
-  margin: 0 auto 14px;
-  border-radius: 20px;
+  width: 56px;
+  height: 56px;
+  margin: 0 auto 16px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--green-soft);
-  color: var(--green-dark);
-  font-size: 1.8rem;
+  background: var(--surface-2);
+  color: var(--fairway-dark);
+  font-size: 1.7rem;
 }
 
 .custom-modal h3 {
   margin: 0 0 8px;
-  color: var(--green-dark);
-  font-size: 1.35rem;
+  font-family: var(--font-display);
+  color: var(--fairway-dark);
+  font-size: 1.3rem;
+  font-weight: 600;
 }
 
 .custom-modal p {
   margin: 0;
   color: var(--muted);
-  line-height: 1.5;
+  line-height: 1.55;
 }
 
 .modal-input {
@@ -889,7 +990,7 @@ button:hover {
 .modal-actions {
   display: flex;
   gap: 10px;
-  margin-top: 22px;
+  margin-top: 24px;
 }
 
 .modal-btn {
@@ -898,15 +999,15 @@ button:hover {
 }
 
 .modal-cancel-btn {
-  background: #ffffff;
-  color: var(--green-dark);
-  border: 1px solid var(--green-line);
+  background: var(--surface);
+  color: var(--fairway-dark);
+  border: 1px solid var(--fairway-line);
   box-shadow: none;
 }
 
 .modal-cancel-btn:hover {
-  background: var(--green-soft);
-  color: var(--green-dark);
+  background: var(--surface-2);
+  color: var(--fairway-dark);
   box-shadow: none;
 }
 
@@ -919,6 +1020,17 @@ button:hover {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+/* Reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }
 
@@ -938,15 +1050,15 @@ button:hover {
   }
 }
 
-/* Mobile */
+/* Mobiel */
 
 @media (max-width: 760px) {
   .app {
-    padding: 18px 12px 72px;
+    padding: 18px 12px 76px;
   }
 
   .app-header {
-    margin-bottom: 20px;
+    margin-bottom: 22px;
   }
 
   .back-link {
@@ -955,19 +1067,18 @@ button:hover {
   }
 
   .logo {
-    width: 64px;
-    height: 64px;
-    font-size: 1.9rem;
+    width: 58px;
+    height: 58px;
+    font-size: 1.75rem;
   }
 
   h1 {
-    font-size: 2.05rem;
+    font-size: 2rem;
   }
 
   .card {
     margin-bottom: 16px;
-    padding: 18px;
-    border-radius: 22px;
+    padding: 20px;
   }
 
   .section-top-split {
@@ -1057,9 +1168,36 @@ button:hover {
 
   .custom-modal {
     padding: 22px;
-    border-radius: 22px;
   }
+
   .scorecard-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .scorecard-rank {
+    flex: none;
+    width: 32px;
+    height: 32px;
+    border-radius: var(--r-pill);
+    background: var(--surface-2);
+    color: var(--fairway-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    border: 1px solid var(--fairway-line);
+  }
+
+  .scorecard-player {
+    display: block;
+    min-width: 0;
+  }
+}
+
+/* scorecard-rank ook op desktop netjes uitlijnen */
+.scorecard-name {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -1067,20 +1205,20 @@ button:hover {
 
 .scorecard-rank {
   flex: none;
-  width: 32px;
-  height: 32px;
-  border-radius: 999px;
-  background: var(--green-soft);
-  color: var(--green-dark);
+  width: 30px;
+  height: 30px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--fairway-dark);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
-  border: 1px solid var(--green-line);
+  font-weight: 700;
+  font-size: 0.82rem;
+  border: 1px solid var(--fairway-line);
 }
 
 .scorecard-player {
   display: block;
   min-width: 0;
-}
 }
