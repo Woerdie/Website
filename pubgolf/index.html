@@ -6,10 +6,10 @@
 
   <title>Pubgolf scorekaart</title>
 
-  <link rel="stylesheet" href="./pubgolf.css?v=8">
+  <link rel="stylesheet" href="./pubgolf.css?v=9">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./pubgolf.js?v=8" defer></script>
+  <script src="./pubgolf.js?v=9" defer></script>
 </head>
 
 <body>
@@ -65,7 +65,7 @@
         <button id="create-game-btn">Spel maken</button>
 
         <p class="hint">
-          Bij duo’s worden teams van 2 gemaakt. Bij teams kies je zelf de teamgrootte.
+          Bij 1 of 2 spelers wordt automatisch iedereen apart gespeeld. Duo’s mogen bij een oneven aantal één persoon alleen hebben.
         </p>
       </section>
 
@@ -78,7 +78,16 @@
         <div class="active-game-box">
           <strong id="active-game-name">Geen spel actief</strong>
           <span id="active-game-info"></span>
-          <a id="share-link" class="share-link" href="#">Deellink openen</a>
+          <a id="share-link" class="share-link" href="#">Deellink kopiëren / sturen</a>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <label for="edit-expected-players">Aantal spelers aanpassen</label>
+            <input id="edit-expected-players" type="number" min="1" max="100">
+          </div>
+
+          <button id="update-expected-players-btn" class="small-action-btn">Aantal opslaan</button>
         </div>
 
         <label for="player-name">Naam speler</label>
