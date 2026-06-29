@@ -337,14 +337,18 @@ function renderPlayers() {
       const team = teams.find(team => team.id === player.team_id);
 
       const item = document.createElement("div");
-      item.className = "list-item";
+      item.className = "list-item player-edit-item";
 
       item.innerHTML = `
-        <div>
+        <div class="player-edit-main">
           <strong>${index + 1}. ${escapeHtml(player.name)}</strong>
           <div class="player-team">${team ? escapeHtml(team.name) : "Nog geen team"}</div>
         </div>
-        <span>Speler</span>
+
+        <div class="player-actions">
+          <button class="tiny-btn" onclick="editPlayerName('${player.id}')">Aanpassen</button>
+          <button class="tiny-btn danger-tiny-btn" onclick="deletePlayer('${player.id}')">Verwijderen</button>
+        </div>
       `;
 
       playersList.appendChild(item);
@@ -355,6 +359,91 @@ function renderPlayers() {
     randomTeamsBtn.classList.add("hidden");
   } else {
     randomTeamsBtn.classList.remove("hidden");
+  }
+}
+
+async function editPlayerName(playerId) {
+  const player = players.find(player => player.id === playerId);
+
+  if (!player) {
+    alert("Speler niet gevonden.");
+    return;
+  }
+
+  const newName = prompt("Nieuwe naam:", player.name);
+
+  if (newName === null) return;
+
+  const cleanName = newName.trim();
+
+  if (!cleanName) {
+    alert("Naam mag niet leeg zijn.");
+    return;
+  }
+
+  const { error } = await db
+    .from("players")
+    .update({ name: cleanName })
+    .eq("id", playerId);
+
+  if (error) {
+    console.error(error);
+    alert("Naam aanpassen is niet gelukt.");
+    return;
+  }
+
+  await reloadGameData();
+
+  updateActiveGameInfo();
+  renderPlayers();
+  renderTeams();
+
+  if (!scoreSection.classList.contains("hidden")) {
+    renderScoreInputs();
+  }
+
+  if (!standingsSection.classList.contains("hidden")) {
+    renderStandings();
+  }
+}
+
+async function deletePlayer(playerId) {
+  const player = players.find(player => player.id === playerId);
+
+  if (!player) {
+    alert("Speler niet gevonden.");
+    return;
+  }
+
+  const zeker = confirm(
+    `Weet je zeker dat je ${player.name} wilt verwijderen? Scores van deze speler worden ook verwijderd.`
+  );
+
+  if (!zeker) return;
+
+  const { error } = await db
+    .from("players")
+    .delete()
+    .eq("id", playerId);
+
+  if (error) {
+    console.error(error);
+    alert("Speler verwijderen is niet gelukt.");
+    return;
+  }
+
+  await reloadGameData();
+
+  updateActiveGameInfo();
+  renderPlayers();
+  renderTeams();
+
+  if (!scoreSection.classList.contains("hidden")) {
+    renderScoreInputs();
+  }
+
+  if (!standingsSection.classList.contains("hidden")) {
+    renderStandings();
   }
 }
 
