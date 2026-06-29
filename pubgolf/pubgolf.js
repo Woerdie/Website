@@ -52,7 +52,12 @@ goScoreBtn.addEventListener("click", openScores);
 saveScoresBtn.addEventListener("click", saveScores);
 holeSelect.addEventListener("change", renderScoreInputs);
 
+if (editPlayersBtn) {
+  editPlayersBtn.addEventListener("click", backToPlayers);
+}
+
 gameModeInput.addEventListener("change", toggleTeamSize);
+
 playerNameInput.addEventListener("keydown", event => {
   if (event.key === "Enter") addPlayer();
 });
@@ -201,6 +206,8 @@ async function loadGame(gameId) {
   savedGamesSection.classList.add("hidden");
   createGameSection.classList.add("hidden");
   playersSection.classList.remove("hidden");
+  scoreSection.classList.add("hidden");
+  standingsSection.classList.add("hidden");
 
   updateActiveGameInfo();
   renderPlayers();
@@ -255,7 +262,18 @@ function updateActiveGameInfo() {
     `${currentGame.holes} holes · ${modeLabel(currentGame.mode)} · ${players.length}/${currentGame.expected_players || "?"} spelers`;
 
   const url = `${window.location.origin}${window.location.pathname}?game=${currentGame.id}`;
-  shareLink.textContent = `Deellink: ${url}`;
+
+  if (shareLink) {
+    shareLink.href = url;
+    shareLink.textContent = "Deellink kopiëren / sturen";
+    shareLink.title = url;
+  }
+
+  if (scoreShareLink) {
+    scoreShareLink.href = url;
+    scoreShareLink.textContent = "Open / stuur door";
+    scoreShareLink.title = url;
+  }
 }
 
 async function addPlayer() {
@@ -407,6 +425,7 @@ async function makeRandomTeams() {
   randomTeamsBtn.textContent = "Random teams maken";
 
   await reloadGameData();
+
   updateActiveGameInfo();
   renderPlayers();
   renderTeams();
@@ -474,13 +493,23 @@ async function openScores() {
 
   fillHoleSelect();
 
+  playersSection.classList.add("hidden");
   scoreSection.classList.remove("hidden");
   standingsSection.classList.remove("hidden");
 
+  updateActiveGameInfo();
   renderScoreInputs();
   renderStandings();
 
   scoreSection.scrollIntoView({ behavior: "smooth" });
+}
+
+function backToPlayers() {
+  scoreSection.classList.add("hidden");
+  standingsSection.classList.add("hidden");
+  playersSection.classList.remove("hidden");
+
+  playersSection.scrollIntoView({ behavior: "smooth" });
 }
 
 function fillHoleSelect() {
@@ -588,13 +617,103 @@ async function saveScores() {
 function renderStandings() {
   standingsList.innerHTML = "";
 
+  if (scorecardTable) {
+    scorecardTable.innerHTML = "";
+  }
+
   if (!currentGame) return;
+
+  renderScorecard();
 
   if (currentGame.mode === "solo") {
     renderSoloStandings();
   } else {
     renderTeamStandings();
   }
+}
+
+function renderScorecard() {
+  if (!scorecardTable) return;
+
+  const holes = [];
+
+  for (let i = 1; i <= currentGame.holes; i++) {
+    holes.push(i);
+  }
+
+  let rows = [];
+
+  if (currentGame.mode === "solo") {
+    rows = players.map(player => {
+      return {
+        name: player.name,
+        sub: "",
+        playerIds: [player.id]
+      };
+    });
+  } else {
+    rows = teams.map(team => {
+      const teamPlayers = players.filter(player => player.team_id === team.id);
+
+      return {
+        name: team.name,
+        sub: teamPlayers.map(player => player.name).join(", "),
+        playerIds: teamPlayers.map(player => player.id)
+      };
+    });
+  }
+
+  const headerCells = holes
+    .map(hole => `<th>H${hole}</th>`)
+    .join("");
+
+  const bodyRows = rows.map(row => {
+    const holeCells = holes.map(hole => {
+      const holeScores = scores.filter(score => {
+        return row.playerIds.includes(score.player_id) && score.hole_number === hole;
+      });
+
+      const hasScore = holeScores.length > 0;
+
+      const holeTotal = holeScores.reduce((sum, score) => {
+        return sum + Number(score.score);
+      }, 0);
+
+      return `<td>${hasScore ? holeTotal : "-"}</td>`;
+    }).join("");
+
+    const total = scores
+      .filter(score => row.playerIds.includes(score.player_id))
+      .reduce((sum, score) => sum + Number(score.score), 0);
+
+    return `
+      <tr>
+        <th class="scorecard-name">
+          ${escapeHtml(row.name)}
+          ${row.sub ? `<small>${escapeHtml(row.sub)}</small>` : ""}
+        </th>
+        ${holeCells}
+        <td class="scorecard-total">${total}</td>
+      </tr>
+    `;
+  }).join("");
+
+  scorecardTable.innerHTML = `
+    <div class="scorecard-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Naam</th>
+            ${headerCells}
+            <th>Totaal</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${bodyRows}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 function renderSoloStandings() {
