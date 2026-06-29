@@ -7,7 +7,6 @@ let currentGame = null;
 let players = [];
 let teams = [];
 let scores = [];
-
 let modalResolve = null;
 
 const savedGamesSection = document.getElementById("saved-games-section");
@@ -33,6 +32,9 @@ const scoreShareLink = document.getElementById("score-share-link");
 const editPlayersBtn = document.getElementById("edit-players-btn");
 const scorecardTable = document.getElementById("scorecard-table");
 
+const editExpectedPlayersInput = document.getElementById("edit-expected-players");
+const updateExpectedPlayersBtn = document.getElementById("update-expected-players-btn");
+
 const playerNameInput = document.getElementById("player-name");
 const addPlayerBtn = document.getElementById("add-player-btn");
 const playersList = document.getElementById("players-list");
@@ -44,7 +46,6 @@ const goScoreBtn = document.getElementById("go-score-btn");
 const holeSelect = document.getElementById("hole-select");
 const scoreList = document.getElementById("score-list");
 const saveScoresBtn = document.getElementById("save-scores-btn");
-
 const standingsList = document.getElementById("standings-list");
 
 const toastContainer = document.getElementById("toast-container");
@@ -62,12 +63,12 @@ randomTeamsBtn.addEventListener("click", makeRandomTeams);
 goScoreBtn.addEventListener("click", openScores);
 saveScoresBtn.addEventListener("click", saveScores);
 holeSelect.addEventListener("change", renderScoreInputs);
+gameModeInput.addEventListener("change", toggleTeamSize);
+updateExpectedPlayersBtn.addEventListener("click", updateExpectedPlayers);
 
 if (editPlayersBtn) {
   editPlayersBtn.addEventListener("click", backToPlayers);
 }
-
-gameModeInput.addEventListener("change", toggleTeamSize);
 
 playerNameInput.addEventListener("keydown", event => {
   if (event.key === "Enter") addPlayer();
@@ -104,6 +105,21 @@ function toggleTeamSize() {
   } else {
     teamSizeWrap.classList.add("hidden");
   }
+}
+
+function getEffectiveMode() {
+  if (!currentGame) return "solo";
+
+  if (players.length <= 2) {
+    return "solo";
+  }
+
+  return currentGame.mode;
+}
+
+function needsTeams() {
+  const effectiveMode = getEffectiveMode();
+  return effectiveMode === "duos" || effectiveMode === "teams";
 }
 
 async function loadSavedGames() {
@@ -281,8 +297,18 @@ async function reloadGameData() {
 function updateActiveGameInfo() {
   activeGameName.textContent = currentGame.name;
 
+  if (editExpectedPlayersInput) {
+    editExpectedPlayersInput.value = currentGame.expected_players || players.length || 1;
+  }
+
+  let modeText = modeLabel(currentGame.mode);
+
+  if (players.length <= 2) {
+    modeText = "Iedereen apart";
+  }
+
   activeGameInfo.textContent =
-    `${currentGame.holes} holes · ${modeLabel(currentGame.mode)} · ${players.length}/${currentGame.expected_players || "?"} spelers`;
+    `${currentGame.holes} holes · ${modeText} · ${players.length}/${currentGame.expected_players || "?"} spelers`;
 
   const url = `${window.location.origin}${window.location.pathname}?game=${currentGame.id}`;
 
@@ -309,10 +335,46 @@ function updateActiveGameInfo() {
   }
 }
 
+async function updateExpectedPlayers() {
+  const newAmount = Number(editExpectedPlayersInput.value);
+
+  if (!newAmount || newAmount < 1) {
+    await showMessage("Vul een geldig aantal spelers in.", "Aantal klopt niet");
+    return;
+  }
+
+  if (newAmount < players.length) {
+    const doorgaan = await showConfirm(
+      `Er staan nu al ${players.length} spelers in. Wil je het aantal toch op ${newAmount} zetten?`,
+      "Aantal lager dan spelers"
+    );
+
+    if (!doorgaan) return;
+  }
+
+  const { error } = await db
+    .from("games")
+    .update({ expected_players: newAmount })
+    .eq("id", currentGame.id);
+
+  if (error) {
+    console.error(error);
+    await showMessage("Aantal spelers aanpassen is niet gelukt.", "Er ging iets mis");
+    return;
+  }
+
+  currentGame.expected_players = newAmount;
+
+  updateActiveGameInfo();
+  renderPlayers();
+
+  showToast("Aantal spelers is aangepast.", "success");
+}
+
 async function copyShareLink(url) {
   try {
     await navigator.clipboard.writeText(url);
-    showToast("Deellink gekopieerd. Je kunt hem nu sturen.", "success");
+    showToast("Deellink gekopieerd.", "success");
   } catch {
     await showMessage(url, "Kopieer deze deellink");
   }
@@ -399,7 +461,7 @@ function renderPlayers() {
     });
   }
 
-  if (currentGame.mode === "solo") {
+  if (!needsTeams()) {
     randomTeamsBtn.classList.add("hidden");
   } else {
     randomTeamsBtn.classList.remove("hidden");
@@ -442,13 +504,8 @@ async function editPlayerName(playerId) {
   renderPlayers();
   renderTeams();
 
-  if (!scoreSection.classList.contains("hidden")) {
-    renderScoreInputs();
-  }
-
-  if (!standingsSection.classList.contains("hidden")) {
-    renderStandings();
-  }
+  if (!scoreSection.classList.contains("hidden")) renderScoreInputs();
+  if (!standingsSection.classList.contains("hidden")) renderStandings();
 
   showToast("Naam is aangepast.", "success");
 }
@@ -462,7 +519,7 @@ async function deletePlayer(playerId) {
   }
 
   const zeker = await showConfirm(
-    `Weet je zeker dat je ${player.name} wilt verwijderen? Scores van deze speler worden ook verwijderd.`,
+    `Weet je zeker dat je ${player.name} wilt verwijderen? De scores van deze speler worden ook verwijderd.`,
     "Speler verwijderen"
   );
 
@@ -485,25 +542,20 @@ async function deletePlayer(playerId) {
   renderPlayers();
   renderTeams();
 
-  if (!scoreSection.classList.contains("hidden")) {
-    renderScoreInputs();
-  }
-
-  if (!standingsSection.classList.contains("hidden")) {
-    renderStandings();
-  }
+  if (!scoreSection.classList.contains("hidden")) renderScoreInputs();
+  if (!standingsSection.classList.contains("hidden")) renderStandings();
 
   showToast(`${player.name} is verwijderd.`, "success");
 }
 
 async function makeRandomTeams() {
-  if (currentGame.mode === "solo") {
-    await showMessage("Random teams zijn niet nodig bij solo.", "Iedereen apart");
+  if (!needsTeams()) {
+    await showMessage("Bij 1 of 2 spelers speel je automatisch iedereen apart.", "Geen teams nodig");
     return;
   }
 
-  if (players.length < 2) {
-    await showMessage("Voeg eerst minimaal 2 spelers toe.", "Te weinig spelers");
+  if (players.length < 3) {
+    await showMessage("Voor teams of duo’s heb je minimaal 3 spelers nodig.", "Te weinig spelers");
     return;
   }
 
@@ -516,13 +568,24 @@ async function makeRandomTeams() {
     if (!doorgaan) return;
   }
 
+  const effectiveMode = getEffectiveMode();
+  const teamSize = effectiveMode === "duos" ? 2 : Number(currentGame.team_size || 2);
+
+  if (effectiveMode === "teams" && players.length % teamSize !== 0) {
+    const doorgaan = await showConfirm(
+      `Met ${players.length} spelers en teams van ${teamSize} komen de teams niet gelijk uit. Wil je doorgaan met een handicap of ongelijke teams?`,
+      "Teams niet gelijk"
+    );
+
+    if (!doorgaan) return;
+  }
+
   randomTeamsBtn.disabled = true;
   randomTeamsBtn.textContent = "Teams maken...";
 
   await deleteExistingTeams();
 
   const shuffled = shuffle([...players]);
-  const teamSize = currentGame.mode === "duos" ? 2 : Number(currentGame.team_size || 2);
   const teamCount = Math.ceil(shuffled.length / teamSize);
 
   const teamRows = [];
@@ -550,7 +613,7 @@ async function makeRandomTeams() {
   const updates = [];
 
   shuffled.forEach((player, index) => {
-    const teamIndex = index % newTeams.length;
+    const teamIndex = Math.floor(index / teamSize);
     const team = newTeams[teamIndex];
 
     updates.push(
@@ -591,7 +654,7 @@ async function deleteExistingTeams() {
 function renderTeams() {
   teamsList.innerHTML = "";
 
-  if (currentGame.mode === "solo") {
+  if (!needsTeams()) {
     return;
   }
 
@@ -630,7 +693,7 @@ async function openScores() {
     if (!doorgaan) return;
   }
 
-  if (currentGame.mode !== "solo" && teams.length === 0) {
+  if (needsTeams() && teams.length === 0) {
     await showMessage("Maak eerst random teams.", "Teams ontbreken");
     return;
   }
@@ -687,7 +750,7 @@ function renderScoreInputs() {
     item.innerHTML = `
       <div>
         <strong>${escapeHtml(player.name)}</strong>
-        <div class="score-meta">${team ? escapeHtml(team.name) : "Solo"}</div>
+        <div class="score-meta">${needsTeams() && team ? escapeHtml(team.name) : "Iedereen apart"}</div>
       </div>
       <input 
         type="number"
@@ -771,7 +834,7 @@ function renderStandings() {
 
   renderScorecard();
 
-  if (currentGame.mode === "solo") {
+  if (!needsTeams()) {
     renderSoloStandings();
   } else {
     renderTeamStandings();
@@ -789,7 +852,7 @@ function renderScorecard() {
 
   let rows = [];
 
-  if (currentGame.mode === "solo") {
+  if (!needsTeams()) {
     rows = players.map(player => {
       return {
         name: player.name,
@@ -936,11 +999,11 @@ function showToast(message, type = "success") {
 
   setTimeout(() => {
     toast.classList.add("toast-hide");
-  }, 2500);
+  }, 2200);
 
   setTimeout(() => {
     toast.remove();
-  }, 3100);
+  }, 2800);
 }
 
 function showMessage(message, title = "Melding") {
@@ -958,7 +1021,7 @@ function showConfirm(message, title = "Weet je het zeker?") {
     title,
     message,
     icon: "⚠️",
-    confirmText: "Ja, doorgaan",
+    confirmText: "Ja",
     cancelText: "Annuleren",
     hideCancel: false
   });
