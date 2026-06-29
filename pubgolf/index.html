@@ -6,10 +6,16 @@
 
   <title>Pubgolf scorekaart</title>
 
-  <link rel="stylesheet" href="./pubgolf.css?v=13">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛳</text></svg>">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+
+  <link rel="stylesheet" href="./pubgolf.css?v=14">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./pubgolf.js?v=13" defer></script>
+  <script src="./pubgolf.js?v=14" defer></script>
 </head>
 
 <body>
@@ -146,12 +152,15 @@
 
         <div id="leader-box" class="leader-box hidden"></div>
 
-        <button id="edit-players-btn" class="small-secondary-btn">← Spelers aanpassen</button>
+        <div class="score-nav-row">
+          <button id="edit-players-btn" class="small-secondary-btn">← Spelers aanpassen</button>
+          <button id="refresh-btn" class="small-secondary-btn">↻ Ververs</button>
+        </div>
 
         <label for="hole-select">Hole kiezen</label>
         <select id="hole-select"></select>
 
-        <p class="hint">Vul de score in. Bonus/strafpunten mag je leeg laten of op 0 zetten. Negatief kan ook, bijvoorbeeld -1 bij een hole-in-one.</p>
+        <p class="hint">Vul de score in. Bonus/strafpunten mag je leeg laten of op 0 zetten.</p>
 
         <div id="score-list" class="score-list"></div>
 
