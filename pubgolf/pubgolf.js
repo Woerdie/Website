@@ -8,6 +8,8 @@ let players = [];
 let teams = [];
 let scores = [];
 let modalResolve = null;
+let realtimeChannel = null;
+let liveRefreshTimer = null;
 
 const savedGamesSection = document.getElementById("saved-games-section");
 const savedGamesList = document.getElementById("saved-games-list");
@@ -56,6 +58,7 @@ const endGameBtn = document.getElementById("end-game-btn");
 const holeSelect = document.getElementById("hole-select");
 const scoreList = document.getElementById("score-list");
 const saveScoresBtn = document.getElementById("save-scores-btn");
+const refreshBtn = document.getElementById("refresh-btn");
 
 const toastContainer = document.getElementById("toast-container");
 const modalBackdrop = document.getElementById("modal-backdrop");
@@ -81,6 +84,10 @@ endGameBtn.addEventListener("click", endGame);
 
 if (editPlayersBtn) {
   editPlayersBtn.addEventListener("click", backToPlayers);
+}
+
+if (refreshBtn) {
+  refreshBtn.addEventListener("click", manualRefresh);
 }
 
 playerNameInput.addEventListener("keydown", event => {
@@ -290,6 +297,8 @@ async function loadGame(gameId) {
   updateActiveGameInfo();
   renderPlayers();
   renderTeams();
+
+  subscribeToRealtime();
 }
 
 async function reloadGameData() {
@@ -1470,6 +1479,105 @@ function renderScorecard() {
       </table>
     </div>
   `;
+}
+
+function subscribeToRealtime() {
+  if (!currentGame || typeof db.channel !== "function") return;
+
+  if (realtimeChannel) {
+    db.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
+
+  const gameFilter = `game_id=eq.${currentGame.id}`;
+
+  realtimeChannel = db
+    .channel(`pubgolf-${currentGame.id}`)
+    .on("postgres_changes", { event: "*", schema: "public", table: "players", filter: gameFilter }, scheduleLiveRefresh)
+    .on("postgres_changes", { event: "*", schema: "public", table: "teams", filter: gameFilter }, scheduleLiveRefresh)
+    .on("postgres_changes", { event: "*", schema: "public", table: "scores", filter: gameFilter }, scheduleLiveRefresh)
+    .on("postgres_changes", { event: "*", schema: "public", table: "games", filter: `id=eq.${currentGame.id}` }, scheduleLiveRefresh)
+    .subscribe();
+}
+
+function scheduleLiveRefresh() {
+  clearTimeout(liveRefreshTimer);
+  liveRefreshTimer = setTimeout(liveRefresh, 400);
+}
+
+async function liveRefresh() {
+  if (!currentGame) return;
+
+  const { data: game } = await db
+    .from("games")
+    .select("*")
+    .eq("id", currentGame.id)
+    .single();
+
+  if (game) currentGame = game;
+
+  await reloadGameData();
+
+  updateActiveGameInfo();
+
+  if (!playersSection.classList.contains("hidden")) {
+    renderPlayers();
+    renderTeams();
+    renderManualTeamBuilder();
+  }
+
+  if (!standingsSection.classList.contains("hidden")) {
+    renderStandings();
+  }
+
+  // Score-invoer alleen verversen als niemand op dit moment aan het typen is,
+  // anders zou een ingevulde score verdwijnen.
+  if (!scoreSection.classList.contains("hidden")) {
+    const active = document.activeElement;
+    const typingInScores = active && scoreList.contains(active);
+
+    if (!typingInScores) {
+      renderScoreInputs();
+    }
+  }
+}
+
+async function manualRefresh() {
+  if (!currentGame) return;
+
+  refreshBtn.disabled = true;
+  const original = refreshBtn.textContent;
+  refreshBtn.textContent = "Verversen...";
+
+  const { data: game } = await db
+    .from("games")
+    .select("*")
+    .eq("id", currentGame.id)
+    .single();
+
+  if (game) currentGame = game;
+
+  await reloadGameData();
+
+  updateActiveGameInfo();
+
+  if (!playersSection.classList.contains("hidden")) {
+    renderPlayers();
+    renderTeams();
+    renderManualTeamBuilder();
+  }
+
+  if (!scoreSection.classList.contains("hidden")) {
+    fillHoleSelect();
+    renderScoreInputs();
+  }
+
+  renderStandings();
+
+  refreshBtn.disabled = false;
+  refreshBtn.textContent = original;
+
+  showToast("Scorekaart bijgewerkt.", "success");
 }
 
 function showToast(message, type = "success") {
