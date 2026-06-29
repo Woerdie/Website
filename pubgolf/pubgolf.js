@@ -8,6 +8,8 @@ let players = [];
 let teams = [];
 let scores = [];
 
+let modalResolve = null;
+
 const savedGamesSection = document.getElementById("saved-games-section");
 const savedGamesList = document.getElementById("saved-games-list");
 
@@ -45,6 +47,15 @@ const saveScoresBtn = document.getElementById("save-scores-btn");
 
 const standingsList = document.getElementById("standings-list");
 
+const toastContainer = document.getElementById("toast-container");
+const modalBackdrop = document.getElementById("modal-backdrop");
+const modalIcon = document.getElementById("modal-icon");
+const modalTitle = document.getElementById("modal-title");
+const modalMessage = document.getElementById("modal-message");
+const modalInput = document.getElementById("modal-input");
+const modalCancelBtn = document.getElementById("modal-cancel-btn");
+const modalConfirmBtn = document.getElementById("modal-confirm-btn");
+
 createGameBtn.addEventListener("click", createGame);
 addPlayerBtn.addEventListener("click", addPlayer);
 randomTeamsBtn.addEventListener("click", makeRandomTeams);
@@ -60,6 +71,17 @@ gameModeInput.addEventListener("change", toggleTeamSize);
 
 playerNameInput.addEventListener("keydown", event => {
   if (event.key === "Enter") addPlayer();
+});
+
+modalConfirmBtn.addEventListener("click", () => closeModal(true));
+modalCancelBtn.addEventListener("click", () => closeModal(false));
+
+modalBackdrop.addEventListener("click", event => {
+  if (event.target === modalBackdrop) closeModal(false);
+});
+
+modalInput.addEventListener("keydown", event => {
+  if (event.key === "Enter") closeModal(true);
 });
 
 init();
@@ -94,6 +116,7 @@ async function loadSavedGames() {
   if (error) {
     console.error(error);
     savedGamesList.innerHTML = `<p class="error">Games laden is niet gelukt.</p>`;
+    showToast("Games laden is niet gelukt.", "error");
     return;
   }
 
@@ -140,22 +163,22 @@ async function createGame() {
   }
 
   if (!name) {
-    alert("Vul eerst een naam voor het spel in.");
+    await showMessage("Vul eerst een naam voor het spel in.", "Naam ontbreekt");
     return;
   }
 
   if (!holes || holes < 1) {
-    alert("Vul een geldig aantal holes in.");
+    await showMessage("Vul een geldig aantal holes in.", "Aantal holes klopt niet");
     return;
   }
 
   if (!expectedPlayers || expectedPlayers < 1) {
-    alert("Vul een geldig aantal spelers in.");
+    await showMessage("Vul een geldig aantal spelers in.", "Aantal spelers klopt niet");
     return;
   }
 
   if ((mode === "duos" || mode === "teams") && teamSize < 2) {
-    alert("Een team moet minimaal uit 2 personen bestaan.");
+    await showMessage("Een team moet minimaal uit 2 personen bestaan.", "Teamgrootte klopt niet");
     return;
   }
 
@@ -179,7 +202,7 @@ async function createGame() {
 
   if (error) {
     console.error(error);
-    alert("Spel maken is niet gelukt.");
+    await showMessage("Spel maken is niet gelukt.", "Er ging iets mis");
     return;
   }
 
@@ -195,7 +218,7 @@ async function loadGame(gameId) {
 
   if (gameError) {
     console.error(gameError);
-    alert("Game kon niet worden geladen.");
+    await showMessage("Game kon niet worden geladen.", "Niet gevonden");
     return;
   }
 
@@ -223,7 +246,7 @@ async function reloadGameData() {
 
   if (playerError) {
     console.error(playerError);
-    alert("Spelers laden is niet gelukt.");
+    showToast("Spelers laden is niet gelukt.", "error");
     return;
   }
 
@@ -235,7 +258,7 @@ async function reloadGameData() {
 
   if (teamError) {
     console.error(teamError);
-    alert("Teams laden is niet gelukt.");
+    showToast("Teams laden is niet gelukt.", "error");
     return;
   }
 
@@ -246,7 +269,7 @@ async function reloadGameData() {
 
   if (scoreError) {
     console.error(scoreError);
-    alert("Scores laden is niet gelukt.");
+    showToast("Scores laden is niet gelukt.", "error");
     return;
   }
 
@@ -267,30 +290,49 @@ function updateActiveGameInfo() {
     shareLink.href = url;
     shareLink.textContent = "Deellink kopiëren / sturen";
     shareLink.title = url;
+
+    shareLink.onclick = async event => {
+      event.preventDefault();
+      await copyShareLink(url);
+    };
   }
 
   if (scoreShareLink) {
     scoreShareLink.href = url;
     scoreShareLink.textContent = "Open / stuur door";
     scoreShareLink.title = url;
+
+    scoreShareLink.onclick = async event => {
+      event.preventDefault();
+      await copyShareLink(url);
+    };
+  }
+}
+
+async function copyShareLink(url) {
+  try {
+    await navigator.clipboard.writeText(url);
+    showToast("Deellink gekopieerd. Je kunt hem nu sturen.", "success");
+  } catch {
+    await showMessage(url, "Kopieer deze deellink");
   }
 }
 
 async function addPlayer() {
   if (!currentGame) {
-    alert("Maak eerst een spel aan.");
+    await showMessage("Maak eerst een spel aan.", "Geen spel actief");
     return;
   }
 
   const name = playerNameInput.value.trim();
 
   if (!name) {
-    alert("Vul een spelernaam in.");
+    await showMessage("Vul een spelernaam in.", "Naam ontbreekt");
     return;
   }
 
   if (currentGame.expected_players && players.length >= currentGame.expected_players) {
-    alert("Je hebt het ingestelde aantal spelers al bereikt.");
+    await showMessage("Je hebt het ingestelde aantal spelers al bereikt.", "Maximum bereikt");
     return;
   }
 
@@ -311,7 +353,7 @@ async function addPlayer() {
 
   if (error) {
     console.error(error);
-    alert("Speler toevoegen is niet gelukt.");
+    await showMessage("Speler toevoegen is niet gelukt.", "Er ging iets mis");
     return;
   }
 
@@ -322,6 +364,8 @@ async function addPlayer() {
   updateActiveGameInfo();
   renderPlayers();
   renderTeams();
+
+  showToast(`${name} is toegevoegd.`, "success");
 }
 
 function renderPlayers() {
@@ -366,18 +410,18 @@ async function editPlayerName(playerId) {
   const player = players.find(player => player.id === playerId);
 
   if (!player) {
-    alert("Speler niet gevonden.");
+    await showMessage("Speler niet gevonden.", "Niet gevonden");
     return;
   }
 
-  const newName = prompt("Nieuwe naam:", player.name);
+  const newName = await showPrompt("Nieuwe naam:", player.name, "Naam aanpassen");
 
   if (newName === null) return;
 
   const cleanName = newName.trim();
 
   if (!cleanName) {
-    alert("Naam mag niet leeg zijn.");
+    await showMessage("Naam mag niet leeg zijn.", "Naam ontbreekt");
     return;
   }
 
@@ -388,7 +432,7 @@ async function editPlayerName(playerId) {
 
   if (error) {
     console.error(error);
-    alert("Naam aanpassen is niet gelukt.");
+    await showMessage("Naam aanpassen is niet gelukt.", "Er ging iets mis");
     return;
   }
 
@@ -405,18 +449,21 @@ async function editPlayerName(playerId) {
   if (!standingsSection.classList.contains("hidden")) {
     renderStandings();
   }
+
+  showToast("Naam is aangepast.", "success");
 }
 
 async function deletePlayer(playerId) {
   const player = players.find(player => player.id === playerId);
 
   if (!player) {
-    alert("Speler niet gevonden.");
+    await showMessage("Speler niet gevonden.", "Niet gevonden");
     return;
   }
 
-  const zeker = confirm(
-    `Weet je zeker dat je ${player.name} wilt verwijderen? Scores van deze speler worden ook verwijderd.`
+  const zeker = await showConfirm(
+    `Weet je zeker dat je ${player.name} wilt verwijderen? Scores van deze speler worden ook verwijderd.`,
+    "Speler verwijderen"
   );
 
   if (!zeker) return;
@@ -428,7 +475,7 @@ async function deletePlayer(playerId) {
 
   if (error) {
     console.error(error);
-    alert("Speler verwijderen is niet gelukt.");
+    await showMessage("Speler verwijderen is niet gelukt.", "Er ging iets mis");
     return;
   }
 
@@ -445,21 +492,27 @@ async function deletePlayer(playerId) {
   if (!standingsSection.classList.contains("hidden")) {
     renderStandings();
   }
+
+  showToast(`${player.name} is verwijderd.`, "success");
 }
 
 async function makeRandomTeams() {
   if (currentGame.mode === "solo") {
-    alert("Random teams zijn niet nodig bij solo.");
+    await showMessage("Random teams zijn niet nodig bij solo.", "Iedereen apart");
     return;
   }
 
   if (players.length < 2) {
-    alert("Voeg eerst minimaal 2 spelers toe.");
+    await showMessage("Voeg eerst minimaal 2 spelers toe.", "Te weinig spelers");
     return;
   }
 
   if (currentGame.expected_players && players.length < currentGame.expected_players) {
-    const doorgaan = confirm("Nog niet alle spelers zijn toegevoegd. Toch random teams maken?");
+    const doorgaan = await showConfirm(
+      "Nog niet alle spelers zijn toegevoegd. Toch random teams maken?",
+      "Nog niet compleet"
+    );
+
     if (!doorgaan) return;
   }
 
@@ -488,7 +541,7 @@ async function makeRandomTeams() {
 
   if (teamError) {
     console.error(teamError);
-    alert("Teams maken is niet gelukt.");
+    await showMessage("Teams maken is niet gelukt.", "Er ging iets mis");
     randomTeamsBtn.disabled = false;
     randomTeamsBtn.textContent = "Random teams maken";
     return;
@@ -520,7 +573,7 @@ async function makeRandomTeams() {
   renderTeams();
   renderStandings();
 
-  alert("Random teams zijn gemaakt.");
+  showToast("Random teams zijn gemaakt.", "success");
 }
 
 async function deleteExistingTeams() {
@@ -564,17 +617,21 @@ function renderTeams() {
 
 async function openScores() {
   if (players.length === 0) {
-    alert("Voeg eerst minimaal één speler toe.");
+    await showMessage("Voeg eerst minimaal één speler toe.", "Geen spelers");
     return;
   }
 
   if (currentGame.expected_players && players.length < currentGame.expected_players) {
-    const doorgaan = confirm("Nog niet alle spelers zijn toegevoegd. Toch doorgaan naar scores?");
+    const doorgaan = await showConfirm(
+      "Nog niet alle spelers zijn toegevoegd. Toch doorgaan naar scores?",
+      "Nog niet compleet"
+    );
+
     if (!doorgaan) return;
   }
 
   if (currentGame.mode !== "solo" && teams.length === 0) {
-    alert("Maak eerst random teams.");
+    await showMessage("Maak eerst random teams.", "Teams ontbreken");
     return;
   }
 
@@ -648,7 +705,7 @@ function renderScoreInputs() {
 
 async function saveScores() {
   if (!currentGame) {
-    alert("Maak eerst een spel aan.");
+    await showMessage("Maak eerst een spel aan.", "Geen spel actief");
     return;
   }
 
@@ -673,7 +730,7 @@ async function saveScores() {
   });
 
   if (rows.length === 0) {
-    alert("Vul minimaal één score in.");
+    await showMessage("Vul minimaal één score in.", "Geen score ingevuld");
     return;
   }
 
@@ -691,7 +748,7 @@ async function saveScores() {
 
   if (error) {
     console.error(error);
-    alert("Scores opslaan is niet gelukt.");
+    await showMessage("Scores opslaan is niet gelukt.", "Er ging iets mis");
     return;
   }
 
@@ -700,7 +757,7 @@ async function saveScores() {
   renderScoreInputs();
   renderStandings();
 
-  alert("Scores opgeslagen.");
+  showToast("Scores opgeslagen.", "success");
 }
 
 function renderStandings() {
@@ -868,6 +925,109 @@ function renderTeamStandings() {
 
     standingsList.appendChild(item);
   });
+}
+
+function showToast(message, type = "success") {
+  const toast = document.createElement("div");
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+
+  toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.add("toast-hide");
+  }, 2500);
+
+  setTimeout(() => {
+    toast.remove();
+  }, 3100);
+}
+
+function showMessage(message, title = "Melding") {
+  return showModal({
+    title,
+    message,
+    icon: "⛳",
+    confirmText: "Oké",
+    hideCancel: true
+  });
+}
+
+function showConfirm(message, title = "Weet je het zeker?") {
+  return showModal({
+    title,
+    message,
+    icon: "⚠️",
+    confirmText: "Ja, doorgaan",
+    cancelText: "Annuleren",
+    hideCancel: false
+  });
+}
+
+function showPrompt(message, value = "", title = "Aanpassen") {
+  return showModal({
+    title,
+    message,
+    icon: "✏️",
+    confirmText: "Opslaan",
+    cancelText: "Annuleren",
+    hideCancel: false,
+    showInput: true,
+    inputValue: value
+  });
+}
+
+function showModal(options) {
+  modalTitle.textContent = options.title || "Melding";
+  modalMessage.textContent = options.message || "";
+  modalIcon.textContent = options.icon || "⛳";
+
+  modalConfirmBtn.textContent = options.confirmText || "Oké";
+  modalCancelBtn.textContent = options.cancelText || "Annuleren";
+
+  if (options.hideCancel) {
+    modalCancelBtn.classList.add("hidden");
+  } else {
+    modalCancelBtn.classList.remove("hidden");
+  }
+
+  if (options.showInput) {
+    modalInput.classList.remove("hidden");
+    modalInput.value = options.inputValue || "";
+  } else {
+    modalInput.classList.add("hidden");
+    modalInput.value = "";
+  }
+
+  modalBackdrop.classList.remove("hidden");
+
+  setTimeout(() => {
+    if (options.showInput) {
+      modalInput.focus();
+      modalInput.select();
+    } else {
+      modalConfirmBtn.focus();
+    }
+  }, 50);
+
+  return new Promise(resolve => {
+    modalResolve = result => {
+      if (options.showInput) {
+        resolve(result ? modalInput.value : null);
+      } else {
+        resolve(result);
+      }
+    };
+  });
+}
+
+function closeModal(result) {
+  modalBackdrop.classList.add("hidden");
+
+  if (modalResolve) {
+    modalResolve(result);
+    modalResolve = null;
+  }
 }
 
 function modeLabel(mode) {
