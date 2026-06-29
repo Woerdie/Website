@@ -6,6 +6,179 @@
 
   <title>Pubgolf scorekaart</title>
 
+  <link rel="stylesheet" href="./pubgolf.css?v=10">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./pubgolf.js?v=10" defer></script>
+</head>
+
+<body>
+  <div class="app">
+    <header class="app-header">
+      <a class="back-link" href="../">← Terug</a>
+
+      <div class="logo">⛳</div>
+
+      <h1>Pubgolf scorekaart</h1>
+      <p>Maak een spel, voeg spelers toe, maak random teams of kies zelf teams en houd per hole de scores bij.</p>
+    </header>
+
+    <main>
+      <section class="card" id="saved-games-section">
+        <div class="section-top">
+          <span class="step">Opgeslagen</span>
+          <h2>Verder met bestaand spel</h2>
+        </div>
+
+        <div id="saved-games-list" class="list">
+          <p class="hint">Games worden geladen...</p>
+        </div>
+      </section>
+
+      <section class="card" id="create-game-section">
+        <div class="section-top">
+          <span class="step">Stap 1</span>
+          <h2>Spel aanmaken</h2>
+        </div>
+
+        <label for="game-name">Naam van het spel</label>
+        <input id="game-name" type="text" placeholder="Bijv. Pubgolf zaterdag">
+
+        <label for="game-holes">Aantal holes</label>
+        <input id="game-holes" type="number" min="1" max="30" value="9">
+
+        <label for="expected-players">Aantal spelers</label>
+        <input id="expected-players" type="number" min="1" max="100" value="8">
+
+        <label for="game-mode">Spelvorm</label>
+        <select id="game-mode">
+          <option value="solo">Iedereen apart</option>
+          <option value="duos">Duo’s</option>
+          <option value="teams">Teams</option>
+        </select>
+
+        <div id="team-size-wrap" class="hidden">
+          <label for="team-size">Aantal mensen per team</label>
+          <input id="team-size" type="number" min="2" max="20" value="3">
+        </div>
+
+        <button id="create-game-btn">Spel maken</button>
+
+        <p class="hint">
+          Bij 1 of 2 spelers wordt automatisch iedereen apart gespeeld. Bij duo’s mag iemand alleen overblijven. Bij teams kun je zelf een handicap invullen als teams ongelijk zijn.
+        </p>
+      </section>
+
+      <section class="card hidden" id="players-section">
+        <div class="section-top">
+          <span class="step">Stap 2</span>
+          <h2>Spelers toevoegen</h2>
+        </div>
+
+        <div class="active-game-box">
+          <strong id="active-game-name">Geen spel actief</strong>
+          <span id="active-game-info"></span>
+          <a id="share-link" class="share-link" href="#">Deellink kopiëren / sturen</a>
+        </div>
+
+        <div class="settings-row">
+          <div>
+            <label for="edit-expected-players">Aantal spelers aanpassen</label>
+            <input id="edit-expected-players" type="number" min="1" max="100">
+          </div>
+
+          <button id="update-expected-players-btn" class="small-action-btn">Aantal opslaan</button>
+        </div>
+
+        <label for="player-name">Naam speler</label>
+
+        <div class="inline-form">
+          <input id="player-name" type="text" placeholder="Bijv. Daan">
+          <button id="add-player-btn">Toevoegen</button>
+        </div>
+
+        <p class="hint" id="player-counter">0 spelers toegevoegd.</p>
+
+        <div id="players-list" class="list"></div>
+
+        <div id="team-choice-actions" class="team-choice-actions hidden">
+          <button id="random-teams-btn" class="secondary-btn">Random teams maken</button>
+          <button id="manual-teams-btn" class="secondary-btn">Zelf teams kiezen</button>
+        </div>
+
+        <div id="manual-team-builder" class="manual-team-builder hidden"></div>
+
+        <div id="teams-list" class="teams-list"></div>
+
+        <button id="go-score-btn">Naar scores</button>
+      </section>
+
+      <section class="card hidden" id="score-section">
+        <div class="section-top section-top-split">
+          <div>
+            <span class="step">Stap 3</span>
+            <h2>Scores invullen</h2>
+          </div>
+
+          <div class="mini-share-box">
+            <span>Deellink</span>
+            <a id="score-share-link" href="#">Open / stuur door</a>
+          </div>
+        </div>
+
+        <button id="edit-players-btn" class="small-secondary-btn">← Spelers aanpassen</button>
+
+        <label for="hole-select">Hole kiezen</label>
+        <select id="hole-select"></select>
+
+        <div id="score-list" class="score-list"></div>
+
+        <button id="save-scores-btn">Scores opslaan / aanpassen</button>
+      </section>
+
+      <section class="card hidden" id="standings-section">
+        <div class="section-top">
+          <span class="step">Scorekaart</span>
+          <h2>Pubgolf scorekaart</h2>
+        </div>
+
+        <div id="scorecard-table" class="scorecard-table"></div>
+
+        <div class="section-top standings-title">
+          <span class="step">Stand</span>
+          <h2>Tussenstand</h2>
+        </div>
+
+        <div id="standings-list" class="standings-list"></div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast-container" class="toast-container"></div>
+
+  <div id="modal-backdrop" class="modal-backdrop hidden">
+    <div class="custom-modal">
+      <div class="modal-icon" id="modal-icon">⛳</div>
+      <h3 id="modal-title">Melding</h3>
+      <p id="modal-message">Bericht</p>
+
+      <input id="modal-input" class="modal-input hidden" type="text">
+
+      <div class="modal-actions">
+        <button id="modal-cancel-btn" class="modal-btn modal-cancel-btn">Annuleren</button>
+        <button id="modal-confirm-btn" class="modal-btn modal-confirm-btn">Oké</button>
+      </div>
+    </div>
+  </div>
+</body>
+</html><!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <title>Pubgolf scorekaart</title>
+
   <link rel="stylesheet" href="./pubgolf.css?v=9">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
