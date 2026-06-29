@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+  <title>Pubgolf scorekaart</title>
+
+  <link rel="stylesheet" href="pubgolf.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="pubgolf.js" defer></script>
+</head>
+
+<body>
+  <div class="app">
+    <header class="app-header">
+      <a class="back-link" href="../">← Terug</a>
+
+      <div class="logo">⛳</div>
+
+      <h1>Pubgolf scorekaart</h1>
+      <p>Maak een spel aan, voeg spelers toe en houd per hole de scores bij.</p>
+    </header>
+
+    <main>
+      <section class="card" id="create-game-section">
+        <div class="section-top">
+          <span class="step">Stap 1</span>
+          <h2>Spel aanmaken</h2>
+        </div>
+
+        <label for="game-name">Naam van het spel</label>
+        <input id="game-name" type="text" placeholder="Bijv. Pubgolf zaterdag">
+
+        <label for="game-holes">Aantal holes</label>
+        <input id="game-holes" type="number" min="1" max="30" value="9">
+
+        <label for="game-mode">Spelmodus</label>
+        <select id="game-mode">
+          <option value="solo">Iedereen apart</option>
+          <option value="teams">Teams</option>
+        </select>
+
+        <button id="create-game-btn">Spel maken</button>
+
+        <p class="hint">
+          Na het aanmaken kun je spelers toevoegen en daarna scores invullen.
+        </p>
+      </section>
+
+      <section class="card hidden" id="players-section">
+        <div class="section-top">
+          <span class="step">Stap 2</span>
+          <h2>Spelers toevoegen</h2>
+        </div>
+
+        <div class="active-game-box">
+          <strong id="active-game-name">Geen spel actief</strong>
+          <span id="active-game-info"></span>
+        </div>
+
+        <label for="player-name">Naam speler</label>
+        <div class="inline-form">
+          <input id="player-name" type="text" placeholder="Bijv. Daan">
+          <button id="add-player-btn">Toevoegen</button>
+        </div>
+
+        <div id="players-list" class="list"></div>
+
+        <button id="go-score-btn" class="secondary-btn">Naar scores</button>
+      </section>
+
+      <section class="card hidden" id="score-section">
+        <div class="section-top">
+          <span class="step">Stap 3</span>
+          <h2>Scores invullen</h2>
+        </div>
+
+        <label for="hole-select">Hole kiezen</label>
+        <select id="hole-select"></select>
+
+        <div id="score-list" class="score-list"></div>
+
+        <button id="save-scores-btn">Scores opslaan</button>
+      </section>
+
+      <section class="card hidden" id="standings-section">
+        <div class="section-top">
+          <span class="step">Eindstand</span>
+          <h2>Tussenstand</h2>
+        </div>
+
+        <div id="standings-list" class="standings-list"></div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
