@@ -1,6 +1,6 @@
 :root {
   --bg: #f3f7ed;
-  --card: rgba(255, 255, 255, 0.94);
+  --card: rgba(255, 255, 255, 0.96);
   --green: #2f6f3e;
   --green-dark: #143d22;
   --green-soft: #e7f2df;
@@ -37,16 +37,18 @@ body {
 }
 
 .app {
-  width: min(1040px, 100%);
+  width: min(1080px, 100%);
   margin: 0 auto;
-  padding: 24px 16px 80px;
+  padding: 26px 18px 90px;
 }
+
+/* Header */
 
 .app-header {
   position: relative;
   text-align: center;
-  margin-bottom: 26px;
-  padding: 12px 0 4px;
+  margin-bottom: 28px;
+  padding: 12px 0 6px;
 }
 
 .back-link {
@@ -59,11 +61,16 @@ body {
   color: var(--green-dark);
   text-decoration: none;
   font-weight: 800;
-  background: rgba(255, 255, 255, 0.82);
+  background: rgba(255, 255, 255, 0.86);
   border: 1px solid var(--line);
   border-radius: 999px;
   padding: 9px 14px;
   box-shadow: var(--shadow-sm);
+}
+
+.back-link:hover {
+  background: #ffffff;
+  border-color: var(--green-line);
 }
 
 .logo {
@@ -98,15 +105,18 @@ h1 {
 }
 
 .app-header p {
-  max-width: 52ch;
+  max-width: 56ch;
   margin: 0 auto;
   color: var(--muted);
   font-size: 1rem;
+  line-height: 1.45;
 }
+
+/* Main desktop layout */
 
 main {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
   gap: 18px;
   align-items: start;
 }
@@ -120,20 +130,25 @@ main {
   box-shadow: var(--shadow);
 }
 
-#create-game-section,
 #saved-games-section {
-  grid-column: span 1;
+  grid-column: 1;
+}
+
+#create-game-section {
+  grid-column: 2;
 }
 
 #players-section,
 #score-section,
 #standings-section {
-  grid-column: span 2;
+  grid-column: 1 / -1;
 }
 
 .hidden {
   display: none !important;
 }
+
+/* Sections */
 
 .section-top {
   margin-bottom: 20px;
@@ -145,7 +160,11 @@ main {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 14px;
+  gap: 16px;
+}
+
+.section-top-split > div:first-child {
+  min-width: 0;
 }
 
 .step {
@@ -169,6 +188,15 @@ h2 {
   font-size: 1.45rem;
   letter-spacing: -0.02em;
 }
+
+.hint {
+  margin: 13px 0 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+/* Forms */
 
 label {
   display: block;
@@ -195,6 +223,8 @@ select:focus {
   border-color: var(--green);
 }
 
+/* Buttons */
+
 button {
   width: 100%;
   min-height: 50px;
@@ -218,12 +248,51 @@ button:hover {
   background: linear-gradient(145deg, #26334d, #111827);
 }
 
-.hint {
-  margin: 13px 0 0;
-  color: var(--muted);
-  font-size: 0.92rem;
-  line-height: 1.45;
+.secondary-btn:hover {
+  background: linear-gradient(145deg, #1f2a40, #0f1726);
 }
+
+.small-action-btn {
+  width: auto;
+  min-width: 145px;
+  margin-top: 0;
+  white-space: nowrap;
+}
+
+.small-secondary-btn,
+.outline-btn,
+.danger-outline-btn {
+  width: auto;
+  min-height: 38px;
+  padding: 9px 13px;
+  margin: 0;
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--green-dark);
+  border: 1px solid var(--green-line);
+  box-shadow: none;
+  font-size: 0.88rem;
+}
+
+.small-secondary-btn:hover,
+.outline-btn:hover {
+  background: var(--green-soft);
+  color: var(--green-dark);
+  box-shadow: none;
+}
+
+.danger-outline-btn {
+  color: var(--danger);
+  border-color: #e0b4b4;
+}
+
+.danger-outline-btn:hover {
+  background: var(--danger-soft);
+  color: var(--danger);
+  box-shadow: none;
+}
+
+/* Active game and leader */
 
 .active-game-box,
 .leader-box {
@@ -249,6 +318,13 @@ button:hover {
   font-size: 1.05rem;
 }
 
+.active-game-box span,
+.leader-box small {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
 .leader-box span {
   color: var(--gold);
   font-size: 0.75rem;
@@ -257,13 +333,10 @@ button:hover {
   letter-spacing: 0.08em;
 }
 
-.leader-box small,
-.active-game-box span {
-  color: var(--muted);
-  font-size: 0.9rem;
-}
+/* Share box */
 
 .mini-share-box {
+  flex: none;
   min-width: 150px;
   max-width: 220px;
   padding: 10px 12px;
@@ -291,15 +364,16 @@ button:hover {
   margin-top: 2px;
 }
 
-.settings-row,
-.inline-form,
-.manual-player-row {
-  display: grid;
-  gap: 12px;
+.mini-share-box a:hover {
+  text-decoration: underline;
 }
 
+/* Settings and add player */
+
 .settings-row {
-  grid-template-columns: 1fr auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
   align-items: end;
   margin-bottom: 16px;
   padding: 14px;
@@ -309,40 +383,19 @@ button:hover {
 }
 
 .inline-form {
-  grid-template-columns: 1fr auto;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
 }
 
-.inline-form button,
-.small-action-btn {
+.inline-form button {
   width: auto;
   min-width: 140px;
   margin-top: 0;
   white-space: nowrap;
 }
 
-.small-secondary-btn,
-.outline-btn,
-.danger-outline-btn {
-  width: auto;
-  min-height: 38px;
-  padding: 9px 13px;
-  margin: 0;
-  border-radius: 999px;
-  background: #ffffff;
-  color: var(--green-dark);
-  border: 1px solid var(--green-line);
-  box-shadow: none;
-  font-size: 0.88rem;
-}
-
-.outline-btn {
-  color: var(--green-dark);
-}
-
-.danger-outline-btn {
-  color: var(--danger);
-  border-color: #e0b4b4;
-}
+/* Lists */
 
 .list,
 .score-list,
@@ -366,19 +419,35 @@ button:hover {
   box-shadow: var(--shadow-sm);
 }
 
+.list-item strong,
+.score-item strong,
+.standing-item strong {
+  color: var(--ink);
+}
+
 .player-team,
 .score-meta {
   color: var(--muted);
   font-size: 0.86rem;
   margin-top: 2px;
+  line-height: 1.35;
+}
+
+/* Player edit buttons */
+
+.player-edit-item {
+  align-items: center;
 }
 
 .player-edit-main {
   flex: 1;
+  min-width: 0;
 }
 
 .player-actions {
   display: flex;
+  align-items: center;
+  justify-content: flex-end;
   gap: 8px;
   flex-wrap: nowrap;
 }
@@ -402,6 +471,12 @@ button:hover {
 .danger-tiny-btn {
   background: var(--danger);
 }
+
+.danger-tiny-btn:hover {
+  background: #8f3030;
+}
+
+/* Saved games */
 
 .saved-game-btn {
   width: 100%;
@@ -428,7 +503,10 @@ button:hover {
   color: var(--muted);
   font-size: 0.88rem;
   margin-top: 3px;
+  line-height: 1.35;
 }
+
+/* Team choice */
 
 .team-choice-actions {
   display: grid;
@@ -440,6 +518,8 @@ button:hover {
 .team-choice-actions button {
   margin-top: 0;
 }
+
+/* Manual team builder */
 
 .manual-team-builder {
   margin-top: 18px;
@@ -454,9 +534,17 @@ button:hover {
   box-shadow: var(--shadow-sm);
 }
 
+.manual-builder-top {
+  margin-bottom: 16px;
+}
+
+.manual-builder-top p {
+  margin-bottom: 0;
+}
+
 .manual-team-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }
@@ -468,15 +556,31 @@ button:hover {
   background: #ffffff;
 }
 
+.manual-team-card label:first-child {
+  margin-top: 0;
+}
+
+.manual-player-list {
+  display: grid;
+  gap: 10px;
+}
+
 .manual-player-row {
-  grid-template-columns: 1fr 220px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 12px;
   align-items: center;
   padding: 12px;
   border: 1px solid var(--line);
   border-radius: 16px;
   background: #ffffff;
-  margin-bottom: 10px;
 }
+
+.manual-player-row strong {
+  color: var(--ink);
+}
+
+/* Team cards */
 
 .team-card {
   padding: 16px;
@@ -502,6 +606,7 @@ button:hover {
 .team-card span {
   color: var(--muted);
   font-size: 0.92rem;
+  line-height: 1.4;
 }
 
 .team-card small {
@@ -510,17 +615,23 @@ button:hover {
   font-weight: 900;
 }
 
+/* Danger zone */
+
 .danger-zone {
   display: flex;
+  justify-content: flex-end;
   gap: 10px;
   margin-top: 18px;
   flex-wrap: wrap;
 }
 
+/* Score input layout */
+
 .score-control-item {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: minmax(0, 1fr) auto 120px;
   align-items: center;
+  gap: 14px;
 }
 
 .score-player-info {
@@ -540,6 +651,11 @@ button:hover {
   font-weight: 900;
 }
 
+.score-step-btn {
+  min-width: 38px;
+  width: 38px !important;
+}
+
 .bonus-control {
   width: 120px;
 }
@@ -554,8 +670,14 @@ button:hover {
   text-align: center;
 }
 
+/* Scorecard */
+
 .standings-title {
   margin-top: 26px;
+}
+
+.scorecard-table {
+  margin-top: 10px;
 }
 
 .scorecard-scroll {
@@ -587,6 +709,11 @@ button:hover {
   font-weight: 900;
 }
 
+.scorecard-scroll tbody tr:last-child th,
+.scorecard-scroll tbody tr:last-child td {
+  border-bottom: 0;
+}
+
 .scorecard-name {
   position: sticky;
   left: 0;
@@ -610,6 +737,8 @@ button:hover {
   background: var(--gold-soft);
 }
 
+/* Standings */
+
 .standing-rank {
   flex: none;
   width: 38px;
@@ -626,6 +755,7 @@ button:hover {
 
 .standing-main {
   flex: 1;
+  min-width: 0;
 }
 
 .standing-score {
@@ -638,6 +768,8 @@ button:hover {
   color: var(--danger);
   font-weight: 800;
 }
+
+/* Toast */
 
 .toast-container {
   position: fixed;
@@ -698,6 +830,8 @@ button:hover {
     transform: translateY(12px) scale(0.98);
   }
 }
+
+/* Modal */
 
 .modal-backdrop {
   position: fixed;
@@ -770,6 +904,12 @@ button:hover {
   box-shadow: none;
 }
 
+.modal-cancel-btn:hover {
+  background: var(--green-soft);
+  color: var(--green-dark);
+  box-shadow: none;
+}
+
 @keyframes modalIn {
   from {
     opacity: 0;
@@ -782,9 +922,31 @@ button:hover {
   }
 }
 
+/* Tablet */
+
+@media (max-width: 900px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+
+  #saved-games-section,
+  #create-game-section,
+  #players-section,
+  #score-section,
+  #standings-section {
+    grid-column: 1;
+  }
+}
+
+/* Mobile */
+
 @media (max-width: 760px) {
   .app {
-    padding: 18px 12px 70px;
+    padding: 18px 12px 72px;
+  }
+
+  .app-header {
+    margin-bottom: 20px;
   }
 
   .back-link {
@@ -798,8 +960,8 @@ button:hover {
     font-size: 1.9rem;
   }
 
-  main {
-    display: block;
+  h1 {
+    font-size: 2.05rem;
   }
 
   .card {
@@ -810,6 +972,7 @@ button:hover {
 
   .section-top-split {
     flex-direction: column;
+    gap: 12px;
   }
 
   .mini-share-box {
@@ -834,30 +997,44 @@ button:hover {
   .standing-item,
   .player-edit-item {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
-  .player-actions,
-  .danger-zone {
+  .player-actions {
     width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
   }
 
-  .tiny-btn,
+  .tiny-btn {
+    width: 100% !important;
+    min-width: 0;
+    max-width: none;
+  }
+
+  .danger-zone {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
   .outline-btn,
-  .danger-outline-btn {
-    flex: 1;
+  .danger-outline-btn,
+  .small-secondary-btn {
+    width: 100%;
   }
 
   .score-control-item {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .score-controls {
     width: 100%;
+    display: grid;
+    grid-template-columns: 48px 1fr 48px;
   }
 
   .score-controls input {
-    flex: 1;
     width: 100%;
   }
 
@@ -870,12 +1047,16 @@ button:hover {
     width: 100%;
   }
 
-  .custom-modal {
-    padding: 22px;
-    border-radius: 22px;
+  .scorecard-scroll table {
+    min-width: 640px;
   }
 
   .modal-actions {
     flex-direction: column-reverse;
+  }
+
+  .custom-modal {
+    padding: 22px;
+    border-radius: 22px;
   }
 }
