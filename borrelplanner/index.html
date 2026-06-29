@@ -1,1 +1,137 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
+  <title>Wanneer kunnen we wat drinken?</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="borrelplanner.css">
+</head>
+
+<body>
+  <div class="wrap">
+    <a href="../" class="backlink">‹ Terug naar overzicht</a>
+
+    <header>
+      <span class="badge">🍻 Borrelplanner</span>
+      <h1>Wanneer kunnen we<br>wat drinken?</h1>
+      <p>Vul je naam in, tik de dagen aan dat jij kan, en zie waar de meeste mensen kunnen.</p>
+    </header>
+
+    <div id="configWarn" class="config-warn" style="display:none">
+      ⚠️ Nog niet ingesteld: vul bovenin het bestand je <code>SUPABASE_URL</code> en <code>SUPABASE_ANON_KEY</code> in.
+    </div>
+
+    <div class="card">
+      <h2><span class="step">1</span> Je naam</h2>
+
+      <input type="text" id="naam" placeholder="bijv. vader Daan" autocomplete="off">
+
+      <h2 style="margin-top:24px"><span class="step">2</span> Kies je dagen</h2>
+
+      <div class="cal-head">
+        <div class="cal-title" id="calTitle"></div>
+
+        <div class="cal-nav">
+          <button id="prevBtn" title="vorige maand" aria-label="vorige maand">‹</button>
+          <button id="nextBtn" title="volgende maand" aria-label="volgende maand">›</button>
+        </div>
+      </div>
+
+      <div class="cal-grid" id="calGrid"></div>
+
+      <div class="selected-bar">
+        <span class="selected-count"><b id="selCount">0</b> dagen gekozen</span>
+        <button class="clear-btn" id="clearBtn" style="display:none">Alles wissen</button>
+      </div>
+
+      <button class="btn-save" id="saveBtn">Opslaan</button>
+      <button class="btn-remove" id="removeBtn">Verwijder mijn gekozen dag(en)</button>
+    </div>
+
+    <div class="card">
+      <div class="toolbar">
+        <h2 style="margin:0">📊 Beste dagen</h2>
+
+        <div class="tools">
+          <button class="btn-tool" id="filterBtn" style="display:none">🔍 Filter</button>
+          <button class="btn-tool" id="refreshBtn">↻ Vernieuwen</button>
+        </div>
+      </div>
+
+      <div class="filter-panel" id="filterPanel">
+        <div class="filter-group">
+          <div class="filter-head">Personen — tik om weg te halen</div>
+          <div class="filter-pills" id="filterPeople"></div>
+        </div>
+
+        <div class="filter-group">
+          <div class="filter-head">Dagen — tik om te verbergen</div>
+          <div class="filter-pills" id="filterDays"></div>
+        </div>
+
+        <button class="filter-reset" id="filterReset">Alle filters wissen</button>
+      </div>
+
+      <div class="legend" id="legend" style="display:none">
+        <span><i class="dot green"></i> veel mensen</span>
+        <span><i class="dot orange"></i> redelijk</span>
+        <span><i class="dot red"></i> weinig</span>
+      </div>
+
+      <div id="results"></div>
+      <div class="empty" id="resultsEmpty">Nog niemand heeft iets ingevuld.</div>
+
+      <div class="pager" id="pager" style="display:none">
+        <button id="prevPage">‹ Vorige</button>
+        <span class="page-info" id="pageInfo"></span>
+        <button id="nextPage">Volgende ›</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="removeModal">
+    <div class="modal">
+      <div class="modal-head">
+        <h3>Dagen verwijderen</h3>
+        <p>Klik op je naam uit de lijst. Daarna zie je precies welke dagen onder die naam zijn opgeslagen.</p>
+      </div>
+
+      <div class="modal-body">
+        <label class="modal-label" for="removeNaam">Naam</label>
+
+        <input type="text" id="removeNaam" placeholder="bijv. Daan" autocomplete="off">
+
+        <button class="btn-small" id="loadRemoveDaysBtn">Toon mijn dagen</button>
+
+        <div class="modal-error" id="removeError"></div>
+
+        <div class="name-choices" id="nameChoicesBox">
+          <div class="name-choices-title">Opgeslagen namen — klik om te kiezen:</div>
+          <div class="name-choice-list" id="nameChoicesList"></div>
+        </div>
+
+        <div class="date-checklist" id="removeDaysBox">
+          <p class="date-hint">Datums staan per maand en oplopend. Klik alleen de dagen aan die je wilt verwijderen.</p>
+          <div class="date-list" id="removeDaysList"></div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-cancel" id="cancelRemoveBtn">Annuleren</button>
+        <button class="btn-confirm" id="confirmRemoveBtn" disabled>Geselecteerde dagen verwijderen</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="borrelplanner.js"></script>
+</body>
+</html>
