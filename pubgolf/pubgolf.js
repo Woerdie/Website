@@ -39,7 +39,12 @@ const playerNameInput = document.getElementById("player-name");
 const addPlayerBtn = document.getElementById("add-player-btn");
 const playersList = document.getElementById("players-list");
 const playerCounter = document.getElementById("player-counter");
+
+const teamChoiceActions = document.getElementById("team-choice-actions");
 const randomTeamsBtn = document.getElementById("random-teams-btn");
+const manualTeamsBtn = document.getElementById("manual-teams-btn");
+const manualTeamBuilder = document.getElementById("manual-team-builder");
+
 const teamsList = document.getElementById("teams-list");
 const goScoreBtn = document.getElementById("go-score-btn");
 
@@ -60,6 +65,7 @@ const modalConfirmBtn = document.getElementById("modal-confirm-btn");
 createGameBtn.addEventListener("click", createGame);
 addPlayerBtn.addEventListener("click", addPlayer);
 randomTeamsBtn.addEventListener("click", makeRandomTeams);
+manualTeamsBtn.addEventListener("click", openManualTeams);
 goScoreBtn.addEventListener("click", openScores);
 saveScoresBtn.addEventListener("click", saveScores);
 holeSelect.addEventListener("change", renderScoreInputs);
@@ -120,6 +126,24 @@ function getEffectiveMode() {
 function needsTeams() {
   const effectiveMode = getEffectiveMode();
   return effectiveMode === "duos" || effectiveMode === "teams";
+}
+
+function getTeamSize() {
+  const effectiveMode = getEffectiveMode();
+
+  if (effectiveMode === "duos") return 2;
+
+  if (effectiveMode === "teams") {
+    return Number(currentGame.team_size || 2);
+  }
+
+  return 1;
+}
+
+function getRequiredTeamCount() {
+  if (!needsTeams()) return 0;
+
+  return Math.ceil(players.length / getTeamSize());
 }
 
 async function loadSavedGames() {
@@ -448,7 +472,7 @@ function renderPlayers() {
       item.innerHTML = `
         <div class="player-edit-main">
           <strong>${index + 1}. ${escapeHtml(player.name)}</strong>
-          <div class="player-team">${team ? escapeHtml(team.name) : "Nog geen team"}</div>
+          <div class="player-team">${team && needsTeams() ? escapeHtml(team.name) : "Nog geen team"}</div>
         </div>
 
         <div class="player-actions">
@@ -462,9 +486,10 @@ function renderPlayers() {
   }
 
   if (!needsTeams()) {
-    randomTeamsBtn.classList.add("hidden");
+    teamChoiceActions.classList.add("hidden");
+    manualTeamBuilder.classList.add("hidden");
   } else {
-    randomTeamsBtn.classList.remove("hidden");
+    teamChoiceActions.classList.remove("hidden");
   }
 }
 
@@ -569,11 +594,11 @@ async function makeRandomTeams() {
   }
 
   const effectiveMode = getEffectiveMode();
-  const teamSize = effectiveMode === "duos" ? 2 : Number(currentGame.team_size || 2);
+  const teamSize = getTeamSize();
 
   if (effectiveMode === "teams" && players.length % teamSize !== 0) {
     const doorgaan = await showConfirm(
-      `Met ${players.length} spelers en teams van ${teamSize} komen de teams niet gelijk uit. Wil je doorgaan met een handicap of ongelijke teams?`,
+      `Met ${players.length} spelers en teams van ${teamSize} komen de teams niet gelijk uit. Je kunt hierna eventueel een handicap invullen. Wil je doorgaan?`,
       "Teams niet gelijk"
     );
 
@@ -593,7 +618,8 @@ async function makeRandomTeams() {
   for (let i = 1; i <= teamCount; i++) {
     teamRows.push({
       game_id: currentGame.id,
-      name: `Team ${i}`
+      name: `Team ${i}`,
+      handicap: 0
     });
   }
 
@@ -634,9 +660,220 @@ async function makeRandomTeams() {
   updateActiveGameInfo();
   renderPlayers();
   renderTeams();
+  renderManualTeamBuilder();
   renderStandings();
 
   showToast("Random teams zijn gemaakt.", "success");
+}
+
+async function openManualTeams() {
+  if (!needsTeams()) {
+    await showMessage("Bij 1 of 2 spelers speel je automatisch iedereen apart.", "Geen teams nodig");
+    return;
+  }
+
+  if (players.length < 3) {
+    await showMessage("Voor teams of duo’s heb je minimaal 3 spelers nodig.", "Te weinig spelers");
+    return;
+  }
+
+  const effectiveMode = getEffectiveMode();
+  const teamSize = getTeamSize();
+
+  if (effectiveMode === "teams" && players.length % teamSize !== 0) {
+    const doorgaan = await showConfirm(
+      `Met ${players.length} spelers en teams van ${teamSize} komen de teams niet gelijk uit. Je kunt zelf een handicap invullen, maar dat hoeft niet. Wil je doorgaan?`,
+      "Teams niet gelijk"
+    );
+
+    if (!doorgaan) return;
+  }
+
+  await ensureManualTeamsExist();
+
+  await reloadGameData();
+
+  renderPlayers();
+  renderTeams();
+  renderManualTeamBuilder();
+
+  manualTeamBuilder.classList.remove("hidden");
+  manualTeamBuilder.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function ensureManualTeamsExist() {
+  const requiredTeamCount = getRequiredTeamCount();
+
+  if (teams.length === requiredTeamCount) {
+    return;
+  }
+
+  await deleteExistingTeams();
+
+  const teamRows = [];
+
+  for (let i = 1; i <= requiredTeamCount; i++) {
+    teamRows.push({
+      game_id: currentGame.id,
+      name: `Team ${i}`,
+      handicap: 0
+    });
+  }
+
+  const { error } = await db
+    .from("teams")
+    .insert(teamRows);
+
+  if (error) {
+    console.error(error);
+    await showMessage("Teams klaarzetten is niet gelukt.", "Er ging iets mis");
+  }
+}
+
+function renderManualTeamBuilder() {
+  if (!needsTeams() || teams.length === 0) {
+    manualTeamBuilder.innerHTML = "";
+    manualTeamBuilder.classList.add("hidden");
+    return;
+  }
+
+  const teamOptions = teams
+    .map(team => `<option value="${team.id}">${escapeHtml(team.name)}</option>`)
+    .join("");
+
+  const teamSettings = teams.map((team, index) => {
+    return `
+      <div class="manual-team-card">
+        <label for="team-name-${team.id}">Teamnaam</label>
+        <input 
+          id="team-name-${team.id}"
+          class="manual-team-name"
+          data-team-id="${team.id}"
+          type="text"
+          value="${escapeAttribute(team.name || `Team ${index + 1}`)}"
+        >
+
+        <label for="team-handicap-${team.id}">Handicap / strafpunten optioneel</label>
+        <input 
+          id="team-handicap-${team.id}"
+          class="manual-team-handicap"
+          data-team-id="${team.id}"
+          type="number"
+          min="0"
+          value="${Number(team.handicap || 0)}"
+        >
+      </div>
+    `;
+  }).join("");
+
+  const playerSettings = players.map(player => {
+    const selectedTeamId = player.team_id || teams[0].id;
+
+    const options = teams.map(team => {
+      const selected = team.id === selectedTeamId ? "selected" : "";
+      return `<option value="${team.id}" ${selected}>${escapeHtml(team.name)}</option>`;
+    }).join("");
+
+    return `
+      <div class="manual-player-row">
+        <strong>${escapeHtml(player.name)}</strong>
+        <select class="manual-player-team" data-player-id="${player.id}">
+          ${options || teamOptions}
+        </select>
+      </div>
+    `;
+  }).join("");
+
+  manualTeamBuilder.innerHTML = `
+    <div class="manual-builder-box">
+      <div class="section-top manual-builder-top">
+        <span class="step">Teams</span>
+        <h2>Zelf teams kiezen</h2>
+        <p class="hint">
+          Kies per speler een team. Als een team minder spelers heeft, kun je optioneel handicap/strafpunten invullen. Laat dit op 0 als je geen handicap wilt gebruiken.
+        </p>
+      </div>
+
+      <div class="manual-team-grid">
+        ${teamSettings}
+      </div>
+
+      <div class="manual-player-list">
+        ${playerSettings}
+      </div>
+
+      <button id="save-manual-teams-btn" class="secondary-btn">Zelf gekozen teams opslaan</button>
+    </div>
+  `;
+
+  document
+    .getElementById("save-manual-teams-btn")
+    .addEventListener("click", saveManualTeams);
+}
+
+async function saveManualTeams() {
+  const teamNameInputs = manualTeamBuilder.querySelectorAll(".manual-team-name");
+  const handicapInputs = manualTeamBuilder.querySelectorAll(".manual-team-handicap");
+  const playerSelects = manualTeamBuilder.querySelectorAll(".manual-player-team");
+
+  const teamUpdates = [];
+
+  teamNameInputs.forEach(input => {
+    const teamId = input.dataset.teamId;
+    const name = input.value.trim() || "Team";
+
+    teamUpdates.push(
+      db
+        .from("teams")
+        .update({ name })
+        .eq("id", teamId)
+    );
+  });
+
+  handicapInputs.forEach(input => {
+    const teamId = input.dataset.teamId;
+    const handicap = Number(input.value || 0);
+
+    teamUpdates.push(
+      db
+        .from("teams")
+        .update({ handicap })
+        .eq("id", teamId)
+    );
+  });
+
+  const playerUpdates = [];
+
+  playerSelects.forEach(select => {
+    const playerId = select.dataset.playerId;
+    const teamId = select.value;
+
+    playerUpdates.push(
+      db
+        .from("players")
+        .update({ team_id: teamId })
+        .eq("id", playerId)
+    );
+  });
+
+  const results = await Promise.all([...teamUpdates, ...playerUpdates]);
+  const hasError = results.some(result => result.error);
+
+  if (hasError) {
+    console.error(results);
+    await showMessage("Zelf gekozen teams opslaan is niet gelukt.", "Er ging iets mis");
+    return;
+  }
+
+  await reloadGameData();
+
+  updateActiveGameInfo();
+  renderPlayers();
+  renderTeams();
+  renderManualTeamBuilder();
+  renderStandings();
+
+  showToast("Zelf gekozen teams zijn opgeslagen.", "success");
 }
 
 async function deleteExistingTeams() {
@@ -665,6 +902,7 @@ function renderTeams() {
 
   teams.forEach(team => {
     const teamPlayers = players.filter(player => player.team_id === team.id);
+    const handicap = Number(team.handicap || 0);
 
     const card = document.createElement("div");
     card.className = "team-card";
@@ -672,6 +910,7 @@ function renderTeams() {
     card.innerHTML = `
       <strong>${escapeHtml(team.name)}</strong>
       <span>${teamPlayers.map(player => escapeHtml(player.name)).join(", ") || "Geen spelers"}</span>
+      ${handicap > 0 ? `<small>Handicap/strafpunten: +${handicap}</small>` : ""}
     `;
 
     teamsList.appendChild(card);
@@ -694,7 +933,14 @@ async function openScores() {
   }
 
   if (needsTeams() && teams.length === 0) {
-    await showMessage("Maak eerst random teams.", "Teams ontbreken");
+    await showMessage("Maak eerst random teams of kies zelf teams.", "Teams ontbreken");
+    return;
+  }
+
+  const playersWithoutTeam = players.filter(player => !player.team_id);
+
+  if (needsTeams() && playersWithoutTeam.length > 0) {
+    await showMessage("Niet alle spelers zitten in een team. Kies eerst random teams of sla zelf gekozen teams op.", "Teams niet compleet");
     return;
   }
 
@@ -857,7 +1103,8 @@ function renderScorecard() {
       return {
         name: player.name,
         sub: "",
-        playerIds: [player.id]
+        playerIds: [player.id],
+        handicap: 0
       };
     });
   } else {
@@ -867,7 +1114,8 @@ function renderScorecard() {
       return {
         name: team.name,
         sub: teamPlayers.map(player => player.name).join(", "),
-        playerIds: teamPlayers.map(player => player.id)
+        playerIds: teamPlayers.map(player => player.id),
+        handicap: Number(team.handicap || 0)
       };
     });
   }
@@ -891,15 +1139,18 @@ function renderScorecard() {
       return `<td>${hasScore ? holeTotal : "-"}</td>`;
     }).join("");
 
-    const total = scores
+    const scoreTotal = scores
       .filter(score => row.playerIds.includes(score.player_id))
       .reduce((sum, score) => sum + Number(score.score), 0);
+
+    const total = scoreTotal + row.handicap;
 
     return `
       <tr>
         <th class="scorecard-name">
           ${escapeHtml(row.name)}
           ${row.sub ? `<small>${escapeHtml(row.sub)}</small>` : ""}
+          ${row.handicap > 0 ? `<small>Handicap: +${row.handicap}</small>` : ""}
         </th>
         ${holeCells}
         <td class="scorecard-total">${total}</td>
@@ -960,13 +1211,17 @@ function renderTeamStandings() {
     const teamPlayers = players.filter(player => player.team_id === team.id);
     const playerIds = teamPlayers.map(player => player.id);
 
-    const total = scores
+    const scoreTotal = scores
       .filter(score => playerIds.includes(score.player_id))
       .reduce((sum, score) => sum + Number(score.score), 0);
+
+    const handicap = Number(team.handicap || 0);
+    const total = scoreTotal + handicap;
 
     return {
       name: team.name,
       players: teamPlayers.map(player => player.name),
+      handicap,
       total
     };
   });
@@ -981,7 +1236,10 @@ function renderTeamStandings() {
       <span class="standing-rank">${index + 1}</span>
       <span class="standing-main">
         <strong>${escapeHtml(team.name)}</strong>
-        <div class="score-meta">${team.players.map(escapeHtml).join(", ")}</div>
+        <div class="score-meta">
+          ${team.players.map(escapeHtml).join(", ")}
+          ${team.handicap > 0 ? ` · handicap +${team.handicap}` : ""}
+        </div>
       </span>
       <span class="standing-score">${team.total}</span>
     `;
@@ -1110,4 +1368,12 @@ function escapeHtml(text) {
   const div = document.createElement("div");
   div.textContent = text || "";
   return div.innerHTML;
+}
+
+function escapeAttribute(text) {
+  return String(text || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;");
 }
