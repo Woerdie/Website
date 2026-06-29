@@ -328,6 +328,40 @@ button:active {
   margin-top: 2px;
 }
 
+/* Player edit buttons */
+
+.player-edit-item {
+  align-items: center;
+}
+
+.player-edit-main {
+  flex: 1;
+}
+
+.player-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tiny-btn {
+  width: auto;
+  min-height: 34px;
+  margin-top: 0;
+  padding: 7px 11px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  box-shadow: none;
+}
+
+.danger-tiny-btn {
+  background: var(--danger);
+}
+
+.danger-tiny-btn:hover {
+  background: #8f3030;
+}
+
 /* Saved games */
 
 .saved-game-btn {
@@ -629,6 +663,19 @@ button:active {
   .list-item,
   .standing-item {
     align-items: flex-start;
+  }
+
+  .player-edit-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .player-actions {
+    width: 100%;
+  }
+
+  .tiny-btn {
+    flex: 1;
   }
 
   .section-top-split {
