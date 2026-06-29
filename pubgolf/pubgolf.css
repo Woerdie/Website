@@ -332,6 +332,7 @@ button:active {
 
 .player-edit-item {
   align-items: center;
+  min-height: auto;
 }
 
 .player-edit-main {
@@ -340,18 +341,23 @@ button:active {
 
 .player-actions {
   display: flex;
+  align-items: center;
+  justify-content: flex-end;
   gap: 8px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .tiny-btn {
-  width: auto;
-  min-height: 34px;
-  margin-top: 0;
-  padding: 7px 11px;
+  width: auto !important;
+  min-width: 96px;
+  max-width: 120px;
+  min-height: 34px !important;
+  margin-top: 0 !important;
+  padding: 7px 12px !important;
   border-radius: 999px;
-  font-size: 0.78rem;
-  box-shadow: none;
+  font-size: 0.78rem !important;
+  line-height: 1;
+  box-shadow: none !important;
 }
 
 .danger-tiny-btn {
@@ -672,9 +678,13 @@ button:active {
 
   .player-actions {
     width: 100%;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
   }
 
   .tiny-btn {
+    min-width: 0;
+    max-width: none;
     flex: 1;
   }
 
