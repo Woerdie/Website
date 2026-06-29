@@ -7,7 +7,6 @@
   --ink: #1b2a44;
   --muted: #6a7484;
   --gold: #b88a3e;
-  --gold-2: #cda44b;
   --gold-soft: #f3ead6;
   --line: #e7dfce;
   --shadow: 0 10px 34px rgba(22, 38, 63, 0.10);
@@ -26,16 +25,16 @@ body {
 }
 
 body {
+  min-height: 100vh;
   font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   color: var(--ink);
   line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
   background:
     radial-gradient(1100px 460px at 50% -200px, rgba(184, 138, 62, 0.14), transparent 60%),
     linear-gradient(165deg, var(--cream), var(--cream-2));
   background-attachment: fixed;
-  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .wrap {
@@ -48,7 +47,7 @@ body {
 
 header {
   text-align: center;
-  margin: 0 0 14px;
+  margin-bottom: 14px;
 }
 
 .mono {
@@ -70,41 +69,40 @@ header {
 }
 
 header h1 {
+  margin: 0 0 8px;
   font-family: 'Playfair Display', serif;
   font-weight: 600;
   font-size: clamp(2rem, 8vw, 2.7rem);
   line-height: 1.08;
-  margin: 0 0 8px;
   letter-spacing: -0.01em;
   color: var(--navy);
 }
 
 header p {
-  color: var(--muted);
-  margin: 0;
-  font-size: clamp(0.96rem, 3.8vw, 1.06rem);
   max-width: 42ch;
-  margin-inline: auto;
+  margin: 0 auto;
+  color: var(--muted);
+  font-size: clamp(0.96rem, 3.8vw, 1.06rem);
 }
 
 .rule {
   width: 46px;
   height: 3px;
+  margin: 22px auto 0;
   background: var(--gold);
   border-radius: 3px;
-  margin: 22px auto 0;
   opacity: 0.85;
 }
 
 /* Secties */
 
 .section-label {
+  margin: 38px 4px 14px;
   font-size: 0.72rem;
   font-weight: 700;
   color: var(--gold);
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  margin: 38px 4px 14px;
 }
 
 /* Uitgelichte kaart */
@@ -112,15 +110,15 @@ header p {
 .feature {
   position: relative;
   display: block;
+  margin-bottom: 12px;
+  overflow: hidden;
   text-decoration: none;
   color: #ffffff;
   border-radius: 22px;
-  overflow: hidden;
   background: linear-gradient(150deg, var(--navy-2), var(--navy));
   box-shadow: 0 16px 40px rgba(22, 38, 63, 0.28);
-  transition: transform 0.14s, box-shadow 0.14s;
   border: 1px solid rgba(205, 164, 75, 0.25);
-  margin-bottom: 12px;
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
 }
 
 .feature:hover {
@@ -144,7 +142,7 @@ header p {
   padding: 26px 24px;
 }
 
-.feature .ficon {
+.ficon {
   flex: none;
   width: 56px;
   height: 56px;
@@ -157,26 +155,26 @@ header p {
   font-size: 1.7rem;
 }
 
-.feature .ftext {
+.ftext {
   flex: 1;
   min-width: 0;
 }
 
-.feature .tag {
+.tag {
   display: inline-block;
+  margin-bottom: 6px;
   font-size: 0.66rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold);
-  margin-bottom: 6px;
 }
 
-.feature h3 {
+.feature h2 {
+  margin: 0 0 4px;
   font-family: 'Playfair Display', serif;
   font-weight: 600;
   font-size: 1.5rem;
-  margin: 0 0 4px;
   line-height: 1.1;
 }
 
@@ -186,27 +184,27 @@ header p {
   opacity: 0.82;
 }
 
-.feature .arrow {
+.arrow {
   flex: none;
   font-size: 1.5rem;
   color: var(--gold);
 }
 
-/* Normale kaarten */
+/* Tools */
 
 .tile {
   display: flex;
   align-items: center;
   gap: 16px;
+  margin-bottom: 12px;
+  padding: 18px 20px;
   text-decoration: none;
   color: var(--ink);
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 16px;
-  padding: 18px 20px;
-  margin-bottom: 12px;
   box-shadow: var(--shadow-sm);
-  transition: transform 0.12s, box-shadow 0.12s, border-color 0.12s;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, border-color 0.12s ease;
 }
 
 .tile:hover {
@@ -215,7 +213,7 @@ header p {
   border-color: #dccba6;
 }
 
-.tile .ticon {
+.ticon {
   flex: none;
   width: 48px;
   height: 48px;
@@ -228,16 +226,16 @@ header p {
   font-size: 1.4rem;
 }
 
-.tile .ttext {
+.ttext {
   flex: 1;
   min-width: 0;
 }
 
-.tile h3 {
+.tile h2 {
+  margin: 0 0 2px;
   font-family: 'Playfair Display', serif;
   font-weight: 600;
   font-size: 1.1rem;
-  margin: 0 0 2px;
   color: var(--navy);
 }
 
@@ -248,10 +246,9 @@ header p {
 }
 
 .tile .arrow {
-  flex: none;
   font-size: 1.3rem;
   color: #c9bda2;
-  transition: 0.15s;
+  transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .tile:hover .arrow {
@@ -259,7 +256,7 @@ header p {
   transform: translateX(3px);
 }
 
-/* Pubgolf kaart net iets herkenbaarder */
+/* Pubgolf kaart */
 
 .tile-pubgolf .ticon {
   background: #eef7df;
@@ -273,11 +270,11 @@ header p {
 /* Footer */
 
 footer {
+  margin-top: 40px;
+  padding: 22px 6px 0;
   text-align: center;
   color: var(--muted);
   font-size: 0.78rem;
-  margin-top: 40px;
-  padding: 22px 6px 0;
   border-top: 1px solid var(--line);
 }
 
@@ -298,17 +295,17 @@ footer a:hover {
     padding: 18px;
   }
 
-  .feature .ficon,
-  .tile .ticon {
+  .ficon,
+  .ticon {
     width: 46px;
     height: 46px;
   }
 
-  .feature h3 {
+  .feature h2 {
     font-size: 1.28rem;
   }
 
-  .tile h3 {
+  .tile h2 {
     font-size: 1.02rem;
   }
 }
