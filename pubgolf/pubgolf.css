@@ -43,8 +43,6 @@ body {
   padding: 28px 18px 80px;
 }
 
-/* Header */
-
 .app-header {
   position: relative;
   text-align: center;
@@ -111,8 +109,6 @@ h1 {
   font-size: 1rem;
 }
 
-/* Main layout */
-
 main {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -173,8 +169,6 @@ h2 {
   font-size: 1.45rem;
   letter-spacing: -0.02em;
 }
-
-/* Forms */
 
 label {
   display: block;
@@ -243,8 +237,6 @@ button:active {
   font-size: 0.92rem;
 }
 
-/* Active game */
-
 .active-game-box {
   padding: 16px;
   border-radius: 18px;
@@ -271,12 +263,24 @@ button:active {
   font-size: 0.9rem;
 }
 
-.active-game-box small {
-  margin-top: 6px;
-  word-break: break-all;
+.settings-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  align-items: end;
+  margin-bottom: 16px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #ffffff;
 }
 
-/* Add player */
+.small-action-btn {
+  width: auto;
+  min-width: 145px;
+  margin-top: 0;
+  white-space: nowrap;
+}
 
 .inline-form {
   display: grid;
@@ -290,8 +294,6 @@ button:active {
   margin-top: 0;
   white-space: nowrap;
 }
-
-/* Lists */
 
 .list,
 .score-list,
@@ -315,12 +317,6 @@ button:active {
   box-shadow: var(--shadow-sm);
 }
 
-.list-item strong,
-.score-item strong,
-.standing-item strong {
-  color: var(--ink);
-}
-
 .player-team,
 .score-meta {
   color: var(--muted);
@@ -328,11 +324,8 @@ button:active {
   margin-top: 2px;
 }
 
-/* Player edit buttons */
-
 .player-edit-item {
   align-items: center;
-  min-height: auto;
 }
 
 .player-edit-main {
@@ -368,8 +361,6 @@ button:active {
   background: #8f3030;
 }
 
-/* Saved games */
-
 .saved-game-btn {
   width: 100%;
   margin-top: 0;
@@ -403,8 +394,6 @@ button:active {
   margin-top: 3px;
 }
 
-/* Teams */
-
 .team-card {
   padding: 16px;
   border: 1px solid var(--green-line);
@@ -427,8 +416,6 @@ button:active {
   font-size: 0.92rem;
 }
 
-/* Scores */
-
 .score-item input {
   width: 110px;
   min-height: 44px;
@@ -436,8 +423,6 @@ button:active {
   font-weight: 800;
   font-size: 1.05rem;
 }
-
-/* Standings */
 
 .standing-rank {
   flex: none;
@@ -471,16 +456,6 @@ button:active {
   color: var(--danger);
   font-weight: 800;
 }
-
-.danger-btn {
-  background: var(--danger);
-}
-
-.danger-btn:hover {
-  background: #8f3030;
-}
-
-/* Share links and scorecard */
 
 .section-top-split {
   display: flex;
@@ -528,10 +503,6 @@ button:active {
   text-decoration: none;
   font-size: 0.9rem;
   margin-top: 2px;
-}
-
-.mini-share-box a:hover {
-  text-decoration: underline;
 }
 
 .small-secondary-btn {
@@ -590,11 +561,6 @@ button:active {
   font-weight: 900;
 }
 
-.scorecard-scroll tbody tr:last-child th,
-.scorecard-scroll tbody tr:last-child td {
-  border-bottom: 0;
-}
-
 .scorecard-name {
   position: sticky;
   left: 0;
@@ -619,7 +585,158 @@ button:active {
   background: var(--gold-soft);
 }
 
-/* Mobile */
+.toast-container {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: min(420px, calc(100% - 28px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.toast {
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #ffffff;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  box-shadow: 0 16px 35px rgba(23, 32, 51, 0.18);
+  font-weight: 800;
+  text-align: center;
+  animation: toastIn 0.22s ease-out;
+}
+
+.toast-success {
+  border-color: var(--green-line);
+  background: var(--green-soft);
+  color: var(--green-dark);
+}
+
+.toast-error {
+  border-color: #e0b4b4;
+  background: #fff1f1;
+  color: var(--danger);
+}
+
+.toast-hide {
+  animation: toastOut 0.25s ease-in forwards;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes toastOut {
+  to {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(10, 20, 12, 0.42);
+  backdrop-filter: blur(5px);
+}
+
+.custom-modal {
+  width: min(430px, 100%);
+  padding: 26px;
+  border-radius: 26px;
+  background: #ffffff;
+  border: 1px solid var(--green-line);
+  box-shadow: 0 28px 70px rgba(23, 32, 51, 0.28);
+  text-align: center;
+  animation: modalIn 0.2s ease-out;
+}
+
+.modal-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--green-soft);
+  color: var(--green-dark);
+  font-size: 1.8rem;
+}
+
+.custom-modal h3 {
+  margin: 0 0 8px;
+  color: var(--green-dark);
+  font-size: 1.35rem;
+}
+
+.custom-modal p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.modal-input {
+  margin-top: 18px;
+  text-align: left;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.modal-btn {
+  margin-top: 0;
+  min-height: 46px;
+}
+
+.modal-cancel-btn {
+  background: #ffffff;
+  color: var(--green-dark);
+  border: 1px solid var(--green-line);
+  box-shadow: none;
+}
+
+.modal-cancel-btn:hover {
+  background: var(--green-soft);
+  color: var(--green-dark);
+  box-shadow: none;
+}
+
+.modal-confirm-btn {
+  background: linear-gradient(145deg, #3d8a4f, var(--green));
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
 @media (max-width: 760px) {
   .app {
@@ -641,12 +758,12 @@ button:active {
     border-radius: 22px;
   }
 
-  #create-game-section,
-  #saved-games-section,
-  #players-section,
-  #score-section,
-  #standings-section {
-    grid-column: auto;
+  .settings-row {
+    grid-template-columns: 1fr;
+  }
+
+  .small-action-btn {
+    width: 100%;
   }
 
   .inline-form {
@@ -666,11 +783,6 @@ button:active {
     width: 100%;
   }
 
-  .list-item,
-  .standing-item {
-    align-items: flex-start;
-  }
-
   .player-edit-item {
     flex-direction: column;
     align-items: flex-start;
@@ -679,7 +791,6 @@ button:active {
   .player-actions {
     width: 100%;
     justify-content: flex-start;
-    flex-wrap: nowrap;
   }
 
   .tiny-btn {
@@ -695,5 +806,14 @@ button:active {
   .mini-share-box {
     width: 100%;
     max-width: none;
+  }
+
+  .custom-modal {
+    padding: 22px;
+    border-radius: 22px;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
   }
 }
