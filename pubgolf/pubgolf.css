@@ -1059,4 +1059,28 @@ button:hover {
     padding: 22px;
     border-radius: 22px;
   }
+  .scorecard-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.scorecard-rank {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: var(--green-soft);
+  color: var(--green-dark);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 900;
+  border: 1px solid var(--green-line);
+}
+
+.scorecard-player {
+  display: block;
+  min-width: 0;
+}
 }
