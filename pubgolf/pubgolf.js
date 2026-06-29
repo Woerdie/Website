@@ -27,6 +27,9 @@ const createGameBtn = document.getElementById("create-game-btn");
 const activeGameName = document.getElementById("active-game-name");
 const activeGameInfo = document.getElementById("active-game-info");
 const shareLink = document.getElementById("share-link");
+const scoreShareLink = document.getElementById("score-share-link");
+const editPlayersBtn = document.getElementById("edit-players-btn");
+const scorecardTable = document.getElementById("scorecard-table");
 
 const playerNameInput = document.getElementById("player-name");
 const addPlayerBtn = document.getElementById("add-player-btn");
