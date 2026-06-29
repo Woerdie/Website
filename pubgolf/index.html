@@ -6,10 +6,10 @@
 
   <title>Pubgolf scorekaart</title>
 
-  <link rel="stylesheet" href="./pubgolf.css?v=12">
+  <link rel="stylesheet" href="./pubgolf.css?v=13">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./pubgolf.js?v=12" defer></script>
+  <script src="./pubgolf.js?v=13" defer></script>
 </head>
 
 <body>
@@ -161,22 +161,15 @@
       <section class="card hidden" id="standings-section">
         <div class="section-top section-top-split">
           <div>
-            <span class="step">Scorekaart</span>
-            <h2>Pubgolf scorekaart</h2>
+            <span class="step">Stand & scorekaart</span>
+            <h2>Stand & scorekaart</h2>
+            <p class="hint">Laagste score staat bovenaan.</p>
           </div>
 
           <button id="end-game-btn" class="small-secondary-btn">Spel beëindigen</button>
         </div>
 
         <div id="scorecard-table" class="scorecard-table"></div>
-
-        <div class="section-top standings-title">
-          <span class="step">Stand</span>
-          <h2>Tussenstand</h2>
-          <p class="hint">Laagste score staat bovenaan.</p>
-        </div>
-
-        <div id="standings-list" class="standings-list"></div>
       </section>
     </main>
   </div>
