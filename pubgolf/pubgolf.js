@@ -21,6 +21,7 @@ const gameNameInput = document.getElementById("game-name");
 const gameHolesInput = document.getElementById("game-holes");
 const expectedPlayersInput = document.getElementById("expected-players");
 const gameModeInput = document.getElementById("game-mode");
+const scoreModeInput = document.getElementById("score-mode");
 const teamSizeWrap = document.getElementById("team-size-wrap");
 const teamSizeInput = document.getElementById("team-size");
 
@@ -32,6 +33,7 @@ const scoreShareLink = document.getElementById("score-share-link");
 const editPlayersBtn = document.getElementById("edit-players-btn");
 const scorecardTable = document.getElementById("scorecard-table");
 
+const leaderBox = document.getElementById("leader-box");
 const editExpectedPlayersInput = document.getElementById("edit-expected-players");
 const updateExpectedPlayersBtn = document.getElementById("update-expected-players-btn");
 
@@ -47,6 +49,9 @@ const manualTeamBuilder = document.getElementById("manual-team-builder");
 
 const teamsList = document.getElementById("teams-list");
 const goScoreBtn = document.getElementById("go-score-btn");
+const resetScoresBtn = document.getElementById("reset-scores-btn");
+const deleteGameBtn = document.getElementById("delete-game-btn");
+const endGameBtn = document.getElementById("end-game-btn");
 
 const holeSelect = document.getElementById("hole-select");
 const scoreList = document.getElementById("score-list");
@@ -71,6 +76,9 @@ saveScoresBtn.addEventListener("click", saveScores);
 holeSelect.addEventListener("change", renderScoreInputs);
 gameModeInput.addEventListener("change", toggleTeamSize);
 updateExpectedPlayersBtn.addEventListener("click", updateExpectedPlayers);
+resetScoresBtn.addEventListener("click", resetScores);
+deleteGameBtn.addEventListener("click", deleteGame);
+endGameBtn.addEventListener("click", endGame);
 
 if (editPlayersBtn) {
   editPlayersBtn.addEventListener("click", backToPlayers);
@@ -142,8 +150,11 @@ function getTeamSize() {
 
 function getRequiredTeamCount() {
   if (!needsTeams()) return 0;
-
   return Math.ceil(players.length / getTeamSize());
+}
+
+function useTeamScoreMode() {
+  return needsTeams() && currentGame.score_mode === "team";
 }
 
 async function loadSavedGames() {
@@ -151,7 +162,7 @@ async function loadSavedGames() {
     .from("games")
     .select("*")
     .order("created_at", { ascending: false })
-    .limit(10);
+    .limit(12);
 
   if (error) {
     console.error(error);
@@ -171,10 +182,12 @@ async function loadSavedGames() {
     const btn = document.createElement("button");
     btn.className = "saved-game-btn";
 
+    const status = game.status === "ended" ? "Afgelopen" : "Actief";
+
     btn.innerHTML = `
       <span class="game-row">
         <strong>${escapeHtml(game.name)}</strong>
-        <span>${game.holes} holes · ${modeLabel(game.mode)} · ${game.expected_players || "?"} spelers</span>
+        <span>${game.holes} holes · ${modeLabel(game.mode)} · ${game.expected_players || "?"} spelers · ${status}</span>
       </span>
     `;
 
@@ -191,6 +204,7 @@ async function createGame() {
   const holes = Number(gameHolesInput.value);
   const expectedPlayers = Number(expectedPlayersInput.value);
   const mode = gameModeInput.value;
+  const scoreMode = scoreModeInput.value;
 
   let teamSize = 1;
 
@@ -231,8 +245,10 @@ async function createGame() {
       name,
       holes,
       mode,
+      score_mode: scoreMode,
       expected_players: expectedPlayers,
-      team_size: teamSize
+      team_size: teamSize,
+      status: "active"
     })
     .select()
     .single();
@@ -242,7 +258,7 @@ async function createGame() {
 
   if (error) {
     console.error(error);
-    await showMessage("Spel maken is niet gelukt.", "Er ging iets mis");
+    await showMessage("Spel maken is niet gelukt. Check of je de SQL hebt uitgevoerd.", "Er ging iets mis");
     return;
   }
 
@@ -331,31 +347,52 @@ function updateActiveGameInfo() {
     modeText = "Iedereen apart";
   }
 
+  const scoreModeText = useTeamScoreMode() ? "scores per team" : "scores per speler";
+  const statusText = currentGame.status === "ended" ? "afgelopen" : "actief";
+
   activeGameInfo.textContent =
-    `${currentGame.holes} holes · ${modeText} · ${players.length}/${currentGame.expected_players || "?"} spelers`;
+    `${currentGame.holes} holes · ${modeText} · ${scoreModeText} · ${players.length}/${currentGame.expected_players || "?"} spelers · ${statusText}`;
 
   const url = `${window.location.origin}${window.location.pathname}?game=${currentGame.id}`;
 
-  if (shareLink) {
-    shareLink.href = url;
-    shareLink.textContent = "Deellink kopiëren / sturen";
-    shareLink.title = url;
+  setupShareLink(shareLink, url);
+  setupShareLink(scoreShareLink, url);
+}
 
-    shareLink.onclick = async event => {
-      event.preventDefault();
-      await copyShareLink(url);
-    };
+function setupShareLink(link, url) {
+  if (!link) return;
+
+  link.href = url;
+  link.textContent = "Kopiëren";
+  link.title = url;
+
+  link.onclick = async event => {
+    event.preventDefault();
+    await shareGame(url);
+  };
+}
+
+async function shareGame(url) {
+  const text = `Doe mee met Pubgolf: ${url}`;
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: "Pubgolf scorekaart",
+        text,
+        url
+      });
+      return;
+    } catch {
+      // gebruiker annuleerde delen
+    }
   }
 
-  if (scoreShareLink) {
-    scoreShareLink.href = url;
-    scoreShareLink.textContent = "Open / stuur door";
-    scoreShareLink.title = url;
-
-    scoreShareLink.onclick = async event => {
-      event.preventDefault();
-      await copyShareLink(url);
-    };
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast("Deellink gekopieerd.", "success");
+  } catch {
+    await showMessage(url, "Kopieer deze deellink");
   }
 }
 
@@ -393,15 +430,6 @@ async function updateExpectedPlayers() {
   renderPlayers();
 
   showToast("Aantal spelers is aangepast.", "success");
-}
-
-async function copyShareLink(url) {
-  try {
-    await navigator.clipboard.writeText(url);
-    showToast("Deellink gekopieerd.", "success");
-  } catch {
-    await showMessage(url, "Kopieer deze deellink");
-  }
 }
 
 async function addPlayer() {
@@ -690,7 +718,6 @@ async function openManualTeams() {
   }
 
   await ensureManualTeamsExist();
-
   await reloadGameData();
 
   renderPlayers();
@@ -737,10 +764,6 @@ function renderManualTeamBuilder() {
     return;
   }
 
-  const teamOptions = teams
-    .map(team => `<option value="${team.id}">${escapeHtml(team.name)}</option>`)
-    .join("");
-
   const teamSettings = teams.map((team, index) => {
     return `
       <div class="manual-team-card">
@@ -759,7 +782,6 @@ function renderManualTeamBuilder() {
           class="manual-team-handicap"
           data-team-id="${team.id}"
           type="number"
-          min="0"
           value="${Number(team.handicap || 0)}"
         >
       </div>
@@ -778,7 +800,7 @@ function renderManualTeamBuilder() {
       <div class="manual-player-row">
         <strong>${escapeHtml(player.name)}</strong>
         <select class="manual-player-team" data-player-id="${player.id}">
-          ${options || teamOptions}
+          ${options}
         </select>
       </div>
     `;
@@ -910,7 +932,7 @@ function renderTeams() {
     card.innerHTML = `
       <strong>${escapeHtml(team.name)}</strong>
       <span>${teamPlayers.map(player => escapeHtml(player.name)).join(", ") || "Geen spelers"}</span>
-      ${handicap > 0 ? `<small>Handicap/strafpunten: +${handicap}</small>` : ""}
+      ${handicap !== 0 ? `<small>Handicap/strafpunten: ${handicap > 0 ? "+" : ""}${handicap}</small>` : ""}
     `;
 
     teamsList.appendChild(card);
@@ -968,6 +990,8 @@ function backToPlayers() {
 }
 
 function fillHoleSelect() {
+  const currentValue = holeSelect.value;
+
   holeSelect.innerHTML = "";
 
   for (let i = 1; i <= currentGame.holes; i++) {
@@ -976,40 +1000,113 @@ function fillHoleSelect() {
     option.textContent = `Hole ${i}`;
     holeSelect.appendChild(option);
   }
+
+  if (currentValue) {
+    holeSelect.value = currentValue;
+  }
+}
+
+function getScoreTargets() {
+  if (useTeamScoreMode()) {
+    return teams.map(team => {
+      return {
+        type: "team",
+        id: team.id,
+        name: team.name,
+        sub: players
+          .filter(player => player.team_id === team.id)
+          .map(player => player.name)
+          .join(", ")
+      };
+    });
+  }
+
+  return players.map(player => {
+    const team = teams.find(team => team.id === player.team_id);
+
+    return {
+      type: "player",
+      id: player.id,
+      name: player.name,
+      sub: needsTeams() && team ? team.name : "Iedereen apart"
+    };
+  });
+}
+
+function getExistingScore(target, holeNumber) {
+  return scores.find(score => {
+    if (Number(score.hole_number) !== Number(holeNumber)) return false;
+
+    if (target.type === "team") {
+      return score.team_id === target.id;
+    }
+
+    return score.player_id === target.id;
+  });
 }
 
 function renderScoreInputs() {
   scoreList.innerHTML = "";
 
   const holeNumber = Number(holeSelect.value);
+  const targets = getScoreTargets();
 
-  players.forEach(player => {
-    const existingScore = scores.find(score => {
-      return score.player_id === player.id && score.hole_number === holeNumber;
-    });
-
-    const team = teams.find(team => team.id === player.team_id);
+  targets.forEach(target => {
+    const existingScore = getExistingScore(target, holeNumber);
 
     const item = document.createElement("div");
-    item.className = "score-item";
+    item.className = "score-item score-control-item";
 
     item.innerHTML = `
-      <div>
-        <strong>${escapeHtml(player.name)}</strong>
-        <div class="score-meta">${needsTeams() && team ? escapeHtml(team.name) : "Iedereen apart"}</div>
+      <div class="score-player-info">
+        <strong>${escapeHtml(target.name)}</strong>
+        <div class="score-meta">${escapeHtml(target.sub || "")}</div>
       </div>
-      <input 
-        type="number"
-        min="0"
-        inputmode="numeric"
-        data-player-id="${player.id}"
-        value="${existingScore ? existingScore.score : ""}"
-        placeholder="Score"
-      >
+
+      <div class="score-controls">
+        <button class="score-step-btn" onclick="changeScoreValue('${target.type}', '${target.id}', -1)">−</button>
+        <input 
+          type="number"
+          min="0"
+          inputmode="numeric"
+          data-target-type="${target.type}"
+          data-target-id="${target.id}"
+          class="score-value-input"
+          value="${existingScore ? existingScore.score : ""}"
+          placeholder="Score"
+        >
+        <button class="score-step-btn" onclick="changeScoreValue('${target.type}', '${target.id}', 1)">+</button>
+      </div>
+
+      <div class="bonus-control">
+        <label>Bonus / straf</label>
+        <input 
+          type="number"
+          inputmode="numeric"
+          data-target-type="${target.type}"
+          data-target-id="${target.id}"
+          class="bonus-value-input"
+          value="${existingScore ? Number(existingScore.bonus || 0) : 0}"
+          placeholder="0"
+        >
+      </div>
     `;
 
     scoreList.appendChild(item);
   });
+}
+
+function changeScoreValue(type, id, amount) {
+  const input = scoreList.querySelector(
+    `.score-value-input[data-target-type="${type}"][data-target-id="${id}"]`
+  );
+
+  if (!input) return;
+
+  const current = Number(input.value || 0);
+  const next = Math.max(0, current + amount);
+
+  input.value = next;
 }
 
 async function saveScores() {
@@ -1019,21 +1116,26 @@ async function saveScores() {
   }
 
   const holeNumber = Number(holeSelect.value);
-  const inputs = scoreList.querySelectorAll("input");
-
+  const scoreInputs = scoreList.querySelectorAll(".score-value-input");
   const rows = [];
 
-  inputs.forEach(input => {
-    const playerId = input.dataset.playerId;
+  scoreInputs.forEach(input => {
+    const targetType = input.dataset.targetType;
+    const targetId = input.dataset.targetId;
     const value = input.value.trim();
+
+    const bonusInput = scoreList.querySelector(
+      `.bonus-value-input[data-target-type="${targetType}"][data-target-id="${targetId}"]`
+    );
+
+    const bonus = Number(bonusInput ? bonusInput.value || 0 : 0);
 
     if (value !== "") {
       rows.push({
-        game_id: currentGame.id,
-        player_id: playerId,
-        hole_number: holeNumber,
+        targetType,
+        targetId,
         score: Number(value),
-        updated_at: new Date().toISOString()
+        bonus
       });
     }
   });
@@ -1046,18 +1148,103 @@ async function saveScores() {
   saveScoresBtn.disabled = true;
   saveScoresBtn.textContent = "Opslaan...";
 
-  const { error } = await db
-    .from("scores")
-    .upsert(rows, {
-      onConflict: "player_id,hole_number"
-    });
+  for (const row of rows) {
+    const result = await upsertScore(row, holeNumber);
+
+    if (result.error) {
+      console.error(result.error);
+      saveScoresBtn.disabled = false;
+      saveScoresBtn.textContent = "Scores opslaan en naar volgende hole";
+      await showMessage("Scores opslaan is niet gelukt.", "Er ging iets mis");
+      return;
+    }
+  }
 
   saveScoresBtn.disabled = false;
-  saveScoresBtn.textContent = "Scores opslaan / aanpassen";
+  saveScoresBtn.textContent = "Scores opslaan en naar volgende hole";
+
+  await reloadGameData();
+
+  goToNextHoleIfPossible();
+
+  renderScoreInputs();
+  renderStandings();
+
+  showToast("Scores opgeslagen.", "success");
+}
+
+async function upsertScore(row, holeNumber) {
+  let query = db
+    .from("scores")
+    .select("id")
+    .eq("game_id", currentGame.id)
+    .eq("hole_number", holeNumber)
+    .limit(1);
+
+  if (row.targetType === "team") {
+    query = query.eq("team_id", row.targetId);
+  } else {
+    query = query.eq("player_id", row.targetId);
+  }
+
+  const { data: existing, error: findError } = await query;
+
+  if (findError) {
+    return { error: findError };
+  }
+
+  const payload = {
+    game_id: currentGame.id,
+    hole_number: holeNumber,
+    score: row.score,
+    bonus: row.bonus,
+    updated_at: new Date().toISOString()
+  };
+
+  if (row.targetType === "team") {
+    payload.team_id = row.targetId;
+    payload.player_id = null;
+  } else {
+    payload.player_id = row.targetId;
+    payload.team_id = null;
+  }
+
+  if (existing && existing.length > 0) {
+    return db
+      .from("scores")
+      .update(payload)
+      .eq("id", existing[0].id);
+  }
+
+  return db
+    .from("scores")
+    .insert(payload);
+}
+
+function goToNextHoleIfPossible() {
+  const currentHole = Number(holeSelect.value);
+
+  if (currentHole < Number(currentGame.holes)) {
+    holeSelect.value = currentHole + 1;
+  }
+}
+
+async function resetScores() {
+  const zeker = await showConfirm(
+    "Weet je zeker dat je alle scores wilt wissen? Spelers en teams blijven staan.",
+    "Scores resetten"
+  );
+
+  if (!zeker) return;
+
+  const { error } = await db
+    .from("scores")
+    .delete()
+    .eq("game_id", currentGame.id);
 
   if (error) {
     console.error(error);
-    await showMessage("Scores opslaan is niet gelukt.", "Er ging iets mis");
+    await showMessage("Scores resetten is niet gelukt.", "Er ging iets mis");
     return;
   }
 
@@ -1066,7 +1253,73 @@ async function saveScores() {
   renderScoreInputs();
   renderStandings();
 
-  showToast("Scores opgeslagen.", "success");
+  showToast("Scores zijn gereset.", "success");
+}
+
+async function deleteGame() {
+  const zeker = await showConfirm(
+    "Weet je zeker dat je dit hele spel wilt verwijderen? Spelers, teams en scores worden ook verwijderd.",
+    "Spel verwijderen"
+  );
+
+  if (!zeker) return;
+
+  const { error } = await db
+    .from("games")
+    .delete()
+    .eq("id", currentGame.id);
+
+  if (error) {
+    console.error(error);
+    await showMessage("Spel verwijderen is niet gelukt.", "Er ging iets mis");
+    return;
+  }
+
+  showToast("Spel is verwijderd.", "success");
+
+  setTimeout(() => {
+    window.location.href = "/pubgolf/";
+  }, 800);
+}
+
+async function endGame() {
+  const standings = getStandings();
+
+  if (standings.length === 0) {
+    await showMessage("Er is nog geen stand om af te ronden.", "Geen eindstand");
+    return;
+  }
+
+  const winner = standings[0];
+
+  const zeker = await showConfirm(
+    `Wil je het spel beëindigen? Winnaar op dit moment: ${winner.name} met ${winner.total} punten.`,
+    "Spel beëindigen"
+  );
+
+  if (!zeker) return;
+
+  const { error } = await db
+    .from("games")
+    .update({
+      status: "ended",
+      ended_at: new Date().toISOString()
+    })
+    .eq("id", currentGame.id);
+
+  if (error) {
+    console.error(error);
+    await showMessage("Spel beëindigen is niet gelukt.", "Er ging iets mis");
+    return;
+  }
+
+  currentGame.status = "ended";
+  currentGame.ended_at = new Date().toISOString();
+
+  updateActiveGameInfo();
+  renderStandings();
+
+  await showMessage(`🏆 Winnaar: ${winner.name} met ${winner.total} punten.`, "Eindstand");
 }
 
 function renderStandings() {
@@ -1078,13 +1331,90 @@ function renderStandings() {
 
   if (!currentGame) return;
 
+  renderLeaderBox();
   renderScorecard();
 
-  if (!needsTeams()) {
-    renderSoloStandings();
-  } else {
-    renderTeamStandings();
+  const standings = getStandings();
+
+  standings.forEach((item, index) => {
+    const standing = document.createElement("div");
+    standing.className = "standing-item";
+
+    standing.innerHTML = `
+      <span class="standing-rank">${index + 1}</span>
+      <span class="standing-main">
+        <strong>${escapeHtml(item.name)}</strong>
+        ${item.sub ? `<div class="score-meta">${escapeHtml(item.sub)}</div>` : ""}
+      </span>
+      <span class="standing-score">${item.total}</span>
+    `;
+
+    standingsList.appendChild(standing);
+  });
+}
+
+function renderLeaderBox() {
+  const standings = getStandings();
+
+  if (!leaderBox || standings.length === 0) {
+    leaderBox.classList.add("hidden");
+    leaderBox.innerHTML = "";
+    return;
   }
+
+  const leader = standings[0];
+
+  leaderBox.classList.remove("hidden");
+  leaderBox.innerHTML = `
+    <div>
+      <span>Huidige leider</span>
+      <strong>🏆 ${escapeHtml(leader.name)}</strong>
+      <small>${leader.total} punten · laagste score wint</small>
+    </div>
+  `;
+}
+
+function getStandings() {
+  if (!currentGame) return [];
+
+  if (!needsTeams()) {
+    return players.map(player => {
+      const total = scores
+        .filter(score => score.player_id === player.id)
+        .reduce((sum, score) => sum + Number(score.score) + Number(score.bonus || 0), 0);
+
+      return {
+        name: player.name,
+        sub: "",
+        total
+      };
+    }).sort((a, b) => a.total - b.total);
+  }
+
+  return teams.map(team => {
+    const teamPlayers = players.filter(player => player.team_id === team.id);
+    const playerIds = teamPlayers.map(player => player.id);
+
+    let scoreTotal = 0;
+
+    if (useTeamScoreMode()) {
+      scoreTotal = scores
+        .filter(score => score.team_id === team.id)
+        .reduce((sum, score) => sum + Number(score.score) + Number(score.bonus || 0), 0);
+    } else {
+      scoreTotal = scores
+        .filter(score => playerIds.includes(score.player_id))
+        .reduce((sum, score) => sum + Number(score.score) + Number(score.bonus || 0), 0);
+    }
+
+    const handicap = Number(team.handicap || 0);
+
+    return {
+      name: team.name,
+      sub: `${teamPlayers.map(player => player.name).join(", ")}${handicap !== 0 ? ` · handicap ${handicap > 0 ? "+" : ""}${handicap}` : ""}`,
+      total: scoreTotal + handicap
+    };
+  }).sort((a, b) => a.total - b.total);
 }
 
 function renderScorecard() {
@@ -1099,14 +1429,13 @@ function renderScorecard() {
   let rows = [];
 
   if (!needsTeams()) {
-    rows = players.map(player => {
-      return {
-        name: player.name,
-        sub: "",
-        playerIds: [player.id],
-        handicap: 0
-      };
-    });
+    rows = players.map(player => ({
+      name: player.name,
+      sub: "",
+      playerIds: [player.id],
+      teamId: null,
+      handicap: 0
+    }));
   } else {
     rows = teams.map(team => {
       const teamPlayers = players.filter(player => player.team_id === team.id);
@@ -1115,6 +1444,7 @@ function renderScorecard() {
         name: team.name,
         sub: teamPlayers.map(player => player.name).join(", "),
         playerIds: teamPlayers.map(player => player.id),
+        teamId: team.id,
         handicap: Number(team.handicap || 0)
       };
     });
@@ -1127,30 +1457,34 @@ function renderScorecard() {
   const bodyRows = rows.map(row => {
     const holeCells = holes.map(hole => {
       const holeScores = scores.filter(score => {
-        return row.playerIds.includes(score.player_id) && score.hole_number === hole;
+        if (Number(score.hole_number) !== Number(hole)) return false;
+
+        if (useTeamScoreMode()) {
+          return score.team_id === row.teamId;
+        }
+
+        return row.playerIds.includes(score.player_id);
       });
 
       const hasScore = holeScores.length > 0;
 
       const holeTotal = holeScores.reduce((sum, score) => {
-        return sum + Number(score.score);
+        return sum + Number(score.score) + Number(score.bonus || 0);
       }, 0);
 
       return `<td>${hasScore ? holeTotal : "-"}</td>`;
     }).join("");
 
-    const scoreTotal = scores
-      .filter(score => row.playerIds.includes(score.player_id))
-      .reduce((sum, score) => sum + Number(score.score), 0);
-
-    const total = scoreTotal + row.handicap;
+    const total = holeCells.includes("</td>")
+      ? calculateRowTotal(row)
+      : 0;
 
     return `
       <tr>
         <th class="scorecard-name">
           ${escapeHtml(row.name)}
           ${row.sub ? `<small>${escapeHtml(row.sub)}</small>` : ""}
-          ${row.handicap > 0 ? `<small>Handicap: +${row.handicap}</small>` : ""}
+          ${row.handicap !== 0 ? `<small>Handicap: ${row.handicap > 0 ? "+" : ""}${row.handicap}</small>` : ""}
         </th>
         ${holeCells}
         <td class="scorecard-total">${total}</td>
@@ -1176,76 +1510,20 @@ function renderScorecard() {
   `;
 }
 
-function renderSoloStandings() {
-  const standings = players.map(player => {
-    const total = scores
-      .filter(score => score.player_id === player.id)
-      .reduce((sum, score) => sum + Number(score.score), 0);
+function calculateRowTotal(row) {
+  let total = 0;
 
-    return {
-      name: player.name,
-      total
-    };
-  });
+  if (useTeamScoreMode()) {
+    total = scores
+      .filter(score => score.team_id === row.teamId)
+      .reduce((sum, score) => sum + Number(score.score) + Number(score.bonus || 0), 0);
+  } else {
+    total = scores
+      .filter(score => row.playerIds.includes(score.player_id))
+      .reduce((sum, score) => sum + Number(score.score) + Number(score.bonus || 0), 0);
+  }
 
-  standings.sort((a, b) => a.total - b.total);
-
-  standings.forEach((player, index) => {
-    const item = document.createElement("div");
-    item.className = "standing-item";
-
-    item.innerHTML = `
-      <span class="standing-rank">${index + 1}</span>
-      <span class="standing-main">
-        <strong>${escapeHtml(player.name)}</strong>
-      </span>
-      <span class="standing-score">${player.total}</span>
-    `;
-
-    standingsList.appendChild(item);
-  });
-}
-
-function renderTeamStandings() {
-  const standings = teams.map(team => {
-    const teamPlayers = players.filter(player => player.team_id === team.id);
-    const playerIds = teamPlayers.map(player => player.id);
-
-    const scoreTotal = scores
-      .filter(score => playerIds.includes(score.player_id))
-      .reduce((sum, score) => sum + Number(score.score), 0);
-
-    const handicap = Number(team.handicap || 0);
-    const total = scoreTotal + handicap;
-
-    return {
-      name: team.name,
-      players: teamPlayers.map(player => player.name),
-      handicap,
-      total
-    };
-  });
-
-  standings.sort((a, b) => a.total - b.total);
-
-  standings.forEach((team, index) => {
-    const item = document.createElement("div");
-    item.className = "standing-item";
-
-    item.innerHTML = `
-      <span class="standing-rank">${index + 1}</span>
-      <span class="standing-main">
-        <strong>${escapeHtml(team.name)}</strong>
-        <div class="score-meta">
-          ${team.players.map(escapeHtml).join(", ")}
-          ${team.handicap > 0 ? ` · handicap +${team.handicap}` : ""}
-        </div>
-      </span>
-      <span class="standing-score">${team.total}</span>
-    `;
-
-    standingsList.appendChild(item);
-  });
+  return total + Number(row.handicap || 0);
 }
 
 function showToast(message, type = "success") {
