@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
   <title>Pubgolf scorekaart</title>
 
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛳</text></svg>">
@@ -12,19 +11,17 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
 
-  <link rel="stylesheet" href="./pubgolf.css?v=15">
+  <link rel="stylesheet" href="./pubgolf.css?v=16">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./pubgolf.js?v=15" defer></script>
+  <script src="./pubgolf.js?v=16" defer></script>
 </head>
 
 <body>
   <div class="app">
     <header class="app-header">
       <a class="back-link" href="../">← Terug</a>
-
       <div class="logo">⛳</div>
-
       <h1>Pubgolf scorekaart</h1>
       <p>Maak teams, vul scores in, voeg bonus- of strafpunten toe en deel de scorekaart met je vrienden.</p>
     </header>
@@ -35,7 +32,6 @@
           <span class="step">Opgeslagen</span>
           <h2>Verder met bestaand spel</h2>
         </div>
-
         <div id="saved-games-list" class="list">
           <p class="hint">Games worden geladen...</p>
         </div>
@@ -47,39 +43,46 @@
           <h2>Spel aanmaken</h2>
         </div>
 
-        <label for="game-name">Naam van het spel</label>
-        <input id="game-name" type="text" placeholder="Bijv. Pubgolf zaterdag">
+        <div class="form-group">
+          <label for="game-name">Naam van het spel</label>
+          <input id="game-name" type="text" placeholder="Bijv. Pubgolf zaterdag">
+        </div>
 
-        <label for="game-holes">Aantal holes</label>
-        <input id="game-holes" type="number" min="1" max="30" value="9">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="game-holes">Aantal holes</label>
+            <input id="game-holes" type="number" min="1" max="30" value="9">
+          </div>
+          <div class="form-group">
+            <label for="expected-players">Aantal spelers</label>
+            <input id="expected-players" type="number" min="1" max="100" value="8">
+          </div>
+        </div>
 
-        <label for="expected-players">Aantal spelers</label>
-        <input id="expected-players" type="number" min="1" max="100" value="8">
+        <div class="form-group">
+          <label for="game-mode">Spelvorm</label>
+          <select id="game-mode">
+            <option value="solo">Iedereen apart</option>
+            <option value="duos">Duo’s</option>
+            <option value="teams">Teams</option>
+          </select>
+        </div>
 
-        <label for="game-mode">Spelvorm</label>
-        <select id="game-mode">
-          <option value="solo">Iedereen apart</option>
-          <option value="duos">Duo’s</option>
-          <option value="teams">Teams</option>
-        </select>
-
-        <div id="team-size-wrap" class="hidden">
+        <div id="team-size-wrap" class="form-group hidden">
           <label for="team-size">Aantal mensen per team</label>
           <input id="team-size" type="number" min="2" max="20" value="3">
         </div>
 
-        <label for="score-mode">Scores invullen per</label>
-        <select id="score-mode">
-          <option value="player">Per speler</option>
-          <option value="team">Per team</option>
-        </select>
+        <div class="form-group">
+          <label for="score-mode">Scores invullen per</label>
+          <select id="score-mode">
+            <option value="player">Per speler</option>
+            <option value="team">Per team</option>
+          </select>
+        </div>
 
         <button id="create-game-btn">Spel maken</button>
-
-        <p class="hint">
-          Laagste score wint. Bij 1 of 2 spelers wordt automatisch iedereen apart gespeeld.
-          Bij teams kun je later random teams maken of zelf teams kiezen.
-        </p>
+        <p class="hint">Laagste score wint. Bij 1 of 2 spelers speelt automatisch iedereen apart.</p>
       </section>
 
       <section class="card hidden" id="players-section">
@@ -88,7 +91,6 @@
             <span class="step">Stap 2</span>
             <h2>Spelers en teams</h2>
           </div>
-
           <div class="mini-share-box">
             <span>Deellink</span>
             <a id="share-link" href="#">Kopiëren</a>
@@ -101,32 +103,30 @@
         </div>
 
         <div class="settings-row">
-          <div>
+          <div class="form-group" style="margin:0;">
             <label for="edit-expected-players">Aantal spelers aanpassen</label>
             <input id="edit-expected-players" type="number" min="1" max="100">
           </div>
-
-          <button id="update-expected-players-btn" class="small-action-btn">Aantal opslaan</button>
+          <button id="update-expected-players-btn" class="small-action-btn">Opslaan</button>
         </div>
 
-        <label for="player-name">Naam speler</label>
-
-        <div class="inline-form">
-          <input id="player-name" type="text" placeholder="Bijv. Daan">
-          <button id="add-player-btn">Toevoegen</button>
+        <div class="form-group">
+          <label for="player-name">Naam speler</label>
+          <div class="inline-form">
+            <input id="player-name" type="text" placeholder="Bijv. Daan">
+            <button id="add-player-btn">Toevoegen</button>
+          </div>
         </div>
 
         <p class="hint" id="player-counter">0 spelers toegevoegd.</p>
-
         <div id="players-list" class="list"></div>
 
         <div id="team-choice-actions" class="team-choice-actions hidden">
-          <button id="random-teams-btn" class="secondary-btn">Random teams maken</button>
-          <button id="manual-teams-btn" class="secondary-btn">Zelf teams kiezen</button>
+          <button id="random-teams-btn" class="secondary-btn">Random teams</button>
+          <button id="manual-teams-btn" class="secondary-btn">Zelf kiezen</button>
         </div>
 
         <div id="manual-team-builder" class="manual-team-builder hidden"></div>
-
         <div id="teams-list" class="teams-list"></div>
 
         <div class="danger-zone">
@@ -134,7 +134,7 @@
           <button id="delete-game-btn" class="danger-outline-btn">Spel verwijderen</button>
         </div>
 
-        <button id="go-score-btn">Naar scores</button>
+        <button id="go-score-btn">Naar scores →</button>
       </section>
 
       <section class="card hidden" id="score-section">
@@ -143,7 +143,6 @@
             <span class="step">Stap 3</span>
             <h2>Scores invullen</h2>
           </div>
-
           <div class="mini-share-box">
             <span>Deellink</span>
             <a id="score-share-link" href="#">Kopiëren</a>
@@ -153,28 +152,28 @@
         <div id="leader-box" class="leader-box hidden"></div>
 
         <div class="score-nav-row">
-          <button id="edit-players-btn" class="small-secondary-btn">← Spelers aanpassen</button>
+          <button id="edit-players-btn" class="small-secondary-btn">← Spelers</button>
           <button id="refresh-btn" class="small-secondary-btn">↻ Ververs</button>
         </div>
 
-        <label for="hole-select">Hole kiezen</label>
-        <select id="hole-select"></select>
+        <div class="form-group">
+          <label for="hole-select">Hole kiezen</label>
+          <select id="hole-select"></select>
+        </div>
 
-        <p class="hint">Vul de score in. Bonus/strafpunten mag je leeg laten of op 0 zetten.</p>
-
+        <p class="hint">Vul de score in. Bonus/strafpunten mag je leeg laten.</p>
         <div id="score-list" class="score-list"></div>
 
-        <button id="save-scores-btn">Scores opslaan en naar volgende hole</button>
+        <button id="save-scores-btn">Scores opslaan & volgende hole</button>
       </section>
 
       <section class="card hidden" id="standings-section">
         <div class="section-top section-top-split">
           <div>
-            <span class="step">Stand & scorekaart</span>
-            <h2>Stand & scorekaart</h2>
+            <span class="step">Live Stand</span>
+            <h2>Scorekaart</h2>
             <p class="hint">Laagste score staat bovenaan.</p>
           </div>
-
           <button id="end-game-btn" class="small-secondary-btn">Spel beëindigen</button>
         </div>
 
@@ -190,9 +189,7 @@
       <div class="modal-icon" id="modal-icon">⛳</div>
       <h3 id="modal-title">Melding</h3>
       <p id="modal-message">Bericht</p>
-
       <input id="modal-input" class="modal-input hidden" type="text">
-
       <div class="modal-actions">
         <button id="modal-cancel-btn" class="modal-btn modal-cancel-btn">Annuleren</button>
         <button id="modal-confirm-btn" class="modal-btn modal-confirm-btn">Oké</button>
