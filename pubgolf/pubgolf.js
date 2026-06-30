@@ -177,6 +177,65 @@ function hasUnevenTeams() {
   return Math.max(...usedTeamSizes) !== Math.min(...usedTeamSizes);
 }
 
+function getScoreTargets() {
+  if (useTeamScoreMode()) {
+    return teams.map(team => {
+      return {
+        type: "team",
+        id: team.id,
+        name: team.name,
+        sub: players
+          .filter(player => player.team_id === team.id)
+          .map(player => player.name)
+          .join(", ")
+      };
+    });
+  }
+
+  return players.map(player => {
+    const team = teams.find(team => team.id === player.team_id);
+
+    return {
+      type: "player",
+      id: player.id,
+      name: player.name,
+      sub: needsTeams() && team ? team.name : ""
+    };
+  });
+}
+
+function getExistingScore(target, holeNumber) {
+  return scores.find(score => {
+    if (Number(score.hole_number) !== Number(holeNumber)) return false;
+
+    if (target.type === "team") {
+      return score.team_id === target.id;
+    }
+
+    return score.player_id === target.id;
+  });
+}
+
+function isHoleComplete(holeNumber) {
+  const targets = getScoreTargets();
+
+  if (targets.length === 0) return false;
+
+  return targets.every(target => {
+    return Boolean(getExistingScore(target, holeNumber));
+  });
+}
+
+function getFirstIncompleteHole() {
+  for (let hole = 1; hole <= Number(currentGame.holes); hole++) {
+    if (!isHoleComplete(hole)) {
+      return hole;
+    }
+  }
+
+  return null;
+}
+
 async function loadSavedGames() {
   const { data, error } = await db
     .from("games")
@@ -729,7 +788,7 @@ async function makeRandomTeams() {
     manualTeamBuilder.classList.remove("hidden");
 
     await showMessage(
-      "De teams zijn niet helemaal gelijk verdeeld. Je kunt hieronder bij 'Zelf teams kiezen' direct handicap/strafpunten invullen.",
+      "De teams zijn niet helemaal gelijk verdeeld. Je kunt hieronder bij 'Zelf teams kiezen' direct handicap/strafpunten invullen. Dit telt automatisch mee in de totaalstand.",
       "Handicap mogelijk nodig"
     );
 
@@ -862,7 +921,7 @@ function renderManualTeamBuilder() {
             <span class="step">Teams</span>
             <h2>Zelf teams kiezen</h2>
             <p class="hint">
-              Kies per speler een team. Handicap/strafpunten is optioneel. Laat op 0 als je dit niet wilt gebruiken.
+              Kies per speler een team. Handicap/strafpunten is optioneel en telt automatisch mee in de totaalstand.
             </p>
           </div>
 
@@ -960,7 +1019,7 @@ async function saveManualTeams() {
   renderManualTeamBuilder();
   renderStandings();
 
-  showToast("Zelf gekozen teams zijn opgeslagen.", "success");
+  showToast("Zelf gekozen teams zijn opgeslagen en handicap telt mee.", "success");
 }
 
 async function adjustTeamHandicap(teamId) {
@@ -1005,7 +1064,7 @@ async function adjustTeamHandicap(teamId) {
   renderManualTeamBuilder();
   renderStandings();
 
-  showToast("Handicap is aangepast.", "success");
+  showToast("Handicap is aangepast en telt mee.", "success");
 }
 
 async function deleteExistingTeams() {
@@ -1082,7 +1141,7 @@ async function openScores() {
 
   await reloadGameData();
 
-  fillHoleSelect();
+  fillHoleSelect(true);
 
   playersSection.classList.add("hidden");
   scoreSection.classList.remove("hidden");
@@ -1103,7 +1162,7 @@ function backToPlayers() {
   playersSection.scrollIntoView({ behavior: "smooth" });
 }
 
-function fillHoleSelect() {
+function fillHoleSelect(selectFirstIncomplete = false) {
   const currentValue = holeSelect.value;
 
   holeSelect.innerHTML = "";
@@ -1111,52 +1170,22 @@ function fillHoleSelect() {
   for (let i = 1; i <= currentGame.holes; i++) {
     const option = document.createElement("option");
     option.value = i;
-    option.textContent = `Hole ${i}`;
+    option.textContent = isHoleComplete(i) ? `Hole ${i} ✓` : `Hole ${i}`;
     holeSelect.appendChild(option);
+  }
+
+  if (selectFirstIncomplete) {
+    const firstIncompleteHole = getFirstIncompleteHole();
+
+    if (firstIncompleteHole !== null) {
+      holeSelect.value = firstIncompleteHole;
+      return;
+    }
   }
 
   if (currentValue) {
     holeSelect.value = currentValue;
   }
-}
-
-function getScoreTargets() {
-  if (useTeamScoreMode()) {
-    return teams.map(team => {
-      return {
-        type: "team",
-        id: team.id,
-        name: team.name,
-        sub: players
-          .filter(player => player.team_id === team.id)
-          .map(player => player.name)
-          .join(", ")
-      };
-    });
-  }
-
-  return players.map(player => {
-    const team = teams.find(team => team.id === player.team_id);
-
-    return {
-      type: "player",
-      id: player.id,
-      name: player.name,
-      sub: needsTeams() && team ? team.name : ""
-    };
-  });
-}
-
-function getExistingScore(target, holeNumber) {
-  return scores.find(score => {
-    if (Number(score.hole_number) !== Number(holeNumber)) return false;
-
-    if (target.type === "team") {
-      return score.team_id === target.id;
-    }
-
-    return score.player_id === target.id;
-  });
 }
 
 function renderScoreInputs() {
@@ -1279,12 +1308,17 @@ async function saveScores() {
 
   await reloadGameData();
 
-  goToNextHoleIfPossible();
-
+  fillHoleSelect(true);
   renderScoreInputs();
   renderStandings();
 
-  showToast("Scores opgeslagen.", "success");
+  const firstIncompleteHole = getFirstIncompleteHole();
+
+  if (firstIncompleteHole === null) {
+    showToast("Scores opgeslagen. Alle holes zijn ingevuld.", "success");
+  } else {
+    showToast(`Scores opgeslagen. Nu naar hole ${firstIncompleteHole}.`, "success");
+  }
 }
 
 async function upsertScore(row, holeNumber) {
@@ -1335,14 +1369,6 @@ async function upsertScore(row, holeNumber) {
     .insert(payload);
 }
 
-function goToNextHoleIfPossible() {
-  const currentHole = Number(holeSelect.value);
-
-  if (currentHole < Number(currentGame.holes)) {
-    holeSelect.value = currentHole + 1;
-  }
-}
-
 async function resetScores() {
   const zeker = await showConfirm(
     "Weet je zeker dat je alle scores wilt wissen? Spelers en teams blijven staan.",
@@ -1364,6 +1390,7 @@ async function resetScores() {
 
   await reloadGameData();
 
+  fillHoleSelect(true);
   renderScoreInputs();
   renderStandings();
 
@@ -1483,6 +1510,7 @@ function getStandings() {
         playerIds: [player.id],
         teamId: null,
         handicap: 0,
+        scoreTotal: total,
         total
       };
     }).sort((a, b) => a.total - b.total);
@@ -1505,6 +1533,7 @@ function getStandings() {
     }
 
     const handicap = Number(team.handicap || 0);
+    const total = scoreTotal + handicap;
 
     return {
       name: team.name,
@@ -1512,7 +1541,8 @@ function getStandings() {
       playerIds,
       teamId: team.id,
       handicap,
-      total: scoreTotal + handicap
+      scoreTotal,
+      total
     };
   }).sort((a, b) => a.total - b.total);
 }
@@ -1531,6 +1561,8 @@ function renderScorecard() {
   const headerCells = holes
     .map(hole => `<th>H${hole}</th>`)
     .join("");
+
+  const handicapHeader = needsTeams() ? "<th>Handicap</th>" : "";
 
   const bodyRows = rows.map((row, index) => {
     const holeCells = holes.map(hole => {
@@ -1553,6 +1585,10 @@ function renderScorecard() {
       return `<td>${hasScore ? holeTotal : "-"}</td>`;
     }).join("");
 
+    const handicapCell = needsTeams()
+      ? `<td>${row.handicap > 0 ? "+" : ""}${row.handicap}</td>`
+      : "";
+
     return `
       <tr>
         <th class="scorecard-name">
@@ -1560,10 +1596,11 @@ function renderScorecard() {
           <span class="scorecard-player">
             ${escapeHtml(row.name)}
             ${row.sub ? `<small>${escapeHtml(row.sub)}</small>` : ""}
-            ${row.handicap !== 0 ? `<small>Handicap: ${row.handicap > 0 ? "+" : ""}${row.handicap}</small>` : ""}
+            ${row.handicap !== 0 ? `<small>Score ${row.scoreTotal} + handicap ${row.handicap > 0 ? "+" : ""}${row.handicap}</small>` : ""}
           </span>
         </th>
         ${holeCells}
+        ${handicapCell}
         <td class="scorecard-total">${row.total}</td>
       </tr>
     `;
@@ -1576,6 +1613,7 @@ function renderScorecard() {
           <tr>
             <th>Stand</th>
             ${headerCells}
+            ${handicapHeader}
             <th>Totaal</th>
           </tr>
         </thead>
