@@ -8,8 +8,6 @@ let players = [];
 let teams = [];
 let scores = [];
 let modalResolve = null;
-let realtimeChannel = null;
-let liveRefreshTimer = null;
 
 const savedGamesSection = document.getElementById("saved-games-section");
 const savedGamesList = document.getElementById("saved-games-list");
@@ -32,10 +30,10 @@ const activeGameName = document.getElementById("active-game-name");
 const activeGameInfo = document.getElementById("active-game-info");
 const shareLink = document.getElementById("share-link");
 const scoreShareLink = document.getElementById("score-share-link");
-const editPlayersBtn = document.getElementById("edit-players-btn");
 const scorecardTable = document.getElementById("scorecard-table");
 
 const leaderBox = document.getElementById("leader-box");
+
 const editExpectedPlayersInput = document.getElementById("edit-expected-players");
 const updateExpectedPlayersBtn = document.getElementById("update-expected-players-btn");
 
@@ -50,7 +48,10 @@ const manualTeamsBtn = document.getElementById("manual-teams-btn");
 const manualTeamBuilder = document.getElementById("manual-team-builder");
 
 const teamsList = document.getElementById("teams-list");
+
 const goScoreBtn = document.getElementById("go-score-btn");
+const editPlayersBtn = document.getElementById("edit-players-btn");
+const refreshBtn = document.getElementById("refresh-btn");
 const resetScoresBtn = document.getElementById("reset-scores-btn");
 const deleteGameBtn = document.getElementById("delete-game-btn");
 const endGameBtn = document.getElementById("end-game-btn");
@@ -58,7 +59,6 @@ const endGameBtn = document.getElementById("end-game-btn");
 const holeSelect = document.getElementById("hole-select");
 const scoreList = document.getElementById("score-list");
 const saveScoresBtn = document.getElementById("save-scores-btn");
-const refreshBtn = document.getElementById("refresh-btn");
 
 const toastContainer = document.getElementById("toast-container");
 const modalBackdrop = document.getElementById("modal-backdrop");
@@ -87,7 +87,7 @@ if (editPlayersBtn) {
 }
 
 if (refreshBtn) {
-  refreshBtn.addEventListener("click", manualRefresh);
+  refreshBtn.addEventListener("click", refreshCurrentGame);
 }
 
 playerNameInput.addEventListener("keydown", event => {
@@ -297,8 +297,6 @@ async function loadGame(gameId) {
   updateActiveGameInfo();
   renderPlayers();
   renderTeams();
-
-  subscribeToRealtime();
 }
 
 async function reloadGameData() {
@@ -340,6 +338,20 @@ async function reloadGameData() {
   players = playerData || [];
   teams = teamData || [];
   scores = scoreData || [];
+}
+
+async function refreshCurrentGame() {
+  if (!currentGame) return;
+
+  await reloadGameData();
+
+  updateActiveGameInfo();
+  renderPlayers();
+  renderTeams();
+  renderScoreInputs();
+  renderStandings();
+
+  showToast("Bijgewerkt.", "success");
 }
 
 function updateActiveGameInfo() {
@@ -508,7 +520,7 @@ function renderPlayers() {
       item.innerHTML = `
         <div class="player-edit-main">
           <strong>${index + 1}. ${escapeHtml(player.name)}</strong>
-          <div class="player-team">${team && needsTeams() ? escapeHtml(team.name) : "Nog geen team"}</div>
+          <div class="player-team">${team && needsTeams() ? escapeHtml(team.name) : ""}</div>
         </div>
 
         <div class="player-actions">
@@ -668,7 +680,7 @@ async function makeRandomTeams() {
     console.error(teamError);
     await showMessage("Teams maken is niet gelukt.", "Er ging iets mis");
     randomTeamsBtn.disabled = false;
-    randomTeamsBtn.textContent = "Random teams maken";
+    randomTeamsBtn.textContent = "Random teams";
     return;
   }
 
@@ -689,7 +701,7 @@ async function makeRandomTeams() {
   await Promise.all(updates);
 
   randomTeamsBtn.disabled = false;
-  randomTeamsBtn.textContent = "Random teams maken";
+  randomTeamsBtn.textContent = "Random teams";
 
   await reloadGameData();
 
@@ -734,6 +746,10 @@ async function openManualTeams() {
 
   manualTeamBuilder.classList.remove("hidden");
   manualTeamBuilder.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function closeManualTeams() {
+  manualTeamBuilder.classList.add("hidden");
 }
 
 async function ensureManualTeamsExist() {
@@ -817,11 +833,17 @@ function renderManualTeamBuilder() {
   manualTeamBuilder.innerHTML = `
     <div class="manual-builder-box">
       <div class="section-top manual-builder-top">
-        <span class="step">Teams</span>
-        <h2>Zelf teams kiezen</h2>
-        <p class="hint">
-          Kies per speler een team. Als een team minder spelers heeft, kun je optioneel handicap/strafpunten invullen. Laat dit op 0 als je geen handicap wilt gebruiken.
-        </p>
+        <div class="section-top-split">
+          <div>
+            <span class="step">Teams</span>
+            <h2>Zelf teams kiezen</h2>
+            <p class="hint">
+              Kies per speler een team. Handicap/strafpunten is optioneel. Laat op 0 als je dit niet wilt gebruiken.
+            </p>
+          </div>
+
+          <button id="hide-manual-teams-btn" class="outline-btn small-action-btn">Verberg</button>
+        </div>
       </div>
 
       <div class="manual-team-grid">
@@ -832,13 +854,24 @@ function renderManualTeamBuilder() {
         ${playerSettings}
       </div>
 
-      <button id="save-manual-teams-btn" class="secondary-btn">Zelf gekozen teams opslaan</button>
+      <div class="manual-actions">
+        <button id="save-manual-teams-btn" class="secondary-btn">Zelf gekozen teams opslaan</button>
+        <button id="collapse-manual-teams-btn" class="outline-btn small-action-btn">Klaar, inklappen</button>
+      </div>
     </div>
   `;
 
   document
     .getElementById("save-manual-teams-btn")
     .addEventListener("click", saveManualTeams);
+
+  document
+    .getElementById("hide-manual-teams-btn")
+    .addEventListener("click", closeManualTeams);
+
+  document
+    .getElementById("collapse-manual-teams-btn")
+    .addEventListener("click", closeManualTeams);
 }
 
 async function saveManualTeams() {
@@ -1036,7 +1069,7 @@ function getScoreTargets() {
       type: "player",
       id: player.id,
       name: player.name,
-      sub: needsTeams() && team ? team.name : "Iedereen apart"
+      sub: needsTeams() && team ? team.name : ""
     };
   });
 }
@@ -1068,7 +1101,7 @@ function renderScoreInputs() {
     item.innerHTML = `
       <div class="score-player-info">
         <strong>${escapeHtml(target.name)}</strong>
-        <div class="score-meta">${escapeHtml(target.sub || "")}</div>
+        ${target.sub ? `<div class="score-meta">${escapeHtml(target.sub)}</div>` : ""}
       </div>
 
       <div class="score-controls">
@@ -1162,14 +1195,14 @@ async function saveScores() {
     if (result.error) {
       console.error(result.error);
       saveScoresBtn.disabled = false;
-      saveScoresBtn.textContent = "Scores opslaan en naar volgende hole";
+      saveScoresBtn.textContent = "Scores opslaan & volgende hole";
       await showMessage("Scores opslaan is niet gelukt.", "Er ging iets mis");
       return;
     }
   }
 
   saveScoresBtn.disabled = false;
-  saveScoresBtn.textContent = "Scores opslaan en naar volgende hole";
+  saveScoresBtn.textContent = "Scores opslaan & volgende hole";
 
   await reloadGameData();
 
@@ -1479,105 +1512,6 @@ function renderScorecard() {
       </table>
     </div>
   `;
-}
-
-function subscribeToRealtime() {
-  if (!currentGame || typeof db.channel !== "function") return;
-
-  if (realtimeChannel) {
-    db.removeChannel(realtimeChannel);
-    realtimeChannel = null;
-  }
-
-  const gameFilter = `game_id=eq.${currentGame.id}`;
-
-  realtimeChannel = db
-    .channel(`pubgolf-${currentGame.id}`)
-    .on("postgres_changes", { event: "*", schema: "public", table: "players", filter: gameFilter }, scheduleLiveRefresh)
-    .on("postgres_changes", { event: "*", schema: "public", table: "teams", filter: gameFilter }, scheduleLiveRefresh)
-    .on("postgres_changes", { event: "*", schema: "public", table: "scores", filter: gameFilter }, scheduleLiveRefresh)
-    .on("postgres_changes", { event: "*", schema: "public", table: "games", filter: `id=eq.${currentGame.id}` }, scheduleLiveRefresh)
-    .subscribe();
-}
-
-function scheduleLiveRefresh() {
-  clearTimeout(liveRefreshTimer);
-  liveRefreshTimer = setTimeout(liveRefresh, 400);
-}
-
-async function liveRefresh() {
-  if (!currentGame) return;
-
-  const { data: game } = await db
-    .from("games")
-    .select("*")
-    .eq("id", currentGame.id)
-    .single();
-
-  if (game) currentGame = game;
-
-  await reloadGameData();
-
-  updateActiveGameInfo();
-
-  if (!playersSection.classList.contains("hidden")) {
-    renderPlayers();
-    renderTeams();
-    renderManualTeamBuilder();
-  }
-
-  if (!standingsSection.classList.contains("hidden")) {
-    renderStandings();
-  }
-
-  // Score-invoer alleen verversen als niemand op dit moment aan het typen is,
-  // anders zou een ingevulde score verdwijnen.
-  if (!scoreSection.classList.contains("hidden")) {
-    const active = document.activeElement;
-    const typingInScores = active && scoreList.contains(active);
-
-    if (!typingInScores) {
-      renderScoreInputs();
-    }
-  }
-}
-
-async function manualRefresh() {
-  if (!currentGame) return;
-
-  refreshBtn.disabled = true;
-  const original = refreshBtn.textContent;
-  refreshBtn.textContent = "Verversen...";
-
-  const { data: game } = await db
-    .from("games")
-    .select("*")
-    .eq("id", currentGame.id)
-    .single();
-
-  if (game) currentGame = game;
-
-  await reloadGameData();
-
-  updateActiveGameInfo();
-
-  if (!playersSection.classList.contains("hidden")) {
-    renderPlayers();
-    renderTeams();
-    renderManualTeamBuilder();
-  }
-
-  if (!scoreSection.classList.contains("hidden")) {
-    fillHoleSelect();
-    renderScoreInputs();
-  }
-
-  renderStandings();
-
-  refreshBtn.disabled = false;
-  refreshBtn.textContent = original;
-
-  showToast("Scorekaart bijgewerkt.", "success");
 }
 
 function showToast(message, type = "success") {
