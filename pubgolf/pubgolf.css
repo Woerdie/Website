@@ -1,200 +1,456 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Pubgolf scorekaart</title>
+:root {
+  /* Premium Donkere/Lichte Golf Kleurenpalet */
+  --bg: #0b1a13; /* Diepe, chique bosgroene achtergrond */
+  --surface: #ffffff;
+  --surface-2: #f4f7f5;
+  --fairway: #1e824c;
+  --fairway-strong: #16653b;
+  --fairway-dark: #0d3e24;
+  --fairway-line: #e2ebd5;
+  --flag: #d97706;
+  --flag-soft: #fef3c7;
+  --flag-line: #fde68a;
+  --ink: #111827;
+  --muted: #6b7280;
+  --line: #e5e7eb;
+  --danger: #dc2626;
+  --danger-soft: #fee2e2;
+  --danger-line: #fca5a5;
 
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛳</text></svg>">
+  /* Dynamische Schaduwen voor diepte */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+  /* Radii */
+  --r-lg: 24px;
+  --r-md: 14px;
+  --r-sm: 10px;
+  --r-pill: 999px;
 
-  <link rel="stylesheet" href="./pubgolf.css?v=16">
+  --ring: 0 0 0 4px rgba(30, 130, 76, 0.25);
+  --font-display: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="./pubgolf.js?v=16" defer></script>
-</head>
+* {
+  box-sizing: border-box;
+}
 
-<body>
-  <div class="app">
-    <header class="app-header">
-      <a class="back-link" href="../">← Terug</a>
-      <div class="logo">⛳</div>
-      <h1>Pubgolf scorekaart</h1>
-      <p>Maak teams, vul scores in, voeg bonus- of strafpunten toe en deel de scorekaart met je vrienden.</p>
-    </header>
+html, body {
+  margin: 0;
+  min-height: 100%;
+}
 
-    <main>
-      <section class="card" id="saved-games-section">
-        <div class="section-top">
-          <span class="step">Opgeslagen</span>
-          <h2>Verder met bestaand spel</h2>
-        </div>
-        <div id="saved-games-list" class="list">
-          <p class="hint">Games worden geladen...</p>
-        </div>
-      </section>
+body {
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: 
+    radial-gradient(circle at 50% 0%, rgba(30, 130, 76, 0.25), transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+}
 
-      <section class="card" id="create-game-section">
-        <div class="section-top">
-          <span class="step">Stap 1</span>
-          <h2>Spel aanmaken</h2>
-        </div>
+.app {
+  width: min(1140px, 100%);
+  margin: 0 auto;
+  padding: 40px 20px 120px;
+}
 
-        <div class="form-group">
-          <label for="game-name">Naam van het spel</label>
-          <input id="game-name" type="text" placeholder="Bijv. Pubgolf zaterdag">
-        </div>
+/* Header styling */
+.app-header {
+  position: relative;
+  text-align: center;
+  margin-bottom: 48px;
+  color: #ffffff;
+}
 
-        <div class="form-grid">
-          <div class="form-group">
-            <label for="game-holes">Aantal holes</label>
-            <input id="game-holes" type="number" min="1" max="30" value="9">
-          </div>
-          <div class="form-group">
-            <label for="expected-players">Aantal spelers</label>
-            <input id="expected-players" type="number" min="1" max="100" value="8">
-          </div>
-        </div>
+.back-link {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: rgba(25, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--r-pill);
+  padding: 10px 20px;
+  backdrop-filter: blur(8px);
+  transition: all 0.2s ease;
+}
 
-        <div class="form-group">
-          <label for="game-mode">Spelvorm</label>
-          <select id="game-mode">
-            <option value="solo">Iedereen apart</option>
-            <option value="duos">Duo’s</option>
-            <option value="teams">Teams</option>
-          </select>
-        </div>
+.back-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
 
-        <div id="team-size-wrap" class="form-group hidden">
-          <label for="team-size">Aantal mensen per team</label>
-          <input id="team-size" type="number" min="2" max="20" value="3">
-        </div>
+.logo {
+  width: 72px;
+  height: 72px;
+  margin: 0 auto 20px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #2ecc71, var(--fairway));
+  font-size: 2.2rem;
+  box-shadow: 0 12px 24px rgba(30, 130, 76, 0.4);
+}
 
-        <div class="form-group">
-          <label for="score-mode">Scores invullen per</label>
-          <select id="score-mode">
-            <option value="player">Per speler</option>
-            <option value="team">Per team</option>
-          </select>
-        </div>
+h1 {
+  margin-bottom: 12px;
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+}
 
-        <button id="create-game-btn">Spel maken</button>
-        <p class="hint">Laagste score wint. Bij 1 of 2 spelers speelt automatisch iedereen apart.</p>
-      </section>
+.app-header p {
+  max-width: 56ch;
+  margin: 0 auto;
+  color: #a7f3d0;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+}
 
-      <section class="card hidden" id="players-section">
-        <div class="section-top section-top-split">
-          <div>
-            <span class="step">Stap 2</span>
-            <h2>Spelers en teams</h2>
-          </div>
-          <div class="mini-share-box">
-            <span>Deellink</span>
-            <a id="share-link" href="#">Kopiëren</a>
-          </div>
-        </div>
+/* Layout Grid */
+main {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 24px;
+  align-items: start;
+}
 
-        <div class="active-game-box">
-          <strong id="active-game-name">Geen spel actief</strong>
-          <span id="active-game-info"></span>
-        </div>
+.card {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--r-lg);
+  padding: 32px;
+  box-shadow: var(--shadow-lg);
+}
 
-        <div class="settings-row">
-          <div class="form-group" style="margin:0;">
-            <label for="edit-expected-players">Aantal spelers aanpassen</label>
-            <input id="edit-expected-players" type="number" min="1" max="100">
-          </div>
-          <button id="update-expected-players-btn" class="small-action-btn">Opslaan</button>
-        </div>
+#saved-games-section { grid-column: 1; }
+#create-game-section { grid-column: 2; }
+#players-section, #score-section, #standings-section { grid-column: 1 / -1; }
+.hidden { display: none !important; }
 
-        <div class="form-group">
-          <label for="player-name">Naam speler</label>
-          <div class="inline-form">
-            <input id="player-name" type="text" placeholder="Bijv. Daan">
-            <button id="add-player-btn">Toevoegen</button>
-          </div>
-        </div>
+/* Section Top */
+.section-top {
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--surface-2);
+}
 
-        <p class="hint" id="player-counter">0 spelers toegevoegd.</p>
-        <div id="players-list" class="list"></div>
+.section-top-split {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
 
-        <div id="team-choice-actions" class="team-choice-actions hidden">
-          <button id="random-teams-btn" class="secondary-btn">Random teams</button>
-          <button id="manual-teams-btn" class="secondary-btn">Zelf kiezen</button>
-        </div>
+.step {
+  display: inline-flex;
+  margin-bottom: 12px;
+  color: var(--fairway-strong);
+  background: #e6f4ea;
+  border-radius: var(--r-pill);
+  padding: 6px 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 
-        <div id="manual-team-builder" class="manual-team-builder hidden"></div>
-        <div id="teams-list" class="teams-list"></div>
+h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  color: var(--dark-ink, #0f172a);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
 
-        <div class="danger-zone">
-          <button id="reset-scores-btn" class="outline-btn">Scores resetten</button>
-          <button id="delete-game-btn" class="danger-outline-btn">Spel verwijderen</button>
-        </div>
+.hint {
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
 
-        <button id="go-score-btn">Naar scores →</button>
-      </section>
+/* Form Groups */
+.form-group {
+  margin-bottom: 20px;
+}
 
-      <section class="card hidden" id="score-section">
-        <div class="section-top section-top-split">
-          <div>
-            <span class="step">Stap 3</span>
-            <h2>Scores invullen</h2>
-          </div>
-          <div class="mini-share-box">
-            <span>Deellink</span>
-            <a id="score-share-link" href="#">Kopiëren</a>
-          </div>
-        </div>
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
 
-        <div id="leader-box" class="leader-box hidden"></div>
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--ink);
+}
 
-        <div class="score-nav-row">
-          <button id="edit-players-btn" class="small-secondary-btn">← Spelers</button>
-          <button id="refresh-btn" class="small-secondary-btn">↻ Ververs</button>
-        </div>
+input, select {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 16px;
+  border: 2px solid var(--surface-2);
+  border-radius: var(--r-md);
+  font-size: 1rem;
+  font-family: inherit;
+  color: var(--ink);
+  background: var(--surface-2);
+  transition: all 0.2s ease;
+}
 
-        <div class="form-group">
-          <label for="hole-select">Hole kiezen</label>
-          <select id="hole-select"></select>
-        </div>
+input:focus, select:focus {
+  outline: none;
+  background: #ffffff;
+  border-color: var(--fairway);
+  box-shadow: var(--ring);
+}
 
-        <p class="hint">Vul de score in. Bonus/strafpunten mag je leeg laten.</p>
-        <div id="score-list" class="score-list"></div>
+/* Buttons */
+button {
+  width: 100%;
+  min-height: 52px;
+  padding: 14px 24px;
+  border: none;
+  border-radius: var(--r-md);
+  background: var(--fairway);
+  color: #ffffff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.2s ease;
+}
 
-        <button id="save-scores-btn">Scores opslaan & volgende hole</button>
-      </section>
+button:hover {
+  background: var(--fairway-strong);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(30, 130, 76, 0.2);
+}
 
-      <section class="card hidden" id="standings-section">
-        <div class="section-top section-top-split">
-          <div>
-            <span class="step">Live Stand</span>
-            <h2>Scorekaart</h2>
-            <p class="hint">Laagste score staat bovenaan.</p>
-          </div>
-          <button id="end-game-btn" class="small-secondary-btn">Spel beëindigen</button>
-        </div>
+button:active {
+  transform: translateY(1px);
+}
 
-        <div id="scorecard-table" class="scorecard-table"></div>
-      </section>
-    </main>
-  </div>
+.secondary-btn {
+  background: var(--fairway-dark);
+}
 
-  <div id="toast-container" class="toast-container"></div>
+.small-action-btn {
+  width: auto;
+  min-height: 52px;
+  padding: 0 24px;
+}
 
-  <div id="modal-backdrop" class="modal-backdrop hidden">
-    <div class="custom-modal">
-      <div class="modal-icon" id="modal-icon">⛳</div>
-      <h3 id="modal-title">Melding</h3>
-      <p id="modal-message">Bericht</p>
-      <input id="modal-input" class="modal-input hidden" type="text">
-      <div class="modal-actions">
-        <button id="modal-cancel-btn" class="modal-btn modal-cancel-btn">Annuleren</button>
-        <button id="modal-confirm-btn" class="modal-btn modal-confirm-btn">Oké</button>
-      </div>
-    </div>
-  </div>
-</body>
-</html>
+.small-secondary-btn, .outline-btn, .danger-outline-btn {
+  width: auto;
+  min-height: 42px;
+  padding: 8px 18px;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 0.9rem;
+  box-shadow: none;
+}
+
+.small-secondary-btn:hover, .outline-btn:hover {
+  background: var(--line);
+  color: var(--ink);
+}
+
+.danger-outline-btn {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+
+.danger-outline-btn:hover {
+  background: #fca5a5;
+  color: #7f1d1d;
+}
+
+/* Share box / Links */
+.mini-share-box {
+  padding: 12px 18px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  text-align: right;
+}
+
+.mini-share-box span {
+  display: block;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.mini-share-box a {
+  color: var(--fairway);
+  font-weight: 700;
+  text-decoration: none;
+  font-size: 0.95rem;
+}
+
+/* Live Boxes */
+.active-game-box, .leader-box {
+  padding: 20px;
+  border-radius: var(--r-md);
+  background: var(--surface-2);
+  margin-bottom: 24px;
+}
+
+.leader-box {
+  background: var(--flag-soft);
+  border-left: 6px solid var(--flag);
+}
+
+/* Lists and Items */
+.list-item, .score-item, .standing-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--surface-2);
+  border-radius: var(--r-md);
+  margin-bottom: 12px;
+  transition: transform 0.2s ease;
+}
+
+.list-item:hover {
+  transform: translateX(4px);
+}
+
+/* Score controls custom tuning */
+.score-control-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+}
+
+.score-controls {
+  display: flex;
+  align-items: center;
+  background: var(--surface);
+  padding: 4px;
+  border-radius: var(--r-pill);
+  border: 2px solid var(--line);
+}
+
+.score-controls input {
+  width: 60px;
+  min-height: 40px;
+  border: none;
+  background: transparent;
+  text-align: center;
+  font-weight: 700;
+}
+
+.score-controls input:focus { box-shadow: none; }
+
+.score-step-btn {
+  width: 40px !important;
+  height: 40px;
+  min-height: 40px !important;
+  padding: 0 !important;
+  border-radius: var(--r-pill);
+  background: var(--surface-2);
+  color: var(--ink);
+}
+
+.score-step-btn:hover { background: var(--line); }
+
+/* Table styling premium update */
+.scorecard-table {
+  overflow-x: auto;
+  background: var(--surface-2);
+  padding: 8px;
+  border-radius: var(--r-md);
+}
+
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+
+th, td {
+  padding: 14px;
+  background: #ffffff;
+}
+
+th {
+  background: transparent;
+  color: var(--muted);
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+tr td:first-child { border-radius: var(--r-sm) 0 0 var(--r-sm); }
+tr td:last-child { border-radius: 0 var(--r-sm) var(--r-sm) 0; }
+
+.scorecard-name {
+  font-weight: 600;
+  text-align: left;
+}
+
+.scorecard-total {
+  font-weight: 700;
+  color: #ffffff;
+  background: var(--fairway);
+}
+
+/* Toasts en Modals */
+.toast {
+  padding: 16px 24px;
+  border-radius: var(--r-md);
+  background: #1f2937;
+  color: #ffffff;
+  box-shadow: var(--shadow-lg);
+  font-weight: 600;
+}
+
+.modal-backdrop {
+  background: rgba(11, 26, 19, 0.6);
+  backdrop-filter: blur(8px);
+}
+
+.custom-modal {
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
+  border: none;
+}
+
+/* Responsive Overrides */
+@media (max-width: 900px) {
+  main { grid-template-columns: 1fr; }
+  .app-header { margin-bottom: 32px; }
+}
+
+@media (max-width: 600px) {
+  .card { padding: 20px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .section-top-split { flex-direction: column; align-items: stretch; }
+  .mini-share-box { text-align: left; }
+  .score-control-item { grid-template-columns: 1fr; }
+  .score-controls { width: 100%; justify-content: space-between; }
+}
