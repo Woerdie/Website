@@ -11,33 +11,34 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
 
-  <link rel="stylesheet" href="./pubgolf.css?v=17" />
+  <link rel="stylesheet" href="./pubgolf.css?v=18" />
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
+
 <body>
   <div class="app">
-
     <header class="app-header">
       <a href="../" class="back-link">← Terug</a>
+
       <div class="logo">⛳</div>
+
       <h1>Pubgolf scorekaart</h1>
       <p>Maak teams, vul scores in, voeg bonus- of strafpunten toe en deel de scorekaart met je vrienden.</p>
     </header>
 
     <main>
-      <!-- ============ SAVED GAMES ============ -->
       <section id="saved-games-section" class="card">
         <div class="section-top">
           <span class="step">Opgeslagen</span>
           <h2>Verder met bestaand spel</h2>
         </div>
+
         <div id="saved-games-list">
           <p class="hint">Games worden geladen...</p>
         </div>
       </section>
 
-      <!-- ============ CREATE GAME ============ -->
       <section id="create-game-section" class="card">
         <div class="section-top">
           <span class="step">Stap 1</span>
@@ -52,11 +53,12 @@
         <div class="form-grid">
           <div class="form-group">
             <label for="game-holes">Aantal holes</label>
-            <input id="game-holes" type="number" min="1" value="9" />
+            <input id="game-holes" type="number" min="1" max="30" value="9" />
           </div>
+
           <div class="form-group">
             <label for="expected-players">Aantal spelers</label>
-            <input id="expected-players" type="number" min="1" value="6" />
+            <input id="expected-players" type="number" min="1" max="100" value="6" />
           </div>
         </div>
 
@@ -71,7 +73,7 @@
 
         <div class="form-group hidden" id="team-size-wrap">
           <label for="team-size">Aantal mensen per team</label>
-          <input id="team-size" type="number" min="2" value="3" />
+          <input id="team-size" type="number" min="2" max="20" value="3" />
         </div>
 
         <div class="form-group">
@@ -83,10 +85,12 @@
         </div>
 
         <button id="create-game-btn">Spel maken</button>
-        <p class="hint">Laagste score wint. Bij 1 of 2 spelers speelt automatisch iedereen apart.</p>
+
+        <p class="hint">
+          Laagste score wint. Bij 1 of 2 spelers speelt automatisch iedereen apart.
+        </p>
       </section>
 
-      <!-- ============ PLAYERS / TEAMS ============ -->
       <section id="players-section" class="card hidden">
         <div class="section-top">
           <div class="section-top-split">
@@ -94,9 +98,14 @@
               <span class="step">Stap 2</span>
               <h2>Spelers en teams</h2>
             </div>
-            <div class="mini-share-box">
-              <span>Deellink</span>
-              <a id="share-link" href="#">Kopiëren</a>
+
+            <div class="section-actions">
+              <a class="small-link-btn" href="./">← Terug naar stap 1</a>
+
+              <div class="mini-share-box">
+                <span>Deellink</span>
+                <a id="share-link" href="#">Kopiëren</a>
+              </div>
             </div>
           </div>
         </div>
@@ -109,15 +118,17 @@
         <div class="form-grid">
           <div class="form-group">
             <label for="edit-expected-players">Aantal spelers aanpassen</label>
-            <input id="edit-expected-players" type="number" min="1" />
+            <input id="edit-expected-players" type="number" min="1" max="100" />
           </div>
-          <div class="form-group" style="display:flex; align-items:flex-end;">
+
+          <div class="form-group button-align-bottom">
             <button id="update-expected-players-btn" class="small-action-btn outline-btn">Opslaan</button>
           </div>
         </div>
 
         <div class="form-group">
           <label for="player-name">Naam speler</label>
+
           <div class="add-player-row">
             <input id="player-name" type="text" placeholder="Bijv. Jasper" />
             <button id="add-player-btn" class="small-action-btn">Toevoegen</button>
@@ -125,25 +136,26 @@
         </div>
 
         <div id="players-list"></div>
+
         <p id="player-counter" class="hint">0 spelers toegevoegd.</p>
 
-        <div id="team-choice-actions" class="hidden">
+        <div id="team-choice-actions" class="team-choice-actions hidden">
           <button id="random-teams-btn" class="small-action-btn">Random teams</button>
           <button id="manual-teams-btn" class="small-action-btn outline-btn">Zelf kiezen</button>
         </div>
 
         <div id="teams-list"></div>
-        <div id="manual-team-builder" class="hidden"></div>
 
-        <div id="team-choice-actions" style="margin-top: 18px; display:flex; gap:10px; flex-wrap:wrap;">
+        <div id="manual-team-builder" class="manual-team-builder hidden"></div>
+
+        <div class="danger-zone">
           <button id="reset-scores-btn" class="outline-btn small-action-btn">Scores resetten</button>
           <button id="delete-game-btn" class="danger-outline-btn small-action-btn">Spel verwijderen</button>
         </div>
 
-        <button id="go-score-btn" style="margin-top:18px;">Naar scores →</button>
+        <button id="go-score-btn" class="main-next-btn">Naar scores →</button>
       </section>
 
-      <!-- ============ SCORES ============ -->
       <section id="score-section" class="card hidden">
         <div class="section-top">
           <div class="section-top-split">
@@ -151,9 +163,14 @@
               <span class="step">Stap 3</span>
               <h2>Scores invullen</h2>
             </div>
-            <div class="mini-share-box">
-              <span>Deellink</span>
-              <a id="score-share-link" href="#">Kopiëren</a>
+
+            <div class="section-actions">
+              <a class="small-link-btn" href="./">← Terug naar stap 1</a>
+
+              <div class="mini-share-box">
+                <span>Deellink</span>
+                <a id="score-share-link" href="#">Kopiëren</a>
+              </div>
             </div>
           </div>
         </div>
@@ -172,19 +189,22 @@
 
         <div id="score-list"></div>
 
-        <button id="save-scores-btn" style="margin-top:14px;">Scores opslaan & volgende hole</button>
+        <button id="save-scores-btn" class="main-next-btn">Scores opslaan & volgende hole</button>
       </section>
 
-      <!-- ============ STANDINGS ============ -->
       <section id="standings-section" class="card hidden">
         <div class="section-top">
           <div class="section-top-split">
             <div>
-              <span class="step">Live Stand</span>
+              <span class="step">Live stand</span>
               <h2>Scorekaart</h2>
               <p class="hint">Laagste score staat bovenaan.</p>
             </div>
-            <button id="end-game-btn" class="danger-outline-btn small-action-btn">Spel beëindigen</button>
+
+            <div class="section-actions">
+              <a class="small-link-btn" href="./">← Terug naar stap 1</a>
+              <button id="end-game-btn" class="danger-outline-btn small-action-btn">Spel beëindigen</button>
+            </div>
           </div>
         </div>
 
@@ -192,19 +212,18 @@
         <div id="scorecard-table" class="scorecard-table"></div>
       </section>
     </main>
-
   </div>
 
-  <!-- ============ TOASTS ============ -->
   <div id="toast-container"></div>
 
-  <!-- ============ MODAL ============ -->
   <div id="modal-backdrop" class="modal-backdrop hidden">
     <div class="custom-modal">
       <div id="modal-icon">⛳</div>
       <h3 id="modal-title">Melding</h3>
       <p id="modal-message">Bericht</p>
+
       <input id="modal-input" type="text" class="hidden" />
+
       <div class="modal-actions">
         <button id="modal-cancel-btn" class="outline-btn">Annuleren</button>
         <button id="modal-confirm-btn">Oké</button>
@@ -212,6 +231,6 @@
     </div>
   </div>
 
-  <script src="./pubgolf.js?v=17"></script>
+  <script src="./pubgolf.js?v=18"></script>
 </body>
 </html>
