@@ -163,6 +163,20 @@ function useTeamScoreMode() {
   return needsTeams() && currentGame.score_mode === "team";
 }
 
+function hasUnevenTeams() {
+  if (!needsTeams() || teams.length === 0) return false;
+
+  const teamSizes = teams.map(team => {
+    return players.filter(player => player.team_id === team.id).length;
+  });
+
+  const usedTeamSizes = teamSizes.filter(size => size > 0);
+
+  if (usedTeamSizes.length <= 1) return false;
+
+  return Math.max(...usedTeamSizes) !== Math.min(...usedTeamSizes);
+}
+
 async function loadSavedGames() {
   const { data, error } = await db
     .from("games")
@@ -641,12 +655,12 @@ async function makeRandomTeams() {
     if (!doorgaan) return;
   }
 
-  const effectiveMode = getEffectiveMode();
   const teamSize = getTeamSize();
+  const unevenTeamsWillHappen = players.length % teamSize !== 0;
 
-  if (effectiveMode === "teams" && players.length % teamSize !== 0) {
+  if (unevenTeamsWillHappen) {
     const doorgaan = await showConfirm(
-      `Met ${players.length} spelers en teams van ${teamSize} komen de teams niet gelijk uit. Je kunt hierna eventueel een handicap invullen. Wil je doorgaan?`,
+      `Met ${players.length} spelers en teams van ${teamSize} komen de teams niet gelijk uit. Je kunt straks handicap/strafpunten invullen om dit recht te trekken. Wil je doorgaan?`,
       "Teams niet gelijk"
     );
 
@@ -711,7 +725,18 @@ async function makeRandomTeams() {
   renderManualTeamBuilder();
   renderStandings();
 
-  showToast("Random teams zijn gemaakt.", "success");
+  if (hasUnevenTeams()) {
+    manualTeamBuilder.classList.remove("hidden");
+
+    await showMessage(
+      "De teams zijn niet helemaal gelijk verdeeld. Je kunt hieronder bij 'Zelf teams kiezen' direct handicap/strafpunten invullen.",
+      "Handicap mogelijk nodig"
+    );
+
+    manualTeamBuilder.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else {
+    showToast("Random teams zijn gemaakt.", "success");
+  }
 }
 
 async function openManualTeams() {
@@ -725,10 +750,9 @@ async function openManualTeams() {
     return;
   }
 
-  const effectiveMode = getEffectiveMode();
   const teamSize = getTeamSize();
 
-  if (effectiveMode === "teams" && players.length % teamSize !== 0) {
+  if (players.length % teamSize !== 0) {
     const doorgaan = await showConfirm(
       `Met ${players.length} spelers en teams van ${teamSize} komen de teams niet gelijk uit. Je kunt zelf een handicap invullen, maar dat hoeft niet. Wil je doorgaan?`,
       "Teams niet gelijk"
@@ -939,6 +963,51 @@ async function saveManualTeams() {
   showToast("Zelf gekozen teams zijn opgeslagen.", "success");
 }
 
+async function adjustTeamHandicap(teamId) {
+  const team = teams.find(team => team.id === teamId);
+
+  if (!team) {
+    await showMessage("Team niet gevonden.", "Niet gevonden");
+    return;
+  }
+
+  const newHandicap = await showPrompt(
+    `Handicap/strafpunten voor ${team.name}:`,
+    String(Number(team.handicap || 0)),
+    "Handicap aanpassen"
+  );
+
+  if (newHandicap === null) return;
+
+  const cleanValue = Number(newHandicap);
+
+  if (Number.isNaN(cleanValue)) {
+    await showMessage("Vul een geldig getal in. Bijvoorbeeld 0, 1, 2 of -1.", "Geen geldig getal");
+    return;
+  }
+
+  const { error } = await db
+    .from("teams")
+    .update({ handicap: cleanValue })
+    .eq("id", teamId);
+
+  if (error) {
+    console.error(error);
+    await showMessage("Handicap aanpassen is niet gelukt.", "Er ging iets mis");
+    return;
+  }
+
+  await reloadGameData();
+
+  updateActiveGameInfo();
+  renderPlayers();
+  renderTeams();
+  renderManualTeamBuilder();
+  renderStandings();
+
+  showToast("Handicap is aangepast.", "success");
+}
+
 async function deleteExistingTeams() {
   await db
     .from("players")
@@ -971,9 +1040,13 @@ function renderTeams() {
     card.className = "team-card";
 
     card.innerHTML = `
-      <strong>${escapeHtml(team.name)}</strong>
+      <div class="team-card-header">
+        <strong>${escapeHtml(team.name)}</strong>
+        <button class="tiny-btn" onclick="adjustTeamHandicap('${team.id}')">Handicap</button>
+      </div>
+
       <span>${teamPlayers.map(player => escapeHtml(player.name)).join(", ") || "Geen spelers"}</span>
-      ${handicap !== 0 ? `<small>Handicap/strafpunten: ${handicap > 0 ? "+" : ""}${handicap}</small>` : ""}
+      <small>Handicap/strafpunten: ${handicap > 0 ? "+" : ""}${handicap}</small>
     `;
 
     teamsList.appendChild(card);
