@@ -612,7 +612,7 @@ function setupShareLink(link, url) {
 }
 
 async function shareGame(url) {
-  const text = `Doe mee met Pubgolf: ${url}`;
+  const text = url;
 
   if (navigator.share) {
     try {
