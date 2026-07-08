@@ -1983,9 +1983,7 @@ function renderScorecard() {
 const DEFAULT_PENALTY_REASONS = [
   { label: "Glas gemorst", points: 1 },
   { label: "Glas laten vallen", points: 3 },
-  { label: "Gelogen over slokken", points: 2 },
-  { label: "Slok gemist", points: 1 },
-  { label: "Te laat bij de hole", points: 1 }
+  { label: "Gelogen over slokken", points: 2 }
 ];
 
 function getPenaltyReasonList() {
@@ -1993,14 +1991,15 @@ function getPenaltyReasonList() {
   const custom = penaltyReasons.map(reason => ({
     label: reason.label,
     points: Number(reason.points || 0),
-    id: reason.id
+    id: reason.id,
+    custom: true
   }));
 
   const customLabels = custom.map(reason => reason.label.toLowerCase());
 
-  const defaults = DEFAULT_PENALTY_REASONS.filter(
-    reason => !customLabels.includes(reason.label.toLowerCase())
-  );
+  const defaults = DEFAULT_PENALTY_REASONS
+    .filter(reason => !customLabels.includes(reason.label.toLowerCase()))
+    .map(reason => ({ label: reason.label, points: reason.points, custom: false }));
 
   return [...custom, ...defaults];
 }
@@ -2051,11 +2050,14 @@ function renderPenaltyModal() {
   const chips = reasons.map((reason, index) => {
     const count = penaltyDraft.filter(d => d.label === reason.label && !d.fixed).length;
     return `
-      <button type="button" class="penalty-reason-chip ${count > 0 ? "active" : ""}" data-reason-index="${index}">
-        <span class="penalty-reason-label">${escapeHtml(reason.label)}</span>
-        <span class="penalty-reason-points">+${reason.points}</span>
-        ${count > 0 ? `<span class="penalty-reason-count">${count}×</span>` : ""}
-      </button>
+      <div class="penalty-reason-chip ${count > 0 ? "active" : ""}">
+        <button type="button" class="penalty-reason-main" data-reason-index="${index}">
+          <span class="penalty-reason-label">${escapeHtml(reason.label)}</span>
+          <span class="penalty-reason-points">+${reason.points}</span>
+          ${count > 0 ? `<span class="penalty-reason-count">${count}×</span>` : ""}
+        </button>
+        <button type="button" class="penalty-reason-edit" data-edit-index="${index}" aria-label="Reden aanpassen">✎</button>
+      </div>
     `;
   }).join("");
 
@@ -2076,11 +2078,18 @@ function renderPenaltyModal() {
 
   penaltyTotal.textContent = penaltyDraftTotal();
 
-  penaltyReasonList.querySelectorAll(".penalty-reason-chip").forEach(chip => {
+  penaltyReasonList.querySelectorAll(".penalty-reason-main").forEach(chip => {
     chip.addEventListener("click", () => {
       const reason = reasons[Number(chip.dataset.reasonIndex)];
       penaltyDraft.push({ label: reason.label, points: Number(reason.points || 0) });
       renderPenaltyModal();
+    });
+  });
+
+  penaltyReasonList.querySelectorAll(".penalty-reason-edit").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const reason = reasons[Number(btn.dataset.editIndex)];
+      editPenaltyReason(reason);
     });
   });
 
@@ -2090,6 +2099,76 @@ function renderPenaltyModal() {
       renderPenaltyModal();
     });
   });
+}
+
+async function editPenaltyReason(reason) {
+  const newLabel = await showPrompt(
+    "Naam van de straf:",
+    reason.label,
+    "Straf aanpassen"
+  );
+
+  if (newLabel === null) return;
+
+  const cleanLabel = newLabel.trim();
+
+  if (!cleanLabel) {
+    await showMessage("Naam mag niet leeg zijn.", "Naam ontbreekt");
+    renderPenaltyModal();
+    return;
+  }
+
+  const newPointsRaw = await showPrompt(
+    "Aantal strafpunten:",
+    String(Number(reason.points || 0)),
+    "Strafpunten aanpassen"
+  );
+
+  if (newPointsRaw === null) {
+    renderPenaltyModal();
+    return;
+  }
+
+  const newPoints = Number(newPointsRaw);
+
+  if (Number.isNaN(newPoints)) {
+    await showMessage("Vul een geldig getal in.", "Geen geldig getal");
+    renderPenaltyModal();
+    return;
+  }
+
+  if (reason.custom && reason.id) {
+    // Bestaande eigen reden bijwerken
+    const { error } = await db
+      .from("penalty_reasons")
+      .update({ label: cleanLabel, points: newPoints })
+      .eq("id", reason.id);
+
+    if (error) {
+      console.error(error);
+      await showMessage("Aanpassen is niet gelukt.", "Er ging iets mis");
+      renderPenaltyModal();
+      return;
+    }
+  } else {
+    // Standaardreden aangepast: opslaan als eigen reden zodat de wijziging blijft
+    const { error } = await db
+      .from("penalty_reasons")
+      .insert({
+        game_id: currentGame.id,
+        label: cleanLabel,
+        points: newPoints
+      });
+
+    if (error) {
+      console.warn("Aangepaste standaardreden opslaan overgeslagen:", error.message);
+    }
+  }
+
+  await reloadGameData();
+  renderPenaltyModal();
+
+  showToast("Straf aangepast.", "success");
 }
 
 function addPenaltyReason() {
