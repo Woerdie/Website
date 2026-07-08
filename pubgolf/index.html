@@ -126,6 +126,14 @@
           </div>
         </div>
 
+        <div class="form-group hidden" id="score-mode-edit-wrap">
+          <label for="edit-score-mode">Scores invullen per</label>
+          <select id="edit-score-mode">
+            <option value="player">Per speler</option>
+            <option value="team">Per team</option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label for="player-name">Naam speler</label>
 
@@ -177,7 +185,6 @@
 
         <div class="score-action-row">
           <button id="edit-players-btn" class="outline-btn small-action-btn">← Spelers</button>
-          <button id="refresh-btn" class="outline-btn small-action-btn">↻ Ververs</button>
         </div>
 
         <div class="form-group">
@@ -185,7 +192,7 @@
           <select id="hole-select"></select>
         </div>
 
-        <p class="hint">Vul de score in. Bonus/strafpunten mag je leeg laten.</p>
+        <p class="hint">Vul de score in. Met de knop straf voeg je penalty's toe, bijvoorbeeld voor een gemorst glas.</p>
 
         <div id="score-list"></div>
 
@@ -231,6 +238,32 @@
     </div>
   </div>
 
-  <script src="./pubgolf.js?v=24"></script>
+  <div id="penalty-backdrop" class="modal-backdrop hidden">
+    <div class="custom-modal penalty-modal">
+      <div id="penalty-icon">🍺</div>
+      <h3 id="penalty-title">Strafpunten</h3>
+      <p id="penalty-subtitle" class="penalty-subtitle"></p>
+
+      <div id="penalty-reason-list" class="penalty-reason-list"></div>
+
+      <div class="penalty-add-row">
+        <input id="penalty-new-reason" type="text" placeholder="Eigen reden, bijv. te laat" />
+        <input id="penalty-new-points" type="number" value="1" min="0" class="penalty-points-input" />
+        <button id="penalty-add-btn" class="small-action-btn">+ Reden</button>
+      </div>
+
+      <div class="penalty-total-row">
+        <span>Totaal straf deze hole</span>
+        <strong id="penalty-total">0</strong>
+      </div>
+
+      <div class="modal-actions">
+        <button id="penalty-cancel-btn" class="outline-btn">Annuleren</button>
+        <button id="penalty-confirm-btn">Toepassen</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./pubgolf.js?v=26"></script>
 </body>
 </html>
