@@ -1189,6 +1189,354 @@ tbody tr:first-child .scorecard-total {
   color: #ffffff !important;
 }
 
+/* Stap-navigatie */
+
+.step-nav {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  max-width: 1180px;
+  margin: 0 auto 16px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--green-line);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+}
+
+.step-nav-btn {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--muted);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-pill);
+  box-shadow: none;
+}
+
+.step-nav-btn:hover {
+  background: var(--surface-green);
+  color: var(--green-dark);
+  transform: none;
+  box-shadow: none;
+}
+
+.step-nav-btn.active {
+  background: linear-gradient(145deg, var(--green-mid), var(--green));
+  color: #ffffff;
+}
+
+/* Mini-stand boven de scores */
+
+.mini-standings {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  background: linear-gradient(145deg, var(--gold-soft), var(--surface));
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius-md);
+}
+
+.mini-standings-head {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold-dark);
+  margin-bottom: 8px;
+}
+
+.mini-standings-body {
+  display: grid;
+  gap: 6px;
+}
+
+.mini-standing-row {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+}
+
+.mini-standing-rank {
+  font-size: 1rem;
+  text-align: center;
+}
+
+.mini-standing-name {
+  font-weight: 700;
+  color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mini-standing-total {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--green-dark);
+}
+
+/* Voortgang per hole */
+
+.hole-progress {
+  margin: -4px 0 12px;
+  padding: 10px 14px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+}
+
+.hole-progress:empty {
+  display: none;
+}
+
+.hole-progress-done {
+  font-weight: 800;
+  color: var(--green);
+}
+
+.hole-progress-label {
+  font-weight: 800;
+  color: var(--gold-dark);
+}
+
+.hole-progress-names {
+  color: var(--muted);
+}
+
+/* Onderste rij scores */
+
+.score-bottom-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+/* Multi-penalty modal */
+
+.multi-penalty-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  margin: 4px 0 8px;
+  text-align: left;
+}
+
+.multi-reason-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.multi-reason-chip {
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  text-align: left;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+.multi-reason-chip.active {
+  background: var(--surface-green);
+  border-color: var(--green);
+}
+
+.multi-reason-chip .penalty-reason-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.multi-reason-chip .penalty-reason-points {
+  color: var(--gold-dark);
+  font-weight: 800;
+}
+
+.multi-target-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.multi-target-chip {
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  text-align: left;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.multi-target-chip.active {
+  background: var(--surface-green);
+  border-color: var(--green);
+}
+
+.multi-target-check {
+  display: inline-grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  border-radius: 7px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  color: var(--green);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.multi-target-chip.active .multi-target-check {
+  background: var(--green);
+  color: #ffffff;
+  border-color: var(--green);
+}
+
+.multi-target-name {
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Scorekaart als kaarten (mobiel) - standaard verborgen op desktop */
+
+.scorecard-cards {
+  display: none;
+}
+
+.scorecard-card {
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+}
+
+.scorecard-card.leader {
+  background: var(--gold-soft);
+  border-color: var(--gold-line);
+}
+
+.scorecard-card-top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.scorecard-card-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.scorecard-card-name strong {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--green-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scorecard-card-name small {
+  color: var(--muted);
+  font-size: 0.75rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.scorecard-card-total {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: var(--green-dark);
+  padding: 2px 12px;
+  background: var(--gold-soft);
+  border-radius: var(--radius-sm);
+}
+
+.scorecard-card.leader .scorecard-card-total {
+  background: var(--gold);
+  color: #ffffff;
+}
+
+.scorecard-card-sub {
+  margin-top: 6px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.hole-chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 10px;
+}
+
+.hole-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  padding: 3px 6px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--muted);
+  line-height: 1.1;
+}
+
+.hole-chip small {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.58rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #a7b0a0;
+}
+
+.hole-chip.filled {
+  background: var(--surface-green);
+  border-color: var(--green-line);
+  color: var(--green-dark);
+}
+
 /* Toast */
 
 #toast-container {
@@ -1628,6 +1976,12 @@ tbody tr:first-child .scorecard-total {
   .app-header p {
     margin-top: 2px;
   }
+
+  .step-nav {
+    margin-left: 14px;
+    margin-right: 14px;
+    max-width: none;
+  }
 }
 
 /* Mobiel */
@@ -1750,8 +2104,18 @@ tbody tr:first-child .scorecard-total {
     font-size: 0.85rem;
   }
 
+  .score-action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
   .score-action-row button {
     width: 100%;
+  }
+
+  /* Eerste knop (Spelers) volle breedte, andere twee ernaast */
+  .score-action-row button:first-child {
+    grid-column: 1 / -1;
   }
 
   .add-player-row {
@@ -1793,52 +2157,32 @@ tbody tr:first-child .scorecard-total {
     width: 100%;
   }
 
+  /* Op mobiel: tabel verbergen, kaarten tonen (geen horizontaal scrollen) */
   .scorecard-table {
-    padding: 5px;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    overflow: visible;
   }
 
-  /* Scorekaart schaalt mee, geen horizontaal scrollen */
-  table {
-    font-size: 0.72rem;
+  .scorecard-scroll {
+    display: none;
   }
 
-  thead th {
-    font-size: 0.56rem;
-    padding: 6px 2px;
+  .scorecard-cards {
+    display: block;
   }
 
-  tbody td,
-  tbody th {
-    padding: 7px 2px;
+  /* Multi-penalty op smal scherm 1 kolom */
+  .multi-reason-grid,
+  .multi-target-grid {
+    grid-template-columns: 1fr;
   }
 
-  thead th:first-child,
-  tbody th:first-child {
-    width: 92px;
-  }
-
-  thead th:last-child,
-  tbody td:last-child {
-    width: 34px;
-  }
-
-  .scorecard-name {
-    gap: 6px;
-    padding-left: 4px !important;
-  }
-
-  .scorecard-rank {
-    width: 22px;
-    height: 22px;
-    font-size: 0.7rem;
-  }
-
-  .scorecard-player small {
-    font-size: 0.64rem;
-  }
-
-  .scorecard-total {
-    font-size: 0.85rem;
+  /* Stap-nav compacter */
+  .step-nav-btn {
+    font-size: 0.8rem;
+    padding: 8px 6px;
   }
 
   /* Penalty-modal op telefoon */
