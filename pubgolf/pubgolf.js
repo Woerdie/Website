@@ -513,10 +513,20 @@ async function silentRefresh() {
     renderPlayers();
     renderTeams();
   }
-
+function scoreListHasEdits() {
+  return Array.from(scoreList.querySelectorAll("input"))
+    .some(input => input.value !== input.defaultValue);
+}
   if (!scoreSection.classList.contains("hidden")) {
-    fillHoleSelect();
-    renderScoreInputsPreservingEdits();
+    if (scoreListHasEdits()) {
+      // B is zelf aan het invullen: blijf op deze hole, behoud invoer
+      fillHoleSelect();
+      renderScoreInputsPreservingEdits();
+    } else {
+      // niets ingevuld: spring mee naar de eerste lege hole
+      fillHoleSelect(true);
+      renderScoreInputs();
+    }
   }
 
   if (!standingsSection.classList.contains("hidden")) {
