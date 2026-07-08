@@ -3,6 +3,7 @@ const SUPABASE_KEY = "sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const STORAGE_KEY = "pubgolf_my_games";
+const STEP_KEY = "pubgolf_current_step";
 
 let currentGame = null;
 let players = [];
@@ -13,6 +14,7 @@ let realtimeChannel = null;
 let refreshTimer = null;
 
 // Dom selecties
+const loadingScreen = document.getElementById("loading-screen");
 const savedGamesSection = document.getElementById("saved-games-section");
 const savedGamesList = document.getElementById("saved-games-list");
 const createGameSection = document.getElementById("create-game-section");
@@ -113,7 +115,22 @@ async function init() {
     if (gameId) {
         await loadGame(gameId);
     } else {
+        createGameSection.classList.remove("hidden");
+        savedGamesSection.classList.remove("hidden");
         await loadSavedGames();
+    }
+    
+    // Verberg het laadscherm pas als alles volledig klaar staat
+    hideLoadingScreen();
+}
+
+function hideLoadingScreen() {
+    if (loadingScreen) {
+        loadingScreen.classList.add("fade-out");
+        // Haal het na de animatie helemaal uit de DOM structuur zodat knoppen klikbaar zijn
+        setTimeout(() => {
+            loadingScreen.style.display = "none";
+        }, 400);
     }
 }
 
@@ -141,6 +158,7 @@ function rememberGame(gameId) {
 function forgetGame(gameId) {
     const ids = getMyGameIds().filter(id => id !== gameId);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+    localStorage.removeItem(STEP_KEY);
 }
 
 function isEnded() {
@@ -157,6 +175,10 @@ function getEffectiveMode() {
     if (!currentGame) return "solo";
     if (players.length <= 2) return "solo";
     return currentGame.mode;
+}
+
+function setSavedStep(stepName) {
+    localStorage.setItem(STEP_KEY, stepName);
 }
 
 function needsTeams() {
@@ -288,6 +310,7 @@ async function createGame() {
     }
 
     rememberGame(data.id);
+    setSavedStep("players");
     window.location.href = `?game=${data.id}`;
 }
 
@@ -318,10 +341,24 @@ async function loadGame(gameId) {
         return;
     }
 
-    playersSection.classList.remove("hidden");
+    const savedStep = localStorage.getItem(STEP_KEY);
+    
+    if (savedStep === "scores") {
+        playersSection.classList.add("hidden");
+        scoreSection.classList.remove("hidden");
+        standingsSection.classList.remove("hidden");
+        fillHoleSelect(true);
+        renderScoreInputs();
+    } else {
+        playersSection.classList.remove("hidden");
+        scoreSection.classList.add("hidden");
+        standingsSection.classList.add("hidden");
+        renderPlayers();
+        renderTeams();
+    }
+
     updateActiveGameInfo();
-    renderPlayers();
-    renderTeams();
+    renderStandings();
 }
 
 function subscribeRealtime() {
@@ -551,6 +588,7 @@ async function saveManualTeams() {
 }
 
 function openScores() {
+    setSavedStep("scores");
     playersSection.classList.add("hidden");
     scoreSection.classList.remove("hidden");
     standingsSection.classList.remove("hidden");
@@ -560,6 +598,7 @@ function openScores() {
 }
 
 function backToPlayers() {
+    setSavedStep("players");
     scoreSection.classList.add("hidden");
     standingsSection.classList.add("hidden");
     playersSection.classList.remove("hidden");
