@@ -1114,12 +1114,19 @@ tbody tr:nth-child(2) th {
   text-align: left !important;
   font-weight: 800;
   padding-left: 8px !important;
+  overflow: hidden;
 }
 
-/* Eerste kolom (naam) krijgt de meeste ruimte, de rest deelt de rest */
+/* Eerste kolom (naam) krijgt een vaste ruimte, de holes delen de rest gelijk */
 thead th:first-child,
 tbody th:first-child {
-  width: 34%;
+  width: 150px;
+}
+
+/* Totaal- en handicapkolom compact houden */
+thead th:last-child,
+tbody td:last-child {
+  width: 48px;
 }
 
 .scorecard-rank {
@@ -1148,6 +1155,16 @@ tbody tr:first-child .scorecard-rank {
   flex-direction: column;
   gap: 1px;
   min-width: 0;
+}
+
+.scorecard-player {
+  overflow: hidden;
+}
+
+.scorecard-player > :first-child {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .scorecard-player small {
@@ -1237,6 +1254,11 @@ tbody tr:first-child .scorecard-total {
   background: rgba(15, 28, 20, 0.45);
   backdrop-filter: blur(6px);
   z-index: 90;
+}
+
+/* Gewone modal (prompt) moet boven de penalty-modal liggen */
+#modal-backdrop {
+  z-index: 95;
 }
 
 .custom-modal {
@@ -1346,7 +1368,23 @@ tbody tr:first-child .scorecard-total {
 }
 
 .penalty-reason-chip {
-  width: 100%;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.penalty-reason-chip.active {
+  background: var(--surface-green);
+  border-color: var(--green);
+}
+
+.penalty-reason-main {
+  flex: 1;
+  min-width: 0;
   min-height: 0;
   display: flex;
   align-items: center;
@@ -1354,24 +1392,41 @@ tbody tr:first-child .scorecard-total {
   padding: 10px 12px;
   text-align: left;
   color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
   box-shadow: none;
   font-weight: 700;
   font-size: 0.85rem;
 }
 
-.penalty-reason-chip:hover {
+.penalty-reason-main:hover {
   background: var(--surface-green);
-  border-color: var(--green-line);
   transform: none;
   box-shadow: none;
 }
 
-.penalty-reason-chip.active {
-  background: var(--surface-green);
-  border-color: var(--green);
+.penalty-reason-edit {
+  width: 40px;
+  min-height: 0;
+  flex-shrink: 0;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  background: var(--surface-soft);
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 0.9rem;
+}
+
+.penalty-reason-edit:hover {
+  background: var(--gold-soft);
+  color: var(--gold-dark);
+  transform: none;
+  box-shadow: none;
 }
 
 .penalty-reason-label {
@@ -1759,7 +1814,12 @@ tbody tr:first-child .scorecard-total {
 
   thead th:first-child,
   tbody th:first-child {
-    width: 38%;
+    width: 92px;
+  }
+
+  thead th:last-child,
+  tbody td:last-child {
+    width: 34px;
   }
 
   .scorecard-name {
