@@ -9,9 +9,18 @@
 </head>
 <body>
 
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="beer-golf-icon">🍺⛳</div>
+            <h3>Pubgolf Scorekaart</h3>
+            <p>Even de glazen spoelen en banen klaarzetten...</p>
+            <div class="spinner"></div>
+        </div>
+    </div>
+
     <div id="toast-container"></div>
 
-    <div id="create-game-section" class="container-box">
+    <div id="create-game-section" class="container-box hidden">
         <h2>Nieuw Pubgolf Spel</h2>
         <div class="form-group">
             <input type="text" id="game-name" placeholder="Naam van het spel (bijv. Verjaardag Pubgolf)">
@@ -40,7 +49,7 @@
         </div>
     </div>
 
-    <div id="saved-games-section" class="container-box">
+    <div id="saved-games-section" class="container-box hidden">
         <h2>Je opgeslagen spellen</h2>
         <div id="saved-games-list"></div>
     </div>
