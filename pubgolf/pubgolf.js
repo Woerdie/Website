@@ -13,6 +13,10 @@ let modalResolve = null;
 let realtimeChannel = null;
 let refreshTimer = null;
 
+let penaltyResolve = null;
+let penaltyReasons = [];
+let penaltyDraft = [];
+
 const savedGamesSection = document.getElementById("saved-games-section");
 const savedGamesList = document.getElementById("saved-games-list");
 
@@ -41,6 +45,9 @@ const leaderBox = document.getElementById("leader-box");
 const editExpectedPlayersInput = document.getElementById("edit-expected-players");
 const updateExpectedPlayersBtn = document.getElementById("update-expected-players-btn");
 
+const scoreModeEditWrap = document.getElementById("score-mode-edit-wrap");
+const editScoreModeInput = document.getElementById("edit-score-mode");
+
 const playerNameInput = document.getElementById("player-name");
 const addPlayerBtn = document.getElementById("add-player-btn");
 const playersList = document.getElementById("players-list");
@@ -55,7 +62,6 @@ const teamsList = document.getElementById("teams-list");
 
 const goScoreBtn = document.getElementById("go-score-btn");
 const editPlayersBtn = document.getElementById("edit-players-btn");
-const refreshBtn = document.getElementById("refresh-btn");
 const resetScoresBtn = document.getElementById("reset-scores-btn");
 const deleteGameBtn = document.getElementById("delete-game-btn");
 const endGameBtn = document.getElementById("end-game-btn");
@@ -73,6 +79,18 @@ const modalInput = document.getElementById("modal-input");
 const modalCancelBtn = document.getElementById("modal-cancel-btn");
 const modalConfirmBtn = document.getElementById("modal-confirm-btn");
 
+const penaltyBackdrop = document.getElementById("penalty-backdrop");
+const penaltyIcon = document.getElementById("penalty-icon");
+const penaltyTitle = document.getElementById("penalty-title");
+const penaltySubtitle = document.getElementById("penalty-subtitle");
+const penaltyReasonList = document.getElementById("penalty-reason-list");
+const penaltyNewReason = document.getElementById("penalty-new-reason");
+const penaltyNewPoints = document.getElementById("penalty-new-points");
+const penaltyAddBtn = document.getElementById("penalty-add-btn");
+const penaltyTotal = document.getElementById("penalty-total");
+const penaltyCancelBtn = document.getElementById("penalty-cancel-btn");
+const penaltyConfirmBtn = document.getElementById("penalty-confirm-btn");
+
 createGameBtn.addEventListener("click", createGame);
 addPlayerBtn.addEventListener("click", addPlayer);
 randomTeamsBtn.addEventListener("click", makeRandomTeams);
@@ -82,16 +100,13 @@ saveScoresBtn.addEventListener("click", saveScores);
 holeSelect.addEventListener("change", renderScoreInputs);
 gameModeInput.addEventListener("change", toggleTeamSize);
 updateExpectedPlayersBtn.addEventListener("click", updateExpectedPlayers);
+editScoreModeInput.addEventListener("change", updateScoreMode);
 resetScoresBtn.addEventListener("click", resetScores);
 deleteGameBtn.addEventListener("click", deleteGame);
 endGameBtn.addEventListener("click", endGame);
 
 if (editPlayersBtn) {
   editPlayersBtn.addEventListener("click", backToPlayers);
-}
-
-if (refreshBtn) {
-  refreshBtn.addEventListener("click", refreshCurrentGame);
 }
 
 playerNameInput.addEventListener("keydown", event => {
@@ -107,6 +122,18 @@ modalBackdrop.addEventListener("click", event => {
 
 modalInput.addEventListener("keydown", event => {
   if (event.key === "Enter") closeModal(true);
+});
+
+penaltyConfirmBtn.addEventListener("click", () => closePenaltyModal(true));
+penaltyCancelBtn.addEventListener("click", () => closePenaltyModal(false));
+penaltyAddBtn.addEventListener("click", addPenaltyReason);
+
+penaltyBackdrop.addEventListener("click", event => {
+  if (event.target === penaltyBackdrop) closePenaltyModal(false);
+});
+
+penaltyNewReason.addEventListener("keydown", event => {
+  if (event.key === "Enter") addPenaltyReason();
 });
 
 init();
@@ -513,20 +540,10 @@ async function silentRefresh() {
     renderPlayers();
     renderTeams();
   }
-function scoreListHasEdits() {
-  return Array.from(scoreList.querySelectorAll("input"))
-    .some(input => input.value !== input.defaultValue);
-}
+
   if (!scoreSection.classList.contains("hidden")) {
-    if (scoreListHasEdits()) {
-      // B is zelf aan het invullen: blijf op deze hole, behoud invoer
-      fillHoleSelect();
-      renderScoreInputsPreservingEdits();
-    } else {
-      // niets ingevuld: spring mee naar de eerste lege hole
-      fillHoleSelect(true);
-      renderScoreInputs();
-    }
+    fillHoleSelect();
+    renderScoreInputsPreservingEdits();
   }
 
   if (!standingsSection.classList.contains("hidden")) {
@@ -570,17 +587,16 @@ async function reloadGameData() {
     return;
   }
 
+  const { data: reasonData } = await db
+    .from("penalty_reasons")
+    .select("*")
+    .eq("game_id", currentGame.id)
+    .order("created_at", { ascending: true });
+
   players = playerData || [];
   teams = teamData || [];
   scores = scoreData || [];
-}
-
-async function refreshCurrentGame() {
-  if (!currentGame) return;
-
-  await silentRefresh();
-
-  showToast("Bijgewerkt.", "success");
+  penaltyReasons = reasonData || [];
 }
 
 function updateActiveGameInfo() {
@@ -588,6 +604,16 @@ function updateActiveGameInfo() {
 
   if (editExpectedPlayersInput) {
     editExpectedPlayersInput.value = currentGame.expected_players || players.length || 1;
+  }
+
+  // Score-modus wisselen alleen tonen als er teams zijn (duo's of teams)
+  if (scoreModeEditWrap) {
+    if (needsTeams()) {
+      scoreModeEditWrap.classList.remove("hidden");
+      editScoreModeInput.value = currentGame.score_mode || "player";
+    } else {
+      scoreModeEditWrap.classList.add("hidden");
+    }
   }
 
   let modeText = modeLabel(currentGame.mode);
@@ -622,7 +648,7 @@ function setupShareLink(link, url) {
 }
 
 async function shareGame(url) {
-  const text = url;
+  const text = `Doe mee met Pubgolf: ${url}`;
 
   if (navigator.share) {
     try {
@@ -681,6 +707,41 @@ async function updateExpectedPlayers() {
   renderPlayers();
 
   showToast("Aantal spelers is aangepast.", "success");
+}
+
+async function updateScoreMode() {
+  if (await blockIfEnded()) {
+    editScoreModeInput.value = currentGame.score_mode || "player";
+    return;
+  }
+
+  const newMode = editScoreModeInput.value;
+
+  const { error } = await db
+    .from("games")
+    .update({ score_mode: newMode })
+    .eq("id", currentGame.id);
+
+  if (error) {
+    console.error(error);
+    editScoreModeInput.value = currentGame.score_mode || "player";
+    await showMessage("Score-modus aanpassen is niet gelukt.", "Er ging iets mis");
+    return;
+  }
+
+  currentGame.score_mode = newMode;
+
+  updateActiveGameInfo();
+  renderPlayers();
+  renderTeams();
+
+  if (!scoreSection.classList.contains("hidden")) renderScoreInputs();
+  if (!standingsSection.classList.contains("hidden")) renderStandings();
+
+  showToast(
+    newMode === "team" ? "Scores tellen nu per team." : "Scores tellen nu per speler.",
+    "success"
+  );
 }
 
 async function addPlayer() {
@@ -1376,6 +1437,7 @@ function renderScoreInputs() {
 
   targets.forEach(target => {
     const existingScore = getExistingScore(target, holeNumber);
+    const bonusValue = existingScore ? Number(existingScore.bonus || 0) : 0;
 
     const item = document.createElement("div");
     item.className = "score-item score-control-item";
@@ -1387,36 +1449,63 @@ function renderScoreInputs() {
       </div>
 
       <div class="score-controls">
-        <button class="score-step-btn" onclick="changeScoreValue('${target.type}', '${target.id}', -1)">−</button>
+        <button class="score-step-btn" onclick="changeScoreValue('${target.type}', '${target.id}', -1)" aria-label="Score omlaag">−</button>
         <input 
-          type="number"
-          min="0"
+          type="text"
           inputmode="numeric"
+          pattern="[0-9]*"
           data-target-type="${target.type}"
           data-target-id="${target.id}"
           class="score-value-input"
           value="${existingScore ? existingScore.score : ""}"
           placeholder="Score"
         >
-        <button class="score-step-btn" onclick="changeScoreValue('${target.type}', '${target.id}', 1)">+</button>
+        <button class="score-step-btn" onclick="changeScoreValue('${target.type}', '${target.id}', 1)" aria-label="Score omhoog">+</button>
       </div>
 
       <div class="bonus-control">
-        <label>Bonus / straf</label>
+        <button class="penalty-btn" onclick="openPenaltyModal('${target.type}', '${target.id}')">
+          <span class="penalty-btn-icon">🍺</span>
+          <span class="penalty-btn-label">Straf</span>
+          <span class="penalty-btn-value ${bonusValue !== 0 ? "has-value" : ""}" data-bonus-badge data-target-type="${target.type}" data-target-id="${target.id}">${bonusValue > 0 ? "+" + bonusValue : bonusValue}</span>
+        </button>
         <input 
-          type="number"
-          inputmode="numeric"
+          type="hidden"
           data-target-type="${target.type}"
           data-target-id="${target.id}"
           class="bonus-value-input"
-          value="${existingScore ? Number(existingScore.bonus || 0) : 0}"
-          placeholder="0"
+          value="${bonusValue}"
         >
       </div>
     `;
 
     scoreList.appendChild(item);
   });
+}
+
+function setBonusValue(type, id, value) {
+  const input = scoreList.querySelector(
+    `.bonus-value-input[data-target-type="${type}"][data-target-id="${id}"]`
+  );
+
+  if (input) input.value = value;
+
+  const badge = scoreList.querySelector(
+    `[data-bonus-badge][data-target-type="${type}"][data-target-id="${id}"]`
+  );
+
+  if (badge) {
+    badge.textContent = value > 0 ? "+" + value : value;
+    badge.classList.toggle("has-value", Number(value) !== 0);
+  }
+}
+
+function getBonusValue(type, id) {
+  const input = scoreList.querySelector(
+    `.bonus-value-input[data-target-type="${type}"][data-target-id="${id}"]`
+  );
+
+  return input ? Number(input.value || 0) : 0;
 }
 
 // Zelfde als renderScoreInputs, maar lokaal ingevulde (nog niet opgeslagen)
@@ -1427,9 +1516,7 @@ function renderScoreInputsPreservingEdits() {
   scoreList.querySelectorAll("input").forEach(input => {
     if (input.value !== input.defaultValue) {
       edits.push({
-        selector: input.classList.contains("bonus-value-input")
-          ? ".bonus-value-input"
-          : ".score-value-input",
+        isBonus: input.classList.contains("bonus-value-input"),
         type: input.dataset.targetType,
         id: input.dataset.targetId,
         value: input.value
@@ -1440,11 +1527,14 @@ function renderScoreInputsPreservingEdits() {
   renderScoreInputs();
 
   edits.forEach(edit => {
-    const input = scoreList.querySelector(
-      `${edit.selector}[data-target-type="${edit.type}"][data-target-id="${edit.id}"]`
-    );
-
-    if (input) input.value = edit.value;
+    if (edit.isBonus) {
+      setBonusValue(edit.type, edit.id, Number(edit.value || 0));
+    } else {
+      const input = scoreList.querySelector(
+        `.score-value-input[data-target-type="${edit.type}"][data-target-id="${edit.id}"]`
+      );
+      if (input) input.value = edit.value;
+    }
   });
 }
 
@@ -1886,6 +1976,181 @@ function renderScorecard() {
       </table>
     </div>
   `;
+}
+
+// ── Penalty / strafpunten ─────────────────────────────────────────
+
+const DEFAULT_PENALTY_REASONS = [
+  { label: "Glas gemorst", points: 1 },
+  { label: "Glas laten vallen", points: 3 },
+  { label: "Gelogen over slokken", points: 2 },
+  { label: "Slok gemist", points: 1 },
+  { label: "Te laat bij de hole", points: 1 }
+];
+
+function getPenaltyReasonList() {
+  // Eigen (opgeslagen) redenen eerst, daarna de standaardlijst die er nog niet in zit
+  const custom = penaltyReasons.map(reason => ({
+    label: reason.label,
+    points: Number(reason.points || 0),
+    id: reason.id
+  }));
+
+  const customLabels = custom.map(reason => reason.label.toLowerCase());
+
+  const defaults = DEFAULT_PENALTY_REASONS.filter(
+    reason => !customLabels.includes(reason.label.toLowerCase())
+  );
+
+  return [...custom, ...defaults];
+}
+
+function openPenaltyModal(type, id) {
+  const targets = getScoreTargets();
+  const target = targets.find(t => t.id === id && t.type === type);
+
+  const startBonus = getBonusValue(type, id);
+
+  // Draft begint bij de huidige bonuswaarde, opgebouwd uit losse strafregels
+  penaltyDraft = [];
+
+  if (startBonus !== 0) {
+    penaltyDraft.push({ label: "Huidige straf/bonus", points: startBonus, fixed: true });
+  }
+
+  penaltyTitle.textContent = "Strafpunten";
+  penaltySubtitle.textContent = target ? target.name : "";
+
+  renderPenaltyModal();
+
+  penaltyNewReason.value = "";
+  penaltyNewPoints.value = "1";
+
+  penaltyBackdrop.classList.remove("hidden");
+
+  penaltyResolve = async result => {
+    penaltyBackdrop.classList.add("hidden");
+
+    if (!result) return;
+
+    const total = penaltyDraftTotal();
+    setBonusValue(type, id, total);
+
+    // Nieuw toegevoegde eigen redenen opslaan voor de volgende keer
+    await persistNewPenaltyReasons();
+  };
+}
+
+function penaltyDraftTotal() {
+  return penaltyDraft.reduce((sum, item) => sum + Number(item.points || 0), 0);
+}
+
+function renderPenaltyModal() {
+  const reasons = getPenaltyReasonList();
+
+  const chips = reasons.map((reason, index) => {
+    const count = penaltyDraft.filter(d => d.label === reason.label && !d.fixed).length;
+    return `
+      <button type="button" class="penalty-reason-chip ${count > 0 ? "active" : ""}" data-reason-index="${index}">
+        <span class="penalty-reason-label">${escapeHtml(reason.label)}</span>
+        <span class="penalty-reason-points">+${reason.points}</span>
+        ${count > 0 ? `<span class="penalty-reason-count">${count}×</span>` : ""}
+      </button>
+    `;
+  }).join("");
+
+  const draftLines = penaltyDraft.length === 0
+    ? `<p class="hint penalty-empty">Nog geen straf toegevoegd.</p>`
+    : penaltyDraft.map((item, index) => `
+        <div class="penalty-draft-row">
+          <span>${escapeHtml(item.label)}</span>
+          <span class="penalty-draft-points">${item.points > 0 ? "+" : ""}${item.points}</span>
+          <button type="button" class="penalty-remove-btn" data-draft-index="${index}" aria-label="Verwijderen">×</button>
+        </div>
+      `).join("");
+
+  penaltyReasonList.innerHTML = `
+    <div class="penalty-chip-grid">${chips}</div>
+    <div class="penalty-draft-list">${draftLines}</div>
+  `;
+
+  penaltyTotal.textContent = penaltyDraftTotal();
+
+  penaltyReasonList.querySelectorAll(".penalty-reason-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      const reason = reasons[Number(chip.dataset.reasonIndex)];
+      penaltyDraft.push({ label: reason.label, points: Number(reason.points || 0) });
+      renderPenaltyModal();
+    });
+  });
+
+  penaltyReasonList.querySelectorAll(".penalty-remove-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      penaltyDraft.splice(Number(btn.dataset.draftIndex), 1);
+      renderPenaltyModal();
+    });
+  });
+}
+
+function addPenaltyReason() {
+  const label = penaltyNewReason.value.trim();
+  const points = Number(penaltyNewPoints.value || 0);
+
+  if (!label) {
+    penaltyNewReason.focus();
+    return;
+  }
+
+  // Direct toepassen in de draft én onthouden als nieuwe reden
+  penaltyDraft.push({ label, points, isNew: true });
+
+  penaltyNewReason.value = "";
+  penaltyNewPoints.value = "1";
+  penaltyNewReason.focus();
+
+  renderPenaltyModal();
+}
+
+async function persistNewPenaltyReasons() {
+  const existingLabels = penaltyReasons.map(r => r.label.toLowerCase());
+
+  const seen = new Set();
+  const toInsert = [];
+
+  penaltyDraft
+    .filter(item => item.isNew)
+    .forEach(item => {
+      const key = item.label.toLowerCase();
+      if (existingLabels.includes(key) || seen.has(key)) return;
+      seen.add(key);
+      toInsert.push({
+        game_id: currentGame.id,
+        label: item.label,
+        points: Number(item.points || 0)
+      });
+    });
+
+  if (toInsert.length === 0) return;
+
+  const { error } = await db
+    .from("penalty_reasons")
+    .insert(toInsert);
+
+  if (error) {
+    // Tabel bestaat misschien nog niet; niet blokkerend
+    console.warn("Penalty-reden opslaan overgeslagen:", error.message);
+    return;
+  }
+
+  await reloadGameData();
+}
+
+function closePenaltyModal(result) {
+  if (penaltyResolve) {
+    const resolve = penaltyResolve;
+    penaltyResolve = null;
+    resolve(result);
+  }
 }
 
 function showToast(message, type = "success") {
