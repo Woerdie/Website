@@ -111,14 +111,23 @@ init();
 
 async function init() {
     toggleTeamSize();
-    const gameId = new URLSearchParams(window.location.search).get("game");
-    if (gameId) {
-        await loadGame(gameId);
-    } else {
-        createGameSection.classList.remove("hidden");
-        savedGamesSection.classList.remove("hidden");
-        await loadSavedGames();
+    try {
+        const gameId = new URLSearchParams(window.location.search).get("game");
+        if (gameId) {
+            await loadGame(gameId);
+        } else {
+            createGameSection.classList.remove("hidden");
+            savedGamesSection.classList.remove("hidden");
+            await loadSavedGames();
+        }
+    } catch (error) {
+        console.error("Er ging iets mis tijdens het opstarten:", error);
+    } finally {
+        // De 'finally' zorgt ervoor dat dit ALTIJD wordt uitgevoerd,
+        // ook als er hierboven een database-fout optreedt.
+        hideLoadingScreen();
     }
+}
     
     // Verberg het laadscherm pas als alles volledig klaar staat
     hideLoadingScreen();
