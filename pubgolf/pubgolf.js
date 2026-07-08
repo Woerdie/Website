@@ -70,6 +70,19 @@ const holeSelect = document.getElementById("hole-select");
 const scoreList = document.getElementById("score-list");
 const saveScoresBtn = document.getElementById("save-scores-btn");
 
+const stepNav = document.getElementById("step-nav");
+const miniStandings = document.getElementById("mini-standings");
+const holeProgress = document.getElementById("hole-progress");
+const clearHoleBtn = document.getElementById("clear-hole-btn");
+const viewStandingsBtn = document.getElementById("view-standings-btn");
+const multiPenaltyBtn = document.getElementById("multi-penalty-btn");
+
+const multiPenaltyBackdrop = document.getElementById("multi-penalty-backdrop");
+const multiPenaltyReasons = document.getElementById("multi-penalty-reasons");
+const multiPenaltyTargets = document.getElementById("multi-penalty-targets");
+const multiPenaltyConfirmBtn = document.getElementById("multi-penalty-confirm-btn");
+const multiPenaltyCancelBtn = document.getElementById("multi-penalty-cancel-btn");
+
 const toastContainer = document.getElementById("toast-container");
 const modalBackdrop = document.getElementById("modal-backdrop");
 const modalIcon = document.getElementById("modal-icon");
@@ -97,13 +110,33 @@ randomTeamsBtn.addEventListener("click", makeRandomTeams);
 manualTeamsBtn.addEventListener("click", openManualTeams);
 goScoreBtn.addEventListener("click", openScores);
 saveScoresBtn.addEventListener("click", saveScores);
-holeSelect.addEventListener("change", renderScoreInputs);
+holeSelect.addEventListener("change", onHoleChange);
 gameModeInput.addEventListener("change", toggleTeamSize);
 updateExpectedPlayersBtn.addEventListener("click", updateExpectedPlayers);
 editScoreModeInput.addEventListener("change", updateScoreMode);
 resetScoresBtn.addEventListener("click", resetScores);
 deleteGameBtn.addEventListener("click", deleteGame);
 endGameBtn.addEventListener("click", endGame);
+
+if (clearHoleBtn) clearHoleBtn.addEventListener("click", clearCurrentHole);
+if (viewStandingsBtn) viewStandingsBtn.addEventListener("click", () => {
+  standingsSection.scrollIntoView({ behavior: "smooth" });
+});
+if (multiPenaltyBtn) multiPenaltyBtn.addEventListener("click", openMultiPenalty);
+
+if (multiPenaltyConfirmBtn) multiPenaltyConfirmBtn.addEventListener("click", applyMultiPenalty);
+if (multiPenaltyCancelBtn) multiPenaltyCancelBtn.addEventListener("click", () => {
+  multiPenaltyBackdrop.classList.add("hidden");
+});
+if (multiPenaltyBackdrop) multiPenaltyBackdrop.addEventListener("click", event => {
+  if (event.target === multiPenaltyBackdrop) multiPenaltyBackdrop.classList.add("hidden");
+});
+
+if (stepNav) {
+  stepNav.querySelectorAll(".step-nav-btn").forEach(btn => {
+    btn.addEventListener("click", () => goToStep(btn.dataset.goto));
+  });
+}
 
 if (editPlayersBtn) {
   editPlayersBtn.addEventListener("click", backToPlayers);
@@ -471,6 +504,7 @@ async function loadGame(gameId) {
   updateActiveGameInfo();
   renderPlayers();
   renderTeams();
+  updateStepNav();
 }
 
 /* Realtime sync */
@@ -551,6 +585,8 @@ async function silentRefresh() {
       fillHoleSelect();
       renderScoreInputs();
     }
+    renderHoleProgress();
+    renderMiniStandings();
   }
 
   if (!standingsSection.classList.contains("hidden")) {
@@ -1416,6 +1452,9 @@ async function openScores() {
   updateActiveGameInfo();
   renderScoreInputs();
   renderStandings();
+  renderMiniStandings();
+  renderHoleProgress();
+  updateStepNav();
 
   scoreSection.scrollIntoView({ behavior: "smooth" });
 }
@@ -1425,6 +1464,7 @@ function backToPlayers() {
   standingsSection.classList.add("hidden");
   playersSection.classList.remove("hidden");
 
+  updateStepNav();
   playersSection.scrollIntoView({ behavior: "smooth" });
 }
 
@@ -1452,6 +1492,11 @@ function fillHoleSelect(selectFirstIncomplete = false) {
   if (currentValue) {
     holeSelect.value = currentValue;
   }
+}
+
+function onHoleChange() {
+  renderScoreInputs();
+  renderHoleProgress();
 }
 
 function renderScoreInputs() {
@@ -1650,7 +1695,9 @@ async function saveScores() {
 
   fillHoleSelect(true);
   renderScoreInputs();
+  renderHoleProgress();
   renderStandings();
+  renderMiniStandings();
 
   const firstIncompleteHole = getFirstIncompleteHole();
 
@@ -1984,6 +2031,44 @@ function renderScorecard() {
     `;
   }).join("");
 
+  // Mobiele kaart-weergave: per speler/team een kaart met totaal groot
+  // en de holes als kleine bolletjes eronder (loopt netjes terug).
+  const cardRows = rows.map((row, index) => {
+    const holeChips = holes.map(hole => {
+      const holeScores = scores.filter(score => {
+        if (Number(score.hole_number) !== Number(hole)) return false;
+        if (useTeamScoreMode()) return score.team_id === row.teamId;
+        return row.playerIds.includes(score.player_id);
+      });
+
+      const hasScore = holeScores.length > 0;
+      const holeTotal = holeScores.reduce((sum, score) => {
+        return sum + Number(score.score) + Number(score.bonus || 0);
+      }, 0);
+
+      return `<span class="hole-chip ${hasScore ? "filled" : ""}"><small>${hole}</small>${hasScore ? holeTotal : "-"}</span>`;
+    }).join("");
+
+    const handicapLine = needsTeams() && row.handicap !== 0
+      ? `<div class="scorecard-card-sub">Score ${row.scoreTotal} · handicap ${row.handicap > 0 ? "+" : ""}${row.handicap}</div>`
+      : "";
+
+    return `
+      <div class="scorecard-card ${index === 0 ? "leader" : ""}">
+        <div class="scorecard-card-top">
+          <span class="scorecard-rank">${index + 1}</span>
+          <div class="scorecard-card-name">
+            <strong>${escapeHtml(row.name)}</strong>
+            ${row.sub ? `<small>${escapeHtml(row.sub)}</small>` : ""}
+          </div>
+          <span class="scorecard-card-total">${row.total}</span>
+        </div>
+        ${handicapLine}
+        <div class="hole-chip-row">${holeChips}</div>
+      </div>
+    `;
+  }).join("");
+
   scorecardTable.innerHTML = `
     <div class="scorecard-scroll">
       <table>
@@ -2000,6 +2085,7 @@ function renderScorecard() {
         </tbody>
       </table>
     </div>
+    <div class="scorecard-cards">${cardRows}</div>
   `;
 }
 
@@ -2255,6 +2341,253 @@ function closePenaltyModal(result) {
     penaltyResolve = null;
     resolve(result);
   }
+}
+
+// ── Stap-navigatie ────────────────────────────────────────────────
+
+function updateStepNav() {
+  if (!stepNav) return;
+
+  // Alleen tonen als er een actief spel is en we voorbij stap 1 zijn
+  if (!currentGame || (createGameSection && !createGameSection.classList.contains("hidden"))) {
+    stepNav.classList.add("hidden");
+    return;
+  }
+
+  if (isEnded()) {
+    stepNav.classList.add("hidden");
+    return;
+  }
+
+  stepNav.classList.remove("hidden");
+
+  const scoreVisible = !scoreSection.classList.contains("hidden");
+  const active = scoreVisible ? "scores" : "players";
+
+  stepNav.querySelectorAll(".step-nav-btn").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.goto === active);
+  });
+}
+
+function goToStep(step) {
+  if (!currentGame) return;
+
+  if (step === "players") {
+    backToPlayers();
+  } else if (step === "scores") {
+    if (scoreSection.classList.contains("hidden")) {
+      openScores();
+    } else {
+      scoreSection.scrollIntoView({ behavior: "smooth" });
+    }
+  } else if (step === "standings") {
+    if (standingsSection.classList.contains("hidden")) {
+      // Stand hoort bij de scores-weergave
+      if (scoreSection.classList.contains("hidden")) openScores();
+    }
+    standingsSection.scrollIntoView({ behavior: "smooth" });
+  }
+
+  updateStepNav();
+}
+
+// ── Mini-stand boven de scores ────────────────────────────────────
+
+function renderMiniStandings() {
+  if (!miniStandings) return;
+
+  const standings = getStandings();
+
+  if (standings.length === 0) {
+    miniStandings.classList.add("hidden");
+    miniStandings.innerHTML = "";
+    return;
+  }
+
+  const top = standings.slice(0, 3);
+  const medals = ["🥇", "🥈", "🥉"];
+
+  const rows = top.map((row, index) => `
+    <div class="mini-standing-row">
+      <span class="mini-standing-rank">${medals[index] || (index + 1)}</span>
+      <span class="mini-standing-name">${escapeHtml(row.name)}</span>
+      <span class="mini-standing-total">${row.total}</span>
+    </div>
+  `).join("");
+
+  miniStandings.classList.remove("hidden");
+  miniStandings.innerHTML = `
+    <div class="mini-standings-head">Tussenstand</div>
+    <div class="mini-standings-body">${rows}</div>
+  `;
+}
+
+// ── Voortgang: wie moet nog invullen deze hole ────────────────────
+
+function renderHoleProgress() {
+  if (!holeProgress) return;
+
+  const holeNumber = Number(holeSelect.value);
+  const targets = getScoreTargets();
+
+  if (targets.length === 0) {
+    holeProgress.innerHTML = "";
+    return;
+  }
+
+  const done = targets.filter(target => getExistingScore(target, holeNumber));
+  const todo = targets.filter(target => !getExistingScore(target, holeNumber));
+
+  if (todo.length === 0) {
+    holeProgress.innerHTML = `<span class="hole-progress-done">✓ Hole ${holeNumber} compleet (${done.length}/${targets.length})</span>`;
+  } else {
+    holeProgress.innerHTML = `
+      <span class="hole-progress-label">Nog invullen (${todo.length}/${targets.length}):</span>
+      <span class="hole-progress-names">${todo.map(t => escapeHtml(t.name)).join(", ")}</span>
+    `;
+  }
+}
+
+// ── Losse hole wissen ─────────────────────────────────────────────
+
+async function clearCurrentHole() {
+  if (!currentGame) return;
+  if (await blockIfEnded()) return;
+
+  const holeNumber = Number(holeSelect.value);
+
+  const zeker = await showConfirm(
+    `Weet je zeker dat je alle scores van hole ${holeNumber} wilt wissen? De andere holes blijven staan.`,
+    `Hole ${holeNumber} wissen`
+  );
+
+  if (!zeker) return;
+
+  const { error } = await db
+    .from("scores")
+    .delete()
+    .eq("game_id", currentGame.id)
+    .eq("hole_number", holeNumber);
+
+  if (error) {
+    console.error(error);
+    await showMessage("Hole wissen is niet gelukt.", "Er ging iets mis");
+    return;
+  }
+
+  await reloadGameData();
+
+  fillHoleSelect();
+  renderScoreInputs();
+  renderHoleProgress();
+  renderStandings();
+  renderMiniStandings();
+
+  showToast(`Hole ${holeNumber} is gewist.`, "success");
+}
+
+// ── Snelle straf voor meerdere spelers ────────────────────────────
+
+let multiPenaltySelectedReason = null;
+let multiPenaltySelectedTargets = new Set();
+
+function openMultiPenalty() {
+  if (!currentGame) return;
+
+  const targets = getScoreTargets();
+
+  if (targets.length === 0) {
+    showMessage("Er zijn nog geen spelers om straf aan te geven.", "Geen spelers");
+    return;
+  }
+
+  multiPenaltySelectedReason = null;
+  multiPenaltySelectedTargets = new Set();
+
+  renderMultiPenalty();
+
+  multiPenaltyBackdrop.classList.remove("hidden");
+}
+
+function renderMultiPenalty() {
+  const reasons = getPenaltyReasonList();
+  const targets = getScoreTargets();
+
+  const reasonChips = reasons.map((reason, index) => `
+    <button type="button" class="multi-reason-chip ${multiPenaltySelectedReason === index ? "active" : ""}" data-reason-index="${index}">
+      <span class="penalty-reason-label">${escapeHtml(reason.label)}</span>
+      <span class="penalty-reason-points">+${reason.points}</span>
+    </button>
+  `).join("");
+
+  const targetRows = targets.map(target => {
+    const key = target.type + ":" + target.id;
+    const checked = multiPenaltySelectedTargets.has(key);
+    return `
+      <button type="button" class="multi-target-chip ${checked ? "active" : ""}" data-target-key="${key}">
+        <span class="multi-target-check">${checked ? "✓" : ""}</span>
+        <span class="multi-target-name">${escapeHtml(target.name)}</span>
+      </button>
+    `;
+  }).join("");
+
+  multiPenaltyReasons.innerHTML = `
+    <div class="multi-penalty-label">1. Kies de straf</div>
+    <div class="multi-reason-grid">${reasonChips}</div>
+  `;
+
+  multiPenaltyTargets.innerHTML = `
+    <div class="multi-penalty-label">2. Vink aan wie</div>
+    <div class="multi-target-grid">${targetRows}</div>
+  `;
+
+  multiPenaltyReasons.querySelectorAll(".multi-reason-chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      multiPenaltySelectedReason = Number(btn.dataset.reasonIndex);
+      renderMultiPenalty();
+    });
+  });
+
+  multiPenaltyTargets.querySelectorAll(".multi-target-chip").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const key = btn.dataset.targetKey;
+      if (multiPenaltySelectedTargets.has(key)) {
+        multiPenaltySelectedTargets.delete(key);
+      } else {
+        multiPenaltySelectedTargets.add(key);
+      }
+      renderMultiPenalty();
+    });
+  });
+}
+
+async function applyMultiPenalty() {
+  if (multiPenaltySelectedReason === null) {
+    await showMessage("Kies eerst een straf.", "Geen straf gekozen");
+    return;
+  }
+
+  if (multiPenaltySelectedTargets.size === 0) {
+    await showMessage("Vink minimaal één speler aan.", "Niemand gekozen");
+    return;
+  }
+
+  const reasons = getPenaltyReasonList();
+  const reason = reasons[multiPenaltySelectedReason];
+
+  // Straf optellen bij de huidige bonus in de score-invoer (nog niet opgeslagen)
+  multiPenaltySelectedTargets.forEach(key => {
+    const [type, id] = key.split(":");
+    const current = getBonusValue(type, id);
+    setBonusValue(type, id, current + Number(reason.points || 0));
+  });
+
+  multiPenaltyBackdrop.classList.add("hidden");
+
+  showToast(
+    `${reason.label} (+${reason.points}) toegevoegd aan ${multiPenaltySelectedTargets.size} speler(s). Vergeet niet op te slaan.`,
+    "success"
+  );
 }
 
 function showToast(message, type = "success") {
