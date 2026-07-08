@@ -43,6 +43,18 @@
   --control-h-sm: 38px;
 }
 
+/* Spinner-pijltjes weg overal waar we plus/min gebruiken */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -875,7 +887,7 @@ button:disabled {
 
 .score-control-item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 150px 130px;
+  grid-template-columns: minmax(0, 1fr) 132px 112px;
   gap: 12px;
   padding: 10px 14px;
   align-items: center;
@@ -908,7 +920,7 @@ button:disabled {
 .score-controls {
   width: 100%;
   display: grid;
-  grid-template-columns: 36px 1fr 36px;
+  grid-template-columns: 34px minmax(0, 1fr) 34px;
   gap: 5px;
   padding: 0;
   background: transparent;
@@ -923,8 +935,9 @@ button:disabled {
   text-align: center;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: 1rem;
-  padding: 4px 6px;
+  font-size: 0.92rem;
+  padding: 4px 4px;
+  min-width: 0;
 }
 
 /* Het woord "Score" als placeholder: klein en rustig */
@@ -942,7 +955,7 @@ button:disabled {
 }
 
 .score-step-btn {
-  width: 36px !important;
+  width: 34px !important;
   height: 36px;
   min-height: 36px !important;
   padding: 0 !important;
@@ -962,32 +975,58 @@ button:disabled {
 
 .bonus-control {
   width: 100%;
-  display: grid;
-  grid-template-columns: 1fr 62px;
-  gap: 6px;
+  display: flex;
   align-items: center;
 }
 
-.bonus-control label {
-  margin: 0;
-  font-size: 0.62rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-align: right;
-  line-height: 1.2;
+/* Strafknop bij het invullen */
+
+.penalty-btn {
+  width: 100%;
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: var(--gold-dark);
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-line);
+  border-radius: var(--radius-pill);
+  box-shadow: none;
 }
 
-.bonus-value-input {
-  width: 62px !important;
-  min-height: 36px;
-  border: 1px solid var(--line);
+.penalty-btn:hover {
+  background: #ffecc4;
+  transform: none;
+  box-shadow: none;
+}
+
+.penalty-btn-icon {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.penalty-btn-label {
+  white-space: nowrap;
+}
+
+.penalty-btn-value {
+  min-width: 22px;
+  padding: 1px 6px;
   border-radius: var(--radius-pill);
-  background: var(--surface);
-  text-align: center;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--muted);
+  font-size: 0.75rem;
   font-weight: 800;
-  font-size: 0.9rem;
-  padding: 4px 6px;
+}
+
+.penalty-btn-value.has-value {
+  background: var(--danger);
+  color: #ffffff;
 }
 
 /* Scorekaart */
@@ -998,30 +1037,39 @@ button:disabled {
   background: var(--surface-soft);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
-  overflow-x: auto;
+  overflow-x: hidden;
 }
 
 .scorecard-scroll {
-  min-width: 100%;
+  width: 100%;
 }
 
 table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: separate;
   border-spacing: 0 5px;
-  font-size: 0.88rem;
+  font-size: 0.85rem;
+}
+
+/* Hole-kolommen krijgen allemaal dezelfde smalle breedte en schalen mee */
+thead th:not(:first-child),
+tbody td {
+  width: auto;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 thead th {
-  padding: 8px 10px;
+  padding: 8px 4px;
   background: var(--surface-soft);
   color: var(--muted);
   text-align: center;
   font-family: var(--font-display);
-  font-size: 0.68rem;
+  font-size: 0.64rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
+  letter-spacing: 0.04em;
 }
 
 thead th:first-child {
@@ -1030,7 +1078,7 @@ thead th:first-child {
 
 tbody td,
 tbody th {
-  padding: 8px 10px;
+  padding: 8px 4px;
   background: var(--surface);
   border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
@@ -1049,19 +1097,6 @@ tbody td:last-child {
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
-/* Naamkolom blijft staan bij horizontaal scrollen */
-
-thead th:first-child,
-tbody th:first-child {
-  position: sticky;
-  left: 0;
-  z-index: 2;
-}
-
-tbody th:first-child {
-  box-shadow: 6px 0 8px -6px rgba(23, 32, 51, 0.15);
-}
-
 tbody tr:first-child td,
 tbody tr:first-child th {
   background: var(--gold-soft);
@@ -1075,11 +1110,16 @@ tbody tr:nth-child(2) th {
 .scorecard-name {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   text-align: left !important;
   font-weight: 800;
-  min-width: 150px;
-  max-width: 210px;
+  padding-left: 8px !important;
+}
+
+/* Eerste kolom (naam) krijgt de meeste ruimte, de rest deelt de rest */
+thead th:first-child,
+tbody th:first-child {
+  width: 34%;
 }
 
 .scorecard-rank {
@@ -1263,6 +1303,197 @@ tbody tr:first-child .scorecard-total {
   min-width: 110px;
 }
 
+/* Penalty-modal */
+
+.penalty-modal {
+  width: min(440px, 100%);
+  text-align: left;
+}
+
+#penalty-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  margin: 0 auto 10px;
+  background: var(--gold-soft);
+  border: 1px solid var(--gold-line);
+  border-radius: 16px;
+  font-size: 1.7rem;
+}
+
+#penalty-title {
+  margin: 0 0 2px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  color: var(--green-dark);
+}
+
+.penalty-subtitle {
+  margin: 0 0 14px;
+  text-align: center;
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.penalty-chip-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.penalty-reason-chip {
+  width: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  text-align: left;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.penalty-reason-chip:hover {
+  background: var(--surface-green);
+  border-color: var(--green-line);
+  transform: none;
+  box-shadow: none;
+}
+
+.penalty-reason-chip.active {
+  background: var(--surface-green);
+  border-color: var(--green);
+}
+
+.penalty-reason-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.penalty-reason-points {
+  color: var(--gold-dark);
+  font-weight: 800;
+  font-size: 0.8rem;
+}
+
+.penalty-reason-count {
+  padding: 1px 7px;
+  border-radius: var(--radius-pill);
+  background: var(--green);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.penalty-draft-list {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.penalty-empty {
+  margin: 0;
+  text-align: center;
+}
+
+.penalty-draft-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  background: var(--surface-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.penalty-draft-points {
+  font-family: var(--font-display);
+  font-weight: 800;
+  color: var(--danger);
+}
+
+.penalty-remove-btn {
+  width: 26px !important;
+  height: 26px;
+  min-height: 26px !important;
+  padding: 0 !important;
+  display: grid;
+  place-items: center;
+  border-radius: var(--radius-pill);
+  background: var(--danger-soft);
+  color: var(--danger);
+  border: 1px solid var(--danger-line);
+  box-shadow: none;
+  font-size: 1rem !important;
+  line-height: 1;
+}
+
+.penalty-remove-btn:hover {
+  background: #f8dddd;
+  transform: none;
+  box-shadow: none;
+}
+
+.penalty-add-row {
+  display: grid;
+  grid-template-columns: 1fr 64px auto;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 0;
+  margin-bottom: 4px;
+  border-top: 1px dashed var(--line);
+}
+
+.penalty-add-row input {
+  min-height: 40px;
+}
+
+.penalty-points-input {
+  text-align: center;
+  font-weight: 800;
+  padding-left: 6px;
+  padding-right: 6px;
+}
+
+.penalty-add-row .small-action-btn {
+  min-height: 40px;
+}
+
+.penalty-total-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  background: var(--surface-green);
+  border: 1px solid var(--green-line);
+  border-radius: var(--radius-sm);
+}
+
+.penalty-total-row span {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.penalty-total-row strong {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--green-dark);
+}
+
 /* Animations */
 
 #players-list .list-item {
@@ -1394,17 +1625,17 @@ tbody tr:first-child .scorecard-total {
     border-radius: 14px;
   }
 
-  /* Score-invoer op telefoon: naam links, stepper en bonus rechts onder elkaar */
+  /* Score-invoer op telefoon: naam bovenaan, daaronder stepper + strafknop */
 
   .score-control-item {
-    grid-template-columns: minmax(0, 1fr) 152px;
+    grid-template-columns: 1fr;
     grid-template-areas:
-      "info controls"
-      "info bonus";
-    column-gap: 12px;
-    row-gap: 6px;
-    padding: 10px 12px;
-    align-items: center;
+      "info"
+      "controls"
+      "bonus";
+    row-gap: 10px;
+    padding: 14px;
+    align-items: stretch;
   }
 
   .score-player-info {
@@ -1415,38 +1646,53 @@ tbody tr:first-child .scorecard-total {
     white-space: normal;
     overflow: visible;
     line-height: 1.25;
+    font-size: 1.05rem;
   }
 
   .score-meta {
     white-space: normal;
     overflow: visible;
+    font-size: 0.85rem;
   }
 
   .score-controls {
     grid-area: controls;
-    grid-template-columns: 40px 1fr 40px;
-    gap: 6px;
+    grid-template-columns: 52px minmax(0, 1fr) 52px;
+    gap: 10px;
   }
 
   .score-step-btn {
-    width: 40px !important;
-    height: 40px;
-    min-height: 40px !important;
+    width: 52px !important;
+    height: 52px;
+    min-height: 52px !important;
+    font-size: 1.4rem !important;
   }
 
   .score-controls input {
-    min-height: 40px;
+    min-height: 52px;
+    font-size: 1.2rem;
+  }
+
+  .score-controls input::placeholder {
+    font-size: 0.8rem;
   }
 
   .bonus-control {
     grid-area: bonus;
-    grid-template-columns: 1fr 62px;
-    gap: 6px;
   }
 
-  .bonus-control label {
-    display: block;
-    text-align: right;
+  .penalty-btn {
+    min-height: 46px;
+    font-size: 0.95rem;
+    gap: 8px;
+  }
+
+  .penalty-btn-icon {
+    font-size: 1.1rem;
+  }
+
+  .penalty-btn-value {
+    font-size: 0.85rem;
   }
 
   .score-action-row button {
@@ -1493,16 +1739,72 @@ tbody tr:first-child .scorecard-total {
   }
 
   .scorecard-table {
-    padding: 6px;
+    padding: 5px;
   }
 
+  /* Scorekaart schaalt mee, geen horizontaal scrollen */
   table {
-    min-width: 560px;
+    font-size: 0.72rem;
+  }
+
+  thead th {
+    font-size: 0.56rem;
+    padding: 6px 2px;
+  }
+
+  tbody td,
+  tbody th {
+    padding: 7px 2px;
+  }
+
+  thead th:first-child,
+  tbody th:first-child {
+    width: 38%;
   }
 
   .scorecard-name {
-    min-width: 130px;
-    max-width: 160px;
+    gap: 6px;
+    padding-left: 4px !important;
+  }
+
+  .scorecard-rank {
+    width: 22px;
+    height: 22px;
+    font-size: 0.7rem;
+  }
+
+  .scorecard-player small {
+    font-size: 0.64rem;
+  }
+
+  .scorecard-total {
+    font-size: 0.85rem;
+  }
+
+  /* Penalty-modal op telefoon */
+  .penalty-chip-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .penalty-add-row {
+    grid-template-columns: 1fr 56px;
+    grid-template-areas:
+      "reason points"
+      "add add";
+    gap: 8px;
+  }
+
+  .penalty-add-row input:first-child {
+    grid-area: reason;
+  }
+
+  .penalty-points-input {
+    grid-area: points;
+  }
+
+  .penalty-add-row .small-action-btn {
+    grid-area: add;
+    width: 100%;
   }
 
   .modal-actions {
