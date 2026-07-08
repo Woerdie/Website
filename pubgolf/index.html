@@ -11,7 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" />
 
-  <link rel="stylesheet" href="./pubgolf.css?v=25" />
+  <link rel="stylesheet" href="./pubgolf.css?v=26" />
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
@@ -26,6 +26,12 @@
       <h1>Pubgolf scorekaart</h1>
       <p>Maak teams, vul scores in, voeg bonus- of strafpunten toe en deel de scorekaart met je vrienden.</p>
     </header>
+
+    <nav id="step-nav" class="step-nav hidden">
+      <button type="button" class="step-nav-btn" data-goto="players">Spelers</button>
+      <button type="button" class="step-nav-btn" data-goto="scores">Scores</button>
+      <button type="button" class="step-nav-btn" data-goto="standings">Stand</button>
+    </nav>
 
     <main>
       <section id="saved-games-section" class="card">
@@ -185,16 +191,26 @@
 
         <div class="score-action-row">
           <button id="edit-players-btn" class="outline-btn small-action-btn">← Spelers</button>
+          <button id="multi-penalty-btn" class="outline-btn small-action-btn">🍺 Straf meerdere</button>
+          <button id="view-standings-btn" class="outline-btn small-action-btn">Volledige stand ↓</button>
         </div>
+
+        <div id="mini-standings" class="mini-standings hidden"></div>
 
         <div class="form-group">
           <label for="hole-select">Hole kiezen</label>
           <select id="hole-select"></select>
         </div>
 
+        <div id="hole-progress" class="hole-progress"></div>
+
         <p class="hint">Vul de score in. Met de knop straf voeg je penalty's toe, bijvoorbeeld voor een gemorst glas.</p>
 
         <div id="score-list"></div>
+
+        <div class="score-bottom-row">
+          <button id="clear-hole-btn" class="danger-outline-btn small-action-btn">Deze hole wissen</button>
+        </div>
 
         <button id="save-scores-btn" class="main-next-btn">Scores opslaan & volgende hole</button>
       </section>
@@ -238,6 +254,22 @@
     </div>
   </div>
 
+  <div id="multi-penalty-backdrop" class="modal-backdrop hidden">
+    <div class="custom-modal penalty-modal">
+      <div id="multi-penalty-icon">🍺</div>
+      <h3 id="multi-penalty-title">Straf voor meerdere</h3>
+      <p class="penalty-subtitle">Kies een straf en vink aan wie het betreft.</p>
+
+      <div id="multi-penalty-reasons" class="multi-penalty-reasons"></div>
+      <div id="multi-penalty-targets" class="multi-penalty-targets"></div>
+
+      <div class="modal-actions">
+        <button id="multi-penalty-cancel-btn" class="outline-btn">Annuleren</button>
+        <button id="multi-penalty-confirm-btn">Toepassen</button>
+      </div>
+    </div>
+  </div>
+
   <div id="penalty-backdrop" class="modal-backdrop hidden">
     <div class="custom-modal penalty-modal">
       <div id="penalty-icon">🍺</div>
@@ -264,6 +296,6 @@
     </div>
   </div>
 
-  <script src="./pubgolf.js?v=28"></script>
+  <script src="./pubgolf.js?v=29"></script>
 </body>
 </html>
