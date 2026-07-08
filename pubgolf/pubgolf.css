@@ -449,7 +449,7 @@ button:disabled {
   box-shadow: none;
 }
 
-/* Share — compacte pill in plaats van blok */
+/* Share — compacte pill */
 
 .mini-share-box {
   display: inline-flex;
@@ -863,7 +863,7 @@ button:disabled {
   width: auto;
 }
 
-/* Score-invoer: rijen in plaats van hoge blokken */
+/* Score-invoer */
 
 #score-list,
 .score-list {
@@ -927,6 +927,16 @@ button:disabled {
   padding: 4px 6px;
 }
 
+/* Het woord "Score" als placeholder: klein en rustig */
+
+.score-controls input::placeholder {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
 .score-controls input:focus {
   box-shadow: var(--ring);
 }
@@ -960,11 +970,12 @@ button:disabled {
 
 .bonus-control label {
   margin: 0;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: var(--muted);
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   text-align: right;
+  line-height: 1.2;
 }
 
 .bonus-value-input {
@@ -1285,7 +1296,7 @@ tbody tr:first-child .scorecard-total {
   }
 }
 
-/* Tablet en kleiner: alles onder elkaar */
+/* Tablet en kleiner: alles onder elkaar, nette header */
 
 @media (max-width: 900px) {
   main {
@@ -1311,29 +1322,21 @@ tbody tr:first-child .scorecard-total {
   }
 
   .app-header {
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "back back"
+      "logo title"
+      "intro intro";
+    row-gap: 6px;
     padding-right: 0;
     margin-bottom: 18px;
   }
 
   .back-link {
-    position: static;
-    grid-area: none;
-    grid-column: 1 / -1;
-    grid-row: 1;
-    justify-self: start;
-    margin-bottom: 10px;
-  }
-
-  .app-header {
-    grid-template-areas:
-      "back back"
-      "logo title"
-      "intro intro";
-    row-gap: 4px;
-  }
-
-  .back-link {
     grid-area: back;
+    position: static;
+    justify-self: start;
+    margin-bottom: 4px;
   }
 
   .app-header p {
@@ -1380,24 +1383,49 @@ tbody tr:first-child .scorecard-total {
     display: none;
   }
 
-  /* Score-invoer op mobiel: naam boven, knoppen eronder in één rij */
+  h1 {
+    font-size: 1.4rem;
+  }
+
+  .logo {
+    width: 46px;
+    height: 46px;
+    font-size: 1.35rem;
+    border-radius: 14px;
+  }
+
+  /* Score-invoer op telefoon: naam links, stepper en bonus rechts onder elkaar */
 
   .score-control-item {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 152px;
     grid-template-areas:
-      "info"
-      "row";
-    gap: 8px;
+      "info controls"
+      "info bonus";
+    column-gap: 12px;
+    row-gap: 6px;
     padding: 10px 12px;
+    align-items: center;
   }
 
   .score-player-info {
     grid-area: info;
   }
 
+  .score-player-info strong {
+    white-space: normal;
+    overflow: visible;
+    line-height: 1.25;
+  }
+
+  .score-meta {
+    white-space: normal;
+    overflow: visible;
+  }
+
   .score-controls {
-    grid-area: row;
-    grid-template-columns: 40px 1fr 40px 76px;
+    grid-area: controls;
+    grid-template-columns: 40px 1fr 40px;
+    gap: 6px;
   }
 
   .score-step-btn {
@@ -1411,23 +1439,14 @@ tbody tr:first-child .scorecard-total {
   }
 
   .bonus-control {
-    display: contents;
+    grid-area: bonus;
+    grid-template-columns: 1fr 62px;
+    gap: 6px;
   }
 
   .bonus-control label {
-    display: none;
-  }
-
-  .bonus-value-input {
-    width: 100% !important;
-    min-height: 40px;
-    background: var(--gold-soft);
-    border-color: var(--gold-line);
-  }
-
-  .score-action-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+    display: block;
+    text-align: right;
   }
 
   .score-action-row button {
