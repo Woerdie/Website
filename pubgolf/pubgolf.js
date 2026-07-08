@@ -3,11 +3,15 @@ const SUPABASE_KEY = "sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
 
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+const STORAGE_KEY = "pubgolf_my_games";
+
 let currentGame = null;
 let players = [];
 let teams = [];
 let scores = [];
 let modalResolve = null;
+let realtimeChannel = null;
+let refreshTimer = null;
 
 const savedGamesSection = document.getElementById("saved-games-section");
 const savedGamesList = document.getElementById("saved-games-list");
@@ -127,6 +131,43 @@ function toggleTeamSize() {
   }
 }
 
+/* Mijn games op dit apparaat (localStorage) */
+
+function getMyGameIds() {
+  try {
+    const ids = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    return Array.isArray(ids) ? ids : [];
+  } catch {
+    return [];
+  }
+}
+
+function rememberGame(gameId) {
+  const ids = getMyGameIds().filter(id => id !== gameId);
+  ids.unshift(gameId);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(ids.slice(0, 20)));
+}
+
+function forgetGame(gameId) {
+  const ids = getMyGameIds().filter(id => id !== gameId);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+}
+
+function isEnded() {
+  return Boolean(currentGame) && currentGame.status === "ended";
+}
+
+async function blockIfEnded() {
+  if (!isEnded()) return false;
+
+  await showMessage(
+    "Dit spel is beëindigd. Je kunt geen wijzigingen meer maken.",
+    "Spel afgelopen"
+  );
+
+  return true;
+}
+
 function getEffectiveMode() {
   if (!currentGame) return "solo";
 
@@ -237,9 +278,17 @@ function getFirstIncompleteHole() {
 }
 
 async function loadSavedGames() {
+  const myIds = getMyGameIds();
+
+  if (myIds.length === 0) {
+    savedGamesList.innerHTML = `<p class="hint">Nog geen opgeslagen games op dit apparaat. Maak een spel aan of open een deellink.</p>`;
+    return;
+  }
+
   const { data, error } = await db
     .from("games")
     .select("*")
+    .in("id", myIds)
     .order("created_at", { ascending: false })
     .limit(12);
 
@@ -250,8 +299,14 @@ async function loadSavedGames() {
     return;
   }
 
+  // Verwijderde games opruimen uit localStorage
+  const foundIds = (data || []).map(game => game.id);
+  myIds
+    .filter(id => !foundIds.includes(id))
+    .forEach(id => forgetGame(id));
+
   if (!data || data.length === 0) {
-    savedGamesList.innerHTML = `<p class="hint">Nog geen opgeslagen games.</p>`;
+    savedGamesList.innerHTML = `<p class="hint">Nog geen opgeslagen games op dit apparaat. Maak een spel aan of open een deellink.</p>`;
     return;
   }
 
@@ -341,6 +396,8 @@ async function createGame() {
     return;
   }
 
+  rememberGame(data.id);
+
   window.location.href = `?game=${data.id}`;
 }
 
@@ -353,16 +410,33 @@ async function loadGame(gameId) {
 
   if (gameError) {
     console.error(gameError);
+    forgetGame(gameId);
     await showMessage("Game kon niet worden geladen.", "Niet gevonden");
     return;
   }
 
   currentGame = game;
 
+  rememberGame(game.id);
+
   await reloadGameData();
+
+  subscribeRealtime();
 
   savedGamesSection.classList.add("hidden");
   createGameSection.classList.add("hidden");
+
+  if (isEnded()) {
+    // Afgelopen spel: alleen de eindstand tonen
+    playersSection.classList.add("hidden");
+    scoreSection.classList.add("hidden");
+    standingsSection.classList.remove("hidden");
+
+    updateActiveGameInfo();
+    renderStandings();
+    return;
+  }
+
   playersSection.classList.remove("hidden");
   scoreSection.classList.add("hidden");
   standingsSection.classList.add("hidden");
@@ -370,6 +444,84 @@ async function loadGame(gameId) {
   updateActiveGameInfo();
   renderPlayers();
   renderTeams();
+}
+
+/* Realtime sync */
+
+function subscribeRealtime() {
+  if (realtimeChannel) {
+    db.removeChannel(realtimeChannel);
+    realtimeChannel = null;
+  }
+
+  realtimeChannel = db
+    .channel(`game-${currentGame.id}`)
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "scores", filter: `game_id=eq.${currentGame.id}` },
+      scheduleRemoteRefresh
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "players", filter: `game_id=eq.${currentGame.id}` },
+      scheduleRemoteRefresh
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "teams", filter: `game_id=eq.${currentGame.id}` },
+      scheduleRemoteRefresh
+    )
+    .on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "games", filter: `id=eq.${currentGame.id}` },
+      scheduleRemoteRefresh
+    )
+    .subscribe();
+}
+
+function scheduleRemoteRefresh() {
+  clearTimeout(refreshTimer);
+  refreshTimer = setTimeout(silentRefresh, 400);
+}
+
+async function silentRefresh() {
+  if (!currentGame) return;
+
+  const { data: game } = await db
+    .from("games")
+    .select("*")
+    .eq("id", currentGame.id)
+    .single();
+
+  if (game) {
+    currentGame = game;
+  }
+
+  await reloadGameData();
+
+  updateActiveGameInfo();
+
+  if (isEnded()) {
+    playersSection.classList.add("hidden");
+    scoreSection.classList.add("hidden");
+    standingsSection.classList.remove("hidden");
+    renderStandings();
+    return;
+  }
+
+  if (!playersSection.classList.contains("hidden")) {
+    renderPlayers();
+    renderTeams();
+  }
+
+  if (!scoreSection.classList.contains("hidden")) {
+    fillHoleSelect();
+    renderScoreInputsPreservingEdits();
+  }
+
+  if (!standingsSection.classList.contains("hidden")) {
+    renderStandings();
+  }
 }
 
 async function reloadGameData() {
@@ -416,13 +568,7 @@ async function reloadGameData() {
 async function refreshCurrentGame() {
   if (!currentGame) return;
 
-  await reloadGameData();
-
-  updateActiveGameInfo();
-  renderPlayers();
-  renderTeams();
-  renderScoreInputs();
-  renderStandings();
+  await silentRefresh();
 
   showToast("Bijgewerkt.", "success");
 }
@@ -490,6 +636,8 @@ async function shareGame(url) {
 }
 
 async function updateExpectedPlayers() {
+  if (await blockIfEnded()) return;
+
   const newAmount = Number(editExpectedPlayersInput.value);
 
   if (!newAmount || newAmount < 1) {
@@ -530,6 +678,8 @@ async function addPlayer() {
     await showMessage("Maak eerst een spel aan.", "Geen spel actief");
     return;
   }
+
+  if (await blockIfEnded()) return;
 
   const name = playerNameInput.value.trim();
 
@@ -615,6 +765,8 @@ function renderPlayers() {
 }
 
 async function editPlayerName(playerId) {
+  if (await blockIfEnded()) return;
+
   const player = players.find(player => player.id === playerId);
 
   if (!player) {
@@ -657,6 +809,8 @@ async function editPlayerName(playerId) {
 }
 
 async function deletePlayer(playerId) {
+  if (await blockIfEnded()) return;
+
   const player = players.find(player => player.id === playerId);
 
   if (!player) {
@@ -695,6 +849,8 @@ async function deletePlayer(playerId) {
 }
 
 async function makeRandomTeams() {
+  if (await blockIfEnded()) return;
+
   if (!needsTeams()) {
     await showMessage("Bij 1 of 2 spelers speel je automatisch iedereen apart.", "Geen teams nodig");
     return;
@@ -799,6 +955,8 @@ async function makeRandomTeams() {
 }
 
 async function openManualTeams() {
+  if (await blockIfEnded()) return;
+
   if (!needsTeams()) {
     await showMessage("Bij 1 of 2 spelers speel je automatisch iedereen apart.", "Geen teams nodig");
     return;
@@ -958,6 +1116,8 @@ function renderManualTeamBuilder() {
 }
 
 async function saveManualTeams() {
+  if (await blockIfEnded()) return;
+
   const teamNameInputs = manualTeamBuilder.querySelectorAll(".manual-team-name");
   const handicapInputs = manualTeamBuilder.querySelectorAll(".manual-team-handicap");
   const playerSelects = manualTeamBuilder.querySelectorAll(".manual-player-team");
@@ -1023,6 +1183,8 @@ async function saveManualTeams() {
 }
 
 async function adjustTeamHandicap(teamId) {
+  if (await blockIfEnded()) return;
+
   const team = teams.find(team => team.id === teamId);
 
   if (!team) {
@@ -1113,6 +1275,14 @@ function renderTeams() {
 }
 
 async function openScores() {
+  if (isEnded()) {
+    playersSection.classList.add("hidden");
+    scoreSection.classList.add("hidden");
+    standingsSection.classList.remove("hidden");
+    renderStandings();
+    return;
+  }
+
   if (players.length === 0) {
     await showMessage("Voeg eerst minimaal één speler toe.", "Geen spelers");
     return;
@@ -1239,6 +1409,35 @@ function renderScoreInputs() {
   });
 }
 
+// Zelfde als renderScoreInputs, maar lokaal ingevulde (nog niet opgeslagen)
+// waardes blijven staan bij een realtime update van iemand anders.
+function renderScoreInputsPreservingEdits() {
+  const edits = [];
+
+  scoreList.querySelectorAll("input").forEach(input => {
+    if (input.value !== input.defaultValue) {
+      edits.push({
+        selector: input.classList.contains("bonus-value-input")
+          ? ".bonus-value-input"
+          : ".score-value-input",
+        type: input.dataset.targetType,
+        id: input.dataset.targetId,
+        value: input.value
+      });
+    }
+  });
+
+  renderScoreInputs();
+
+  edits.forEach(edit => {
+    const input = scoreList.querySelector(
+      `${edit.selector}[data-target-type="${edit.type}"][data-target-id="${edit.id}"]`
+    );
+
+    if (input) input.value = edit.value;
+  });
+}
+
 function changeScoreValue(type, id, amount) {
   const input = scoreList.querySelector(
     `.score-value-input[data-target-type="${type}"][data-target-id="${id}"]`
@@ -1258,9 +1457,13 @@ async function saveScores() {
     return;
   }
 
+  if (await blockIfEnded()) return;
+
   const holeNumber = Number(holeSelect.value);
   const scoreInputs = scoreList.querySelectorAll(".score-value-input");
+  const targets = getScoreTargets();
   const rows = [];
+  const bonusOnly = [];
 
   scoreInputs.forEach(input => {
     const targetType = input.dataset.targetType;
@@ -1280,8 +1483,20 @@ async function saveScores() {
         score: Number(value),
         bonus
       });
+    } else if (bonus !== 0) {
+      const target = targets.find(target => target.id === targetId);
+      bonusOnly.push(target ? target.name : "onbekend");
     }
   });
+
+  if (bonusOnly.length > 0) {
+    const doorgaan = await showConfirm(
+      `Bij ${bonusOnly.join(", ")} is wel bonus/straf ingevuld maar geen score. Die bonus wordt nog niet opgeslagen. Toch doorgaan met de rest?`,
+      "Score ontbreekt"
+    );
+
+    if (!doorgaan) return;
+  }
 
   if (rows.length === 0) {
     await showMessage("Vul minimaal één score in.", "Geen score ingevuld");
@@ -1321,7 +1536,7 @@ async function saveScores() {
   }
 }
 
-async function upsertScore(row, holeNumber) {
+function findExistingScoreRow(row, holeNumber) {
   let query = db
     .from("scores")
     .select("id")
@@ -1335,7 +1550,11 @@ async function upsertScore(row, holeNumber) {
     query = query.eq("player_id", row.targetId);
   }
 
-  const { data: existing, error: findError } = await query;
+  return query;
+}
+
+async function upsertScore(row, holeNumber) {
+  const { data: existing, error: findError } = await findExistingScoreRow(row, holeNumber);
 
   if (findError) {
     return { error: findError };
@@ -1364,12 +1583,33 @@ async function upsertScore(row, holeNumber) {
       .eq("id", existing[0].id);
   }
 
-  return db
+  const insertResult = await db
     .from("scores")
     .insert(payload);
+
+  // Als iemand anders exact tegelijk dezelfde rij insertte (unique constraint),
+  // dan alsnog updaten in plaats van een fout tonen.
+  if (insertResult.error && insertResult.error.code === "23505") {
+    const { data: retry, error: retryError } = await findExistingScoreRow(row, holeNumber);
+
+    if (retryError) {
+      return { error: retryError };
+    }
+
+    if (retry && retry.length > 0) {
+      return db
+        .from("scores")
+        .update(payload)
+        .eq("id", retry[0].id);
+    }
+  }
+
+  return insertResult;
 }
 
 async function resetScores() {
+  if (await blockIfEnded()) return;
+
   const zeker = await showConfirm(
     "Weet je zeker dat je alle scores wilt wissen? Spelers en teams blijven staan.",
     "Scores resetten"
@@ -1416,14 +1656,21 @@ async function deleteGame() {
     return;
   }
 
+  forgetGame(currentGame.id);
+
   showToast("Spel is verwijderd.", "success");
 
   setTimeout(() => {
-    window.location.href = "/pubgolf/";
+    window.location.href = "./";
   }, 800);
 }
 
 async function endGame() {
+  if (isEnded()) {
+    await showMessage("Dit spel is al beëindigd.", "Spel afgelopen");
+    return;
+  }
+
   const standings = getStandings();
 
   if (standings.length === 0) {
@@ -1457,6 +1704,11 @@ async function endGame() {
   currentGame.status = "ended";
   currentGame.ended_at = new Date().toISOString();
 
+  // Vanaf nu alleen nog de eindstand tonen
+  playersSection.classList.add("hidden");
+  scoreSection.classList.add("hidden");
+  standingsSection.classList.remove("hidden");
+
   updateActiveGameInfo();
   renderStandings();
 
@@ -1484,11 +1736,12 @@ function renderLeaderBox() {
   }
 
   const leader = standings[0];
+  const ended = isEnded();
 
   leaderBox.classList.remove("hidden");
   leaderBox.innerHTML = `
     <div>
-      <span>Huidige leider</span>
+      <span>${ended ? "Eindstand · Winnaar" : "Huidige leider"}</span>
       <strong>🏆 ${escapeHtml(leader.name)}</strong>
       <small>${leader.total} punten · laagste score wint</small>
     </div>
