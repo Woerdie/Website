@@ -542,13 +542,25 @@ async function silentRefresh() {
   }
 
   if (!scoreSection.classList.contains("hidden")) {
-    fillHoleSelect();
-    renderScoreInputsPreservingEdits();
+    if (scoreListHasEdits()) {
+      // Iemand is zelf aan het invullen: blijf op deze hole, behoud invoer
+      fillHoleSelect();
+      renderScoreInputsPreservingEdits();
+    } else {
+      // Niks ingevuld: gewoon bijwerken, hole-keuze blijft staan
+      fillHoleSelect();
+      renderScoreInputs();
+    }
   }
 
   if (!standingsSection.classList.contains("hidden")) {
     renderStandings();
   }
+}
+
+function scoreListHasEdits() {
+  return Array.from(scoreList.querySelectorAll("input"))
+    .some(input => input.value !== input.defaultValue);
 }
 
 async function reloadGameData() {
@@ -716,6 +728,19 @@ async function updateScoreMode() {
   }
 
   const newMode = editScoreModeInput.value;
+
+  // Waarschuwen als er al scores staan: die tellen in de andere modus niet mee
+  if (scores.length > 0 && newMode !== (currentGame.score_mode || "player")) {
+    const doorgaan = await showConfirm(
+      "Er zijn al scores ingevuld. Als je nu wisselt, tellen de al ingevulde scores niet mee in de nieuwe telling (ze blijven wel bewaard). Wil je toch wisselen?",
+      "Let op: scores ingevuld"
+    );
+
+    if (!doorgaan) {
+      editScoreModeInput.value = currentGame.score_mode || "player";
+      return;
+    }
+  }
 
   const { error } = await db
     .from("games")
