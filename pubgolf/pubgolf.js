@@ -14,7 +14,6 @@ let realtimeChannel = null;
 let refreshTimer = null;
 
 // Dom selecties
-const loadingScreen = document.getElementById("loading-screen");
 const savedGamesSection = document.getElementById("saved-games-section");
 const savedGamesList = document.getElementById("saved-games-list");
 const createGameSection = document.getElementById("create-game-section");
@@ -111,35 +110,13 @@ init();
 
 async function init() {
     toggleTeamSize();
-    try {
-        const gameId = new URLSearchParams(window.location.search).get("game");
-        if (gameId) {
-            await loadGame(gameId);
-        } else {
-            createGameSection.classList.remove("hidden");
-            savedGamesSection.classList.remove("hidden");
-            await loadSavedGames();
-        }
-    } catch (error) {
-        console.error("Er ging iets mis tijdens het opstarten:", error);
-    } finally {
-        // De 'finally' zorgt ervoor dat dit ALTIJD wordt uitgevoerd,
-        // ook als er hierboven een database-fout optreedt.
-        hideLoadingScreen();
-    }
-}
-    
-    // Verberg het laadscherm pas als alles volledig klaar staat
-    hideLoadingScreen();
-}
-
-function hideLoadingScreen() {
-    if (loadingScreen) {
-        loadingScreen.classList.add("fade-out");
-        // Haal het na de animatie helemaal uit de DOM structuur zodat knoppen klikbaar zijn
-        setTimeout(() => {
-            loadingScreen.style.display = "none";
-        }, 400);
+    const gameId = new URLSearchParams(window.location.search).get("game");
+    if (gameId) {
+        await loadGame(gameId);
+    } else {
+        createGameSection.classList.remove("hidden");
+        savedGamesSection.classList.remove("hidden");
+        await loadSavedGames();
     }
 }
 
@@ -615,7 +592,7 @@ function backToPlayers() {
 
 function fillHoleSelect(selectFirstIncomplete = false) {
     const currentVal = holeSelect.value;
-    holeSelect.innerHTML = "";
+    textVal = holeSelect.innerHTML = "";
     for (let i = 1; i <= Number(currentGame.holes); i++) {
         const opt = document.createElement("option");
         opt.value = i;
