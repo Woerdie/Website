@@ -915,8 +915,9 @@ function renderToetsRow(){
   groupedExams().forEach(([name,exams])=>{
     const stats=subjectStats(name);
     const card=document.createElement("div");
-
     card.className="chip";
+
+    const studyYear=exams.find(exam=>exam.study_year)?.study_year||null;
 
     let attempts="";
 
@@ -941,7 +942,9 @@ function renderToetsRow(){
         <div class="exam-attempt-line">
           <div>
             <strong>Kans ${exam.attempt}</strong>
-            <span class="exam-attempt-date"> · ${longDate(exam.exam_date).replace(/^\w+\s/,"")}</span>
+            <span class="exam-attempt-date">
+              · ${longDate(exam.exam_date).replace(/^\w+\s/,"")}
+            </span>
           </div>
           <div class="exam-attempt-count ${cls}">${text}</div>
         </div>
@@ -969,8 +972,13 @@ function renderToetsRow(){
     card.innerHTML=`
       <div class="exam-card-top">
         <div class="name">${escapeHtml(name)}</div>
-        <span class="exam-priority ${stats.level}">${stats.label}</span>
+
+        <div class="exam-badges">
+          ${studyYear?`<span class="exam-year">Jaar ${studyYear}</span>`:""}
+          <span class="exam-priority ${stats.level}">${stats.label}</span>
+        </div>
       </div>
+
       <div class="exam-attempts">${attempts}</div>
       ${progress}
     `;
