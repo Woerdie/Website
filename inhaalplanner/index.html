@@ -158,21 +158,62 @@ function daysBetween(a, b){ return Math.round((parse(b) - parse(a)) / 86400000);
 const el = id => document.getElementById(id);
 
 // =================== BOOT ===================
+function fatal(titel, tekst){
+  const w = el("configWarn");
+  const h = w.querySelector("h2");
+  const p = w.querySelector("p");
+  if (h) h.textContent = titel;
+  if (p) p.innerHTML = tekst;
+  el("authScreen").classList.add("hidden");
+  el("appScreen").classList.add("hidden");
+  w.classList.remove("hidden");
+}
+
+function boot(){
+  try {
+    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+      auth: { storage: safeStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+    });
+    initAuthUI();
+    sb.auth.getSession().then(({ data }) => {
+      if (data.session) enterApp(data.session.user);
+      else showAuth();
+    });
+    sb.auth.onAuthStateChange((_e, session) => {
+      if (session) enterApp(session.user);
+      else showAuth();
+    });
+  } catch (e){
+    fatal("Er ging iets mis bij het starten", "Foutmelding: " + (e && e.message ? e.message : e));
+  }
+}
+
+// Laadt de Supabase-bibliotheek; probeert een tweede bron als de eerste faalt.
+function laadSupabase(klaar, mislukt){
+  if (typeof supabase !== "undefined"){ klaar(); return; }
+  const bronnen = [
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
+    "https://unpkg.com/@supabase/supabase-js@2",
+    "https://esm.sh/@supabase/supabase-js@2?bundle"
+  ];
+  let i = 0;
+  (function volgende(){
+    if (i >= bronnen.length){ mislukt(); return; }
+    const s = document.createElement("script");
+    s.src = bronnen[i++];
+    s.onload = () => { typeof supabase !== "undefined" ? klaar() : volgende(); };
+    s.onerror = volgende;
+    document.head.appendChild(s);
+  })();
+}
+
 if (!configured) {
-  el("configWarn").classList.remove("hidden");
+  fatal("Even instellen", "Vul bovenin index.html je eigen SUPABASE_URL en SUPABASE_ANON_KEY in.");
 } else {
-  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: { storage: safeStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
-  });
-  initAuthUI();
-  sb.auth.getSession().then(({ data }) => {
-    if (data.session) enterApp(data.session.user);
-    else showAuth();
-  });
-  sb.auth.onAuthStateChange((_e, session) => {
-    if (session) enterApp(session.user);
-    else showAuth();
-  });
+  laadSupabase(boot, () => fatal(
+    "Supabase kon niet geladen worden",
+    "De bibliotheek werd geblokkeerd of niet gevonden. Zet je VPN of adblocker uit voor deze pagina en laad opnieuw."
+  ));
 }
 
 // =================== AUTH ===================
