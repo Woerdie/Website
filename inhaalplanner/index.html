@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Inhaalplanner</title>
 
@@ -13,9 +13,8 @@
 <link rel="stylesheet" href="style.css">
 
 <style>
-
 /* =========================================================
-   EXTRA STYLING VOOR TOETSEN
+   EXTRA STYLING
    ========================================================= */
 
 .exam-toolbar {
@@ -51,12 +50,12 @@
 
 
 /* =========================================================
-   TOETSEN BOVENAAN
+   TOETSKAARTEN
    ========================================================= */
 
 .toetsrow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
   gap: 12px;
   margin-bottom: 18px;
 }
@@ -66,11 +65,41 @@
   height: auto;
 }
 
+.exam-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.exam-priority {
+  flex-shrink: 0;
+  padding: 4px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.exam-priority.high {
+  background: #fff0ed;
+  color: #b42318;
+}
+
+.exam-priority.medium {
+  background: #fff6e5;
+  color: #9a6700;
+}
+
+.exam-priority.low {
+  background: #ebf8ef;
+  color: #227447;
+}
+
 .exam-attempts {
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin-top: 8px;
+  margin-top: 9px;
 }
 
 .exam-attempt-line {
@@ -78,10 +107,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-
   padding-top: 6px;
   border-top: 1px solid rgba(0,0,0,.06);
-
   font-size: 12px;
 }
 
@@ -111,33 +138,64 @@
   color: #8b929c;
 }
 
-.exam-task-progress {
+.exam-progress {
   margin-top: 10px;
   padding-top: 8px;
-
   border-top: 1px solid rgba(0,0,0,.07);
-
   font-size: 12px;
   color: #66707e;
 }
 
+.progress-bar {
+  height: 5px;
+  background: #edf0f3;
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: currentColor;
+  border-radius: 999px;
+}
+
 
 /* =========================================================
-   MODAL
+   DAGTOTAAL
+   ========================================================= */
+
+.day-hours {
+  margin-top: 5px;
+  font-size: 12px;
+  color: #66707e;
+  font-weight: 600;
+}
+
+.task-hours {
+  display: inline-flex;
+  margin-top: 4px;
+  padding: 2px 6px;
+  background: #f1f4f7;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+
+/* =========================================================
+   MODALS
    ========================================================= */
 
 .modal-backdrop {
   position: fixed;
   inset: 0;
   z-index: 9999;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   padding: 20px;
-
-  background: rgba(20, 25, 35, .50);
+  background: rgba(20,25,35,.50);
 }
 
 .modal-backdrop.hidden {
@@ -147,29 +205,22 @@
 .modal {
   width: min(720px, 100%);
   max-height: 88vh;
-
   overflow-y: auto;
-
   background: #fff;
   border-radius: 18px;
-
-  box-shadow:
-    0 24px 70px rgba(0, 0, 0, .20);
-
+  box-shadow: 0 24px 70px rgba(0,0,0,.20);
   padding: 24px;
 }
 
 .modal-small {
-  width: min(520px, 100%);
+  width: min(540px, 100%);
 }
 
 .modal-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-
   gap: 20px;
-
   margin-bottom: 20px;
 }
 
@@ -186,12 +237,9 @@
 .modal-close {
   width: 38px;
   height: 38px;
-
   border-radius: 50%;
   border: 1px solid #d8dde5;
-
   background: #fff;
-
   font-size: 22px;
   cursor: pointer;
 }
@@ -200,11 +248,6 @@
   background: #f5f7fa;
 }
 
-
-/* =========================================================
-   FORM
-   ========================================================= */
-
 .modal-field {
   margin-bottom: 16px;
 }
@@ -212,7 +255,6 @@
 .modal-field label {
   display: block;
   margin-bottom: 6px;
-
   font-size: 13px;
   font-weight: 600;
 }
@@ -220,35 +262,116 @@
 .modal-field input,
 .modal-field select {
   width: 100%;
-
   box-sizing: border-box;
-
   padding: 11px 12px;
-
   border-radius: 9px;
   border: 1px solid #d5dae2;
-
   font-family: inherit;
   font-size: 14px;
+}
+
+.modal-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
 }
 
 .modal-actions {
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-
   margin-top: 20px;
 }
 
 
 /* =========================================================
-   TOETSEN BEHEREN
+   STUDIEPLANNER
+   ========================================================= */
+
+.plan-summary {
+  padding: 14px;
+  border-radius: 12px;
+  background: #f5f8fb;
+  margin: 15px 0;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.plan-summary strong {
+  color: #1f2937;
+}
+
+.skip-title {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.weekday-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 16px;
+}
+
+.weekday-btn {
+  border: 1px solid #d9dee5;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.weekday-btn.skip {
+  background: #252b35;
+  color: #fff;
+  border-color: #252b35;
+}
+
+.skip-date-row {
+  display: flex;
+  gap: 8px;
+}
+
+.skip-date-row input {
+  flex: 1;
+}
+
+.skip-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.skip-date-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #f0f2f5;
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 11px;
+}
+
+.skip-date-chip button {
+  border: 0;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+
+/* =========================================================
+   EXAMS BEHEREN
    ========================================================= */
 
 .exam-manage-list {
   display: flex;
   flex-direction: column;
-
   gap: 10px;
 }
 
@@ -260,10 +383,8 @@
 
 .exam-manage-group-title {
   padding: 13px 14px;
-
   font-size: 14px;
   font-weight: 700;
-
   background: #f7f9fb;
 }
 
@@ -271,21 +392,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-
   gap: 15px;
-
   padding: 12px 14px;
-
   border-top: 1px solid #e8ebef;
-}
-
-.exam-manage-info {
-  min-width: 0;
-}
-
-.exam-manage-name {
-  font-weight: 600;
-  font-size: 14px;
 }
 
 .exam-manage-meta {
@@ -296,47 +405,35 @@
 .exam-empty {
   width: 100%;
   box-sizing: border-box;
-
   padding: 20px;
-
   border-radius: 12px;
-
   background: #f6f8fa;
-
   color: #727b88;
-
   text-align: center;
   font-size: 14px;
 }
 
+@media (max-width: 600px) {
+  .modal-row {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
 
 <body>
 
-
-<!-- =========================================================
-     CONFIG WARNING
-     ========================================================= -->
-
 <div id="configWarn" class="config-warn hidden">
   <h2>Even instellen</h2>
-  <p>
-    Vul bovenin dit bestand je eigen
-    <code>SUPABASE_URL</code>
-    en
-    <code>SUPABASE_ANON_KEY</code>
-    in.
-  </p>
+  <p>Controleer de Supabase instellingen.</p>
 </div>
 
 
 <!-- =========================================================
-     AUTH
+     LOGIN
      ========================================================= -->
 
 <div id="authScreen" class="auth-wrap hidden">
-
   <div class="auth">
 
     <h1>Inhaalplanner</h1>
@@ -347,50 +444,26 @@
 
     <div class="field">
       <label for="email">E-mail</label>
-
-      <input
-        id="email"
-        type="email"
-        autocomplete="email"
-        placeholder="jij@voorbeeld.nl"
-      />
+      <input id="email" type="email" autocomplete="email" placeholder="jij@voorbeeld.nl">
     </div>
 
     <div class="field">
       <label for="password">Wachtwoord</label>
-
-      <input
-        id="password"
-        type="password"
-        autocomplete="current-password"
-        placeholder="Minimaal 6 tekens"
-      />
+      <input id="password" type="password" autocomplete="current-password" placeholder="Minimaal 6 tekens">
     </div>
 
-    <button
-      class="btn btn-primary"
-      id="authBtn"
-    >
+    <button class="btn btn-primary" id="authBtn">
       Inloggen
     </button>
 
-    <div
-      id="authMsg"
-      class="msg"
-    ></div>
+    <div id="authMsg" class="msg"></div>
 
-    <p
-      class="switch"
-      id="authSwitch"
-    >
+    <p class="switch" id="authSwitch">
       Nog geen account?
-      <a id="switchLink">
-        Maak er een aan
-      </a>
+      <a id="switchLink">Maak er een aan</a>
     </p>
 
   </div>
-
 </div>
 
 
@@ -403,137 +476,67 @@
   <div class="topbar">
 
     <div class="brand">
-
-      <h1>
-        Inhaalplanner
-      </h1>
-
-      <span class="tag">
-        grip op je studievoortgang
-      </span>
-
+      <h1>Inhaalplanner</h1>
+      <span class="tag">grip op je studievoortgang</span>
     </div>
 
     <div class="topbar-right">
-
-      <span
-        id="userEmail"
-        class="tnum"
-      ></span>
-
-      <button
-        class="btn"
-        id="logoutBtn"
-      >
-        Uitloggen
-      </button>
-
+      <span id="userEmail" class="tnum"></span>
+      <button class="btn" id="logoutBtn">Uitloggen</button>
     </div>
 
   </div>
 
-
   <div class="wrap">
-
-
-    <!-- =====================================================
-         TOETS KNOPPEN
-         ===================================================== -->
 
     <div class="exam-toolbar">
 
-      <button
-        class="btn btn-primary"
-        id="addYear2Btn"
-      >
+      <button class="btn btn-primary" id="studyPlanBtn">
+        ⚡ Studieplan maken
+      </button>
+
+      <button class="btn btn-secondary" id="addYear2Btn">
         + Alle Jaar 2 toetsen toevoegen
       </button>
 
-      <button
-        class="btn btn-secondary"
-        id="customExamBtn"
-      >
+      <button class="btn btn-secondary" id="customExamBtn">
         + Andere toets toevoegen
       </button>
 
-      <button
-        class="btn btn-secondary"
-        id="manageExamsBtn"
-      >
+      <button class="btn btn-secondary" id="manageExamsBtn">
         Mijn toetsen beheren
       </button>
 
     </div>
 
+    <div class="toetsrow" id="toetsRow"></div>
 
-    <!-- =====================================================
-         TOETSEN
-         ===================================================== -->
-
-    <div
-      class="toetsrow"
-      id="toetsRow"
-    ></div>
-
-
-    <!-- =====================================================
-         GEMISTE TAKEN
-         ===================================================== -->
-
-    <div
-      class="banner"
-      id="missedBanner"
-    >
-
-      <span
-        class="txt"
-        id="missedTxt"
-      ></span>
-
-      <button
-        class="btn btn-missed"
-        id="redistributeBtn"
-      >
+    <div class="banner" id="missedBanner">
+      <span class="txt" id="missedTxt"></span>
+      <button class="btn btn-missed" id="redistributeBtn">
         Verdeel opnieuw
       </button>
-
     </div>
-
 
     <div class="grid">
 
-
-      <!-- ===================================================
-           KALENDER
-           =================================================== -->
+      <!-- KALENDER -->
 
       <div class="panel">
 
         <div class="cal-head">
 
-          <button
-            class="nav-btn"
-            id="prevMonth"
-            aria-label="Vorige maand"
-          >
+          <button class="nav-btn" id="prevMonth">
             &lsaquo;
           </button>
 
-          <span
-            class="month"
-            id="monthLabel"
-          ></span>
+          <span class="month" id="monthLabel"></span>
 
-          <button
-            class="nav-btn"
-            id="nextMonth"
-            aria-label="Volgende maand"
-          >
+          <button class="nav-btn" id="nextMonth">
             &rsaquo;
           </button>
 
         </div>
-
 
         <div class="weekdays">
           <span>ma</span>
@@ -545,41 +548,26 @@
           <span>zo</span>
         </div>
 
-
-        <div
-          class="days"
-          id="calDays"
-        ></div>
+        <div class="days" id="calDays"></div>
 
       </div>
 
 
-      <!-- ===================================================
-           DAGPANEEL
-           =================================================== -->
+      <!-- DAG -->
 
       <div class="panel">
 
         <div class="day-head">
 
-          <div
-            class="date"
-            id="dayDate"
-          ></div>
+          <div class="date" id="dayDate"></div>
 
-          <div
-            class="toetsline"
-            id="dayToets"
-          ></div>
+          <div class="day-hours" id="dayHours"></div>
+
+          <div class="toetsline" id="dayToets"></div>
 
         </div>
 
-
-        <div
-          class="tasklist"
-          id="taskList"
-        ></div>
-
+        <div class="tasklist" id="taskList"></div>
 
         <div class="add">
 
@@ -587,24 +575,24 @@
             id="newTitle"
             type="text"
             placeholder="Wat ga je die dag doen?"
-          />
-
+          >
 
           <div class="add-row">
 
             <select id="newSubject">
-
-              <option value="">
-                Geen vak
-              </option>
-
+              <option value="">Geen vak</option>
             </select>
 
-
-            <button
-              class="btn btn-primary"
-              id="addBtn"
+            <input
+              id="newHours"
+              type="number"
+              min="0"
+              step="0.25"
+              placeholder="Uur"
+              style="max-width:90px;"
             >
+
+            <button class="btn btn-primary" id="addBtn">
               Toevoegen
             </button>
 
@@ -621,36 +609,22 @@
 </div>
 
 
-
 <!-- =========================================================
-     MODAL: EIGEN TOETS TOEVOEGEN
+     STUDIEPLAN MODAL
      ========================================================= -->
 
-<div
-  id="customExamModal"
-  class="modal-backdrop hidden"
->
+<div id="studyPlanModal" class="modal-backdrop hidden">
 
   <div class="modal modal-small">
 
     <div class="modal-head">
 
       <div>
-
-        <h2>
-          Andere toets toevoegen
-        </h2>
-
-        <p>
-          Voeg zelf een toets of herkansing toe.
-        </p>
-
+        <h2>Studieplan maken</h2>
+        <p>De planner verdeelt je leeruren automatisch vóór je toets.</p>
       </div>
 
-      <button
-        class="modal-close"
-        data-close="customExamModal"
-      >
+      <button class="modal-close" data-close="studyPlanModal">
         ×
       </button>
 
@@ -659,108 +633,215 @@
 
     <div class="modal-field">
 
-      <label for="customExamName">
-        Naam van de toets
+      <label for="planSubject">
+        Vak
       </label>
 
-      <input
-        id="customExamName"
-        type="text"
-        placeholder="Bijvoorbeeld HRM Basis"
-      />
+      <select id="planSubject"></select>
+
+    </div>
+
+
+    <div class="modal-row">
+
+      <div class="modal-field">
+
+        <label for="planTotalHours">
+          Hoeveel uur totaal?
+        </label>
+
+        <input
+          id="planTotalHours"
+          type="number"
+          min="0.25"
+          step="0.25"
+          value="10"
+        >
+
+      </div>
+
+
+      <div class="modal-field">
+
+        <label for="planHoursPerDay">
+          Maximaal per dag
+        </label>
+
+        <input
+          id="planHoursPerDay"
+          type="number"
+          min="0.25"
+          step="0.25"
+          value="2"
+        >
+
+      </div>
 
     </div>
 
 
     <div class="modal-field">
 
-      <label for="customExamDate">
-        Toetsdatum
+      <label for="planStartDate">
+        Beginnen vanaf
       </label>
 
       <input
-        id="customExamDate"
+        id="planStartDate"
         type="date"
-      />
+      >
+
+    </div>
+
+
+    <div class="skip-title">
+      Deze dagen standaard overslaan
+    </div>
+
+    <div class="weekday-selector">
+
+      <button type="button" class="weekday-btn" data-day="1">
+        Ma
+      </button>
+
+      <button type="button" class="weekday-btn" data-day="2">
+        Di
+      </button>
+
+      <button type="button" class="weekday-btn" data-day="3">
+        Wo
+      </button>
+
+      <button type="button" class="weekday-btn" data-day="4">
+        Do
+      </button>
+
+      <button type="button" class="weekday-btn" data-day="5">
+        Vr
+      </button>
+
+      <button type="button" class="weekday-btn" data-day="6">
+        Za
+      </button>
+
+      <button type="button" class="weekday-btn" data-day="0">
+        Zo
+      </button>
 
     </div>
 
 
     <div class="modal-field">
 
-      <label for="customExamAttempt">
-        Kans
+      <label>
+        Losse dag overslaan
       </label>
 
-      <select id="customExamAttempt">
+      <div class="skip-date-row">
 
-        <option value="1">
-          Kans 1
-        </option>
+        <input
+          id="skipDateInput"
+          type="date"
+        >
 
-        <option value="2">
-          Kans 2
-        </option>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          id="addSkipDateBtn"
+        >
+          Overslaan
+        </button>
 
-        <option value="3">
-          Kans 3
-        </option>
+      </div>
 
-        <option value="4">
-          Kans 4
-        </option>
-
-      </select>
+      <div class="skip-dates" id="skipDatesList"></div>
 
     </div>
 
 
-    <div class="modal-field">
-
-      <label for="customExamYear">
-        Studiejaar
-      </label>
-
-      <select id="customExamYear">
-
-        <option value="">
-          Niet aangeven
-        </option>
-
-        <option value="1">
-          Jaar 1
-        </option>
-
-        <option value="2">
-          Jaar 2
-        </option>
-
-        <option value="3">
-          Jaar 3
-        </option>
-
-        <option value="4">
-          Jaar 4
-        </option>
-
-      </select>
-
-    </div>
+    <div class="plan-summary" id="planSummary"></div>
 
 
     <div class="modal-actions">
 
-      <button
-        class="btn btn-secondary"
-        data-close="customExamModal"
-      >
+      <button class="btn btn-secondary" data-close="studyPlanModal">
         Annuleren
       </button>
 
-      <button
-        class="btn btn-primary"
-        id="saveCustomExamBtn"
-      >
+      <button class="btn btn-primary" id="generatePlanBtn">
+        Planning maken
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+<!-- =========================================================
+     EIGEN TOETS
+     ========================================================= -->
+
+<div id="customExamModal" class="modal-backdrop hidden">
+
+  <div class="modal modal-small">
+
+    <div class="modal-head">
+
+      <div>
+        <h2>Andere toets toevoegen</h2>
+        <p>Voeg zelf een toets of herkansing toe.</p>
+      </div>
+
+      <button class="modal-close" data-close="customExamModal">
+        ×
+      </button>
+
+    </div>
+
+    <div class="modal-field">
+      <label for="customExamName">Naam</label>
+      <input id="customExamName" type="text">
+    </div>
+
+    <div class="modal-field">
+      <label for="customExamDate">Datum</label>
+      <input id="customExamDate" type="date">
+    </div>
+
+    <div class="modal-field">
+      <label for="customExamAttempt">Kans</label>
+
+      <select id="customExamAttempt">
+        <option value="1">Kans 1</option>
+        <option value="2">Kans 2</option>
+        <option value="3">Kans 3</option>
+        <option value="4">Kans 4</option>
+      </select>
+
+    </div>
+
+    <div class="modal-field">
+      <label for="customExamYear">Studiejaar</label>
+
+      <select id="customExamYear">
+        <option value="">Niet aangeven</option>
+        <option value="1">Jaar 1</option>
+        <option value="2">Jaar 2</option>
+        <option value="3">Jaar 3</option>
+        <option value="4">Jaar 4</option>
+      </select>
+
+    </div>
+
+    <div class="modal-actions">
+
+      <button class="btn btn-secondary" data-close="customExamModal">
+        Annuleren
+      </button>
+
+      <button class="btn btn-primary" id="saveCustomExamBtn">
         Toets toevoegen
       </button>
 
@@ -771,55 +852,35 @@
 </div>
 
 
-
 <!-- =========================================================
-     MODAL: TOETSEN BEHEREN
+     TOETSEN BEHEREN
      ========================================================= -->
 
-<div
-  id="manageExamsModal"
-  class="modal-backdrop hidden"
->
+<div id="manageExamsModal" class="modal-backdrop hidden">
 
   <div class="modal">
 
     <div class="modal-head">
 
       <div>
-
-        <h2>
-          Mijn toetsen
-        </h2>
-
-        <p>
-          Hier kun je een toetsmoment verwijderen dat je niet meer nodig hebt.
-        </p>
-
+        <h2>Mijn toetsen</h2>
+        <p>Verwijder toetsmomenten die je niet meer nodig hebt.</p>
       </div>
 
-      <button
-        class="modal-close"
-        data-close="manageExamsModal"
-      >
+      <button class="modal-close" data-close="manageExamsModal">
         ×
       </button>
 
     </div>
 
-
-    <div
-      class="exam-manage-list"
-      id="manageExamList"
-    ></div>
+    <div class="exam-manage-list" id="manageExamList"></div>
 
   </div>
 
 </div>
 
 
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 
 <script>
 
@@ -835,7 +896,7 @@ const SUPABASE_ANON_KEY =
 
 
 /* =========================================================
-   STORAGE
+   STATE
    ========================================================= */
 
 const memStore = {};
@@ -843,61 +904,37 @@ const memStore = {};
 const safeStorage = {
 
   getItem(k) {
-
     try {
-
-      return window.localStorage.getItem(k);
-
-    } catch(e) {
-
-      return k in memStore
-        ? memStore[k]
-        : null;
-
+      return localStorage.getItem(k);
+    } catch {
+      return memStore[k] ?? null;
     }
-
   },
 
-
-  setItem(k, v) {
-
+  setItem(k,v) {
     try {
-
-      window.localStorage.setItem(k, v);
-
-    } catch(e) {
-
+      localStorage.setItem(k,v);
+    } catch {
       memStore[k] = v;
-
     }
-
   },
-
 
   removeItem(k) {
-
     try {
-
-      window.localStorage.removeItem(k);
-
-    } catch(e) {
-
+      localStorage.removeItem(k);
+    } catch {
       delete memStore[k];
-
     }
-
   }
 
 };
 
 
-/* =========================================================
-   STATE
-   ========================================================= */
-
 let sb = null;
 
 let mode = "login";
+
+let eventsBound = false;
 
 const state = {
 
@@ -913,126 +950,97 @@ const state = {
 
   viewMonth: 0,
 
-  selected: ""
+  selected: "",
+
+  skipWeekdays: new Set(),
+
+  skipDates: new Set()
 
 };
 
 
-const configured =
-  SUPABASE_URL &&
-  !SUPABASE_URL.startsWith("JOUW") &&
-  SUPABASE_ANON_KEY &&
-  !SUPABASE_ANON_KEY.startsWith("JOUW");
-
-
 /* =========================================================
-   DATE HELPERS
+   HELPERS
    ========================================================= */
 
+const el = id => document.getElementById(id);
+
 function pad(n) {
-
-  return String(n).padStart(2, "0");
-
+  return String(n).padStart(2,"0");
 }
-
 
 function ymd(d) {
 
   return (
     d.getFullYear() +
     "-" +
-    pad(d.getMonth() + 1) +
+    pad(d.getMonth()+1) +
     "-" +
     pad(d.getDate())
   );
 
 }
 
-
 function today() {
-
   return ymd(new Date());
-
 }
-
 
 function parse(s) {
 
-  const [y, m, d] =
+  const [y,m,d] =
     s.split("-").map(Number);
 
-  return new Date(y, m - 1, d);
+  return new Date(y,m-1,d);
 
 }
 
-
-function addDays(s, n) {
+function addDays(s,n) {
 
   const d = parse(s);
 
-  d.setDate(
-    d.getDate() + n
-  );
+  d.setDate(d.getDate()+n);
 
   return ymd(d);
 
 }
 
+function daysBetween(a,b) {
 
-function rangeInclusive(a, b) {
-
-  const out = [];
-
-  let cur = a;
-
-  let guard = 0;
-
-
-  while (
-    cur <= b &&
-    guard < 400
-  ) {
-
-    out.push(cur);
-
-    cur = addDays(cur, 1);
-
-    guard++;
-
-  }
-
-
-  return out;
+  return Math.round(
+    (parse(b)-parse(a))/86400000
+  );
 
 }
 
+function roundHours(v) {
+
+  return Math.round(v*4)/4;
+
+}
+
+function formatHours(v) {
+
+  const n = Number(v || 0);
+
+  if (n === 1)
+    return "1 uur";
+
+  return n.toLocaleString(
+    "nl-NL",
+    { maximumFractionDigits: 2 }
+  ) + " uur";
+
+}
 
 const MONTHS = [
-  "januari",
-  "februari",
-  "maart",
-  "april",
-  "mei",
-  "juni",
-  "juli",
-  "augustus",
-  "september",
-  "oktober",
-  "november",
-  "december"
+  "januari","februari","maart","april","mei","juni",
+  "juli","augustus","september","oktober","november","december"
 ];
-
 
 const DAYS_FULL = [
-  "zondag",
-  "maandag",
-  "dinsdag",
-  "woensdag",
-  "donderdag",
-  "vrijdag",
-  "zaterdag"
+  "zondag","maandag","dinsdag","woensdag",
+  "donderdag","vrijdag","zaterdag"
 ];
-
 
 function longDate(s) {
 
@@ -1048,20 +1056,6 @@ function longDate(s) {
 
 }
 
-
-function daysBetween(a, b) {
-
-  return Math.round(
-    (
-      parse(b) -
-      parse(a)
-    ) /
-    86400000
-  );
-
-}
-
-
 function shortDate(s) {
 
   const d = parse(s);
@@ -1069,53 +1063,92 @@ function shortDate(s) {
   return (
     pad(d.getDate()) +
     "-" +
-    pad(d.getMonth() + 1) +
+    pad(d.getMonth()+1) +
     "-" +
     d.getFullYear()
   );
 
 }
 
+function escapeHtml(s) {
+
+  if (s === null || s === undefined)
+    return "";
+
+  return String(s).replace(
+    /[&<>"']/g,
+    c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[c])
+  );
+
+}
+
 
 /* =========================================================
-   DOM
+   SUPABASE
    ========================================================= */
 
-const el = id =>
-  document.getElementById(id);
+function laadSupabase(klaar,mislukt) {
+
+  if (typeof supabase !== "undefined") {
+    klaar();
+    return;
+  }
+
+  const bronnen = [
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
+    "https://unpkg.com/@supabase/supabase-js@2",
+    "https://esm.sh/@supabase/supabase-js@2?bundle"
+  ];
+
+  let i = 0;
+
+  function volgende() {
+
+    if (i >= bronnen.length) {
+      mislukt();
+      return;
+    }
+
+    const s =
+      document.createElement("script");
+
+    s.src = bronnen[i++];
+
+    s.onload = () =>
+      typeof supabase !== "undefined"
+        ? klaar()
+        : volgende();
+
+    s.onerror = volgende;
+
+    document.head.appendChild(s);
+
+  }
+
+  volgende();
+
+}
 
 
-/* =========================================================
-   START
-   ========================================================= */
+function fatal(title,text) {
 
-function fatal(titel, tekst) {
+  el("configWarn").classList.remove("hidden");
 
-  const w =
-    el("configWarn");
+  el("configWarn").querySelector("h2").textContent =
+    title;
 
-  const h =
-    w.querySelector("h2");
+  el("configWarn").querySelector("p").textContent =
+    text;
 
-  const p =
-    w.querySelector("p");
+  el("authScreen").classList.add("hidden");
 
-
-  if (h)
-    h.textContent = titel;
-
-
-  if (p)
-    p.innerHTML = tekst;
-
-
-  el("authScreen")
-    .classList.add("hidden");
-
-  el("appScreen")
-    .classList.add("hidden");
-
-  w.classList.remove("hidden");
+  el("appScreen").classList.add("hidden");
 
 }
 
@@ -1124,89 +1157,47 @@ function boot() {
 
   try {
 
-    sb =
-      supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY,
-        {
-
-          auth: {
-
-            storage:
-              safeStorage,
-
-            persistSession:
-              true,
-
-            autoRefreshToken:
-              true,
-
-            detectSessionInUrl:
-              false
-
-          }
-
+    sb = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_ANON_KEY,
+      {
+        auth: {
+          storage: safeStorage,
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: false
         }
-      );
-
+      }
+    );
 
     initAuthUI();
 
+    sb.auth.getSession()
+      .then(({data}) => {
 
-    sb.auth
-      .getSession()
-      .then(({ data }) => {
-
-        if (
-          data.session
-        ) {
-
-          enterApp(
-            data.session.user
-          );
-
-        } else {
-
+        if (data.session)
+          enterApp(data.session.user);
+        else
           showAuth();
-
-        }
 
       });
 
+    sb.auth.onAuthStateChange(
+      (_event,session) => {
 
-    sb.auth
-      .onAuthStateChange(
-        (_event, session) => {
+        if (session)
+          enterApp(session.user);
+        else
+          showAuth();
 
-          if (
-            session
-          ) {
+      }
+    );
 
-            enterApp(
-              session.user
-            );
-
-          } else {
-
-            showAuth();
-
-          }
-
-        }
-      );
-
-
-  } catch (e) {
+  } catch(e) {
 
     fatal(
-      "Er ging iets mis bij het starten",
-      "Foutmelding: " +
-      (
-        e &&
-        e.message
-          ? e.message
-          : e
-      )
+      "Er ging iets mis",
+      e.message || String(e)
     );
 
   }
@@ -1214,108 +1205,13 @@ function boot() {
 }
 
 
-/* =========================================================
-   SUPABASE LADEN
-   ========================================================= */
-
-function laadSupabase(
-  klaar,
-  mislukt
-) {
-
-  if (
-    typeof supabase !==
-    "undefined"
-  ) {
-
-    klaar();
-
-    return;
-
-  }
-
-
-  const bronnen = [
-
-    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
-
-    "https://unpkg.com/@supabase/supabase-js@2",
-
-    "https://esm.sh/@supabase/supabase-js@2?bundle"
-
-  ];
-
-
-  let i = 0;
-
-
-  (function volgende() {
-
-    if (
-      i >= bronnen.length
-    ) {
-
-      mislukt();
-
-      return;
-
-    }
-
-
-    const s =
-      document.createElement(
-        "script"
-      );
-
-
-    s.src =
-      bronnen[i++];
-
-
-    s.onload = () => {
-
-      typeof supabase !==
-      "undefined"
-        ? klaar()
-        : volgende();
-
-    };
-
-
-    s.onerror =
-      volgende;
-
-
-    document.head
-      .appendChild(s);
-
-  })();
-
-}
-
-
-if (!configured) {
-
-  fatal(
-    "Even instellen",
-    "Vul bovenin index.html je SUPABASE_URL en SUPABASE_ANON_KEY in."
-  );
-
-} else {
-
-  laadSupabase(
-
-    boot,
-
-    () =>
-      fatal(
-        "Supabase kon niet geladen worden",
-        "De Supabase-bibliotheek kon niet worden geladen."
-      )
-
-  );
-
-}
+laadSupabase(
+  boot,
+  () => fatal(
+    "Supabase kon niet laden",
+    "Controleer je internetverbinding."
+  )
+);
 
 
 /* =========================================================
@@ -1324,44 +1220,35 @@ if (!configured) {
 
 function updateAuthMode() {
 
-  const isLogin =
+  const login =
     mode === "login";
 
-
   el("authBtn").textContent =
-    isLogin
+    login
       ? "Inloggen"
       : "Account aanmaken";
 
-
   el("authLead").textContent =
-    isLogin
+    login
       ? "Log in om je planning te zien."
       : "Maak een account om te beginnen.";
 
-
   el("authSwitch").innerHTML =
-    isLogin
+    login
       ? 'Nog geen account? <a id="switchLink">Maak er een aan</a>'
       : 'Al een account? <a id="switchLink">Log in</a>';
 
+  el("switchLink").onclick =
+    () => {
 
-  el("switchLink")
-    .addEventListener(
-      "click",
-      () => {
+      mode =
+        login
+          ? "signup"
+          : "login";
 
-        mode =
-          mode === "login"
-            ? "signup"
-            : "login";
+      updateAuthMode();
 
-        hideMsg();
-
-        updateAuthMode();
-
-      }
-    );
+    };
 
 }
 
@@ -1370,56 +1257,16 @@ function initAuthUI() {
 
   updateAuthMode();
 
+  el("authBtn").onclick =
+    doAuth;
 
-  el("authBtn")
-    .addEventListener(
-      "click",
-      doAuth
-    );
+  el("password").onkeydown =
+    e => {
 
+      if (e.key === "Enter")
+        doAuth();
 
-  el("password")
-    .addEventListener(
-      "keydown",
-      e => {
-
-        if (
-          e.key === "Enter"
-        ) {
-
-          doAuth();
-
-        }
-
-      }
-    );
-
-}
-
-
-function showMsg(
-  text,
-  kind
-) {
-
-  const m =
-    el("authMsg");
-
-  m.textContent =
-    text;
-
-  m.className =
-    "msg show " +
-    kind;
-
-}
-
-
-function hideMsg() {
-
-  el("authMsg")
-    .className =
-    "msg";
+    };
 
 }
 
@@ -1427,379 +1274,220 @@ function hideMsg() {
 async function doAuth() {
 
   const email =
-    el("email")
-      .value
-      .trim();
-
+    el("email").value.trim();
 
   const password =
-    el("password")
-      .value;
+    el("password").value;
 
-
-  if (
-    !email ||
-    !password
-  ) {
-
-    showMsg(
-      "Vul je e-mail en wachtwoord in.",
-      "err"
-    );
-
+  if (!email || !password)
     return;
 
-  }
-
-
-  el("authBtn")
-    .disabled =
+  el("authBtn").disabled =
     true;
-
 
   try {
 
-    if (
-      mode === "login"
-    ) {
+    if (mode === "login") {
 
-      const {
-        error
-      } =
-        await sb.auth
-          .signInWithPassword({
-
-            email,
-
-            password
-
-          });
-
+      const {error} =
+        await sb.auth.signInWithPassword({
+          email,
+          password
+        });
 
       if (error)
         throw error;
-
 
     } else {
 
-      const {
-        data,
-        error
-      } =
-        await sb.auth
-          .signUp({
-
-            email,
-
-            password
-
-          });
-
+      const {error} =
+        await sb.auth.signUp({
+          email,
+          password
+        });
 
       if (error)
         throw error;
 
-
-      if (
-        !data.session
-      ) {
-
-        showMsg(
-          "Account aangemaakt. Bevestig je e-mail en log daarna in.",
-          "ok"
-        );
-
-      }
-
     }
 
+  } catch(e) {
 
-  } catch (err) {
-
-    showMsg(
-      vertaalFout(
-        err.message
-      ),
-      "err"
-    );
-
-
-  } finally {
-
-    el("authBtn")
-      .disabled =
-      false;
+    alert(e.message);
 
   }
 
-}
-
-
-function vertaalFout(m) {
-
-  if (
-    /invalid login/i
-      .test(m)
-  )
-    return "E-mail of wachtwoord klopt niet.";
-
-
-  if (
-    /already registered/i
-      .test(m)
-  )
-    return "Dit e-mailadres heeft al een account.";
-
-
-  if (
-    /at least 6/i
-      .test(m)
-  )
-    return "Je wachtwoord moet minstens 6 tekens zijn.";
-
-
-  if (
-    /confirm/i
-      .test(m)
-  )
-    return "Bevestig eerst je e-mail voordat je inlogt.";
-
-
-  return m;
+  el("authBtn").disabled =
+    false;
 
 }
 
 
 function showAuth() {
 
-  state.user =
-    null;
+  state.user = null;
 
-  state.tasks =
-    [];
+  el("appScreen").classList.add("hidden");
 
-  state.exams =
-    [];
-
-  state.examPresets =
-    [];
-
-
-  el("appScreen")
-    .classList.add("hidden");
-
-  el("authScreen")
-    .classList.remove("hidden");
+  el("authScreen").classList.remove("hidden");
 
 }
 
 
-el("logoutBtn")
-  .addEventListener(
-    "click",
-    () =>
-      sb.auth.signOut()
-  );
+el("logoutBtn").onclick =
+  () => sb.auth.signOut();
 
 
 /* =========================================================
-   APP
+   APP START
    ========================================================= */
 
 async function enterApp(user) {
 
-  state.user =
-    user;
+  state.user = user;
 
+  el("authScreen").classList.add("hidden");
 
-  el("authScreen")
-    .classList.add("hidden");
+  el("appScreen").classList.remove("hidden");
 
-  el("appScreen")
-    .classList.remove("hidden");
-
-
-  el("userEmail")
-    .textContent =
+  el("userEmail").textContent =
     user.email;
 
-
-  const n =
+  const now =
     new Date();
 
-
   state.viewYear =
-    n.getFullYear();
+    now.getFullYear();
 
   state.viewMonth =
-    n.getMonth();
+    now.getMonth();
 
   state.selected =
     today();
 
-
-  bindAppEvents();
-
+  bindEvents();
 
   await Promise.all([
-
     loadTasks(),
-
     loadExams(),
-
     loadExamPresets()
-
   ]);
 
-
-  fillSubjectMenu();
+  fillSubjectMenus();
 
   renderAll();
 
 }
 
 
-/* =========================================================
-   EVENTS
-   ========================================================= */
+function bindEvents() {
 
-let eventsBound =
-  false;
-
-
-function bindAppEvents() {
-
-  if (
-    eventsBound
-  )
+  if (eventsBound)
     return;
 
+  eventsBound = true;
 
-  eventsBound =
-    true;
+  el("prevMonth").onclick =
+    () => shiftMonth(-1);
 
+  el("nextMonth").onclick =
+    () => shiftMonth(1);
 
-  el("prevMonth")
-    .addEventListener(
-      "click",
-      () =>
-        shiftMonth(-1)
-    );
+  el("addBtn").onclick =
+    addTask;
 
+  el("newTitle").onkeydown =
+    e => {
 
-  el("nextMonth")
-    .addEventListener(
-      "click",
-      () =>
-        shiftMonth(1)
-    );
+      if (e.key === "Enter")
+        addTask();
 
+    };
 
-  el("addBtn")
-    .addEventListener(
-      "click",
-      addTask
-    );
+  el("redistributeBtn").onclick =
+    redistributeMissed;
 
+  el("addYear2Btn").onclick =
+    addAllYear2Exams;
 
-  el("newTitle")
-    .addEventListener(
-      "keydown",
-      e => {
+  el("customExamBtn").onclick =
+    () => openModal("customExamModal");
 
-        if (
-          e.key === "Enter"
-        ) {
+  el("manageExamsBtn").onclick =
+    openManageModal;
 
-          addTask();
+  el("saveCustomExamBtn").onclick =
+    saveCustomExam;
 
-        }
+  el("studyPlanBtn").onclick =
+    openStudyPlan;
 
-      }
-    );
+  el("generatePlanBtn").onclick =
+    generateStudyPlan;
 
+  el("addSkipDateBtn").onclick =
+    addSkipDate;
 
-  el("redistributeBtn")
-    .addEventListener(
-      "click",
-      redistributeMissed
-    );
-
-
-  el("addYear2Btn")
-    .addEventListener(
-      "click",
-      addAllYear2Exams
-    );
-
-
-  el("customExamBtn")
-    .addEventListener(
-      "click",
-      () =>
-        openModal(
-          "customExamModal"
-        )
-    );
-
-
-  el("manageExamsBtn")
-    .addEventListener(
-      "click",
-      openManageModal
-    );
-
-
-  el("saveCustomExamBtn")
-    .addEventListener(
-      "click",
-      saveCustomExam
-    );
-
-
-  document
-    .querySelectorAll(
-      "[data-close]"
-    )
+  document.querySelectorAll(".weekday-btn")
     .forEach(btn => {
 
-      btn.addEventListener(
-        "click",
-        () => {
+      btn.onclick = () => {
 
-          closeModal(
-            btn.dataset.close
-          );
+        const day =
+          Number(btn.dataset.day);
+
+        if (state.skipWeekdays.has(day)) {
+
+          state.skipWeekdays.delete(day);
+
+          btn.classList.remove("skip");
+
+        } else {
+
+          state.skipWeekdays.add(day);
+
+          btn.classList.add("skip");
 
         }
-      );
+
+        updatePlanSummary();
+
+      };
 
     });
 
+  [
+    "planSubject",
+    "planTotalHours",
+    "planHoursPerDay",
+    "planStartDate"
+  ].forEach(id => {
 
-  document
-    .querySelectorAll(
-      ".modal-backdrop"
-    )
+    el(id).addEventListener(
+      "input",
+      updatePlanSummary
+    );
+
+  });
+
+  document.querySelectorAll("[data-close]")
+    .forEach(btn => {
+
+      btn.onclick =
+        () => closeModal(btn.dataset.close);
+
+    });
+
+  document.querySelectorAll(".modal-backdrop")
     .forEach(backdrop => {
 
-      backdrop.addEventListener(
-        "click",
+      backdrop.onclick =
         e => {
 
-          if (
-            e.target ===
-            backdrop
-          ) {
+          if (e.target === backdrop)
+            closeModal(backdrop.id);
 
-            closeModal(
-              backdrop.id
-            );
-
-          }
-
-        }
-      );
+        };
 
     });
 
@@ -1807,47 +1495,16 @@ function bindAppEvents() {
 
 
 /* =========================================================
-   MODALS
-   ========================================================= */
-
-function openModal(id) {
-
-  el(id)
-    .classList
-    .remove("hidden");
-
-}
-
-
-function closeModal(id) {
-
-  el(id)
-    .classList
-    .add("hidden");
-
-}
-
-
-/* =========================================================
-   DATA LADEN
+   LOAD DATA
    ========================================================= */
 
 async function loadTasks() {
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await sb
       .from("tasks")
       .select("*")
-      .order(
-        "planned_date",
-        {
-          ascending: true
-        }
-      );
-
+      .order("planned_date");
 
   if (error) {
 
@@ -1862,7 +1519,6 @@ async function loadTasks() {
 
   }
 
-
   state.tasks =
     data || [];
 
@@ -1871,34 +1527,19 @@ async function loadTasks() {
 
 async function loadExams() {
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await sb
       .from("exams")
       .select("*")
-      .order(
-        "exam_date",
-        {
-          ascending: true
-        }
-      );
-
+      .order("exam_date");
 
   if (error) {
 
     console.error(error);
 
-    alert(
-      "Toetsen laden lukte niet: " +
-      error.message
-    );
-
     return;
 
   }
-
 
   state.exams =
     data || [];
@@ -1908,38 +1549,20 @@ async function loadExams() {
 
 async function loadExamPresets() {
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await sb
       .from("exam_presets")
       .select("*")
-      .eq(
-        "study_year",
-        2
-      )
-      .order(
-        "exam_date",
-        {
-          ascending: true
-        }
-      );
-
+      .eq("study_year",2)
+      .order("exam_date");
 
   if (error) {
 
     console.error(error);
 
-    alert(
-      "Jaar 2 toetsen laden lukte niet: " +
-      error.message
-    );
-
     return;
 
   }
-
 
   state.examPresets =
     data || [];
@@ -1948,106 +1571,768 @@ async function loadExamPresets() {
 
 
 /* =========================================================
-   VAK MENU
+   SUBJECTS
    ========================================================= */
 
-function fillSubjectMenu() {
+function getSubjects() {
 
-  const sel =
-    el("newSubject");
+  return [
+    ...new Set(
+      state.exams.map(e => e.name)
+    )
+  ];
+
+}
 
 
-  sel.innerHTML =
-    '<option value="">Geen vak</option>';
-
+function fillSubjectMenus() {
 
   const subjects =
-    [
-      ...new Set(
-        state.exams.map(
-          exam =>
-            exam.name
-        )
-      )
-    ];
+    getSubjects();
+
+  const taskSelect =
+    el("newSubject");
+
+  const planSelect =
+    el("planSubject");
+
+  taskSelect.innerHTML =
+    '<option value="">Geen vak</option>';
+
+  planSelect.innerHTML =
+    "";
+
+  subjects.forEach(subject => {
+
+    const a =
+      document.createElement("option");
+
+    a.value =
+      subject;
+
+    a.textContent =
+      subject;
+
+    taskSelect.appendChild(a);
 
 
-  subjects.sort(
-    (a, b) =>
-      a.localeCompare(
-        b,
-        "nl"
-      )
-  );
+    const b =
+      document.createElement("option");
 
+    b.value =
+      subject;
 
-  subjects.forEach(
-    subject => {
+    b.textContent =
+      subject;
 
-      const option =
-        document.createElement(
-          "option"
-        );
+    planSelect.appendChild(b);
 
-
-      option.value =
-        subject;
-
-      option.textContent =
-        subject;
-
-
-      sel.appendChild(
-        option
-      );
-
-    }
-  );
+  });
 
 }
 
 
 /* =========================================================
-   MAAND
+   PRIORITEIT
    ========================================================= */
+
+function nextExamForSubject(subject) {
+
+  const td =
+    today();
+
+  return state.exams
+    .filter(
+      e =>
+        e.name === subject &&
+        e.exam_date >= td
+    )
+    .sort(
+      (a,b) =>
+        a.exam_date.localeCompare(
+          b.exam_date
+        )
+    )[0] || null;
+
+}
+
+
+function subjectStats(subject) {
+
+  const exam =
+    nextExamForSubject(subject);
+
+  const openTasks =
+    state.tasks.filter(
+      t =>
+        t.subject === subject &&
+        !t.done
+    );
+
+  const remainingHours =
+    openTasks.reduce(
+      (sum,t) =>
+        sum + Number(t.duration_hours || 0),
+      0
+    );
+
+  const allHours =
+    state.tasks
+      .filter(t => t.subject === subject)
+      .reduce(
+        (sum,t) =>
+          sum + Number(t.duration_hours || 0),
+        0
+      );
+
+  const doneHours =
+    state.tasks
+      .filter(
+        t =>
+          t.subject === subject &&
+          t.done
+      )
+      .reduce(
+        (sum,t) =>
+          sum + Number(t.duration_hours || 0),
+        0
+      );
+
+  let days =
+    exam
+      ? Math.max(
+          daysBetween(today(),exam.exam_date),
+          0
+        )
+      : 999;
+
+  const requiredPerDay =
+    remainingHours /
+    Math.max(days,1);
+
+  /*
+    Prioriteit:
+    - weinig dagen over = hoger
+    - veel resterende uren = hoger
+  */
+
+  let score = 0;
+
+  if (exam) {
+
+    score +=
+      300 /
+      Math.max(days + 1,1);
+
+  }
+
+  score +=
+    requiredPerDay * 40;
+
+  score +=
+    remainingHours * 1.5;
+
+
+  let level =
+    "low";
+
+  let label =
+    "Rustig";
+
+  if (
+    days <= 14 ||
+    requiredPerDay >= 1.5
+  ) {
+
+    level =
+      "high";
+
+    label =
+      "Hoge prioriteit";
+
+  } else if (
+    days <= 35 ||
+    requiredPerDay >= .75
+  ) {
+
+    level =
+      "medium";
+
+    label =
+      "Prioriteit";
+
+  }
+
+  return {
+    exam,
+    days,
+    remainingHours,
+    allHours,
+    doneHours,
+    score,
+    level,
+    label
+  };
+
+}
+
+
+/* =========================================================
+   EXAMS GROEPEREN
+   ========================================================= */
+
+function groupedExams() {
+
+  const groups = {};
+
+  state.exams.forEach(exam => {
+
+    if (!groups[exam.name])
+      groups[exam.name] = [];
+
+    groups[exam.name].push(exam);
+
+  });
+
+  Object.values(groups)
+    .forEach(items => {
+
+      items.sort(
+        (a,b) =>
+          a.exam_date.localeCompare(
+            b.exam_date
+          )
+      );
+
+    });
+
+  /*
+    NIET simpel op toetsdatum.
+    Hoogste prioriteit komt bovenaan.
+  */
+
+  return Object.entries(groups)
+    .sort(
+      (a,b) =>
+        subjectStats(b[0]).score -
+        subjectStats(a[0]).score
+    );
+
+}
+
+
+/* =========================================================
+   RENDER TOETSEN
+   ========================================================= */
+
+function renderToetsRow() {
+
+  const row =
+    el("toetsRow");
+
+  row.innerHTML =
+    "";
+
+  if (!state.exams.length) {
+
+    row.innerHTML =
+      '<div class="exam-empty">Je hebt nog geen toetsen toegevoegd.</div>';
+
+    return;
+
+  }
+
+  groupedExams()
+    .forEach(([name,exams]) => {
+
+      const stats =
+        subjectStats(name);
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "chip";
+
+      let attempts =
+        "";
+
+      exams.forEach(exam => {
+
+        const days =
+          daysBetween(
+            today(),
+            exam.exam_date
+          );
+
+        let cls =
+          "ok";
+
+        let text;
+
+        if (days < 0) {
+
+          cls = "past";
+          text = "gehad";
+
+        } else if (days === 0) {
+
+          cls = "soon";
+          text = "vandaag";
+
+        } else {
+
+          cls =
+            days <= 10
+              ? "soon"
+              : "ok";
+
+          text =
+            "nog " +
+            days +
+            (
+              days === 1
+                ? " dag"
+                : " dagen"
+            );
+
+        }
+
+        attempts += `
+          <div class="exam-attempt-line">
+            <div>
+              <strong>Kans ${exam.attempt}</strong>
+              <span class="exam-attempt-date">
+                · ${longDate(exam.exam_date).replace(/^\w+\s/,"")}
+              </span>
+            </div>
+
+            <div class="exam-attempt-count ${cls}">
+              ${text}
+            </div>
+          </div>
+        `;
+
+      });
+
+
+      let progress =
+        "";
+
+      if (stats.allHours > 0) {
+
+        const percentage =
+          Math.min(
+            100,
+            Math.round(
+              stats.doneHours /
+              stats.allHours *
+              100
+            )
+          );
+
+        progress = `
+          <div class="exam-progress">
+            ${formatHours(stats.doneHours)}
+            van
+            ${formatHours(stats.allHours)}
+            afgerond
+
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                style="width:${percentage}%"
+              ></div>
+            </div>
+          </div>
+        `;
+
+      }
+
+
+      card.innerHTML = `
+        <div class="exam-card-top">
+
+          <div class="name">
+            ${escapeHtml(name)}
+          </div>
+
+          <span class="exam-priority ${stats.level}">
+            ${stats.label}
+          </span>
+
+        </div>
+
+        <div class="exam-attempts">
+          ${attempts}
+        </div>
+
+        ${progress}
+      `;
+
+
+      row.appendChild(card);
+
+    });
+
+}
+
+
+/* =========================================================
+   KALENDER
+   ========================================================= */
+
+function examsOn(date) {
+
+  return state.exams.filter(
+    e => e.exam_date === date
+  );
+
+}
+
 
 function shiftMonth(delta) {
 
-  state.viewMonth +=
-    delta;
+  state.viewMonth += delta;
 
+  if (state.viewMonth < 0) {
 
-  if (
-    state.viewMonth < 0
-  ) {
-
-    state.viewMonth =
-      11;
-
+    state.viewMonth = 11;
     state.viewYear--;
 
   }
 
+  if (state.viewMonth > 11) {
 
-  if (
-    state.viewMonth > 11
-  ) {
-
-    state.viewMonth =
-      0;
-
+    state.viewMonth = 0;
     state.viewYear++;
 
   }
-
 
   renderCalendar();
 
 }
 
 
+function renderCalendar() {
+
+  el("monthLabel").textContent =
+    MONTHS[state.viewMonth] +
+    " " +
+    state.viewYear;
+
+  const first =
+    new Date(
+      state.viewYear,
+      state.viewMonth,
+      1
+    );
+
+  const offset =
+    (first.getDay()+6)%7;
+
+  const start =
+    new Date(
+      state.viewYear,
+      state.viewMonth,
+      1-offset
+    );
+
+  const container =
+    el("calDays");
+
+  container.innerHTML =
+    "";
+
+  for (let i=0;i<42;i++) {
+
+    const d =
+      new Date(start);
+
+    d.setDate(
+      start.getDate()+i
+    );
+
+    const ds =
+      ymd(d);
+
+    const cell =
+      document.createElement("button");
+
+    cell.className =
+      "day tnum";
+
+    if (d.getMonth() !== state.viewMonth)
+      cell.classList.add("other");
+
+    if (ds === today())
+      cell.classList.add("today");
+
+    if (ds === state.selected)
+      cell.classList.add("selected");
+
+    if (examsOn(ds).length)
+      cell.classList.add("toets");
+
+    let html =
+      `<span>${d.getDate()}</span>`;
+
+    if (examsOn(ds).length)
+      html += '<span class="tflag"></span>';
+
+    const tasks =
+      state.tasks.filter(
+        t => t.planned_date === ds
+      );
+
+    if (tasks.length) {
+
+      html +=
+        '<span class="dot">' +
+        tasks.slice(0,3)
+          .map(
+            t => {
+
+              let c = "";
+
+              if (t.done)
+                c = "done";
+              else if (ds < today())
+                c = "missed";
+
+              return `<i class="${c}"></i>`;
+
+            }
+          )
+          .join("") +
+        "</span>";
+
+    }
+
+    cell.innerHTML =
+      html;
+
+    cell.onclick =
+      () => {
+
+        state.selected =
+          ds;
+
+        renderCalendar();
+
+        renderDay();
+
+      };
+
+    container.appendChild(cell);
+
+  }
+
+}
+
+
 /* =========================================================
-   ALLES RENDEREN
+   DAG
+   ========================================================= */
+
+function renderDay() {
+
+  el("dayDate").textContent =
+    longDate(state.selected);
+
+  const dayTasks =
+    state.tasks.filter(
+      t =>
+        t.planned_date ===
+        state.selected
+    );
+
+  const totalHours =
+    dayTasks
+      .filter(t => !t.done)
+      .reduce(
+        (sum,t) =>
+          sum + Number(t.duration_hours || 0),
+        0
+      );
+
+  el("dayHours").textContent =
+    totalHours > 0
+      ? formatHours(totalHours) +
+        " gepland"
+      : "";
+
+
+  const dayExam =
+    examsOn(state.selected);
+
+  if (dayExam.length) {
+
+    el("dayToets").textContent =
+      "Toetsdag: " +
+      dayExam.map(
+        e =>
+          e.name +
+          " (kans " +
+          e.attempt +
+          ")"
+      ).join(", ");
+
+    el("dayToets")
+      .classList.add("show");
+
+  } else {
+
+    el("dayToets").textContent =
+      "";
+
+    el("dayToets")
+      .classList.remove("show");
+
+  }
+
+
+  const list =
+    el("taskList");
+
+  list.innerHTML =
+    "";
+
+  if (!dayTasks.length) {
+
+    list.innerHTML =
+      '<div class="empty">Nog niets gepland. Voeg hieronder een taak toe.</div>';
+
+    return;
+
+  }
+
+
+  dayTasks.forEach(t => {
+
+    const overdue =
+      !t.done &&
+      t.planned_date <
+      today();
+
+    const row =
+      document.createElement("div");
+
+    row.className =
+      "task" +
+      (t.done ? " done" : "") +
+      (overdue ? " overdue" : "");
+
+
+    const check =
+      document.createElement("button");
+
+    check.className =
+      "check" +
+      (t.done ? " on" : "");
+
+    check.onclick =
+      () => toggleTask(t);
+
+
+    const body =
+      document.createElement("div");
+
+    body.className =
+      "body";
+
+
+    let sub =
+      t.subject || "";
+
+    if (overdue)
+      sub +=
+        (sub ? " · " : "") +
+        "gemist";
+
+
+    body.innerHTML = `
+      <div class="title">
+        ${escapeHtml(t.title)}
+      </div>
+
+      ${sub
+        ? `<div class="sub">${escapeHtml(sub)}</div>`
+        : ""
+      }
+
+      ${
+        Number(t.duration_hours || 0) > 0
+          ? `<span class="task-hours">${formatHours(t.duration_hours)}</span>`
+          : ""
+      }
+    `;
+
+
+    const del =
+      document.createElement("button");
+
+    del.className =
+      "del";
+
+    del.textContent =
+      "×";
+
+    del.onclick =
+      () => deleteTask(t);
+
+
+    row.appendChild(check);
+
+    row.appendChild(body);
+
+    row.appendChild(del);
+
+    list.appendChild(row);
+
+  });
+
+}
+
+
+/* =========================================================
+   GEMIST
+   ========================================================= */
+
+function renderMissedBanner() {
+
+  const missed =
+    state.tasks.filter(
+      t =>
+        !t.done &&
+        t.planned_date <
+        today()
+    );
+
+  if (missed.length) {
+
+    el("missedTxt").textContent =
+      `Je hebt ${missed.length} ${
+        missed.length === 1
+          ? "taak"
+          : "taken"
+      } gemist.`;
+
+    el("missedBanner")
+      .classList.add("show");
+
+  } else {
+
+    el("missedBanner")
+      .classList.remove("show");
+
+  }
+
+}
+
+
+/* =========================================================
+   RENDER ALLES
    ========================================================= */
 
 function renderAll() {
@@ -2064,971 +2349,30 @@ function renderAll() {
 
 
 /* =========================================================
-   TOETSEN GROEPEREN
-   ========================================================= */
-
-function getGroupedExams() {
-
-  const groups =
-    {};
-
-
-  state.exams.forEach(
-    exam => {
-
-      if (
-        !groups[exam.name]
-      ) {
-
-        groups[exam.name] =
-          [];
-
-      }
-
-
-      groups[exam.name]
-        .push(exam);
-
-    }
-  );
-
-
-  Object.values(groups)
-    .forEach(exams => {
-
-      exams.sort(
-        (a, b) =>
-          a.exam_date
-            .localeCompare(
-              b.exam_date
-            )
-      );
-
-    });
-
-
-  return Object.entries(groups)
-    .sort(
-      (a, b) => {
-
-        const dateA =
-          a[1][0]
-            .exam_date;
-
-        const dateB =
-          b[1][0]
-            .exam_date;
-
-
-        return dateA
-          .localeCompare(
-            dateB
-          );
-
-      }
-    );
-
-}
-
-
-/* =========================================================
-   TOETS BLOKKEN
-   ========================================================= */
-
-function renderToetsRow() {
-
-  const row =
-    el("toetsRow");
-
-
-  row.innerHTML =
-    "";
-
-
-  if (
-    !state.exams.length
-  ) {
-
-    const empty =
-      document.createElement(
-        "div"
-      );
-
-
-    empty.className =
-      "exam-empty";
-
-
-    empty.textContent =
-      "Je hebt nog geen toetsen toegevoegd. Voeg Jaar 2 toe of voeg zelf een toets toe.";
-
-
-    row.appendChild(
-      empty
-    );
-
-
-    return;
-
-  }
-
-
-  const groups =
-    getGroupedExams();
-
-
-  groups.forEach(
-    ([name, exams]) => {
-
-      const div =
-        document.createElement(
-          "div"
-        );
-
-
-      div.className =
-        "chip";
-
-
-      const done =
-        state.tasks.filter(
-          t =>
-            t.subject ===
-              name &&
-            t.done
-        ).length;
-
-
-      const total =
-        state.tasks.filter(
-          t =>
-            t.subject ===
-            name
-        ).length;
-
-
-      let attemptsHtml =
-        "";
-
-
-      exams.forEach(
-        exam => {
-
-          const d =
-            daysBetween(
-              today(),
-              exam.exam_date
-            );
-
-
-          let cls =
-            "ok";
-
-          let label =
-            "";
-
-
-          if (
-            d < 0
-          ) {
-
-            cls =
-              "past";
-
-            label =
-              "gehad";
-
-          } else if (
-            d === 0
-          ) {
-
-            cls =
-              "soon";
-
-            label =
-              "vandaag";
-
-          } else {
-
-            cls =
-              d <= 10
-                ? "soon"
-                : "ok";
-
-
-            label =
-              "nog " +
-              d +
-              " " +
-              (
-                d === 1
-                  ? "dag"
-                  : "dagen"
-              );
-
-          }
-
-
-          attemptsHtml +=
-
-            '<div class="exam-attempt-line">' +
-
-              '<div>' +
-
-                '<strong>kans ' +
-                exam.attempt +
-                '</strong>' +
-
-                '<span class="exam-attempt-date"> · ' +
-                longDate(
-                  exam.exam_date
-                )
-                .replace(
-                  /^\w+\s/,
-                  ""
-                ) +
-                '</span>' +
-
-              '</div>' +
-
-              '<div class="exam-attempt-count ' +
-              cls +
-              '">' +
-
-                label +
-
-              '</div>' +
-
-            '</div>';
-
-        }
-      );
-
-
-      div.innerHTML =
-
-        '<div class="name">' +
-        escapeHtml(
-          name
-        ) +
-        '</div>' +
-
-        '<div class="exam-attempts">' +
-        attemptsHtml +
-        '</div>' +
-
-        (
-          total
-            ?
-              '<div class="exam-task-progress">' +
-              done +
-              '/' +
-              total +
-              ' taken afgerond</div>'
-            :
-              ''
-        );
-
-
-      row.appendChild(
-        div
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   TOETS OP DATUM
-   ========================================================= */
-
-function examsOn(dateStr) {
-
-  return state.exams.filter(
-    exam =>
-      exam.exam_date ===
-      dateStr
-  );
-
-}
-
-
-/* =========================================================
-   KALENDER
-   ========================================================= */
-
-function renderCalendar() {
-
-  el("monthLabel")
-    .textContent =
-    MONTHS[
-      state.viewMonth
-    ] +
-    " " +
-    state.viewYear;
-
-
-  const first =
-    new Date(
-      state.viewYear,
-      state.viewMonth,
-      1
-    );
-
-
-  const startOffset =
-    (
-      first.getDay() +
-      6
-    ) %
-    7;
-
-
-  const gridStart =
-    new Date(
-      state.viewYear,
-      state.viewMonth,
-      1 -
-      startOffset
-    );
-
-
-  const days =
-    el("calDays");
-
-
-  days.innerHTML =
-    "";
-
-
-  const td =
-    today();
-
-
-  for (
-    let i = 0;
-    i < 42;
-    i++
-  ) {
-
-    const d =
-      new Date(
-        gridStart
-      );
-
-
-    d.setDate(
-      gridStart.getDate() +
-      i
-    );
-
-
-    const ds =
-      ymd(d);
-
-
-    const cell =
-      document.createElement(
-        "button"
-      );
-
-
-    cell.className =
-      "day tnum";
-
-
-    if (
-      d.getMonth() !==
-      state.viewMonth
-    ) {
-
-      cell.classList
-        .add("other");
-
-    }
-
-
-    if (
-      ds === td
-    ) {
-
-      cell.classList
-        .add("today");
-
-    }
-
-
-    if (
-      ds ===
-      state.selected
-    ) {
-
-      cell.classList
-        .add("selected");
-
-    }
-
-
-    if (
-      examsOn(ds).length
-    ) {
-
-      cell.classList
-        .add("toets");
-
-    }
-
-
-    let inner =
-      "<span>" +
-      d.getDate() +
-      "</span>";
-
-
-    if (
-      examsOn(ds).length
-    ) {
-
-      inner +=
-        '<span class="tflag"></span>';
-
-    }
-
-
-    const dayTasks =
-      state.tasks.filter(
-        t =>
-          t.planned_date ===
-          ds
-      );
-
-
-    if (
-      dayTasks.length
-    ) {
-
-      const dots =
-        dayTasks
-          .slice(0, 3)
-          .map(
-            t => {
-
-              let c =
-                "";
-
-
-              if (
-                t.done
-              ) {
-
-                c =
-                  "done";
-
-              } else if (
-                ds < td
-              ) {
-
-                c =
-                  "missed";
-
-              }
-
-
-              return (
-                '<i class="' +
-                c +
-                '"></i>'
-              );
-
-            }
-          )
-          .join("");
-
-
-      inner +=
-        '<span class="dot">' +
-        dots +
-        '</span>';
-
-    }
-
-
-    cell.innerHTML =
-      inner;
-
-
-    cell.addEventListener(
-      "click",
-      () => {
-
-        state.selected =
-          ds;
-
-        renderCalendar();
-
-        renderDay();
-
-      }
-    );
-
-
-    days.appendChild(
-      cell
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   DAG
-   ========================================================= */
-
-function renderDay() {
-
-  el("dayDate")
-    .textContent =
-    longDate(
-      state.selected
-    );
-
-
-  const tl =
-    el("dayToets");
-
-
-  const examens =
-    examsOn(
-      state.selected
-    );
-
-
-  if (
-    examens.length
-  ) {
-
-    tl.textContent =
-      "Toetsdag: " +
-      examens
-        .map(
-          exam =>
-            exam.name +
-            " (kans " +
-            exam.attempt +
-            ")"
-        )
-        .join(", ");
-
-
-    tl.classList
-      .add("show");
-
-  } else {
-
-    tl.textContent =
-      "";
-
-    tl.classList
-      .remove("show");
-
-  }
-
-
-  const list =
-    el("taskList");
-
-
-  list.innerHTML =
-    "";
-
-
-  const td =
-    today();
-
-
-  const items =
-    state.tasks.filter(
-      t =>
-        t.planned_date ===
-        state.selected
-    );
-
-
-  if (
-    !items.length
-  ) {
-
-    const e =
-      document.createElement(
-        "div"
-      );
-
-
-    e.className =
-      "empty";
-
-
-    e.textContent =
-      "Nog niets gepland. Voeg hieronder een taak toe.";
-
-
-    list.appendChild(
-      e
-    );
-
-
-    return;
-
-  }
-
-
-  items.forEach(
-    t => {
-
-      const overdue =
-        !t.done &&
-        t.planned_date <
-        td;
-
-
-      const row =
-        document.createElement(
-          "div"
-        );
-
-
-      row.className =
-        "task" +
-        (
-          t.done
-            ? " done"
-            : ""
-        ) +
-        (
-          overdue
-            ? " overdue"
-            : ""
-        );
-
-
-      const check =
-        document.createElement(
-          "button"
-        );
-
-
-      check.className =
-        "check" +
-        (
-          t.done
-            ? " on"
-            : ""
-        );
-
-
-      check.setAttribute(
-        "aria-label",
-        t.done
-          ? "Vink uit"
-          : "Vink af"
-      );
-
-
-      check.addEventListener(
-        "click",
-        () =>
-          toggleTask(t)
-      );
-
-
-      const body =
-        document.createElement(
-          "div"
-        );
-
-
-      body.className =
-        "body";
-
-
-      let sub =
-        "";
-
-
-      if (
-        t.subject
-      ) {
-
-        sub =
-          t.subject;
-
-      }
-
-
-      if (
-        overdue
-      ) {
-
-        sub =
-          (
-            sub
-              ? sub + " · "
-              : ""
-          ) +
-          "gemist";
-
-      }
-
-
-      body.innerHTML =
-
-        '<div class="title">' +
-        escapeHtml(
-          t.title
-        ) +
-        '</div>' +
-
-        (
-          sub
-            ?
-              '<div class="sub">' +
-              escapeHtml(
-                sub
-              ) +
-              '</div>'
-            :
-              ''
-        );
-
-
-      const del =
-        document.createElement(
-          "button"
-        );
-
-
-      del.className =
-        "del";
-
-
-      del.textContent =
-        "×";
-
-
-      del.setAttribute(
-        "aria-label",
-        "Verwijderen"
-      );
-
-
-      del.addEventListener(
-        "click",
-        () =>
-          deleteTask(t)
-      );
-
-
-      row.appendChild(
-        check
-      );
-
-      row.appendChild(
-        body
-      );
-
-      row.appendChild(
-        del
-      );
-
-
-      list.appendChild(
-        row
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   GEMIST
-   ========================================================= */
-
-function renderMissedBanner() {
-
-  const td =
-    today();
-
-
-  const missed =
-    state.tasks.filter(
-      t =>
-        !t.done &&
-        t.planned_date <
-        td
-    );
-
-
-  const b =
-    el("missedBanner");
-
-
-  if (
-    missed.length
-  ) {
-
-    el("missedTxt")
-      .textContent =
-
-      "Je hebt " +
-      missed.length +
-      " " +
-      (
-        missed.length === 1
-          ? "taak"
-          : "taken"
-      ) +
-      " niet afgevinkt. Verdeel ze over je resterende dagen.";
-
-
-    b.classList
-      .add("show");
-
-  } else {
-
-    b.classList
-      .remove("show");
-
-  }
-
-}
-
-
-/* =========================================================
-   HTML ESCAPE
-   ========================================================= */
-
-function escapeHtml(s) {
-
-  if (
-    s === null ||
-    s === undefined
-  )
-    return "";
-
-
-  return String(s)
-    .replace(
-      /[&<>"']/g,
-      c => (
-        {
-          "&": "&amp;",
-          "<": "&lt;",
-          ">": "&gt;",
-          '"': "&quot;",
-          "'": "&#39;"
-        }[c]
-      )
-    );
-
-}
-
-
-/* =========================================================
-   TAKEN CRUD
+   HANDMATIGE TAAK
    ========================================================= */
 
 async function addTask() {
 
   const title =
-    el("newTitle")
-      .value
-      .trim();
+    el("newTitle").value.trim();
 
-
-  if (
-    !title
-  )
+  if (!title)
     return;
 
-
   const subject =
-    el("newSubject")
-      .value ||
-    null;
+    el("newSubject").value || null;
 
+  const hours =
+    Math.max(
+      0,
+      Number(el("newHours").value || 0)
+    );
 
-  let deadline =
-    null;
-
-
-  if (
+  const exam =
     subject
-  ) {
-
-    const upcoming =
-      state.exams
-        .filter(
-          exam =>
-            exam.name ===
-              subject &&
-            exam.exam_date >=
-              state.selected
-        )
-        .sort(
-          (a, b) =>
-            a.exam_date
-              .localeCompare(
-                b.exam_date
-              )
-        );
-
-
-    if (
-      upcoming.length
-    ) {
-
-      deadline =
-        upcoming[0]
-          .exam_date;
-
-    } else {
-
-      const subjectExams =
-        state.exams
-          .filter(
-            exam =>
-              exam.name ===
-              subject
-          )
-          .sort(
-            (a, b) =>
-              a.exam_date
-                .localeCompare(
-                  b.exam_date
-                )
-          );
-
-
-      if (
-        subjectExams.length
-      ) {
-
-        deadline =
-          subjectExams[
-            subjectExams.length -
-            1
-          ].exam_date;
-
-      }
-
-    }
-
-  }
+      ? nextExamForSubject(subject)
+      : null;
 
 
   const row = {
@@ -3040,21 +2384,27 @@ async function addTask() {
 
     subject,
 
-    deadline,
+    deadline:
+      exam
+        ? exam.exam_date
+        : null,
 
     planned_date:
       state.selected,
 
     done:
+      false,
+
+    duration_hours:
+      hours,
+
+    auto_generated:
       false
 
   };
 
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await sb
       .from("tasks")
       .insert(row)
@@ -3064,10 +2414,619 @@ async function addTask() {
 
   if (error) {
 
-    console.error(error);
+    alert(error.message);
+
+    return;
+
+  }
+
+  state.tasks.push(data);
+
+  el("newTitle").value =
+    "";
+
+  el("newHours").value =
+    "";
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   TAAK AAN / UIT
+   ========================================================= */
+
+async function toggleTask(t) {
+
+  const newValue =
+    !t.done;
+
+  const {error} =
+    await sb
+      .from("tasks")
+      .update({
+        done:newValue
+      })
+      .eq("id",t.id);
+
+  if (error)
+    return;
+
+  t.done =
+    newValue;
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   TAAK VERWIJDEREN
+   ========================================================= */
+
+async function deleteTask(t) {
+
+  const {error} =
+    await sb
+      .from("tasks")
+      .delete()
+      .eq("id",t.id);
+
+  if (error)
+    return;
+
+  state.tasks =
+    state.tasks.filter(
+      x => x.id !== t.id
+    );
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   STUDIEPLAN OPENEN
+   ========================================================= */
+
+function openStudyPlan() {
+
+  if (!state.exams.length) {
 
     alert(
-      "Toevoegen lukte niet: " +
+      "Voeg eerst minimaal één toets toe."
+    );
+
+    return;
+
+  }
+
+  state.skipWeekdays =
+    new Set();
+
+  state.skipDates =
+    new Set();
+
+  document
+    .querySelectorAll(".weekday-btn")
+    .forEach(
+      btn =>
+        btn.classList.remove("skip")
+    );
+
+  el("planStartDate").value =
+    today();
+
+  el("planTotalHours").value =
+    10;
+
+  el("planHoursPerDay").value =
+    2;
+
+  renderSkipDates();
+
+  updatePlanSummary();
+
+  openModal("studyPlanModal");
+
+}
+
+
+/* =========================================================
+   SKIP DATES
+   ========================================================= */
+
+function addSkipDate() {
+
+  const date =
+    el("skipDateInput").value;
+
+  if (!date)
+    return;
+
+  state.skipDates.add(date);
+
+  el("skipDateInput").value =
+    "";
+
+  renderSkipDates();
+
+  updatePlanSummary();
+
+}
+
+
+function renderSkipDates() {
+
+  const list =
+    el("skipDatesList");
+
+  list.innerHTML =
+    "";
+
+  [...state.skipDates]
+    .sort()
+    .forEach(date => {
+
+      const chip =
+        document.createElement("span");
+
+      chip.className =
+        "skip-date-chip";
+
+      chip.innerHTML = `
+        ${shortDate(date)}
+        <button type="button">×</button>
+      `;
+
+      chip.querySelector("button")
+        .onclick =
+          () => {
+
+            state.skipDates.delete(date);
+
+            renderSkipDates();
+
+            updatePlanSummary();
+
+          };
+
+      list.appendChild(chip);
+
+    });
+
+}
+
+
+/* =========================================================
+   BESCHIKBARE STUDIEDAGEN
+   ========================================================= */
+
+function availableStudyDays(
+  start,
+  deadline
+) {
+
+  const result =
+    [];
+
+  let current =
+    start;
+
+  /*
+    Geen studietaak op de toetsdag zelf.
+  */
+
+  const finalDay =
+    addDays(deadline,-1);
+
+  let guard =
+    0;
+
+  while (
+    current <= finalDay &&
+    guard < 500
+  ) {
+
+    const date =
+      parse(current);
+
+    const weekday =
+      date.getDay();
+
+    if (
+      !state.skipWeekdays.has(weekday) &&
+      !state.skipDates.has(current)
+    ) {
+
+      result.push(current);
+
+    }
+
+    current =
+      addDays(current,1);
+
+    guard++;
+
+  }
+
+  return result;
+
+}
+
+
+/* =========================================================
+   VERDEEL STUDIEDAGEN GELIJKMATIG
+   ========================================================= */
+
+function chooseSpreadDays(
+  available,
+  count
+) {
+
+  if (count >= available.length)
+    return available.slice();
+
+  if (count === 1)
+    return [available[0]];
+
+  const selected =
+    [];
+
+  for (
+    let i=0;
+    i<count;
+    i++
+  ) {
+
+    const index =
+      Math.round(
+        i *
+        (available.length-1) /
+        (count-1)
+      );
+
+    const date =
+      available[index];
+
+    if (!selected.includes(date))
+      selected.push(date);
+
+  }
+
+  /*
+    Door afronden kan heel soms één dag ontbreken.
+  */
+
+  for (
+    const date of available
+  ) {
+
+    if (selected.length >= count)
+      break;
+
+    if (!selected.includes(date))
+      selected.push(date);
+
+  }
+
+  return selected.sort();
+
+}
+
+
+/* =========================================================
+   PLAN INFO
+   ========================================================= */
+
+function getPlanInfo() {
+
+  const subject =
+    el("planSubject").value;
+
+  const totalHours =
+    Number(
+      el("planTotalHours").value
+    );
+
+  const hoursPerDay =
+    Number(
+      el("planHoursPerDay").value
+    );
+
+  const start =
+    el("planStartDate").value;
+
+  const exam =
+    nextExamForSubject(subject);
+
+  if (
+    !subject ||
+    !exam ||
+    !start ||
+    totalHours <= 0 ||
+    hoursPerDay <= 0
+  ) {
+
+    return null;
+
+  }
+
+  const available =
+    availableStudyDays(
+      start,
+      exam.exam_date
+    );
+
+  const neededDays =
+    Math.ceil(
+      totalHours /
+      hoursPerDay
+    );
+
+  return {
+    subject,
+    totalHours,
+    hoursPerDay,
+    start,
+    exam,
+    available,
+    neededDays
+  };
+
+}
+
+
+/* =========================================================
+   PLAN SAMENVATTING
+   ========================================================= */
+
+function updatePlanSummary() {
+
+  const info =
+    getPlanInfo();
+
+  const box =
+    el("planSummary");
+
+  if (!info) {
+
+    box.innerHTML =
+      "Vul hierboven je uren in.";
+
+    return;
+
+  }
+
+  if (info.available.length === 0) {
+
+    box.innerHTML = `
+      <strong>Geen beschikbare studiedagen.</strong><br>
+      Pas je startdatum of overgeslagen dagen aan.
+    `;
+
+    return;
+
+  }
+
+  const enough =
+    info.neededDays <=
+    info.available.length;
+
+  const averageNeeded =
+    info.totalHours /
+    info.available.length;
+
+  box.innerHTML = `
+    <strong>${escapeHtml(info.subject)}</strong><br><br>
+
+    Eerstvolgende toets:
+    <strong>${shortDate(info.exam.exam_date)}</strong><br>
+
+    Totaal leren:
+    <strong>${formatHours(info.totalHours)}</strong><br>
+
+    Maximaal per studiedag:
+    <strong>${formatHours(info.hoursPerDay)}</strong><br>
+
+    Nodig:
+    <strong>${info.neededDays} studiedagen</strong><br>
+
+    Beschikbaar vóór de toets:
+    <strong>${info.available.length} dagen</strong><br>
+
+    Gemiddeld nodig als je het over alle beschikbare dagen verdeelt:
+    <strong>${formatHours(roundHours(averageNeeded))} per dag</strong>
+    <br><br>
+
+    ${
+      enough
+        ? "✓ Dit past ruim vóór je toets."
+        : "⚠ Met deze instellingen heb je te weinig studiedagen. Verhoog het aantal uur per dag of sla minder dagen over."
+    }
+  `;
+
+}
+
+
+/* =========================================================
+   PLAN GENEREREN
+   ========================================================= */
+
+async function generateStudyPlan() {
+
+  const info =
+    getPlanInfo();
+
+  if (!info)
+    return;
+
+  if (
+    info.neededDays >
+    info.available.length
+  ) {
+
+    alert(
+      "Er zijn te weinig beschikbare dagen. Verhoog het aantal uur per dag of sla minder dagen over."
+    );
+
+    return;
+
+  }
+
+
+  /*
+    Als er al automatisch gemaakte taken bestaan voor
+    hetzelfde vak, eerst vragen of deze vervangen moeten worden.
+  */
+
+  const existingAuto =
+    state.tasks.filter(
+      t =>
+        t.subject === info.subject &&
+        t.auto_generated &&
+        !t.done
+    );
+
+
+  if (existingAuto.length) {
+
+    const replace =
+      confirm(
+        "Er staat al een automatisch studieplan voor dit vak.\n\nWil je het oude openstaande studieplan vervangen?"
+      );
+
+    if (!replace)
+      return;
+
+
+    const ids =
+      existingAuto.map(t => t.id);
+
+
+    const {error} =
+      await sb
+        .from("tasks")
+        .delete()
+        .in("id",ids);
+
+
+    if (error) {
+
+      alert(
+        "Oude planning verwijderen lukte niet: " +
+        error.message
+      );
+
+      return;
+
+    }
+
+
+    state.tasks =
+      state.tasks.filter(
+        t => !ids.includes(t.id)
+      );
+
+  }
+
+
+  const chosenDays =
+    chooseSpreadDays(
+      info.available,
+      info.neededDays
+    );
+
+
+  let remaining =
+    info.totalHours;
+
+
+  const rows =
+    [];
+
+
+  chosenDays.forEach(
+    date => {
+
+      if (remaining <= 0)
+        return;
+
+      const hours =
+        roundHours(
+          Math.min(
+            info.hoursPerDay,
+            remaining
+          )
+        );
+
+      remaining =
+        roundHours(
+          remaining - hours
+        );
+
+
+      rows.push({
+
+        user_id:
+          state.user.id,
+
+        title:
+          "Studeren",
+
+        subject:
+          info.subject,
+
+        deadline:
+          info.exam.exam_date,
+
+        planned_date:
+          date,
+
+        done:
+          false,
+
+        duration_hours:
+          hours,
+
+        auto_generated:
+          true
+
+      });
+
+    }
+  );
+
+
+  const btn =
+    el("generatePlanBtn");
+
+  btn.disabled =
+    true;
+
+  btn.textContent =
+    "Planning maken...";
+
+
+  const {data,error} =
+    await sb
+      .from("tasks")
+      .insert(rows)
+      .select();
+
+
+  btn.disabled =
+    false;
+
+  btn.textContent =
+    "Planning maken";
+
+
+  if (error) {
+
+    alert(
+      "Planning maken lukte niet: " +
       error.message
     );
 
@@ -3077,157 +3036,55 @@ async function addTask() {
 
 
   state.tasks.push(
-    data
+    ...(data || [])
   );
 
 
-  el("newTitle")
-    .value =
-    "";
+  state.tasks.sort(
+    (a,b) =>
+      a.planned_date.localeCompare(
+        b.planned_date
+      )
+  );
 
 
-  el("newSubject")
-    .value =
-    "";
-
-
-  renderAll();
-
-}
-
-
-async function toggleTask(t) {
-
-  const nieuw =
-    !t.done;
-
-
-  t.done =
-    nieuw;
+  closeModal(
+    "studyPlanModal"
+  );
 
 
   renderAll();
 
 
-  const {
-    error
-  } =
-    await sb
-      .from("tasks")
-      .update({
-
-        done:
-          nieuw
-
-      })
-      .eq(
-        "id",
-        t.id
-      );
-
-
-  if (error) {
-
-    console.error(error);
-
-    t.done =
-      !nieuw;
-
-    renderAll();
-
-  }
-
-}
-
-
-async function deleteTask(t) {
-
-  const {
-    error
-  } =
-    await sb
-      .from("tasks")
-      .delete()
-      .eq(
-        "id",
-        t.id
-      );
-
-
-  if (error) {
-
-    console.error(error);
-
-    alert(
-      "Verwijderen lukte niet: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  state.tasks =
-    state.tasks.filter(
-      x =>
-        x.id !==
-        t.id
-    );
-
-
-  renderAll();
+  alert(
+    `${formatHours(info.totalHours)} is automatisch verdeeld over ${rows.length} studiedagen.`
+  );
 
 }
 
 
 /* =========================================================
-   ALLE JAAR 2 TOETSEN TOEVOEGEN
+   JAAR 2 IN ÉÉN KEER
    ========================================================= */
 
 async function addAllYear2Exams() {
-
-  if (
-    !state.examPresets.length
-  ) {
-
-    alert(
-      "Er zijn geen Jaar 2 toetsen gevonden."
-    );
-
-    return;
-
-  }
-
 
   const missing =
     state.examPresets.filter(
       preset =>
         !state.exams.some(
           exam =>
+            exam.preset_id === preset.id ||
             (
-              exam.preset_id ===
-              preset.id
-            ) ||
-            (
-              exam.name ===
-                preset.name &&
-              exam.exam_date ===
-                preset.exam_date &&
-              Number(
-                exam.attempt
-              ) ===
-                Number(
-                  preset.attempt
-                )
+              exam.name === preset.name &&
+              exam.exam_date === preset.exam_date &&
+              Number(exam.attempt) ===
+              Number(preset.attempt)
             )
         )
     );
 
-
-  if (
-    !missing.length
-  ) {
+  if (!missing.length) {
 
     alert(
       "Alle Jaar 2 toetsen staan al in je planner."
@@ -3238,246 +3095,29 @@ async function addAllYear2Exams() {
   }
 
 
-  const btn =
-    el("addYear2Btn");
-
-
-  const oldText =
-    btn.textContent;
-
-
-  btn.disabled =
-    true;
-
-
-  btn.textContent =
-    "Bezig met toevoegen...";
-
-
   const rows =
     missing.map(
-      preset => ({
-
-        user_id:
-          state.user.id,
-
-        preset_id:
-          preset.id,
-
-        name:
-          preset.name,
-
-        exam_date:
-          preset.exam_date,
-
-        attempt:
-          preset.attempt,
-
-        study_year:
-          preset.study_year
-
+      p => ({
+        user_id: state.user.id,
+        preset_id: p.id,
+        name: p.name,
+        exam_date: p.exam_date,
+        attempt: p.attempt,
+        study_year: p.study_year
       })
     );
 
 
-  const {
-    data,
-    error
-  } =
+  const {data,error} =
     await sb
       .from("exams")
       .insert(rows)
       .select();
 
 
-  btn.disabled =
-    false;
-
-
-  btn.textContent =
-    oldText;
-
-
   if (error) {
 
-    console.error(error);
-
-    alert(
-      "Jaar 2 toetsen toevoegen lukte niet: " +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  state.exams =
-    [
-      ...state.exams,
-      ...(data || [])
-    ];
-
-
-  state.exams.sort(
-    (a, b) =>
-      a.exam_date
-        .localeCompare(
-          b.exam_date
-        )
-  );
-
-
-  fillSubjectMenu();
-
-  renderAll();
-
-
-  alert(
-    missing.length +
-    " Jaar 2 toetsmoment" +
-    (
-      missing.length === 1
-        ? ""
-        : "en"
-    ) +
-    " toegevoegd."
-  );
-
-}
-
-
-/* =========================================================
-   EIGEN TOETS TOEVOEGEN
-   ========================================================= */
-
-async function saveCustomExam() {
-
-  const name =
-    el("customExamName")
-      .value
-      .trim();
-
-
-  const examDate =
-    el("customExamDate")
-      .value;
-
-
-  const attempt =
-    Number(
-      el("customExamAttempt")
-        .value
-    );
-
-
-  const yearValue =
-    el("customExamYear")
-      .value;
-
-
-  const studyYear =
-    yearValue
-      ? Number(
-          yearValue
-        )
-      : null;
-
-
-  if (
-    !name
-  ) {
-
-    alert(
-      "Vul de naam van de toets in."
-    );
-
-    return;
-
-  }
-
-
-  if (
-    !examDate
-  ) {
-
-    alert(
-      "Kies een toetsdatum."
-    );
-
-    return;
-
-  }
-
-
-  const alreadyExists =
-    state.exams.some(
-      exam =>
-        exam.name
-          .toLowerCase() ===
-          name.toLowerCase() &&
-        exam.exam_date ===
-          examDate &&
-        Number(
-          exam.attempt
-        ) ===
-          attempt
-    );
-
-
-  if (
-    alreadyExists
-  ) {
-
-    alert(
-      "Deze toets staat al in je planning."
-    );
-
-    return;
-
-  }
-
-
-  const row = {
-
-    user_id:
-      state.user.id,
-
-    preset_id:
-      null,
-
-    name,
-
-    exam_date:
-      examDate,
-
-    attempt,
-
-    study_year:
-      studyYear
-
-  };
-
-
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("exams")
-      .insert(row)
-      .select()
-      .single();
-
-
-  if (error) {
-
-    console.error(error);
-
-    alert(
-      "Toets toevoegen lukte niet: " +
-      error.message
-    );
+    alert(error.message);
 
     return;
 
@@ -3485,58 +3125,166 @@ async function saveCustomExam() {
 
 
   state.exams.push(
-    data
+    ...(data || [])
   );
 
 
-  state.exams.sort(
-    (a, b) =>
-      a.exam_date
-        .localeCompare(
-          b.exam_date
-        )
-  );
-
-
-  el("customExamName")
-    .value =
-    "";
-
-
-  el("customExamDate")
-    .value =
-    "";
-
-
-  el("customExamAttempt")
-    .value =
-    "1";
-
-
-  el("customExamYear")
-    .value =
-    "";
-
-
-  fillSubjectMenu();
+  fillSubjectMenus();
 
   renderAll();
 
 
-  closeModal(
-    "customExamModal"
+  alert(
+    `${missing.length} Jaar 2 toetsmomenten toegevoegd.`
   );
 
 }
 
 
 /* =========================================================
-   MIJN TOETSEN BEHEREN
+   EIGEN TOETS
+   ========================================================= */
+
+async function saveCustomExam() {
+
+  const name =
+    el("customExamName").value.trim();
+
+  const date =
+    el("customExamDate").value;
+
+  const attempt =
+    Number(
+      el("customExamAttempt").value
+    );
+
+  const year =
+    el("customExamYear").value
+      ? Number(el("customExamYear").value)
+      : null;
+
+
+  if (!name || !date) {
+
+    alert(
+      "Vul een naam en datum in."
+    );
+
+    return;
+
+  }
+
+
+  const {data,error} =
+    await sb
+      .from("exams")
+      .insert({
+        user_id:state.user.id,
+        preset_id:null,
+        name,
+        exam_date:date,
+        attempt,
+        study_year:year
+      })
+      .select()
+      .single();
+
+
+  if (error) {
+
+    alert(error.message);
+
+    return;
+
+  }
+
+
+  state.exams.push(data);
+
+  el("customExamName").value =
+    "";
+
+  el("customExamDate").value =
+    "";
+
+  closeModal(
+    "customExamModal"
+  );
+
+  fillSubjectMenus();
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   TOETSEN BEHEREN
    ========================================================= */
 
 function openManageModal() {
 
-  renderManageExams();
+  const list =
+    el("manageExamList");
+
+  list.innerHTML =
+    "";
+
+  groupedExams()
+    .forEach(([name,exams]) => {
+
+      const group =
+        document.createElement("div");
+
+      group.className =
+        "exam-manage-group";
+
+      group.innerHTML = `
+        <div class="exam-manage-group-title">
+          ${escapeHtml(name)}
+        </div>
+      `;
+
+      exams.forEach(exam => {
+
+        const row =
+          document.createElement("div");
+
+        row.className =
+          "exam-manage-item";
+
+        row.innerHTML = `
+          <div class="exam-manage-meta">
+            Kans ${exam.attempt}
+            · ${shortDate(exam.exam_date)}
+            ${exam.study_year
+              ? " · Jaar " + exam.study_year
+              : ""
+            }
+          </div>
+        `;
+
+        const del =
+          document.createElement("button");
+
+        del.className =
+          "btn btn-danger";
+
+        del.textContent =
+          "Verwijderen";
+
+        del.onclick =
+          () => deleteExam(exam);
+
+        row.appendChild(del);
+
+        group.appendChild(row);
+
+      });
+
+      list.appendChild(group);
+
+    });
 
   openModal(
     "manageExamsModal"
@@ -3545,414 +3293,139 @@ function openManageModal() {
 }
 
 
-function renderManageExams() {
-
-  const list =
-    el("manageExamList");
-
-
-  list.innerHTML =
-    "";
-
-
-  if (
-    !state.exams.length
-  ) {
-
-    list.innerHTML =
-      '<div class="exam-empty">Je hebt nog geen toetsen toegevoegd.</div>';
-
-    return;
-
-  }
-
-
-  const groups =
-    getGroupedExams();
-
-
-  groups.forEach(
-    ([name, exams]) => {
-
-      const group =
-        document.createElement(
-          "div"
-        );
-
-
-      group.className =
-        "exam-manage-group";
-
-
-      const title =
-        document.createElement(
-          "div"
-        );
-
-
-      title.className =
-        "exam-manage-group-title";
-
-
-      title.textContent =
-        name;
-
-
-      group.appendChild(
-        title
-      );
-
-
-      exams.forEach(
-        exam => {
-
-          const item =
-            document.createElement(
-              "div"
-            );
-
-
-          item.className =
-            "exam-manage-item";
-
-
-          const info =
-            document.createElement(
-              "div"
-            );
-
-
-          info.className =
-            "exam-manage-info";
-
-
-          info.innerHTML =
-
-            '<div class="exam-manage-meta">' +
-
-            shortDate(
-              exam.exam_date
-            ) +
-
-            ' · kans ' +
-            exam.attempt +
-
-            (
-              exam.study_year
-                ?
-                  ' · jaar ' +
-                  exam.study_year
-                :
-                  ''
-            ) +
-
-            '</div>';
-
-
-          const del =
-            document.createElement(
-              "button"
-            );
-
-
-          del.className =
-            "btn btn-danger";
-
-
-          del.textContent =
-            "Verwijderen";
-
-
-          del.addEventListener(
-            "click",
-            () =>
-              deleteExam(
-                exam
-              )
-          );
-
-
-          item.appendChild(
-            info
-          );
-
-
-          item.appendChild(
-            del
-          );
-
-
-          group.appendChild(
-            item
-          );
-
-        }
-      );
-
-
-      list.appendChild(
-        group
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   TOETS VERWIJDEREN
-   ========================================================= */
-
 async function deleteExam(exam) {
 
-  const ok =
-    confirm(
-      "Weet je zeker dat je dit toetsmoment wilt verwijderen?\n\n" +
-      exam.name +
-      "\nKans " +
-      exam.attempt +
-      " · " +
-      shortDate(
-        exam.exam_date
-      )
-    );
-
-
   if (
-    !ok
+    !confirm(
+      `Toets verwijderen?\n\n${exam.name}\nKans ${exam.attempt}`
+    )
   )
     return;
 
 
-  const {
-    error
-  } =
+  const {error} =
     await sb
       .from("exams")
       .delete()
-      .eq(
-        "id",
-        exam.id
-      );
+      .eq("id",exam.id);
 
 
-  if (error) {
-
-    console.error(error);
-
-    alert(
-      "Toets verwijderen lukte niet: " +
-      error.message
-    );
-
+  if (error)
     return;
-
-  }
 
 
   state.exams =
     state.exams.filter(
-      x =>
-        x.id !==
-        exam.id
+      e => e.id !== exam.id
     );
 
 
-  fillSubjectMenu();
+  closeModal(
+    "manageExamsModal"
+  );
+
+  fillSubjectMenus();
 
   renderAll();
-
-  renderManageExams();
 
 }
 
 
 /* =========================================================
-   GEMISTE TAKEN VERDELEN
+   GEMISTE TAKEN OPNIEUW VERDELEN
    ========================================================= */
 
 async function redistributeMissed() {
-
-  const td =
-    today();
-
 
   const missed =
     state.tasks.filter(
       t =>
         !t.done &&
         t.planned_date <
-        td
+        today()
     );
 
-
-  if (
-    !missed.length
-  )
+  if (!missed.length)
     return;
 
 
-  const load =
-    {};
+  for (const task of missed) {
 
+    const exam =
+      task.subject
+        ? nextExamForSubject(task.subject)
+        : null;
 
-  state.tasks.forEach(
-    t => {
+    const end =
+      exam
+        ? addDays(exam.exam_date,-1)
+        : addDays(today(),14);
 
-      if (
-        !t.done &&
-        t.planned_date >= td &&
-        !missed.includes(t)
-      ) {
+    let target =
+      today();
 
-        load[t.planned_date] =
-          (
-            load[
-              t.planned_date
-            ] ||
+    while (
+      target <= end
+    ) {
+
+      const workload =
+        state.tasks
+          .filter(
+            t =>
+              !t.done &&
+              t.planned_date === target
+          )
+          .reduce(
+            (sum,t) =>
+              sum + Number(t.duration_hours || 0),
             0
-          ) +
-          1;
+          );
 
-      }
+      if (workload < 3)
+        break;
 
-    }
-  );
-
-
-  missed.sort(
-    (a, b) =>
-      (
-        a.deadline ||
-        "9999-12-31"
-      )
-      .localeCompare(
-        b.deadline ||
-        "9999-12-31"
-      )
-  );
-
-
-  const updates =
-    [];
-
-
-  missed.forEach(
-    t => {
-
-      let end =
-        (
-          t.deadline &&
-          t.deadline >= td
-        )
-          ?
-            t.deadline
-          :
-            addDays(
-              td,
-              13
-            );
-
-
-      const window =
-        rangeInclusive(
-          td,
-          end
-        );
-
-
-      let best =
-        window[0];
-
-
-      let bestLoad =
-        Infinity;
-
-
-      window.forEach(
-        d => {
-
-          const l =
-            load[d] ||
-            0;
-
-
-          if (
-            l < bestLoad
-          ) {
-
-            bestLoad =
-              l;
-
-            best =
-              d;
-
-          }
-
-        }
-      );
-
-
-      load[best] =
-        (
-          load[best] ||
-          0
-        ) +
-        1;
-
-
-      t.planned_date =
-        best;
-
-
-      updates.push({
-
-        id:
-          t.id,
-
-        date:
-          best
-
-      });
+      target =
+        addDays(target,1);
 
     }
-  );
+
+
+    const {error} =
+      await sb
+        .from("tasks")
+        .update({
+          planned_date:target
+        })
+        .eq("id",task.id);
+
+
+    if (!error)
+      task.planned_date =
+        target;
+
+  }
 
 
   renderAll();
 
-
-  for (
-    const u of updates
-  ) {
-
-    const {
-      error
-    } =
-      await sb
-        .from("tasks")
-        .update({
-
-          planned_date:
-            u.date
-
-        })
-        .eq(
-          "id",
-          u.id
-        );
+}
 
 
-    if (error) {
+/* =========================================================
+   MODALS
+   ========================================================= */
 
-      console.error(
-        error
-      );
+function openModal(id) {
 
-    }
+  el(id)
+    .classList.remove("hidden");
 
-  }
+}
+
+function closeModal(id) {
+
+  el(id)
+    .classList.add("hidden");
 
 }
 
