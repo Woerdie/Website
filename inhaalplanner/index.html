@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Inhaalplanner</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
+
 <style>
 .exam-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
 .exam-toolbar .btn{white-space:nowrap}
@@ -16,6 +18,7 @@
 .btn-danger{background:#fff1f1;border:1px solid #f2c6c6;color:#b42318}
 .btn-danger:hover{background:#ffe4e4}
 .btn-small{padding:6px 9px;font-size:11px}
+.ai-btn{text-decoration:none;display:inline-flex;align-items:center}
 
 .toetsrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:12px;margin-bottom:18px}
 .toetsrow .chip{min-width:0;height:auto}
@@ -47,7 +50,9 @@
 .duration-picker{display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:7px}
 .duration-picker input,.duration-picker select{width:100%}
 .duration-unit{font-size:12px;color:#66707e}
-.inline-duration{display:grid;grid-template-columns:60px auto 70px auto;align-items:center;gap:5px}
+
+.inline-duration{display:grid;grid-template-columns:70px auto 75px auto;align-items:center;gap:6px}
+.inline-duration select{height:38px;padding:0 10px;border:1px solid #d5dae2;border-radius:9px;background:#fff;font-family:inherit;font-size:13px;color:#252b35}
 
 .more-tasks{margin-left:3px;font-size:9px;font-weight:700;line-height:1;color:#66707e}
 
@@ -104,14 +109,17 @@
   <div class="auth">
     <h1>Inhaalplanner</h1>
     <p class="lead" id="authLead">Log in om je planning te zien.</p>
+
     <div class="field">
       <label for="email">E-mail</label>
       <input id="email" type="email" autocomplete="email" placeholder="jij@voorbeeld.nl">
     </div>
+
     <div class="field">
       <label for="password">Wachtwoord</label>
       <input id="password" type="password" autocomplete="current-password" placeholder="Minimaal 6 tekens">
     </div>
+
     <button class="btn btn-primary" id="authBtn">Inloggen</button>
     <div id="authMsg" class="msg"></div>
     <p class="switch" id="authSwitch">Nog geen account? <a id="switchLink">Maak er een aan</a></p>
@@ -124,15 +132,19 @@
       <h1>Inhaalplanner</h1>
       <span class="tag">grip op je studievoortgang</span>
     </div>
+
     <div class="topbar-right">
+      <a href="leren.html" class="btn btn-primary ai-btn">AI leren</a>
       <span id="userEmail" class="tnum"></span>
       <button class="btn" id="logoutBtn">Uitloggen</button>
     </div>
   </div>
 
   <div class="wrap">
+
     <div class="exam-toolbar">
       <button class="btn btn-primary" id="studyPlanBtn">⚡ Studieplan maken</button>
+      <a href="leren.html" class="btn btn-secondary ai-btn">📚 AI Leeromgeving</a>
       <button class="btn btn-secondary" id="addYear2Btn">+ Alle Jaar 2 toetsen toevoegen</button>
       <button class="btn btn-secondary" id="customExamBtn">+ Andere toets toevoegen</button>
       <button class="btn btn-secondary" id="manageExamsBtn">Mijn toetsen beheren</button>
@@ -152,9 +164,11 @@
           <span class="month" id="monthLabel"></span>
           <button class="nav-btn" id="nextMonth">&rsaquo;</button>
         </div>
+
         <div class="weekdays">
           <span>ma</span><span>di</span><span>wo</span><span>do</span><span>vr</span><span>za</span><span>zo</span>
         </div>
+
         <div class="days" id="calDays"></div>
       </div>
 
@@ -169,29 +183,49 @@
 
         <div class="add">
           <input id="newTitle" type="text" placeholder="Wat ga je die dag doen?">
+
           <div class="add-row" style="flex-wrap:wrap">
-            <select id="newSubject"><option value="">Geen vak</option></select>
+            <select id="newSubject">
+              <option value="">Geen vak</option>
+            </select>
+
             <div class="inline-duration">
-              <input id="newHours" type="number" min="0" max="24" step="1" value="0">
+              <select id="newHours">
+                <option value="0">0</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+              </select>
+
               <span class="duration-unit">uur</span>
+
               <select id="newMinutes">
                 <option value="0">00</option>
                 <option value="15">15</option>
                 <option value="30">30</option>
                 <option value="45">45</option>
               </select>
+
               <span class="duration-unit">min</span>
             </div>
+
             <button class="btn btn-primary" id="addBtn">Toevoegen</button>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
 <div id="studyPlanModal" class="modal-backdrop hidden">
   <div class="modal modal-small">
+
     <div class="modal-head">
       <div>
         <h2>Studieplan maken</h2>
@@ -207,30 +241,67 @@
 
     <div class="modal-field">
       <label>Hoeveel wil je in totaal leren?</label>
+
       <div class="duration-picker">
-        <input id="planTotalHours" type="number" min="0" max="200" step="1" value="10">
+        <select id="planTotalHours">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10" selected>10</option>
+          <option value="12">12</option>
+          <option value="15">15</option>
+          <option value="20">20</option>
+          <option value="25">25</option>
+          <option value="30">30</option>
+          <option value="40">40</option>
+          <option value="50">50</option>
+        </select>
+
         <span class="duration-unit">uur</span>
+
         <select id="planTotalMinutes">
           <option value="0">00</option>
           <option value="15">15</option>
           <option value="30">30</option>
           <option value="45">45</option>
         </select>
+
         <span class="duration-unit">min</span>
       </div>
     </div>
 
     <div class="modal-field">
       <label>Maximaal per studiedag</label>
+
       <div class="duration-picker">
-        <input id="planDayHours" type="number" min="0" max="24" step="1" value="2">
+        <select id="planDayHours">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2" selected>2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+        </select>
+
         <span class="duration-unit">uur</span>
+
         <select id="planDayMinutes">
           <option value="0">00</option>
           <option value="15">15</option>
           <option value="30">30</option>
           <option value="45">45</option>
         </select>
+
         <span class="duration-unit">min</span>
       </div>
     </div>
@@ -241,6 +312,7 @@
     </div>
 
     <div class="skip-title">Deze dagen standaard overslaan</div>
+
     <div class="weekday-selector">
       <button type="button" class="weekday-btn" data-day="1">Ma</button>
       <button type="button" class="weekday-btn" data-day="2">Di</button>
@@ -253,10 +325,12 @@
 
     <div class="modal-field">
       <label>Losse dag overslaan</label>
+
       <div class="skip-date-row">
         <input id="skipDateInput" type="date">
         <button class="btn btn-secondary" type="button" id="addSkipDateBtn">Overslaan</button>
       </div>
+
       <div class="skip-dates" id="skipDatesList"></div>
     </div>
 
@@ -266,11 +340,13 @@
       <button class="btn btn-secondary" data-close="studyPlanModal">Annuleren</button>
       <button class="btn btn-primary" id="generatePlanBtn">Planning maken</button>
     </div>
+
   </div>
 </div>
 
 <div id="timeModal" class="modal-backdrop hidden">
   <div class="modal modal-small">
+
     <div class="modal-head">
       <div>
         <h2>Leertijd invullen</h2>
@@ -283,15 +359,29 @@
 
     <div class="modal-field">
       <label>Hoeveel heb je daadwerkelijk geleerd?</label>
+
       <div class="duration-picker">
-        <input id="actualHours" type="number" min="0" max="24" step="1" value="0">
+        <select id="actualHours">
+          <option value="0">0</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+        </select>
+
         <span class="duration-unit">uur</span>
+
         <select id="actualMinutes">
           <option value="0">00</option>
           <option value="15">15</option>
           <option value="30">30</option>
           <option value="45">45</option>
         </select>
+
         <span class="duration-unit">min</span>
       </div>
     </div>
@@ -300,11 +390,13 @@
       <button class="btn btn-secondary" data-close="timeModal">Annuleren</button>
       <button class="btn btn-primary" id="saveTimeBtn">Opslaan</button>
     </div>
+
   </div>
 </div>
 
 <div id="customExamModal" class="modal-backdrop hidden">
   <div class="modal modal-small">
+
     <div class="modal-head">
       <div>
         <h2>Andere toets toevoegen</h2>
@@ -335,6 +427,7 @@
 
     <div class="modal-field">
       <label>Studiejaar</label>
+
       <select id="customExamYear">
         <option value="">Niet aangeven</option>
         <option value="1">Jaar 1</option>
@@ -348,11 +441,13 @@
       <button class="btn btn-secondary" data-close="customExamModal">Annuleren</button>
       <button class="btn btn-primary" id="saveCustomExamBtn">Toets toevoegen</button>
     </div>
+
   </div>
 </div>
 
 <div id="manageExamsModal" class="modal-backdrop hidden">
   <div class="modal">
+
     <div class="modal-head">
       <div>
         <h2>Mijn toetsen</h2>
@@ -360,11 +455,13 @@
       </div>
       <button class="modal-close" data-close="manageExamsModal">×</button>
     </div>
+
     <div class="exam-manage-list" id="manageExamList"></div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 const SUPABASE_URL="https://rdlkdglzfjniwamumucb.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
@@ -418,7 +515,13 @@ function shortDate(s){
 
 function escapeHtml(s){
   if(s===null||s===undefined)return "";
-  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  return String(s).replace(/[&<>"']/g,c=>({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c]));
 }
 
 function makeMinutes(hours,minutes){
@@ -434,27 +537,51 @@ function formatMinutes(total){
   total=Math.max(0,Math.round(Number(total||0)));
   const hours=Math.floor(total/60);
   const minutes=total%60;
+
   if(hours&&minutes)return hours+" uur "+minutes+" min";
   if(hours)return hours+" uur";
   return minutes+" min";
 }
 
+function setDurationPicker(hoursId,minutesId,total){
+  const split=splitMinutes(total);
+  const hoursSelect=el(hoursId);
+  const minutesSelect=el(minutesId);
+
+  if(hoursSelect){
+    const available=[...hoursSelect.options].map(o=>Number(o.value));
+    const closest=available.reduce((a,b)=>Math.abs(b-split.hours)<Math.abs(a-split.hours)?b:a,available[0]||0);
+    hoursSelect.value=String(closest);
+  }
+
+  if(minutesSelect){
+    const minuteOptions=[0,15,30,45];
+    const closestMinute=minuteOptions.reduce((a,b)=>Math.abs(b-split.minutes)<Math.abs(a-split.minutes)?b:a,0);
+    minutesSelect.value=String(closestMinute);
+  }
+}
+
 function laadSupabase(klaar,mislukt){
   if(typeof supabase!=="undefined"){klaar();return}
+
   const bronnen=[
     "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
     "https://unpkg.com/@supabase/supabase-js@2",
     "https://esm.sh/@supabase/supabase-js@2?bundle"
   ];
+
   let i=0;
+
   function volgende(){
     if(i>=bronnen.length){mislukt();return}
+
     const s=document.createElement("script");
     s.src=bronnen[i++];
     s.onload=()=>typeof supabase!=="undefined"?klaar():volgende();
     s.onerror=volgende;
     document.head.appendChild(s);
   }
+
   volgende();
 }
 
@@ -488,20 +615,27 @@ function boot(){
       if(session)enterApp(session.user);
       else showAuth();
     });
+
   }catch(e){
     fatal("Er ging iets mis",e.message||String(e));
   }
 }
 
-laadSupabase(boot,()=>fatal("Supabase kon niet laden","Controleer je internetverbinding."));
+laadSupabase(
+  boot,
+  ()=>fatal("Supabase kon niet laden","Controleer je internetverbinding.")
+);
 
 function updateAuthMode(){
   const login=mode==="login";
+
   el("authBtn").textContent=login?"Inloggen":"Account aanmaken";
   el("authLead").textContent=login?"Log in om je planning te zien.":"Maak een account om te beginnen.";
+
   el("authSwitch").innerHTML=login
     ?'Nog geen account? <a id="switchLink">Maak er een aan</a>'
     :'Al een account? <a id="switchLink">Log in</a>';
+
   el("switchLink").onclick=()=>{
     mode=login?"signup":"login";
     updateAuthMode();
@@ -517,6 +651,7 @@ function initAuthUI(){
 async function doAuth(){
   const email=el("email").value.trim();
   const password=el("password").value;
+
   if(!email||!password)return;
 
   el("authBtn").disabled=true;
@@ -589,6 +724,7 @@ function bindEvents(){
   document.querySelectorAll(".weekday-btn").forEach(btn=>{
     btn.onclick=()=>{
       const day=Number(btn.dataset.day);
+
       if(state.skipWeekdays.has(day)){
         state.skipWeekdays.delete(day);
         btn.classList.remove("skip");
@@ -596,6 +732,7 @@ function bindEvents(){
         state.skipWeekdays.add(day);
         btn.classList.add("skip");
       }
+
       updatePlanSummary();
     };
   });
@@ -618,30 +755,51 @@ function bindEvents(){
 
 async function loadTasks(){
   const{data,error}=await sb.from("tasks").select("*").order("planned_date");
-  if(error){console.error(error);alert("Taken laden lukte niet: "+error.message);return}
+
+  if(error){
+    console.error(error);
+    alert("Taken laden lukte niet: "+error.message);
+    return;
+  }
+
   state.tasks=data||[];
 }
 
 async function loadExams(){
   const{data,error}=await sb.from("exams").select("*").order("exam_date");
-  if(error){console.error(error);return}
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
   state.exams=data||[];
 }
 
 async function loadExamPresets(){
   const{data,error}=await sb.from("exam_presets").select("*").eq("study_year",2).order("exam_date");
-  if(error){console.error(error);return}
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
   state.examPresets=data||[];
 }
 
 async function loadStudyPlans(){
   const{data,error}=await sb.from("study_plans").select("*");
-  if(error){console.error(error);return}
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
   state.studyPlans=data||[];
 }
 
 function getSubjects(){
-  return[...new Set(state.exams.map(e=>e.name))];
+  return [...new Set(state.exams.map(e=>e.name))];
 }
 
 function fillSubjectMenus(){
@@ -667,6 +825,7 @@ function fillSubjectMenus(){
 
 function nextExamForSubject(subject){
   const td=today();
+
   return state.exams
     .filter(e=>e.name===subject&&e.exam_date>=td)
     .sort((a,b)=>a.exam_date.localeCompare(b.exam_date))[0]||null;
@@ -680,10 +839,17 @@ function subjectStats(subject){
   const exam=nextExamForSubject(subject);
   const subjectTasks=state.tasks.filter(t=>t.subject===subject);
 
-  const total=subjectTasks.reduce((sum,t)=>sum+Number(t.planned_minutes||0),0);
+  const total=subjectTasks.reduce(
+    (sum,t)=>sum+Number(t.planned_minutes||0),
+    0
+  );
 
-  const actual=subjectTasks.reduce((sum,t)=>
-    sum+Math.min(Number(t.actual_minutes||0),Number(t.planned_minutes||0)),0
+  const actual=subjectTasks.reduce(
+    (sum,t)=>sum+Math.min(
+      Number(t.actual_minutes||0),
+      Number(t.planned_minutes||0)
+    ),
+    0
   );
 
   const remaining=Math.max(total-actual,0);
@@ -691,7 +857,11 @@ function subjectStats(subject){
   const requiredPerDay=remaining/Math.max(days,1);
 
   let score=0;
-  if(exam)score+=400/Math.max(days+1,1);
+
+  if(exam){
+    score+=400/Math.max(days+1,1);
+  }
+
   score+=requiredPerDay*2;
   score+=remaining/120;
 
@@ -706,7 +876,16 @@ function subjectStats(subject){
     label="Prioriteit";
   }
 
-  return{exam,total,actual,remaining,days,score,level,label};
+  return{
+    exam,
+    total,
+    actual,
+    remaining,
+    days,
+    score,
+    level,
+    label
+  };
 }
 
 function groupedExams(){
@@ -721,7 +900,8 @@ function groupedExams(){
     items.sort((a,b)=>a.exam_date.localeCompare(b.exam_date));
   });
 
-  return Object.entries(groups).sort((a,b)=>subjectStats(b[0]).score-subjectStats(a[0]).score);
+  return Object.entries(groups)
+    .sort((a,b)=>subjectStats(b[0]).score-subjectStats(a[0]).score);
 }
 
 function renderToetsRow(){
@@ -736,12 +916,14 @@ function renderToetsRow(){
   groupedExams().forEach(([name,exams])=>{
     const stats=subjectStats(name);
     const card=document.createElement("div");
+
     card.className="chip";
 
     let attempts="";
 
     exams.forEach(exam=>{
       const days=daysBetween(today(),exam.exam_date);
+
       let cls="ok";
       let text;
 
@@ -770,7 +952,10 @@ function renderToetsRow(){
     let progress="";
 
     if(stats.total>0){
-      const percent=Math.min(100,Math.round(stats.actual/stats.total*100));
+      const percent=Math.min(
+        100,
+        Math.round(stats.actual/stats.total*100)
+      );
 
       progress=`
         <div class="exam-progress">
@@ -812,7 +997,8 @@ function shiftMonth(delta){
 }
 
 function renderCalendar(){
-  el("monthLabel").textContent=MONTHS[state.viewMonth]+" "+state.viewYear;
+  el("monthLabel").textContent=
+    MONTHS[state.viewMonth]+" "+state.viewYear;
 
   const first=new Date(state.viewYear,state.viewMonth,1);
   const offset=(first.getDay()+6)%7;
@@ -823,23 +1009,41 @@ function renderCalendar(){
 
   for(let i=0;i<42;i++){
     const d=new Date(start);
-    d.setDate(start.getDate()+i);
+
+    d.setDate(
+      start.getDate()+i
+    );
 
     const ds=ymd(d);
     const cell=document.createElement("button");
 
     cell.className="day tnum";
 
-    if(d.getMonth()!==state.viewMonth)cell.classList.add("other");
-    if(ds===today())cell.classList.add("today");
-    if(ds===state.selected)cell.classList.add("selected");
-    if(examsOn(ds).length)cell.classList.add("toets");
+    if(d.getMonth()!==state.viewMonth){
+      cell.classList.add("other");
+    }
+
+    if(ds===today()){
+      cell.classList.add("today");
+    }
+
+    if(ds===state.selected){
+      cell.classList.add("selected");
+    }
+
+    if(examsOn(ds).length){
+      cell.classList.add("toets");
+    }
 
     let html=`<span>${d.getDate()}</span>`;
 
-    if(examsOn(ds).length)html+='<span class="tflag"></span>';
+    if(examsOn(ds).length){
+      html+='<span class="tflag"></span>';
+    }
 
-    const tasks=state.tasks.filter(t=>t.planned_date===ds);
+    const tasks=state.tasks.filter(
+      t=>t.planned_date===ds
+    );
 
     if(tasks.length){
       const visibleTasks=tasks.slice(0,3);
@@ -848,8 +1052,13 @@ function renderCalendar(){
       html+='<span class="dot">'+
         visibleTasks.map(t=>{
           let c="";
-          if(t.done)c="done";
-          else if(ds<today())c="missed";
+
+          if(t.done){
+            c="done";
+          }else if(ds<today()){
+            c="missed";
+          }
+
           return `<i class="${c}"></i>`;
         }).join("")+
         (extraCount>0?`<span class="more-tasks">+${extraCount}</span>`:"")+
@@ -869,13 +1078,27 @@ function renderCalendar(){
 }
 
 function renderDay(){
-  el("dayDate").textContent=longDate(state.selected);
+  el("dayDate").textContent=
+    longDate(state.selected);
 
-  const tasks=state.tasks.filter(t=>t.planned_date===state.selected);
+  const tasks=state.tasks.filter(
+    t=>t.planned_date===state.selected
+  );
 
-  const planned=tasks.reduce((sum,t)=>sum+Number(t.planned_minutes||0),0);
-  const actual=tasks.reduce((sum,t)=>sum+Number(t.actual_minutes||0),0);
-  const remaining=Math.max(planned-actual,0);
+  const planned=tasks.reduce(
+    (sum,t)=>sum+Number(t.planned_minutes||0),
+    0
+  );
+
+  const actual=tasks.reduce(
+    (sum,t)=>sum+Number(t.actual_minutes||0),
+    0
+  );
+
+  const remaining=Math.max(
+    planned-actual,
+    0
+  );
 
   if(planned>0){
     el("dayHours").innerHTML=`
@@ -884,15 +1107,20 @@ function renderDay(){
       <strong>${formatMinutes(remaining)}</strong> resterend
     `;
   }else{
-    el("dayHours").textContent="Geen studie-uren gepland.";
+    el("dayHours").textContent=
+      "Geen studie-uren gepland.";
   }
 
-  const exams=examsOn(state.selected);
+  const exams=examsOn(
+    state.selected
+  );
 
   if(exams.length){
     el("dayToets").textContent=
       "Toetsdag: "+
-      exams.map(e=>e.name+" (kans "+e.attempt+")").join(", ");
+      exams.map(
+        e=>e.name+" (kans "+e.attempt+")"
+      ).join(", ");
 
     el("dayToets").classList.add("show");
   }else{
@@ -901,18 +1129,28 @@ function renderDay(){
   }
 
   const list=el("taskList");
+
   list.innerHTML="";
 
   if(!tasks.length){
-    list.innerHTML='<div class="empty">Nog niets gepland voor deze dag.</div>';
+    list.innerHTML=
+      '<div class="empty">Nog niets gepland voor deze dag.</div>';
+
     return;
   }
 
   tasks.forEach(task=>{
     const taskPlanned=Number(task.planned_minutes||0);
     const taskActual=Number(task.actual_minutes||0);
-    const taskRemaining=Math.max(taskPlanned-taskActual,0);
-    const overdue=!task.done&&task.planned_date<today();
+
+    const taskRemaining=Math.max(
+      taskPlanned-taskActual,
+      0
+    );
+
+    const overdue=
+      !task.done&&
+      task.planned_date<today();
 
     const row=document.createElement("div");
 
@@ -922,10 +1160,15 @@ function renderDay(){
       (overdue?" overdue":"");
 
     const check=document.createElement("button");
-    check.className="check"+(task.done?" on":"");
+
+    check.className=
+      "check"+
+      (task.done?" on":"");
+
     check.onclick=()=>markTaskComplete(task);
 
     const body=document.createElement("div");
+
     body.className="body";
 
     let sub=task.subject||"";
@@ -957,19 +1200,26 @@ function renderDay(){
 
     if(taskPlanned>0){
       const timeButton=document.createElement("button");
-      timeButton.className="btn btn-secondary btn-small";
-      timeButton.textContent="Tijd invullen";
-      timeButton.onclick=()=>openTimeModal(task);
+
+      timeButton.className=
+        "btn btn-secondary btn-small";
+
+      timeButton.textContent=
+        "Tijd invullen";
+
+      timeButton.onclick=
+        ()=>openTimeModal(task);
+
       actions.appendChild(timeButton);
     }
 
     const del=document.createElement("button");
+
     del.className="del";
     del.textContent="×";
     del.onclick=()=>deleteTask(task);
 
     actions.appendChild(del);
-
     row.appendChild(check);
     row.appendChild(body);
     row.appendChild(actions);
@@ -981,11 +1231,14 @@ function renderDay(){
 function getRedistributableTasks(){
   return state.tasks.filter(task=>{
     const remaining=Math.max(
-      Number(task.planned_minutes||0)-Number(task.actual_minutes||0),
+      Number(task.planned_minutes||0)-
+      Number(task.actual_minutes||0),
       0
     );
 
-    if(remaining<=0)return false;
+    if(remaining<=0){
+      return false;
+    }
 
     return(
       task.planned_date<today()||
@@ -1000,12 +1253,15 @@ function getRedistributableTasks(){
 function renderMissedBanner(){
   const items=getRedistributableTasks();
 
-  const minutes=items.reduce((sum,t)=>
-    sum+
-    Math.max(
-      Number(t.planned_minutes||0)-Number(t.actual_minutes||0),
-      0
-    ),0
+  const minutes=items.reduce(
+    (sum,t)=>
+      sum+
+      Math.max(
+        Number(t.planned_minutes||0)-
+        Number(t.actual_minutes||0),
+        0
+      ),
+    0
   );
 
   if(items.length){
@@ -1029,11 +1285,23 @@ function renderAll(){
 
 async function addTask(){
   const title=el("newTitle").value.trim();
-  if(!title)return;
 
-  const subject=el("newSubject").value||null;
-  const minutes=makeMinutes(el("newHours").value,el("newMinutes").value);
-  const exam=subject?nextExamForSubject(subject):null;
+  if(!title){
+    return;
+  }
+
+  const subject=
+    el("newSubject").value||
+    null;
+
+  const minutes=makeMinutes(
+    el("newHours").value,
+    el("newMinutes").value
+  );
+
+  const exam=subject
+    ?nextExamForSubject(subject)
+    :null;
 
   const row={
     user_id:state.user.id,
@@ -1048,7 +1316,11 @@ async function addTask(){
     study_plan_id:null
   };
 
-  const{data,error}=await sb.from("tasks").insert(row).select().single();
+  const{data,error}=await sb
+    .from("tasks")
+    .insert(row)
+    .select()
+    .single();
 
   if(error){
     alert(error.message);
@@ -1066,7 +1338,10 @@ async function addTask(){
 
 async function markTaskComplete(task){
   const newDone=!task.done;
-  const newActual=newDone?Number(task.planned_minutes||0):0;
+
+  const newActual=newDone
+    ?Number(task.planned_minutes||0)
+    :0;
 
   const{error}=await sb
     .from("tasks")
@@ -1091,31 +1366,28 @@ function openTimeModal(task){
   currentTimeTask=task;
 
   el("timeTaskName").textContent=
-    task.subject?task.subject:task.title;
+    task.subject
+      ?task.subject
+      :task.title;
 
   el("timeTaskSummary").innerHTML=`
     Gepland: <strong>${formatMinutes(task.planned_minutes)}</strong><br>
     Tot nu toe ingevuld: <strong>${formatMinutes(task.actual_minutes)}</strong>
   `;
 
-  const split=splitMinutes(task.actual_minutes);
-
-  el("actualHours").value=split.hours;
-
-  const rounded=Math.min(
-    45,
-    Math.round(split.minutes/15)*15
-  );
-
-  el("actualMinutes").value=String(
-    rounded===60?45:rounded
+  setDurationPicker(
+    "actualHours",
+    "actualMinutes",
+    task.actual_minutes
   );
 
   openModal("timeModal");
 }
 
 async function saveActualTime(){
-  if(!currentTimeTask)return;
+  if(!currentTimeTask){
+    return;
+  }
 
   const actual=makeMinutes(
     el("actualHours").value,
@@ -1133,11 +1405,18 @@ async function saveActualTime(){
       "?"
     );
 
-    if(!use)return;
+    if(!use){
+      return;
+    }
   }
 
-  const newPlanned=Math.max(planned,actual);
-  const done=actual>=newPlanned;
+  const newPlanned=Math.max(
+    planned,
+    actual
+  );
+
+  const done=
+    actual>=newPlanned;
 
   const{error}=await sb
     .from("tasks")
@@ -1175,7 +1454,9 @@ async function deleteTask(task){
     return;
   }
 
-  state.tasks=state.tasks.filter(t=>t.id!==task.id);
+  state.tasks=state.tasks.filter(
+    t=>t.id!==task.id
+  );
 
   renderAll();
 }
@@ -1189,9 +1470,8 @@ function openStudyPlan(){
   state.skipWeekdays=new Set();
   state.skipDates=new Set();
 
-  document.querySelectorAll(".weekday-btn").forEach(btn=>{
-    btn.classList.remove("skip");
-  });
+  document.querySelectorAll(".weekday-btn")
+    .forEach(btn=>btn.classList.remove("skip"));
 
   el("planStartDate").value=today();
   el("planTotalHours").value="10";
@@ -1206,7 +1486,10 @@ function openStudyPlan(){
 
 function addSkipDate(){
   const date=el("skipDateInput").value;
-  if(!date)return;
+
+  if(!date){
+    return;
+  }
 
   state.skipDates.add(date);
 
@@ -1218,38 +1501,53 @@ function addSkipDate(){
 
 function renderSkipDates(){
   const list=el("skipDatesList");
+
   list.innerHTML="";
 
-  [...state.skipDates].sort().forEach(date=>{
-    const chip=document.createElement("span");
+  [...state.skipDates]
+    .sort()
+    .forEach(date=>{
+      const chip=document.createElement("span");
 
-    chip.className="skip-date-chip";
+      chip.className=
+        "skip-date-chip";
 
-    chip.innerHTML=`
-      ${shortDate(date)}
-      <button type="button">×</button>
-    `;
+      chip.innerHTML=`
+        ${shortDate(date)}
+        <button type="button">×</button>
+      `;
 
-    chip.querySelector("button").onclick=()=>{
-      state.skipDates.delete(date);
-      renderSkipDates();
-      updatePlanSummary();
-    };
+      chip.querySelector("button").onclick=()=>{
+        state.skipDates.delete(date);
+        renderSkipDates();
+        updatePlanSummary();
+      };
 
-    list.appendChild(chip);
-  });
+      list.appendChild(chip);
+    });
 }
 
-function availableStudyDays(start,deadline,skipWeekdays,skipDates){
+function availableStudyDays(
+  start,
+  deadline,
+  skipWeekdays,
+  skipDates
+){
   const result=[];
   let current=start;
   const last=addDays(deadline,-1);
   let guard=0;
 
-  while(current<=last&&guard<500){
+  while(
+    current<=last&&
+    guard<500
+  ){
     const weekday=parse(current).getDay();
 
-    if(!skipWeekdays.has(weekday)&&!skipDates.has(current)){
+    if(
+      !skipWeekdays.has(weekday)&&
+      !skipDates.has(current)
+    ){
       result.push(current);
     }
 
@@ -1260,9 +1558,17 @@ function availableStudyDays(start,deadline,skipWeekdays,skipDates){
   return result;
 }
 
-function chooseSpreadDays(available,count){
-  if(count>=available.length)return available.slice();
-  if(count===1)return[available[0]];
+function chooseSpreadDays(
+  available,
+  count
+){
+  if(count>=available.length){
+    return available.slice();
+  }
+
+  if(count===1){
+    return[available[0]];
+  }
 
   const result=[];
 
@@ -1279,7 +1585,10 @@ function chooseSpreadDays(available,count){
   }
 
   for(const date of available){
-    if(result.length>=count)break;
+    if(result.length>=count){
+      break;
+    }
+
     if(!result.includes(date)){
       result.push(date);
     }
@@ -1289,7 +1598,8 @@ function chooseSpreadDays(available,count){
 }
 
 function getPlanInfo(){
-  const subject=el("planSubject").value;
+  const subject=
+    el("planSubject").value;
 
   const totalMinutes=makeMinutes(
     el("planTotalHours").value,
@@ -1301,8 +1611,11 @@ function getPlanInfo(){
     el("planDayMinutes").value
   );
 
-  const start=el("planStartDate").value;
-  const exam=nextExamForSubject(subject);
+  const start=
+    el("planStartDate").value;
+
+  const exam=
+    nextExamForSubject(subject);
 
   if(
     !subject||
@@ -1314,16 +1627,18 @@ function getPlanInfo(){
     return null;
   }
 
-  const available=availableStudyDays(
-    start,
-    exam.exam_date,
-    state.skipWeekdays,
-    state.skipDates
-  );
+  const available=
+    availableStudyDays(
+      start,
+      exam.exam_date,
+      state.skipWeekdays,
+      state.skipDates
+    );
 
-  const neededDays=Math.ceil(
-    totalMinutes/maxMinutes
-  );
+  const neededDays=
+    Math.ceil(
+      totalMinutes/maxMinutes
+    );
 
   return{
     subject,
@@ -1340,21 +1655,28 @@ function updatePlanSummary(){
   const info=getPlanInfo();
 
   if(!info){
-    el("planSummary").textContent="Vul hierboven je leertijd in.";
+    el("planSummary").textContent=
+      "Vul hierboven je leertijd in.";
+
     return;
   }
 
   if(!info.available.length){
     el("planSummary").innerHTML=
       "<strong>Geen beschikbare studiedagen.</strong><br>Pas de startdatum of overgeslagen dagen aan.";
+
     return;
   }
 
-  const enough=info.neededDays<=info.available.length;
+  const enough=
+    info.neededDays<=
+    info.available.length;
 
-  const average=Math.ceil(
-    info.totalMinutes/info.available.length
-  );
+  const average=
+    Math.ceil(
+      info.totalMinutes/
+      info.available.length
+    );
 
   el("planSummary").innerHTML=`
     <strong>${escapeHtml(info.subject)}</strong><br><br>
@@ -1363,25 +1685,26 @@ function updatePlanSummary(){
     Maximaal per studiedag: <strong>${formatMinutes(info.maxMinutes)}</strong><br>
     Nodig: <strong>${info.neededDays} studiedagen</strong><br>
     Beschikbaar: <strong>${info.available.length} dagen</strong><br>
-    Gemiddeld als je iedere beschikbare dag gebruikt:
-    <strong>${formatMinutes(average)}</strong><br><br>
-    ${
-      enough
-        ?"✓ Dit past vóór je toets."
-        :"⚠ Dit past niet met je huidige maximum per dag."
-    }
+    Gemiddeld als je iedere beschikbare dag gebruikt: <strong>${formatMinutes(average)}</strong><br><br>
+    ${enough?"✓ Dit past vóór je toets.":"⚠ Dit past niet met je huidige maximum per dag."}
   `;
 }
 
 async function generateStudyPlan(){
   const info=getPlanInfo();
 
-  if(!info)return;
+  if(!info){
+    return;
+  }
 
-  if(info.neededDays>info.available.length){
+  if(
+    info.neededDays>
+    info.available.length
+  ){
     alert(
       "Er zijn te weinig beschikbare studiedagen. Verhoog je maximale leertijd per dag of sla minder dagen over."
     );
+
     return;
   }
 
@@ -1394,19 +1717,24 @@ async function generateStudyPlan(){
       "Er bestaat al een studieplan voor dit vak.\n\nWil je de nog openstaande automatische planning vervangen?"
     );
 
-    if(!replace)return;
+    if(!replace){
+      return;
+    }
 
-    const oldIds=oldPlans.map(p=>p.id);
+    const oldIds=
+      oldPlans.map(p=>p.id);
 
-    const openAutoTasks=state.tasks.filter(
-      t=>
-        t.study_plan_id&&
-        oldIds.includes(t.study_plan_id)&&
-        !t.done
-    );
+    const openAutoTasks=
+      state.tasks.filter(
+        t=>
+          t.study_plan_id&&
+          oldIds.includes(t.study_plan_id)&&
+          !t.done
+      );
 
     if(openAutoTasks.length){
-      const taskIds=openAutoTasks.map(t=>t.id);
+      const taskIds=
+        openAutoTasks.map(t=>t.id);
 
       const{error}=await sb
         .from("tasks")
@@ -1418,9 +1746,10 @@ async function generateStudyPlan(){
         return;
       }
 
-      state.tasks=state.tasks.filter(
-        t=>!taskIds.includes(t.id)
-      );
+      state.tasks=
+        state.tasks.filter(
+          t=>!taskIds.includes(t.id)
+        );
     }
 
     const{error:planDeleteError}=await sb
@@ -1433,9 +1762,10 @@ async function generateStudyPlan(){
       return;
     }
 
-    state.studyPlans=state.studyPlans.filter(
-      p=>!oldIds.includes(p.id)
-    );
+    state.studyPlans=
+      state.studyPlans.filter(
+        p=>!oldIds.includes(p.id)
+      );
   }
 
   const{data:plan,error:planError}=await sb
@@ -1467,7 +1797,9 @@ async function generateStudyPlan(){
   const rows=[];
 
   chosen.forEach(date=>{
-    if(remaining<=0)return;
+    if(remaining<=0){
+      return;
+    }
 
     const minutes=Math.min(
       info.maxMinutes,
@@ -1509,6 +1841,7 @@ async function generateStudyPlan(){
   state.tasks.push(...(data||[]));
 
   closeModal("studyPlanModal");
+
   renderAll();
 
   alert(
@@ -1522,12 +1855,18 @@ async function generateStudyPlan(){
 async function redistributeRemainingTime(){
   const candidates=getRedistributableTasks();
 
-  if(!candidates.length)return;
+  if(!candidates.length){
+    return;
+  }
 
   const grouped={};
 
   candidates
-    .filter(t=>t.auto_generated&&t.study_plan_id)
+    .filter(
+      t=>
+        t.auto_generated&&
+        t.study_plan_id
+    )
     .forEach(task=>{
       if(!grouped[task.study_plan_id]){
         grouped[task.study_plan_id]=[];
@@ -1538,15 +1877,27 @@ async function redistributeRemainingTime(){
 
   let unplannedMinutes=0;
 
-  for(const[planId,oldTasks]of Object.entries(grouped)){
-    const plan=state.studyPlans.find(p=>p.id===planId);
+  for(
+    const[
+      planId,
+      oldTasks
+    ]
+    of Object.entries(grouped)
+  ){
+    const plan=state.studyPlans.find(
+      p=>p.id===planId
+    );
 
-    if(!plan)continue;
+    if(!plan){
+      continue;
+    }
 
     let remainingToMove=0;
 
     for(const task of oldTasks){
-      const planned=Number(task.planned_minutes||0);
+      const planned=Number(
+        task.planned_minutes||0
+      );
 
       const actual=Math.min(
         Number(task.actual_minutes||0),
@@ -1580,34 +1931,42 @@ async function redistributeRemainingTime(){
           .eq("id",task.id);
 
         if(!error){
-          state.tasks=state.tasks.filter(
-            t=>t.id!==task.id
-          );
+          state.tasks=
+            state.tasks.filter(
+              t=>t.id!==task.id
+            );
         }
       }
     }
 
-    if(remainingToMove<=0)continue;
+    if(remainingToMove<=0){
+      continue;
+    }
 
-    const skipWeekdays=new Set(plan.skip_weekdays||[]);
-    const skipDates=new Set(plan.skip_dates||[]);
+    const skipWeekdays=
+      new Set(plan.skip_weekdays||[]);
 
-    const hadTodayPartial=oldTasks.some(
-      t=>
-        t.planned_date===today()&&
-        Number(t.actual_minutes||0)>0
-    );
+    const skipDates=
+      new Set(plan.skip_dates||[]);
+
+    const hadTodayPartial=
+      oldTasks.some(
+        t=>
+          t.planned_date===today()&&
+          Number(t.actual_minutes||0)>0
+      );
 
     const start=hadTodayPartial
       ?addDays(today(),1)
       :today();
 
-    const available=availableStudyDays(
-      start,
-      plan.deadline,
-      skipWeekdays,
-      skipDates
-    );
+    const available=
+      availableStudyDays(
+        start,
+        plan.deadline,
+        skipWeekdays,
+        skipDates
+      );
 
     const existingLoad={};
 
@@ -1627,28 +1986,34 @@ async function redistributeRemainingTime(){
     const newRows=[];
     let left=remainingToMove;
 
-    const orderedDays=available.slice().sort((a,b)=>{
-      const loadA=existingLoad[a]||0;
-      const loadB=existingLoad[b]||0;
+    const orderedDays=
+      available.slice().sort((a,b)=>{
+        const loadA=existingLoad[a]||0;
+        const loadB=existingLoad[b]||0;
 
-      if(loadA!==loadB){
-        return loadA-loadB;
-      }
+        if(loadA!==loadB){
+          return loadA-loadB;
+        }
 
-      return a.localeCompare(b);
-    });
+        return a.localeCompare(b);
+      });
 
     for(const date of orderedDays){
-      if(left<=0)break;
+      if(left<=0){
+        break;
+      }
 
-      const already=existingLoad[date]||0;
+      const already=
+        existingLoad[date]||0;
 
       const capacity=Math.max(
         Number(plan.max_minutes_per_day)-already,
         0
       );
 
-      if(capacity<=0)continue;
+      if(capacity<=0){
+        continue;
+      }
 
       const amount=Math.min(
         capacity,
@@ -1668,7 +2033,9 @@ async function redistributeRemainingTime(){
         study_plan_id:plan.id
       });
 
-      existingLoad[date]=already+amount;
+      existingLoad[date]=
+        already+amount;
+
       left-=amount;
     }
 
@@ -1692,7 +2059,9 @@ async function redistributeRemainingTime(){
   }
 
   const manual=candidates.filter(
-    t=>!t.auto_generated||!t.study_plan_id
+    t=>
+      !t.auto_generated||
+      !t.study_plan_id
   );
 
   for(const task of manual){
@@ -1702,7 +2071,9 @@ async function redistributeRemainingTime(){
       0
     );
 
-    if(remaining<=0)continue;
+    if(remaining<=0){
+      continue;
+    }
 
     const actual=Number(
       task.actual_minutes||0
@@ -1727,9 +2098,10 @@ async function redistributeRemainingTime(){
         .delete()
         .eq("id",task.id);
 
-      state.tasks=state.tasks.filter(
-        t=>t.id!==task.id
-      );
+      state.tasks=
+        state.tasks.filter(
+          t=>t.id!==task.id
+        );
     }
 
     const target=
@@ -1760,7 +2132,10 @@ async function redistributeRemainingTime(){
   }
 
   state.tasks.sort(
-    (a,b)=>a.planned_date.localeCompare(b.planned_date)
+    (a,b)=>
+      a.planned_date.localeCompare(
+        b.planned_date
+      )
   );
 
   renderAll();
@@ -1793,18 +2168,23 @@ async function addAllYear2Exams(){
   );
 
   if(!missing.length){
-    alert("Alle Jaar 2 toetsen staan al in je planner.");
+    alert(
+      "Alle Jaar 2 toetsen staan al in je planner."
+    );
+
     return;
   }
 
-  const rows=missing.map(p=>({
-    user_id:state.user.id,
-    preset_id:p.id,
-    name:p.name,
-    exam_date:p.exam_date,
-    attempt:p.attempt,
-    study_year:p.study_year
-  }));
+  const rows=missing.map(
+    p=>({
+      user_id:state.user.id,
+      preset_id:p.id,
+      name:p.name,
+      exam_date:p.exam_date,
+      attempt:p.attempt,
+      study_year:p.study_year
+    })
+  );
 
   const{data,error}=await sb
     .from("exams")
@@ -1828,16 +2208,26 @@ async function addAllYear2Exams(){
 }
 
 async function saveCustomExam(){
-  const name=el("customExamName").value.trim();
-  const date=el("customExamDate").value;
-  const attempt=Number(el("customExamAttempt").value);
+  const name=
+    el("customExamName").value.trim();
 
-  const year=el("customExamYear").value
-    ?Number(el("customExamYear").value)
-    :null;
+  const date=
+    el("customExamDate").value;
+
+  const attempt=Number(
+    el("customExamAttempt").value
+  );
+
+  const year=
+    el("customExamYear").value
+      ?Number(el("customExamYear").value)
+      :null;
 
   if(!name||!date){
-    alert("Vul een naam en datum in.");
+    alert(
+      "Vul een naam en datum in."
+    );
+
     return;
   }
 
@@ -1849,7 +2239,10 @@ async function saveCustomExam(){
   );
 
   if(exists){
-    alert("Deze toets staat al in je planner.");
+    alert(
+      "Deze toets staat al in je planner."
+    );
+
     return;
   }
 
@@ -1884,44 +2277,54 @@ async function saveCustomExam(){
 
 function openManageModal(){
   const list=el("manageExamList");
+
   list.innerHTML="";
 
-  groupedExams().forEach(([name,exams])=>{
-    const group=document.createElement("div");
+  groupedExams().forEach(
+    ([name,exams])=>{
+      const group=document.createElement("div");
 
-    group.className="exam-manage-group";
+      group.className=
+        "exam-manage-group";
 
-    group.innerHTML=`
-      <div class="exam-manage-group-title">
-        ${escapeHtml(name)}
-      </div>
-    `;
-
-    exams.forEach(exam=>{
-      const row=document.createElement("div");
-
-      row.className="exam-manage-item";
-
-      row.innerHTML=`
-        <div class="exam-manage-meta">
-          Kans ${exam.attempt}
-          · ${shortDate(exam.exam_date)}
-          ${exam.study_year?" · Jaar "+exam.study_year:""}
+      group.innerHTML=`
+        <div class="exam-manage-group-title">
+          ${escapeHtml(name)}
         </div>
       `;
 
-      const del=document.createElement("button");
+      exams.forEach(exam=>{
+        const row=document.createElement("div");
 
-      del.className="btn btn-danger";
-      del.textContent="Verwijderen";
-      del.onclick=()=>deleteExam(exam);
+        row.className=
+          "exam-manage-item";
 
-      row.appendChild(del);
-      group.appendChild(row);
-    });
+        row.innerHTML=`
+          <div class="exam-manage-meta">
+            Kans ${exam.attempt}
+            · ${shortDate(exam.exam_date)}
+            ${exam.study_year?" · Jaar "+exam.study_year:""}
+          </div>
+        `;
 
-    list.appendChild(group);
-  });
+        const del=document.createElement("button");
+
+        del.className=
+          "btn btn-danger";
+
+        del.textContent=
+          "Verwijderen";
+
+        del.onclick=
+          ()=>deleteExam(exam);
+
+        row.appendChild(del);
+        group.appendChild(row);
+      });
+
+      list.appendChild(group);
+    }
+  );
 
   openModal("manageExamsModal");
 }
@@ -1948,11 +2351,14 @@ async function deleteExam(exam){
     return;
   }
 
-  state.exams=state.exams.filter(
-    e=>e.id!==exam.id
-  );
+  state.exams=
+    state.exams.filter(
+      e=>e.id!==exam.id
+    );
 
-  closeModal("manageExamsModal");
+  closeModal(
+    "manageExamsModal"
+  );
 
   fillSubjectMenus();
   renderAll();
@@ -1966,5 +2372,6 @@ function closeModal(id){
   el(id).classList.add("hidden");
 }
 </script>
+
 </body>
 </html>
