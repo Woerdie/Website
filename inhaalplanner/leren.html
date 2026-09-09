@@ -307,8 +307,14 @@ function getSubjects(){
   const fromExams=state.exams.map(e=>e.name);
   const fromTopics=state.topics.map(t=>t.subject);
 
+  const excludedSubjects=[
+    "Taaltoets 3F",
+    "Taaltoets 4F Nederlands"
+  ];
+
   return [...new Set([...fromExams,...fromTopics])]
     .filter(Boolean)
+    .filter(subject=>!excludedSubjects.includes(subject))
     .sort((a,b)=>a.localeCompare(b,"nl"));
 }
 
