@@ -174,33 +174,8 @@
 
 
 /* =========================================================
-   DAG NAVIGATIE
+   DAGTOTAAL
    ========================================================= */
-
-.day-navigation {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-
-  margin-bottom: 12px;
-}
-
-.day-nav-btn {
-  border: 1px solid #d8dde5;
-  border-radius: 8px;
-  background: #fff;
-
-  padding: 7px 10px;
-
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 12px;
-}
-
-.day-nav-btn:hover {
-  background: #f5f7fa;
-}
 
 .day-hours {
   margin-top: 5px;
@@ -854,26 +829,6 @@
 
       <div class="panel">
 
-
-        <div class="day-navigation">
-
-          <button
-            class="day-nav-btn"
-            id="previousDayBtn"
-          >
-            ‹ Vorige dag
-          </button>
-
-          <button
-            class="day-nav-btn"
-            id="nextDayBtn"
-          >
-            Volgende dag ›
-          </button>
-
-        </div>
-
-
         <div class="day-head">
 
           <div
@@ -994,7 +949,7 @@
         </h2>
 
         <p>
-          De planner verdeelt je leeruren automatisch vóór je toets.
+          De planner verdeelt je leertijd automatisch vóór je toets.
         </p>
 
       </div>
@@ -1813,13 +1768,7 @@ function formatMinutes(total) {
 
     return (
       hours +
-      " " +
-      (
-        hours === 1
-          ? "uur"
-          : "uur"
-      ) +
-      " " +
+      " uur " +
       minutes +
       " min"
     );
@@ -2336,18 +2285,6 @@ function bindEvents() {
     .onclick =
     () =>
       shiftMonth(1);
-
-
-  el("previousDayBtn")
-    .onclick =
-    () =>
-      changeSelectedDay(-1);
-
-
-  el("nextDayBtn")
-    .onclick =
-    () =>
-      changeSelectedDay(1);
 
 
   el("addBtn")
@@ -3237,7 +3174,7 @@ function renderToetsRow() {
 
 
 /* =========================================================
-   MAAND / DAG NAVIGATIE
+   MAAND
    ========================================================= */
 
 function shiftMonth(delta) {
@@ -3273,38 +3210,6 @@ function shiftMonth(delta) {
 
 
   renderCalendar();
-
-}
-
-
-function changeSelectedDay(
-  delta
-) {
-
-  state.selected =
-    addDays(
-      state.selected,
-      delta
-    );
-
-
-  const d =
-    parse(
-      state.selected
-    );
-
-
-  state.viewYear =
-    d.getFullYear();
-
-
-  state.viewMonth =
-    d.getMonth();
-
-
-  renderCalendar();
-
-  renderDay();
 
 }
 
@@ -3976,11 +3881,6 @@ function getRedistributableTasks() {
         }
 
 
-        /*
-          Oude dagen altijd.
-          Vandaag ook meenemen als je al een deel hebt ingevuld.
-        */
-
         return (
           task.planned_date <
           today()
@@ -4309,11 +4209,6 @@ function openTimeModal(
     .value =
     split.hours;
 
-
-  /*
-    Alleen 0/15/30/45 in keuzelijst.
-    Bestaande afwijkende waarde ronden we op kwartier.
-  */
 
   const rounded =
     Math.min(
@@ -5114,10 +5009,6 @@ async function generateStudyPlan() {
   }
 
 
-  /*
-    Bestaand actief automatisch plan voor dit vak vervangen.
-  */
-
   const oldPlans =
     state.studyPlans
       .filter(
@@ -5470,11 +5361,6 @@ async function redistributeRemainingTime() {
   }
 
 
-  /*
-    Alleen automatische taken kunnen volledig volgens hun
-    opgeslagen studieplan worden herverdeeld.
-  */
-
   const grouped =
     {};
 
@@ -5548,13 +5434,6 @@ async function redistributeRemainingTime() {
     let remainingToMove =
       0;
 
-
-    /*
-      Oude taken verwerken:
-      - niets gedaan -> verwijderen
-      - deels gedaan -> oorspronkelijke dag als afgerond bewaren
-      - rest gaat opnieuw de planning in
-    */
 
     for (
       const task
@@ -5685,12 +5564,6 @@ async function redistributeRemainingTime() {
       );
 
 
-    /*
-      Als het vandaag een gedeeltelijk uitgevoerde taak betrof,
-      plannen we de rest vanaf morgen.
-      Voor echt gemiste eerdere dagen mag vandaag gebruikt worden.
-    */
-
     const hadTodayPartial =
       oldTasks
         .some(
@@ -5722,10 +5595,6 @@ async function redistributeRemainingTime() {
         skipDates
       );
 
-
-    /*
-      Reeds geplande tijd van hetzelfde plan per toekomstige dag.
-    */
 
     const existingLoad =
       {};
@@ -5768,10 +5637,6 @@ async function redistributeRemainingTime() {
     let left =
       remainingToMove;
 
-
-    /*
-      Eerst de minst belaste dagen vullen.
-    */
 
     const orderedDays =
       available
@@ -5955,12 +5820,6 @@ async function redistributeRemainingTime() {
 
   }
 
-
-  /*
-    Handmatige taken:
-    die hebben geen maximum/skipregels uit study_plans.
-    Deze schuiven we daarom simpelweg naar vandaag/morgen.
-  */
 
   const manual =
     candidates
@@ -6150,7 +6009,7 @@ async function redistributeRemainingTime() {
       formatMinutes(
         unplannedMinutes
       ) +
-      " past niet meer vóór de toets binnen jouw maximale tijd per dag.\n\nJe moet dus meer tijd per dag toestaan of een overgeslagen dag alsnog gebruiken."
+      " past niet meer vóór de toets binnen jouw maximale tijd per dag.\n\nJe moet meer tijd per dag toestaan of een overgeslagen dag alsnog gebruiken."
     );
 
 
