@@ -173,5 +173,7 @@
   }
   .config-warn h2 { margin: 0 0 8px; font-size: 18px; }
   .config-warn code { background: #fff; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+    .exam-badges{display:flex;align-items:center;gap:5px;flex-shrink:0}
+    .exam-year{padding:4px 7px;border-radius:999px;background:#eef2f7;color:#526071;font-size:10px;font-weight:700}
 
   .hidden { display: none !important; }
