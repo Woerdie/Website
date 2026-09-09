@@ -3,532 +3,3954 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <title>Inhaalplanner</title>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="style.css">
+
+<style>
+
+/* =========================================================
+   EXTRA STYLING VOOR TOETSEN
+   ========================================================= */
+
+.exam-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+
+.exam-toolbar .btn {
+  white-space: nowrap;
+}
+
+.btn-secondary {
+  background: #fff;
+  border: 1px solid #d8dde5;
+  color: #252b35;
+}
+
+.btn-secondary:hover {
+  background: #f5f7fa;
+}
+
+.btn-danger {
+  background: #fff1f1;
+  border: 1px solid #f2c6c6;
+  color: #b42318;
+}
+
+.btn-danger:hover {
+  background: #ffe4e4;
+}
+
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 20px;
+
+  background: rgba(20, 25, 35, .50);
+}
+
+.modal-backdrop.hidden {
+  display: none;
+}
+
+.modal {
+  width: min(720px, 100%);
+  max-height: 88vh;
+
+  overflow-y: auto;
+
+  background: #fff;
+  border-radius: 18px;
+
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, .20);
+
+  padding: 24px;
+}
+
+.modal-small {
+  width: min(520px, 100%);
+}
+
+.modal-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+
+  gap: 20px;
+
+  margin-bottom: 20px;
+}
+
+.modal-head h2 {
+  margin: 0 0 5px;
+}
+
+.modal-head p {
+  margin: 0;
+  color: #687180;
+  font-size: 14px;
+}
+
+.modal-close {
+  width: 38px;
+  height: 38px;
+
+  border-radius: 50%;
+  border: 1px solid #d8dde5;
+
+  background: #fff;
+
+  font-size: 22px;
+  cursor: pointer;
+}
+
+.modal-close:hover {
+  background: #f5f7fa;
+}
+
+
+/* =========================================================
+   TOETS KEUZELIJST
+   ========================================================= */
+
+.exam-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin-bottom: 22px;
+}
+
+.exam-choice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+
+  padding: 14px;
+
+  border: 1px solid #e1e5eb;
+  border-radius: 12px;
+
+  cursor: pointer;
+}
+
+.exam-choice:hover {
+  background: #f8fafc;
+}
+
+.exam-choice input {
+  margin-top: 4px;
+}
+
+.exam-choice-content {
+  flex: 1;
+}
+
+.exam-choice-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.exam-choice-meta {
+  margin-top: 4px;
+
+  color: #717986;
+  font-size: 12px;
+}
+
+.exam-choice.already-added {
+  opacity: .55;
+  background: #f5f7f8;
+  cursor: default;
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.modal-field {
+  margin-bottom: 16px;
+}
+
+.modal-field label {
+  display: block;
+
+  margin-bottom: 6px;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.modal-field input,
+.modal-field select {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  padding: 11px 12px;
+
+  border-radius: 9px;
+  border: 1px solid #d5dae2;
+
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  margin-top: 20px;
+}
+
+
+/* =========================================================
+   GEKOZEN TOETSEN
+   ========================================================= */
+
+.exam-manage-list {
+  display: flex;
+  flex-direction: column;
+
+  gap: 10px;
+}
+
+.exam-manage-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 13px;
+
+  border: 1px solid #e1e5eb;
+  border-radius: 10px;
+}
+
+.exam-manage-info {
+  min-width: 0;
+}
+
+.exam-manage-name {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.exam-manage-meta {
+  margin-top: 4px;
+
+  font-size: 12px;
+  color: #6f7784;
+}
+
+.exam-empty {
+  width: 100%;
+  box-sizing: border-box;
+
+  padding: 20px;
+
+  border-radius: 12px;
+
+  background: #f6f8fa;
+
+  color: #727b88;
+
+  text-align: center;
+  font-size: 14px;
+}
+
+</style>
 </head>
+
+
 <body>
 
-<!-- Config warning -->
+
+<!-- =========================================================
+     CONFIG WARNING
+     ========================================================= -->
+
 <div id="configWarn" class="config-warn hidden">
+
   <h2>Even instellen</h2>
-  <p>Vul bovenin dit bestand je eigen <code>SUPABASE_URL</code> en <code>SUPABASE_ANON_KEY</code> in. Die vind je in Supabase onder Project Settings, API.</p>
+
+  <p>
+    Vul bovenin dit bestand je eigen
+    <code>SUPABASE_URL</code>
+    en
+    <code>SUPABASE_ANON_KEY</code>
+    in.
+  </p>
+
 </div>
 
-<!-- Auth screen -->
+
+<!-- =========================================================
+     AUTH
+     ========================================================= -->
+
 <div id="authScreen" class="auth-wrap hidden">
+
   <div class="auth">
+
     <h1>Inhaalplanner</h1>
-    <p class="lead" id="authLead">Log in om je planning te zien.</p>
+
+    <p class="lead" id="authLead">
+      Log in om je planning te zien.
+    </p>
+
+
     <div class="field">
-      <label for="email">E-mail</label>
-      <input id="email" type="email" autocomplete="email" placeholder="jij@voorbeeld.nl" />
+
+      <label for="email">
+        E-mail
+      </label>
+
+      <input
+        id="email"
+        type="email"
+        autocomplete="email"
+        placeholder="jij@voorbeeld.nl"
+      />
+
     </div>
+
+
     <div class="field">
-      <label for="password">Wachtwoord</label>
-      <input id="password" type="password" autocomplete="current-password" placeholder="Minimaal 6 tekens" />
+
+      <label for="password">
+        Wachtwoord
+      </label>
+
+      <input
+        id="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Minimaal 6 tekens"
+      />
+
     </div>
-    <button class="btn btn-primary" id="authBtn">Inloggen</button>
-    <div id="authMsg" class="msg"></div>
-    <p class="switch" id="authSwitch">Nog geen account? <a id="switchLink">Maak er een aan</a></p>
+
+
+    <button
+      class="btn btn-primary"
+      id="authBtn"
+    >
+      Inloggen
+    </button>
+
+
+    <div
+      id="authMsg"
+      class="msg"
+    ></div>
+
+
+    <p
+      class="switch"
+      id="authSwitch"
+    >
+      Nog geen account?
+      <a id="switchLink">
+        Maak er een aan
+      </a>
+    </p>
+
   </div>
+
 </div>
 
-<!-- App screen -->
+
+<!-- =========================================================
+     APP
+     ========================================================= -->
+
 <div id="appScreen" class="hidden">
+
+
+  <!-- TOPBAR -->
+
   <div class="topbar">
+
     <div class="brand">
-      <h1>Inhaalplanner</h1>
-      <span class="tag">grip op je studievoortgang</span>
+
+      <h1>
+        Inhaalplanner
+      </h1>
+
+      <span class="tag">
+        grip op je studievoortgang
+      </span>
+
     </div>
+
+
     <div class="topbar-right">
-      <span id="userEmail" class="tnum"></span>
-      <button class="btn" id="logoutBtn">Uitloggen</button>
+
+      <span
+        id="userEmail"
+        class="tnum"
+      ></span>
+
+      <button
+        class="btn"
+        id="logoutBtn"
+      >
+        Uitloggen
+      </button>
+
     </div>
+
   </div>
+
 
   <div class="wrap">
-    <div class="toetsrow" id="toetsRow"></div>
 
-    <div class="banner" id="missedBanner">
-      <span class="txt" id="missedTxt"></span>
-      <button class="btn btn-missed" id="redistributeBtn">Verdeel opnieuw</button>
+
+    <!-- =====================================================
+         TOETS KNOPPEN
+         ===================================================== -->
+
+    <div class="exam-toolbar">
+
+      <button
+        class="btn btn-primary"
+        id="chooseYear2Btn"
+      >
+        + Jaar 2 toetsen kiezen
+      </button>
+
+      <button
+        class="btn btn-secondary"
+        id="customExamBtn"
+      >
+        + Andere toets toevoegen
+      </button>
+
+      <button
+        class="btn btn-secondary"
+        id="manageExamsBtn"
+      >
+        Mijn toetsen beheren
+      </button>
+
     </div>
+
+
+    <!-- TOETS CHIPS -->
+
+    <div
+      class="toetsrow"
+      id="toetsRow"
+    ></div>
+
+
+    <!-- GEMISTE TAKEN -->
+
+    <div
+      class="banner"
+      id="missedBanner"
+    >
+
+      <span
+        class="txt"
+        id="missedTxt"
+      ></span>
+
+      <button
+        class="btn btn-missed"
+        id="redistributeBtn"
+      >
+        Verdeel opnieuw
+      </button>
+
+    </div>
+
 
     <div class="grid">
-      <!-- Calendar -->
+
+
+      <!-- ===================================================
+           KALENDER
+           =================================================== -->
+
       <div class="panel">
+
         <div class="cal-head">
-          <button class="nav-btn" id="prevMonth" aria-label="Vorige maand">&lsaquo;</button>
-          <span class="month" id="monthLabel"></span>
-          <button class="nav-btn" id="nextMonth" aria-label="Volgende maand">&rsaquo;</button>
+
+          <button
+            class="nav-btn"
+            id="prevMonth"
+            aria-label="Vorige maand"
+          >
+            &lsaquo;
+          </button>
+
+
+          <span
+            class="month"
+            id="monthLabel"
+          ></span>
+
+
+          <button
+            class="nav-btn"
+            id="nextMonth"
+            aria-label="Volgende maand"
+          >
+            &rsaquo;
+          </button>
+
         </div>
+
+
         <div class="weekdays">
-          <span>ma</span><span>di</span><span>wo</span><span>do</span><span>vr</span><span>za</span><span>zo</span>
+
+          <span>ma</span>
+          <span>di</span>
+          <span>wo</span>
+          <span>do</span>
+          <span>vr</span>
+          <span>za</span>
+          <span>zo</span>
+
         </div>
-        <div class="days" id="calDays"></div>
+
+
+        <div
+          class="days"
+          id="calDays"
+        ></div>
+
       </div>
 
-      <!-- Day panel -->
+
+      <!-- ===================================================
+           DAGPANEEL
+           =================================================== -->
+
       <div class="panel">
+
         <div class="day-head">
-          <div class="date" id="dayDate"></div>
-          <div class="toetsline" id="dayToets"></div>
+
+          <div
+            class="date"
+            id="dayDate"
+          ></div>
+
+          <div
+            class="toetsline"
+            id="dayToets"
+          ></div>
+
         </div>
-        <div class="tasklist" id="taskList"></div>
+
+
+        <div
+          class="tasklist"
+          id="taskList"
+        ></div>
+
+
         <div class="add">
-          <input id="newTitle" type="text" placeholder="Wat ga je die dag doen?" />
+
+          <input
+            id="newTitle"
+            type="text"
+            placeholder="Wat ga je die dag doen?"
+          />
+
+
           <div class="add-row">
+
             <select id="newSubject">
-              <option value="">Geen vak</option>
+
+              <option value="">
+                Geen vak
+              </option>
+
             </select>
-            <button class="btn btn-primary" id="addBtn">Toevoegen</button>
+
+
+            <button
+              class="btn btn-primary"
+              id="addBtn"
+            >
+              Toevoegen
+            </button>
+
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   </div>
+
 </div>
 
+
+
+<!-- =========================================================
+     MODAL: JAAR 2 KIEZEN
+     ========================================================= -->
+
+<div
+  id="year2Modal"
+  class="modal-backdrop hidden"
+>
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <div>
+
+        <h2>
+          Jaar 2 toetsen kiezen
+        </h2>
+
+        <p>
+          Kies alleen de toetsen die jij nog moet maken.
+        </p>
+
+      </div>
+
+
+      <button
+        class="modal-close"
+        data-close="year2Modal"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div
+      class="exam-selector"
+      id="year2ExamList"
+    ></div>
+
+
+    <div class="modal-actions">
+
+      <button
+        class="btn btn-secondary"
+        data-close="year2Modal"
+      >
+        Annuleren
+      </button>
+
+      <button
+        class="btn btn-primary"
+        id="saveYear2Btn"
+      >
+        Geselecteerde toetsen toevoegen
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     MODAL: EIGEN TOETS
+     ========================================================= -->
+
+<div
+  id="customExamModal"
+  class="modal-backdrop hidden"
+>
+
+  <div class="modal modal-small">
+
+    <div class="modal-head">
+
+      <div>
+
+        <h2>
+          Andere toets toevoegen
+        </h2>
+
+        <p>
+          Voeg zelf een toets of herkansing toe.
+        </p>
+
+      </div>
+
+
+      <button
+        class="modal-close"
+        data-close="customExamModal"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div class="modal-field">
+
+      <label for="customExamName">
+        Naam van de toets
+      </label>
+
+      <input
+        id="customExamName"
+        type="text"
+        placeholder="Bijvoorbeeld HRM Basis"
+      />
+
+    </div>
+
+
+    <div class="modal-field">
+
+      <label for="customExamDate">
+        Toetsdatum
+      </label>
+
+      <input
+        id="customExamDate"
+        type="date"
+      />
+
+    </div>
+
+
+    <div class="modal-field">
+
+      <label for="customExamAttempt">
+        Kans
+      </label>
+
+      <select id="customExamAttempt">
+
+        <option value="1">
+          Kans 1
+        </option>
+
+        <option value="2">
+          Kans 2
+        </option>
+
+        <option value="3">
+          Kans 3
+        </option>
+
+        <option value="4">
+          Kans 4
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="modal-field">
+
+      <label for="customExamYear">
+        Studiejaar
+      </label>
+
+      <select id="customExamYear">
+
+        <option value="">
+          Niet aangeven
+        </option>
+
+        <option value="1">
+          Jaar 1
+        </option>
+
+        <option value="2">
+          Jaar 2
+        </option>
+
+        <option value="3">
+          Jaar 3
+        </option>
+
+        <option value="4">
+          Jaar 4
+        </option>
+
+      </select>
+
+    </div>
+
+
+    <div class="modal-actions">
+
+      <button
+        class="btn btn-secondary"
+        data-close="customExamModal"
+      >
+        Annuleren
+      </button>
+
+      <button
+        class="btn btn-primary"
+        id="saveCustomExamBtn"
+      >
+        Toets toevoegen
+      </button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     MODAL: TOETSEN BEHEREN
+     ========================================================= -->
+
+<div
+  id="manageExamsModal"
+  class="modal-backdrop hidden"
+>
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <div>
+
+        <h2>
+          Mijn toetsen
+        </h2>
+
+        <p>
+          Hier kun je toetsen verwijderen die je niet meer nodig hebt.
+        </p>
+
+      </div>
+
+
+      <button
+        class="modal-close"
+        data-close="manageExamsModal"
+      >
+        ×
+      </button>
+
+    </div>
+
+
+    <div
+      class="exam-manage-list"
+      id="manageExamList"
+    ></div>
+
+  </div>
+
+</div>
+
+
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
 <script>
-// ======================= CONFIG =======================
-const SUPABASE_URL = "https://rdlkdglzfjniwamumucb.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
-// ======================================================
 
-// Je toetsen met deadline (kans 1) voor het vak-menu, en alle toetsdagen voor de kalender.
-const SUBJECTS = [
-  { key: "Taaltoets 3F",     deadline: "2026-09-30" },
-  { key: "RO en Planologie", deadline: "2026-10-21" },
-  { key: "Mobiliteit",       deadline: "2026-10-23" },
-  { key: "Wegontwerp",       deadline: "2026-12-18" },
-];
-const TOETSDAGEN = [
-  { date: "2026-09-30", name: "Taaltoets 3F",     kans: 1 },
-  { date: "2026-10-21", name: "RO en Planologie", kans: 1 },
-  { date: "2026-10-23", name: "Mobiliteit",       kans: 1 },
-  { date: "2026-10-28", name: "Taaltoets 3F",     kans: 2 },
-  { date: "2026-11-27", name: "Mobiliteit",       kans: 2 },
-  { date: "2026-12-04", name: "RO en Planologie", kans: 2 },
-  { date: "2026-12-18", name: "Wegontwerp",       kans: 1 },
-  { date: "2027-01-22", name: "Wegontwerp",       kans: 2 },
-];
+/* =========================================================
+   CONFIG
+   ========================================================= */
 
-// Storage-adapter die localStorage probeert en anders terugvalt op geheugen,
-// zodat de app ook werkt in omgevingen zonder localStorage.
+const SUPABASE_URL =
+  "https://rdlkdglzfjniwamumucb.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
+
+
+/* =========================================================
+   STORAGE
+   ========================================================= */
+
 const memStore = {};
+
 const safeStorage = {
-  getItem(k){ try { return window.localStorage.getItem(k); } catch(e){ return k in memStore ? memStore[k] : null; } },
-  setItem(k,v){ try { window.localStorage.setItem(k,v); } catch(e){ memStore[k] = v; } },
-  removeItem(k){ try { window.localStorage.removeItem(k); } catch(e){ delete memStore[k]; } },
+
+  getItem(k) {
+
+    try {
+
+      return window.localStorage.getItem(k);
+
+    } catch(e) {
+
+      return k in memStore
+        ? memStore[k]
+        : null;
+
+    }
+
+  },
+
+
+  setItem(k, v) {
+
+    try {
+
+      window.localStorage.setItem(k, v);
+
+    } catch(e) {
+
+      memStore[k] = v;
+
+    }
+
+  },
+
+
+  removeItem(k) {
+
+    try {
+
+      window.localStorage.removeItem(k);
+
+    } catch(e) {
+
+      delete memStore[k];
+
+    }
+
+  }
+
 };
+
+
+/* =========================================================
+   STATE
+   ========================================================= */
 
 let sb = null;
-let mode = "login"; // "login" of "signup"
-const configured = SUPABASE_URL && !SUPABASE_URL.startsWith("JOUW") && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith("JOUW");
+let mode = "login";
 
 const state = {
+
   user: null,
+
   tasks: [],
+
+  exams: [],
+
+  examPresets: [],
+
   viewYear: 0,
-  viewMonth: 0,   // 0-11
-  selected: "",   // YYYY-MM-DD
+
+  viewMonth: 0,
+
+  selected: ""
+
 };
 
-// ---------- date helpers ----------
-function pad(n){ return String(n).padStart(2, "0"); }
-function ymd(d){ return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
-function today(){ return ymd(new Date()); }
-function parse(s){ const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); }
-function addDays(s, n){ const d = parse(s); d.setDate(d.getDate()+n); return ymd(d); }
-function rangeInclusive(a, b){
-  const out = []; let cur = a;
+
+const configured =
+  SUPABASE_URL &&
+  !SUPABASE_URL.startsWith("JOUW") &&
+  SUPABASE_ANON_KEY &&
+  !SUPABASE_ANON_KEY.startsWith("JOUW");
+
+
+/* =========================================================
+   DATE HELPERS
+   ========================================================= */
+
+function pad(n) {
+
+  return String(n).padStart(2, "0");
+
+}
+
+
+function ymd(d) {
+
+  return (
+    d.getFullYear() +
+    "-" +
+    pad(d.getMonth() + 1) +
+    "-" +
+    pad(d.getDate())
+  );
+
+}
+
+
+function today() {
+
+  return ymd(new Date());
+
+}
+
+
+function parse(s) {
+
+  const [y, m, d] =
+    s.split("-").map(Number);
+
+  return new Date(y, m - 1, d);
+
+}
+
+
+function addDays(s, n) {
+
+  const d = parse(s);
+
+  d.setDate(
+    d.getDate() + n
+  );
+
+  return ymd(d);
+
+}
+
+
+function rangeInclusive(a, b) {
+
+  const out = [];
+
+  let cur = a;
+
   let guard = 0;
-  while (cur <= b && guard < 400){ out.push(cur); cur = addDays(cur, 1); guard++; }
-  return out;
-}
-const MONTHS = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
-const DAYS_FULL = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
-function longDate(s){ const d = parse(s); return DAYS_FULL[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()]; }
-function daysBetween(a, b){ return Math.round((parse(b) - parse(a)) / 86400000); }
 
-// ---------- DOM ----------
-const el = id => document.getElementById(id);
 
-// =================== BOOT ===================
-function fatal(titel, tekst){
-  const w = el("configWarn");
-  const h = w.querySelector("h2");
-  const p = w.querySelector("p");
-  if (h) h.textContent = titel;
-  if (p) p.innerHTML = tekst;
-  el("authScreen").classList.add("hidden");
-  el("appScreen").classList.add("hidden");
-  w.classList.remove("hidden");
-}
+  while (
+    cur <= b &&
+    guard < 400
+  ) {
 
-function boot(){
-  try {
-    sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      auth: { storage: safeStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
-    });
-    initAuthUI();
-    sb.auth.getSession().then(({ data }) => {
-      if (data.session) enterApp(data.session.user);
-      else showAuth();
-    });
-    sb.auth.onAuthStateChange((_e, session) => {
-      if (session) enterApp(session.user);
-      else showAuth();
-    });
-  } catch (e){
-    fatal("Er ging iets mis bij het starten", "Foutmelding: " + (e && e.message ? e.message : e));
+    out.push(cur);
+
+    cur = addDays(cur, 1);
+
+    guard++;
+
   }
+
+
+  return out;
+
 }
 
-// Laadt de Supabase-bibliotheek; probeert een tweede bron als de eerste faalt.
-function laadSupabase(klaar, mislukt){
-  if (typeof supabase !== "undefined"){ klaar(); return; }
-  const bronnen = [
-    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
-    "https://unpkg.com/@supabase/supabase-js@2",
-    "https://esm.sh/@supabase/supabase-js@2?bundle"
-  ];
-  let i = 0;
-  (function volgende(){
-    if (i >= bronnen.length){ mislukt(); return; }
-    const s = document.createElement("script");
-    s.src = bronnen[i++];
-    s.onload = () => { typeof supabase !== "undefined" ? klaar() : volgende(); };
-    s.onerror = volgende;
-    document.head.appendChild(s);
-  })();
+
+const MONTHS = [
+  "januari",
+  "februari",
+  "maart",
+  "april",
+  "mei",
+  "juni",
+  "juli",
+  "augustus",
+  "september",
+  "oktober",
+  "november",
+  "december"
+];
+
+
+const DAYS_FULL = [
+  "zondag",
+  "maandag",
+  "dinsdag",
+  "woensdag",
+  "donderdag",
+  "vrijdag",
+  "zaterdag"
+];
+
+
+function longDate(s) {
+
+  const d = parse(s);
+
+  return (
+    DAYS_FULL[d.getDay()] +
+    " " +
+    d.getDate() +
+    " " +
+    MONTHS[d.getMonth()]
+  );
+
 }
+
+
+function daysBetween(a, b) {
+
+  return Math.round(
+    (parse(b) - parse(a)) /
+    86400000
+  );
+
+}
+
+
+function shortDate(s) {
+
+  const d = parse(s);
+
+  return (
+    pad(d.getDate()) +
+    "-" +
+    pad(d.getMonth() + 1) +
+    "-" +
+    d.getFullYear()
+  );
+
+}
+
+
+/* =========================================================
+   DOM
+   ========================================================= */
+
+const el = id =>
+  document.getElementById(id);
+
+
+/* =========================================================
+   START
+   ========================================================= */
+
+function fatal(titel, tekst) {
+
+  const w =
+    el("configWarn");
+
+  const h =
+    w.querySelector("h2");
+
+  const p =
+    w.querySelector("p");
+
+
+  if (h)
+    h.textContent = titel;
+
+
+  if (p)
+    p.innerHTML = tekst;
+
+
+  el("authScreen")
+    .classList.add("hidden");
+
+  el("appScreen")
+    .classList.add("hidden");
+
+  w.classList.remove("hidden");
+
+}
+
+
+function boot() {
+
+  try {
+
+    sb =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY,
+        {
+
+          auth: {
+
+            storage: safeStorage,
+
+            persistSession: true,
+
+            autoRefreshToken: true,
+
+            detectSessionInUrl: false
+
+          }
+
+        }
+      );
+
+
+    initAuthUI();
+
+
+    sb.auth
+      .getSession()
+      .then(({ data }) => {
+
+        if (data.session) {
+
+          enterApp(
+            data.session.user
+          );
+
+        } else {
+
+          showAuth();
+
+        }
+
+      });
+
+
+    sb.auth
+      .onAuthStateChange(
+        (_event, session) => {
+
+          if (session) {
+
+            enterApp(
+              session.user
+            );
+
+          } else {
+
+            showAuth();
+
+          }
+
+        }
+      );
+
+
+  } catch (e) {
+
+    fatal(
+      "Er ging iets mis bij het starten",
+      "Foutmelding: " +
+      (
+        e &&
+        e.message
+          ? e.message
+          : e
+      )
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   SUPABASE LADEN
+   ========================================================= */
+
+function laadSupabase(
+  klaar,
+  mislukt
+) {
+
+  if (
+    typeof supabase !==
+    "undefined"
+  ) {
+
+    klaar();
+
+    return;
+
+  }
+
+
+  const bronnen = [
+
+    "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
+
+    "https://unpkg.com/@supabase/supabase-js@2",
+
+    "https://esm.sh/@supabase/supabase-js@2?bundle"
+
+  ];
+
+
+  let i = 0;
+
+
+  (function volgende() {
+
+    if (
+      i >= bronnen.length
+    ) {
+
+      mislukt();
+
+      return;
+
+    }
+
+
+    const s =
+      document.createElement(
+        "script"
+      );
+
+
+    s.src =
+      bronnen[i++];
+
+
+    s.onload = () => {
+
+      typeof supabase !==
+      "undefined"
+        ? klaar()
+        : volgende();
+
+    };
+
+
+    s.onerror =
+      volgende;
+
+
+    document.head
+      .appendChild(s);
+
+  })();
+
+}
+
 
 if (!configured) {
-  fatal("Even instellen", "Vul bovenin index.html je eigen SUPABASE_URL en SUPABASE_ANON_KEY in.");
+
+  fatal(
+    "Even instellen",
+    "Vul bovenin index.html je SUPABASE_URL en SUPABASE_ANON_KEY in."
+  );
+
 } else {
-  laadSupabase(boot, () => fatal(
-    "Supabase kon niet geladen worden",
-    "De bibliotheek werd geblokkeerd of niet gevonden. Zet je VPN of adblocker uit voor deze pagina en laad opnieuw."
-  ));
+
+  laadSupabase(
+
+    boot,
+
+    () =>
+      fatal(
+        "Supabase kon niet geladen worden",
+        "De Supabase-bibliotheek kon niet worden geladen."
+      )
+
+  );
+
 }
 
-// =================== AUTH ===================
-function updateAuthMode(){
-  const isLogin = mode === "login";
-  el("authBtn").textContent = isLogin ? "Inloggen" : "Account aanmaken";
-  el("authLead").textContent = isLogin ? "Log in om je planning te zien." : "Maak een account om te beginnen.";
-  el("authSwitch").innerHTML = isLogin
-    ? 'Nog geen account? <a id="switchLink">Maak er een aan</a>'
-    : 'Al een account? <a id="switchLink">Log in</a>';
-  el("switchLink").addEventListener("click", () => {
-    mode = mode === "login" ? "signup" : "login";
-    hideMsg();
-    updateAuthMode();
-  });
+
+/* =========================================================
+   AUTH
+   ========================================================= */
+
+function updateAuthMode() {
+
+  const isLogin =
+    mode === "login";
+
+
+  el("authBtn").textContent =
+    isLogin
+      ? "Inloggen"
+      : "Account aanmaken";
+
+
+  el("authLead").textContent =
+    isLogin
+      ? "Log in om je planning te zien."
+      : "Maak een account om te beginnen.";
+
+
+  el("authSwitch").innerHTML =
+    isLogin
+      ? 'Nog geen account? <a id="switchLink">Maak er een aan</a>'
+      : 'Al een account? <a id="switchLink">Log in</a>';
+
+
+  el("switchLink")
+    .addEventListener(
+      "click",
+      () => {
+
+        mode =
+          mode === "login"
+            ? "signup"
+            : "login";
+
+        hideMsg();
+
+        updateAuthMode();
+
+      }
+    );
+
 }
 
-function initAuthUI(){
+
+function initAuthUI() {
+
   updateAuthMode();
-  el("authBtn").addEventListener("click", doAuth);
-  el("password").addEventListener("keydown", e => { if (e.key === "Enter") doAuth(); });
+
+
+  el("authBtn")
+    .addEventListener(
+      "click",
+      doAuth
+    );
+
+
+  el("password")
+    .addEventListener(
+      "keydown",
+      e => {
+
+        if (
+          e.key === "Enter"
+        ) {
+
+          doAuth();
+
+        }
+
+      }
+    );
+
 }
 
-function showMsg(text, kind){ const m = el("authMsg"); m.textContent = text; m.className = "msg show " + kind; }
-function hideMsg(){ el("authMsg").className = "msg"; }
 
-async function doAuth(){
-  const email = el("email").value.trim();
-  const password = el("password").value;
-  if (!email || !password){ showMsg("Vul je e-mail en wachtwoord in.", "err"); return; }
-  el("authBtn").disabled = true;
-  try {
-    if (mode === "login"){
-      const { error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-    } else {
-      const { data, error } = await sb.auth.signUp({ email, password });
-      if (error) throw error;
-      if (!data.session){ showMsg("Account aangemaakt. Bevestig je e-mail en log daarna in.", "ok"); }
-    }
-  } catch (err) {
-    showMsg(vertaalFout(err.message), "err");
-  } finally {
-    el("authBtn").disabled = false;
+function showMsg(
+  text,
+  kind
+) {
+
+  const m =
+    el("authMsg");
+
+  m.textContent =
+    text;
+
+  m.className =
+    "msg show " +
+    kind;
+
+}
+
+
+function hideMsg() {
+
+  el("authMsg")
+    .className =
+    "msg";
+
+}
+
+
+async function doAuth() {
+
+  const email =
+    el("email")
+      .value
+      .trim();
+
+
+  const password =
+    el("password")
+      .value;
+
+
+  if (
+    !email ||
+    !password
+  ) {
+
+    showMsg(
+      "Vul je e-mail en wachtwoord in.",
+      "err"
+    );
+
+    return;
+
   }
+
+
+  el("authBtn")
+    .disabled =
+    true;
+
+
+  try {
+
+    if (
+      mode === "login"
+    ) {
+
+      const { error } =
+        await sb.auth
+          .signInWithPassword({
+
+            email,
+
+            password
+
+          });
+
+
+      if (error)
+        throw error;
+
+
+    } else {
+
+      const {
+        data,
+        error
+      } =
+        await sb.auth
+          .signUp({
+
+            email,
+
+            password
+
+          });
+
+
+      if (error)
+        throw error;
+
+
+      if (
+        !data.session
+      ) {
+
+        showMsg(
+          "Account aangemaakt. Bevestig je e-mail en log daarna in.",
+          "ok"
+        );
+
+      }
+
+    }
+
+
+  } catch (err) {
+
+    showMsg(
+      vertaalFout(
+        err.message
+      ),
+      "err"
+    );
+
+
+  } finally {
+
+    el("authBtn")
+      .disabled =
+      false;
+
+  }
+
 }
 
-function vertaalFout(m){
-  if (/invalid login/i.test(m)) return "E-mail of wachtwoord klopt niet.";
-  if (/already registered/i.test(m)) return "Dit e-mailadres heeft al een account.";
-  if (/at least 6/i.test(m)) return "Je wachtwoord moet minstens 6 tekens zijn.";
-  if (/confirm/i.test(m)) return "Bevestig eerst je e-mail voordat je inlogt.";
+
+function vertaalFout(m) {
+
+  if (
+    /invalid login/i
+      .test(m)
+  )
+    return "E-mail of wachtwoord klopt niet.";
+
+
+  if (
+    /already registered/i
+      .test(m)
+  )
+    return "Dit e-mailadres heeft al een account.";
+
+
+  if (
+    /at least 6/i
+      .test(m)
+  )
+    return "Je wachtwoord moet minstens 6 tekens zijn.";
+
+
+  if (
+    /confirm/i
+      .test(m)
+  )
+    return "Bevestig eerst je e-mail voordat je inlogt.";
+
+
   return m;
+
 }
 
-function showAuth(){
+
+function showAuth() {
+
   state.user = null;
-  el("appScreen").classList.add("hidden");
-  el("authScreen").classList.remove("hidden");
+
+  state.tasks = [];
+
+  state.exams = [];
+
+  state.examPresets = [];
+
+
+  el("appScreen")
+    .classList.add("hidden");
+
+  el("authScreen")
+    .classList.remove("hidden");
+
 }
 
-el("logoutBtn").addEventListener("click", () => sb.auth.signOut());
 
-// =================== APP ===================
-async function enterApp(user){
-  state.user = user;
-  el("authScreen").classList.add("hidden");
-  el("appScreen").classList.remove("hidden");
-  el("userEmail").textContent = user.email;
+el("logoutBtn")
+  .addEventListener(
+    "click",
+    () =>
+      sb.auth.signOut()
+  );
 
-  const n = new Date();
-  state.viewYear = n.getFullYear();
-  state.viewMonth = n.getMonth();
-  state.selected = today();
+
+/* =========================================================
+   APP
+   ========================================================= */
+
+async function enterApp(user) {
+
+  state.user =
+    user;
+
+
+  el("authScreen")
+    .classList.add("hidden");
+
+  el("appScreen")
+    .classList.remove("hidden");
+
+
+  el("userEmail")
+    .textContent =
+    user.email;
+
+
+  const n =
+    new Date();
+
+
+  state.viewYear =
+    n.getFullYear();
+
+  state.viewMonth =
+    n.getMonth();
+
+  state.selected =
+    today();
+
+
+  bindAppEvents();
+
+
+  await Promise.all([
+
+    loadTasks(),
+
+    loadExams(),
+
+    loadExamPresets()
+
+  ]);
+
 
   fillSubjectMenu();
-  bindAppEvents();
-  await loadTasks();
+
+  renderAll();
+
 }
 
-function fillSubjectMenu(){
-  const sel = el("newSubject");
-  SUBJECTS.forEach(s => {
-    const o = document.createElement("option");
-    o.value = s.key; o.textContent = s.key;
-    sel.appendChild(o);
-  });
-}
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
 
 let eventsBound = false;
-function bindAppEvents(){
-  if (eventsBound) return; eventsBound = true;
-  el("prevMonth").addEventListener("click", () => shiftMonth(-1));
-  el("nextMonth").addEventListener("click", () => shiftMonth(1));
-  el("addBtn").addEventListener("click", addTask);
-  el("newTitle").addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
-  el("redistributeBtn").addEventListener("click", redistributeMissed);
-}
 
-function shiftMonth(delta){
-  state.viewMonth += delta;
-  if (state.viewMonth < 0){ state.viewMonth = 11; state.viewYear--; }
-  if (state.viewMonth > 11){ state.viewMonth = 0; state.viewYear++; }
-  renderCalendar();
-}
 
-async function loadTasks(){
-  const { data, error } = await sb.from("tasks").select("*").order("planned_date", { ascending: true });
-  if (error){ console.error(error); return; }
-  state.tasks = data || [];
-  renderAll();
-}
+function bindAppEvents() {
 
-function renderAll(){
-  renderToetsRow();
-  renderCalendar();
-  renderDay();
-  renderMissedBanner();
-}
-
-// ---------- toets chips ----------
-function renderToetsRow(){
-  const row = el("toetsRow");
-  row.innerHTML = "";
-  SUBJECTS.forEach(s => {
-    const d = daysBetween(today(), s.deadline);
-    let cls = "ok", label;
-    if (d < 0){ cls = "past"; label = "gehad"; }
-    else if (d === 0){ cls = "soon"; label = "vandaag"; }
-    else { cls = d <= 10 ? "soon" : "ok"; label = "nog " + d + " " + (d === 1 ? "dag" : "dagen"); }
-    const done = state.tasks.filter(t => t.subject === s.key && t.done).length;
-    const total = state.tasks.filter(t => t.subject === s.key).length;
-    const div = document.createElement("div");
-    div.className = "chip";
-    div.innerHTML =
-      '<div class="name">' + s.key + '</div>' +
-      '<div class="meta">kans 1: ' + longDate(s.deadline).replace(/^\w+\s/, "") + '</div>' +
-      '<div class="count ' + cls + '">' + label + (total ? ' \u00b7 ' + done + '/' + total + ' taken' : '') + '</div>';
-    row.appendChild(div);
-  });
-}
-
-// ---------- calendar ----------
-function toetsOn(dateStr){ return TOETSDAGEN.filter(t => t.date === dateStr); }
-
-function renderCalendar(){
-  el("monthLabel").textContent = MONTHS[state.viewMonth] + " " + state.viewYear;
-  const first = new Date(state.viewYear, state.viewMonth, 1);
-  let startOffset = (first.getDay() + 6) % 7; // maandag = 0
-  const gridStart = new Date(state.viewYear, state.viewMonth, 1 - startOffset);
-  const days = el("calDays");
-  days.innerHTML = "";
-  const td = today();
-
-  for (let i = 0; i < 42; i++){
-    const d = new Date(gridStart); d.setDate(gridStart.getDate() + i);
-    const ds = ymd(d);
-    const cell = document.createElement("button");
-    cell.className = "day tnum";
-    if (d.getMonth() !== state.viewMonth) cell.classList.add("other");
-    if (ds === td) cell.classList.add("today");
-    if (ds === state.selected) cell.classList.add("selected");
-    if (toetsOn(ds).length) cell.classList.add("toets");
-
-    let inner = '<span>' + d.getDate() + '</span>';
-    if (toetsOn(ds).length) inner += '<span class="tflag"></span>';
-
-    const dayTasks = state.tasks.filter(t => t.planned_date === ds);
-    if (dayTasks.length){
-      const dots = dayTasks.slice(0, 3).map(t => {
-        let c = "";
-        if (t.done) c = "done";
-        else if (ds < td) c = "missed";
-        return '<i class="' + c + '"></i>';
-      }).join("");
-      inner += '<span class="dot">' + dots + '</span>';
-    }
-    cell.innerHTML = inner;
-    cell.addEventListener("click", () => { state.selected = ds; renderCalendar(); renderDay(); });
-    days.appendChild(cell);
-  }
-}
-
-// ---------- day panel ----------
-function renderDay(){
-  el("dayDate").textContent = longDate(state.selected);
-  const tl = el("dayToets");
-  const toetsen = toetsOn(state.selected);
-  if (toetsen.length){
-    tl.textContent = "Toetsdag: " + toetsen.map(t => t.name + " (kans " + t.kans + ")").join(", ");
-    tl.classList.add("show");
-  } else { tl.classList.remove("show"); }
-
-  const list = el("taskList");
-  list.innerHTML = "";
-  const td = today();
-  const items = state.tasks.filter(t => t.planned_date === state.selected);
-
-  if (!items.length){
-    const e = document.createElement("div");
-    e.className = "empty";
-    e.textContent = "Nog niets gepland. Voeg hieronder een taak toe.";
-    list.appendChild(e);
+  if (
+    eventsBound
+  )
     return;
-  }
 
-  items.forEach(t => {
-    const overdue = !t.done && t.planned_date < td;
-    const row = document.createElement("div");
-    row.className = "task" + (t.done ? " done" : "") + (overdue ? " overdue" : "");
-    const check = document.createElement("button");
-    check.className = "check" + (t.done ? " on" : "");
-    check.setAttribute("aria-label", t.done ? "Vink uit" : "Vink af");
-    check.addEventListener("click", () => toggleTask(t));
-    const body = document.createElement("div");
-    body.className = "body";
-    let sub = "";
-    if (t.subject) sub = t.subject;
-    if (overdue) sub = (sub ? sub + " \u00b7 " : "") + "gemist";
-    body.innerHTML = '<div class="title">' + escapeHtml(t.title) + '</div>' + (sub ? '<div class="sub">' + escapeHtml(sub) + '</div>' : "");
-    const del = document.createElement("button");
-    del.className = "del"; del.textContent = "\u00d7"; del.setAttribute("aria-label", "Verwijderen");
-    del.addEventListener("click", () => deleteTask(t));
-    row.appendChild(check); row.appendChild(body); row.appendChild(del);
-    list.appendChild(row);
-  });
-}
 
-function renderMissedBanner(){
-  const td = today();
-  const missed = state.tasks.filter(t => !t.done && t.planned_date < td);
-  const b = el("missedBanner");
-  if (missed.length){
-    el("missedTxt").textContent = "Je hebt " + missed.length + " " + (missed.length === 1 ? "taak" : "taken") + " niet afgevinkt. Verdeel ze over je resterende dagen.";
-    b.classList.add("show");
-  } else {
-    b.classList.remove("show");
-  }
-}
+  eventsBound =
+    true;
 
-function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
 
-// ---------- CRUD ----------
-async function addTask(){
-  const title = el("newTitle").value.trim();
-  if (!title) return;
-  const subject = el("newSubject").value || null;
-  const subj = SUBJECTS.find(s => s.key === subject);
-  const deadline = subj ? subj.deadline : null;
-  const row = {
-    user_id: state.user.id, title, subject, deadline,
-    planned_date: state.selected, done: false,
-  };
-  const { data, error } = await sb.from("tasks").insert(row).select().single();
-  if (error){ console.error(error); alert("Toevoegen lukte niet: " + error.message); return; }
-  state.tasks.push(data);
-  el("newTitle").value = "";
-  el("newSubject").value = "";
-  renderAll();
-}
+  el("prevMonth")
+    .addEventListener(
+      "click",
+      () =>
+        shiftMonth(-1)
+    );
 
-async function toggleTask(t){
-  const nieuw = !t.done;
-  t.done = nieuw;
-  renderDay(); renderCalendar(); renderToetsRow(); renderMissedBanner();
-  const { error } = await sb.from("tasks").update({ done: nieuw }).eq("id", t.id);
-  if (error){ console.error(error); t.done = !nieuw; renderAll(); }
-}
 
-async function deleteTask(t){
-  const { error } = await sb.from("tasks").delete().eq("id", t.id);
-  if (error){ console.error(error); return; }
-  state.tasks = state.tasks.filter(x => x.id !== t.id);
-  renderAll();
-}
+  el("nextMonth")
+    .addEventListener(
+      "click",
+      () =>
+        shiftMonth(1)
+    );
 
-// ---------- redistribute ----------
-async function redistributeMissed(){
-  const td = today();
-  const missed = state.tasks.filter(t => !t.done && t.planned_date < td);
-  if (!missed.length) return;
 
-  // huidige belasting per toekomstige dag (open taken die niet gemist zijn)
-  const load = {};
-  state.tasks.forEach(t => {
-    if (!t.done && t.planned_date >= td && !missed.includes(t)){
-      load[t.planned_date] = (load[t.planned_date] || 0) + 1;
-    }
-  });
+  el("addBtn")
+    .addEventListener(
+      "click",
+      addTask
+    );
 
-  // gemiste taken eerst met de vroegste deadline verdelen
-  missed.sort((a, b) => (a.deadline || "9999") < (b.deadline || "9999") ? -1 : 1);
 
-  const updates = [];
-  missed.forEach(t => {
-    let end = (t.deadline && t.deadline >= td) ? t.deadline : addDays(td, 13);
-    const window = rangeInclusive(td, end);
-    // kies de minst belaste dag; bij gelijke stand de vroegste
-    let best = window[0], bestLoad = Infinity;
-    window.forEach(d => {
-      const l = load[d] || 0;
-      if (l < bestLoad){ bestLoad = l; best = d; }
+  el("newTitle")
+    .addEventListener(
+      "keydown",
+      e => {
+
+        if (
+          e.key === "Enter"
+        ) {
+
+          addTask();
+
+        }
+
+      }
+    );
+
+
+  el("redistributeBtn")
+    .addEventListener(
+      "click",
+      redistributeMissed
+    );
+
+
+  el("chooseYear2Btn")
+    .addEventListener(
+      "click",
+      openYear2Modal
+    );
+
+
+  el("customExamBtn")
+    .addEventListener(
+      "click",
+      () =>
+        openModal(
+          "customExamModal"
+        )
+    );
+
+
+  el("manageExamsBtn")
+    .addEventListener(
+      "click",
+      openManageModal
+    );
+
+
+  el("saveYear2Btn")
+    .addEventListener(
+      "click",
+      saveSelectedYear2Exams
+    );
+
+
+  el("saveCustomExamBtn")
+    .addEventListener(
+      "click",
+      saveCustomExam
+    );
+
+
+  document
+    .querySelectorAll(
+      "[data-close]"
+    )
+    .forEach(btn => {
+
+      btn.addEventListener(
+        "click",
+        () => {
+
+          closeModal(
+            btn.dataset.close
+          );
+
+        }
+      );
+
     });
-    load[best] = (load[best] || 0) + 1;
-    t.planned_date = best;
-    updates.push({ id: t.id, date: best });
-  });
+
+
+  document
+    .querySelectorAll(
+      ".modal-backdrop"
+    )
+    .forEach(backdrop => {
+
+      backdrop.addEventListener(
+        "click",
+        e => {
+
+          if (
+            e.target ===
+            backdrop
+          ) {
+
+            closeModal(
+              backdrop.id
+            );
+
+          }
+
+        }
+      );
+
+    });
+
+}
+
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+function openModal(id) {
+
+  el(id)
+    .classList
+    .remove("hidden");
+
+}
+
+
+function closeModal(id) {
+
+  el(id)
+    .classList
+    .add("hidden");
+
+}
+
+
+/* =========================================================
+   DATA LADEN
+   ========================================================= */
+
+async function loadTasks() {
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from("tasks")
+      .select("*")
+      .order(
+        "planned_date",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Taken laden lukte niet: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  state.tasks =
+    data || [];
+
+}
+
+
+async function loadExams() {
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from("exams")
+      .select("*")
+      .order(
+        "exam_date",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Toetsen laden lukte niet: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  state.exams =
+    data || [];
+
+}
+
+
+async function loadExamPresets() {
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from("exam_presets")
+      .select("*")
+      .eq(
+        "study_year",
+        2
+      )
+      .order(
+        "exam_date",
+        {
+          ascending: true
+        }
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Jaar 2 toetsen laden lukte niet: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  state.examPresets =
+    data || [];
+
+}
+
+
+/* =========================================================
+   SUBJECT MENU
+   ========================================================= */
+
+function fillSubjectMenu() {
+
+  const sel =
+    el("newSubject");
+
+
+  sel.innerHTML =
+    '<option value="">Geen vak</option>';
+
+
+  const subjects =
+    [
+      ...new Set(
+        state.exams.map(
+          exam =>
+            exam.name
+        )
+      )
+    ];
+
+
+  subjects.sort(
+    (a, b) =>
+      a.localeCompare(
+        b,
+        "nl"
+      )
+  );
+
+
+  subjects.forEach(
+    subject => {
+
+      const option =
+        document.createElement(
+          "option"
+        );
+
+
+      option.value =
+        subject;
+
+      option.textContent =
+        subject;
+
+
+      sel.appendChild(
+        option
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   MAAND
+   ========================================================= */
+
+function shiftMonth(delta) {
+
+  state.viewMonth +=
+    delta;
+
+
+  if (
+    state.viewMonth < 0
+  ) {
+
+    state.viewMonth = 11;
+
+    state.viewYear--;
+
+  }
+
+
+  if (
+    state.viewMonth > 11
+  ) {
+
+    state.viewMonth = 0;
+
+    state.viewYear++;
+
+  }
+
+
+  renderCalendar();
+
+}
+
+
+/* =========================================================
+   ALLES RENDEREN
+   ========================================================= */
+
+function renderAll() {
+
+  renderToetsRow();
+
+  renderCalendar();
+
+  renderDay();
+
+  renderMissedBanner();
+
+}
+
+
+/* =========================================================
+   TOETS CHIPS
+   ========================================================= */
+
+function renderToetsRow() {
+
+  const row =
+    el("toetsRow");
+
+
+  row.innerHTML =
+    "";
+
+
+  if (
+    !state.exams.length
+  ) {
+
+    const empty =
+      document.createElement(
+        "div"
+      );
+
+
+    empty.className =
+      "exam-empty";
+
+
+    empty.textContent =
+      "Je hebt nog geen toetsen toegevoegd. Kies Jaar 2 toetsen of voeg zelf een toets toe.";
+
+
+    row.appendChild(
+      empty
+    );
+
+
+    return;
+
+  }
+
+
+  state.exams.forEach(
+    exam => {
+
+      const d =
+        daysBetween(
+          today(),
+          exam.exam_date
+        );
+
+
+      let cls =
+        "ok";
+
+      let label;
+
+
+      if (
+        d < 0
+      ) {
+
+        cls =
+          "past";
+
+        label =
+          "gehad";
+
+      } else if (
+        d === 0
+      ) {
+
+        cls =
+          "soon";
+
+        label =
+          "vandaag";
+
+      } else {
+
+        cls =
+          d <= 10
+            ? "soon"
+            : "ok";
+
+
+        label =
+          "nog " +
+          d +
+          " " +
+          (
+            d === 1
+              ? "dag"
+              : "dagen"
+          );
+
+      }
+
+
+      const done =
+        state.tasks
+          .filter(
+            t =>
+              t.subject ===
+                exam.name &&
+              t.done
+          )
+          .length;
+
+
+      const total =
+        state.tasks
+          .filter(
+            t =>
+              t.subject ===
+              exam.name
+          )
+          .length;
+
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+
+      div.className =
+        "chip";
+
+
+      div.innerHTML =
+
+        '<div class="name">' +
+        escapeHtml(
+          exam.name
+        ) +
+        '</div>' +
+
+        '<div class="meta">' +
+        'kans ' +
+        exam.attempt +
+        ': ' +
+        longDate(
+          exam.exam_date
+        ).replace(
+          /^\w+\s/,
+          ""
+        ) +
+        '</div>' +
+
+        '<div class="count ' +
+        cls +
+        '">' +
+
+        label +
+
+        (
+          total
+            ? ' · ' +
+              done +
+              '/' +
+              total +
+              ' taken'
+            : ''
+        ) +
+
+        '</div>';
+
+
+      row.appendChild(
+        div
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   TOETS OP DATUM
+   ========================================================= */
+
+function examsOn(dateStr) {
+
+  return state.exams.filter(
+    exam =>
+      exam.exam_date ===
+      dateStr
+  );
+
+}
+
+
+/* =========================================================
+   KALENDER
+   ========================================================= */
+
+function renderCalendar() {
+
+  el("monthLabel")
+    .textContent =
+    MONTHS[
+      state.viewMonth
+    ] +
+    " " +
+    state.viewYear;
+
+
+  const first =
+    new Date(
+      state.viewYear,
+      state.viewMonth,
+      1
+    );
+
+
+  const startOffset =
+    (
+      first.getDay() +
+      6
+    ) %
+    7;
+
+
+  const gridStart =
+    new Date(
+      state.viewYear,
+      state.viewMonth,
+      1 -
+      startOffset
+    );
+
+
+  const days =
+    el("calDays");
+
+
+  days.innerHTML =
+    "";
+
+
+  const td =
+    today();
+
+
+  for (
+    let i = 0;
+    i < 42;
+    i++
+  ) {
+
+    const d =
+      new Date(
+        gridStart
+      );
+
+
+    d.setDate(
+      gridStart.getDate() +
+      i
+    );
+
+
+    const ds =
+      ymd(d);
+
+
+    const cell =
+      document.createElement(
+        "button"
+      );
+
+
+    cell.className =
+      "day tnum";
+
+
+    if (
+      d.getMonth() !==
+      state.viewMonth
+    ) {
+
+      cell.classList
+        .add("other");
+
+    }
+
+
+    if (
+      ds === td
+    ) {
+
+      cell.classList
+        .add("today");
+
+    }
+
+
+    if (
+      ds ===
+      state.selected
+    ) {
+
+      cell.classList
+        .add("selected");
+
+    }
+
+
+    if (
+      examsOn(ds).length
+    ) {
+
+      cell.classList
+        .add("toets");
+
+    }
+
+
+    let inner =
+      "<span>" +
+      d.getDate() +
+      "</span>";
+
+
+    if (
+      examsOn(ds).length
+    ) {
+
+      inner +=
+        '<span class="tflag"></span>';
+
+    }
+
+
+    const dayTasks =
+      state.tasks.filter(
+        t =>
+          t.planned_date ===
+          ds
+      );
+
+
+    if (
+      dayTasks.length
+    ) {
+
+      const dots =
+        dayTasks
+          .slice(0, 3)
+          .map(t => {
+
+            let c =
+              "";
+
+
+            if (
+              t.done
+            ) {
+
+              c =
+                "done";
+
+            } else if (
+              ds < td
+            ) {
+
+              c =
+                "missed";
+
+            }
+
+
+            return (
+              '<i class="' +
+              c +
+              '"></i>'
+            );
+
+          })
+          .join("");
+
+
+      inner +=
+        '<span class="dot">' +
+        dots +
+        '</span>';
+
+    }
+
+
+    cell.innerHTML =
+      inner;
+
+
+    cell.addEventListener(
+      "click",
+      () => {
+
+        state.selected =
+          ds;
+
+        renderCalendar();
+
+        renderDay();
+
+      }
+    );
+
+
+    days.appendChild(
+      cell
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   DAG
+   ========================================================= */
+
+function renderDay() {
+
+  el("dayDate")
+    .textContent =
+    longDate(
+      state.selected
+    );
+
+
+  const tl =
+    el("dayToets");
+
+
+  const examens =
+    examsOn(
+      state.selected
+    );
+
+
+  if (
+    examens.length
+  ) {
+
+    tl.textContent =
+      "Toetsdag: " +
+      examens
+        .map(
+          exam =>
+            exam.name +
+            " (kans " +
+            exam.attempt +
+            ")"
+        )
+        .join(", ");
+
+
+    tl.classList
+      .add("show");
+
+  } else {
+
+    tl.textContent = "";
+
+    tl.classList
+      .remove("show");
+
+  }
+
+
+  const list =
+    el("taskList");
+
+
+  list.innerHTML =
+    "";
+
+
+  const td =
+    today();
+
+
+  const items =
+    state.tasks.filter(
+      t =>
+        t.planned_date ===
+        state.selected
+    );
+
+
+  if (
+    !items.length
+  ) {
+
+    const e =
+      document.createElement(
+        "div"
+      );
+
+
+    e.className =
+      "empty";
+
+
+    e.textContent =
+      "Nog niets gepland. Voeg hieronder een taak toe.";
+
+
+    list.appendChild(
+      e
+    );
+
+
+    return;
+
+  }
+
+
+  items.forEach(
+    t => {
+
+      const overdue =
+        !t.done &&
+        t.planned_date <
+        td;
+
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "task" +
+        (
+          t.done
+            ? " done"
+            : ""
+        ) +
+        (
+          overdue
+            ? " overdue"
+            : ""
+        );
+
+
+      const check =
+        document.createElement(
+          "button"
+        );
+
+
+      check.className =
+        "check" +
+        (
+          t.done
+            ? " on"
+            : ""
+        );
+
+
+      check.setAttribute(
+        "aria-label",
+        t.done
+          ? "Vink uit"
+          : "Vink af"
+      );
+
+
+      check.addEventListener(
+        "click",
+        () =>
+          toggleTask(t)
+      );
+
+
+      const body =
+        document.createElement(
+          "div"
+        );
+
+
+      body.className =
+        "body";
+
+
+      let sub =
+        "";
+
+
+      if (
+        t.subject
+      ) {
+
+        sub =
+          t.subject;
+
+      }
+
+
+      if (
+        overdue
+      ) {
+
+        sub =
+          (
+            sub
+              ? sub + " · "
+              : ""
+          ) +
+          "gemist";
+
+      }
+
+
+      body.innerHTML =
+
+        '<div class="title">' +
+        escapeHtml(
+          t.title
+        ) +
+        '</div>' +
+
+        (
+          sub
+            ? '<div class="sub">' +
+              escapeHtml(sub) +
+              '</div>'
+            : ''
+        );
+
+
+      const del =
+        document.createElement(
+          "button"
+        );
+
+
+      del.className =
+        "del";
+
+
+      del.textContent =
+        "×";
+
+
+      del.setAttribute(
+        "aria-label",
+        "Verwijderen"
+      );
+
+
+      del.addEventListener(
+        "click",
+        () =>
+          deleteTask(t)
+      );
+
+
+      row.appendChild(
+        check
+      );
+
+
+      row.appendChild(
+        body
+      );
+
+
+      row.appendChild(
+        del
+      );
+
+
+      list.appendChild(
+        row
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   GEMIST
+   ========================================================= */
+
+function renderMissedBanner() {
+
+  const td =
+    today();
+
+
+  const missed =
+    state.tasks.filter(
+      t =>
+        !t.done &&
+        t.planned_date <
+        td
+    );
+
+
+  const b =
+    el("missedBanner");
+
+
+  if (
+    missed.length
+  ) {
+
+    el("missedTxt")
+      .textContent =
+
+      "Je hebt " +
+      missed.length +
+      " " +
+      (
+        missed.length === 1
+          ? "taak"
+          : "taken"
+      ) +
+      " niet afgevinkt. Verdeel ze over je resterende dagen.";
+
+
+    b.classList
+      .add("show");
+
+  } else {
+
+    b.classList
+      .remove("show");
+
+  }
+
+}
+
+
+/* =========================================================
+   HTML ESCAPE
+   ========================================================= */
+
+function escapeHtml(s) {
+
+  if (
+    s === null ||
+    s === undefined
+  )
+    return "";
+
+
+  return String(s)
+    .replace(
+      /[&<>"']/g,
+      c => (
+        {
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        }[c]
+      )
+    );
+
+}
+
+
+/* =========================================================
+   TAKEN CRUD
+   ========================================================= */
+
+async function addTask() {
+
+  const title =
+    el("newTitle")
+      .value
+      .trim();
+
+
+  if (
+    !title
+  )
+    return;
+
+
+  const subject =
+    el("newSubject")
+      .value ||
+    null;
+
+
+  let deadline =
+    null;
+
+
+  if (
+    subject
+  ) {
+
+    const upcoming =
+      state.exams
+        .filter(
+          exam =>
+            exam.name ===
+              subject &&
+            exam.exam_date >=
+              state.selected
+        )
+        .sort(
+          (a, b) =>
+            a.exam_date
+              .localeCompare(
+                b.exam_date
+              )
+        );
+
+
+    if (
+      upcoming.length
+    ) {
+
+      deadline =
+        upcoming[0]
+          .exam_date;
+
+    } else {
+
+      const subjectExams =
+        state.exams
+          .filter(
+            exam =>
+              exam.name ===
+              subject
+          )
+          .sort(
+            (a, b) =>
+              a.exam_date
+                .localeCompare(
+                  b.exam_date
+                )
+          );
+
+
+      if (
+        subjectExams.length
+      ) {
+
+        deadline =
+          subjectExams[
+            subjectExams.length -
+            1
+          ].exam_date;
+
+      }
+
+    }
+
+  }
+
+
+  const row = {
+
+    user_id:
+      state.user.id,
+
+    title,
+
+    subject,
+
+    deadline,
+
+    planned_date:
+      state.selected,
+
+    done:
+      false
+
+  };
+
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from("tasks")
+      .insert(row)
+      .select()
+      .single();
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Toevoegen lukte niet: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  state.tasks.push(
+    data
+  );
+
+
+  el("newTitle")
+    .value =
+    "";
+
+
+  el("newSubject")
+    .value =
+    "";
+
 
   renderAll();
-  for (const u of updates){
-    const { error } = await sb.from("tasks").update({ planned_date: u.date }).eq("id", u.id);
-    if (error) console.error(error);
-  }
+
 }
+
+
+async function toggleTask(t) {
+
+  const nieuw =
+    !t.done;
+
+
+  t.done =
+    nieuw;
+
+
+  renderAll();
+
+
+  const {
+    error
+  } =
+    await sb
+      .from("tasks")
+      .update({
+
+        done:
+          nieuw
+
+      })
+      .eq(
+        "id",
+        t.id
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    t.done =
+      !nieuw;
+
+    renderAll();
+
+  }
+
+}
+
+
+async function deleteTask(t) {
+
+  const {
+    error
+  } =
+    await sb
+      .from("tasks")
+      .delete()
+      .eq(
+        "id",
+        t.id
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Verwijderen lukte niet: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  state.tasks =
+    state.tasks.filter(
+      x =>
+        x.id !==
+        t.id
+    );
+
+
+  renderAll();
+
+}
+
+
+/* =========================================================
+   JAAR 2 MODAL
+   ========================================================= */
+
+function openYear2Modal() {
+
+  renderYear2Choices();
+
+  openModal(
+    "year2Modal"
+  );
+
+}
+
+
+function renderYear2Choices() {
+
+  const list =
+    el("year2ExamList");
+
+
+  list.innerHTML =
+    "";
+
+
+  if (
+    !state.examPresets.length
+  ) {
+
+    list.innerHTML =
+      '<div class="exam-empty">Er zijn geen Jaar 2 toetsen gevonden.</div>';
+
+    return;
+
+  }
+
+
+  state.examPresets.forEach(
+    preset => {
+
+      const exists =
+        state.exams.some(
+          exam =>
+            exam.preset_id ===
+              preset.id ||
+            (
+              exam.name ===
+                preset.name &&
+              exam.exam_date ===
+                preset.exam_date &&
+              Number(exam.attempt) ===
+                Number(preset.attempt)
+            )
+        );
+
+
+      const label =
+        document.createElement(
+          "label"
+        );
+
+
+      label.className =
+        "exam-choice" +
+        (
+          exists
+            ? " already-added"
+            : ""
+        );
+
+
+      const checkbox =
+        document.createElement(
+          "input"
+        );
+
+
+      checkbox.type =
+        "checkbox";
+
+
+      checkbox.value =
+        preset.id;
+
+
+      checkbox.disabled =
+        exists;
+
+
+      checkbox.className =
+        "year2-checkbox";
+
+
+      const content =
+        document.createElement(
+          "div"
+        );
+
+
+      content.className =
+        "exam-choice-content";
+
+
+      content.innerHTML =
+
+        '<div class="exam-choice-name">' +
+        escapeHtml(
+          preset.name
+        ) +
+        '</div>' +
+
+        '<div class="exam-choice-meta">' +
+
+        shortDate(
+          preset.exam_date
+        ) +
+
+        ' · kans ' +
+        preset.attempt +
+
+        (
+          exists
+            ? ' · al toegevoegd'
+            : ''
+        ) +
+
+        '</div>';
+
+
+      label.appendChild(
+        checkbox
+      );
+
+
+      label.appendChild(
+        content
+      );
+
+
+      list.appendChild(
+        label
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   JAAR 2 OPSLAAN
+   ========================================================= */
+
+async function saveSelectedYear2Exams() {
+
+  const selectedIds =
+    [
+      ...document.querySelectorAll(
+        ".year2-checkbox:checked"
+      )
+    ]
+    .map(
+      input =>
+        input.value
+    );
+
+
+  if (
+    !selectedIds.length
+  ) {
+
+    alert(
+      "Selecteer eerst minimaal één toets."
+    );
+
+    return;
+
+  }
+
+
+  const selectedPresets =
+    state.examPresets.filter(
+      preset =>
+        selectedIds.includes(
+          preset.id
+        )
+    );
+
+
+  const rows =
+    selectedPresets.map(
+      preset => ({
+
+        user_id:
+          state.user.id,
+
+        preset_id:
+          preset.id,
+
+        name:
+          preset.name,
+
+        exam_date:
+          preset.exam_date,
+
+        attempt:
+          preset.attempt,
+
+        study_year:
+          preset.study_year
+
+      })
+    );
+
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from("exams")
+      .insert(rows)
+      .select();
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Toetsen toevoegen lukte niet: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  state.exams =
+    [
+      ...state.exams,
+      ...(data || [])
+    ];
+
+
+  state.exams.sort(
+    (a, b) =>
+      a.exam_date
+        .localeCompare(
+          b.exam_date
+        )
+  );
+
+
+  fillSubjectMenu();
+
+  renderAll();
+
+  closeModal(
+    "year2Modal"
+  );
+
+}
+
+
+/* =========================================================
+   EIGEN TOETS TOEVOEGEN
+   ========================================================= */
+
+async function saveCustomExam() {
+
+  const name =
+    el("customExamName")
+      .value
+      .trim();
+
+
+  const examDate =
+    el("customExamDate")
+      .value;
+
+
+  const attempt =
+    Number(
+      el("customExamAttempt")
+        .value
+    );
+
+
+  const yearValue =
+    el("customExamYear")
+      .value;
+
+
+  const studyYear =
+    yearValue
+      ? Number(yearValue)
+      : null;
+
+
+  if (
+    !name
+  ) {
+
+    alert(
+      "Vul de naam van de toets in."
+    );
+
+    return;
+
+  }
+
+
+  if (
+    !examDate
+  ) {
+
+    alert(
+      "Kies een toetsdatum."
+    );
+
+    return;
+
+  }
+
+
+  const alreadyExists =
+    state.exams.some(
+      exam =>
+        exam.name
+          .toLowerCase() ===
+        name.toLowerCase() &&
+        exam.exam_date ===
+          examDate &&
+        Number(exam.attempt) ===
+          attempt
+    );
+
+
+  if (
+    alreadyExists
+  ) {
+
+    alert(
+      "Deze toets staat al in je planning."
+    );
+
+    return;
+
+  }
+
+
+  const row = {
+
+    user_id:
+      state.user.id,
+
+    preset_id:
+      null,
+
+    name,
+
+    exam_date:
+      examDate,
+
+    attempt,
+
+    study_year:
+      studyYear
+
+  };
+
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from("exams")
+      .insert(row)
+      .select()
+      .single();
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Toets toevoegen lukte niet: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  state.exams.push(
+    data
+  );
+
+
+  state.exams.sort(
+    (a, b) =>
+      a.exam_date
+        .localeCompare(
+          b.exam_date
+        )
+  );
+
+
+  el("customExamName")
+    .value =
+    "";
+
+
+  el("customExamDate")
+    .value =
+    "";
+
+
+  el("customExamAttempt")
+    .value =
+    "1";
+
+
+  el("customExamYear")
+    .value =
+    "";
+
+
+  fillSubjectMenu();
+
+  renderAll();
+
+
+  closeModal(
+    "customExamModal"
+  );
+
+}
+
+
+/* =========================================================
+   MIJN TOETSEN BEHEREN
+   ========================================================= */
+
+function openManageModal() {
+
+  renderManageExams();
+
+  openModal(
+    "manageExamsModal"
+  );
+
+}
+
+
+function renderManageExams() {
+
+  const list =
+    el("manageExamList");
+
+
+  list.innerHTML =
+    "";
+
+
+  if (
+    !state.exams.length
+  ) {
+
+    list.innerHTML =
+      '<div class="exam-empty">Je hebt nog geen toetsen toegevoegd.</div>';
+
+    return;
+
+  }
+
+
+  state.exams.forEach(
+    exam => {
+
+      const item =
+        document.createElement(
+          "div"
+        );
+
+
+      item.className =
+        "exam-manage-item";
+
+
+      const info =
+        document.createElement(
+          "div"
+        );
+
+
+      info.className =
+        "exam-manage-info";
+
+
+      info.innerHTML =
+
+        '<div class="exam-manage-name">' +
+        escapeHtml(
+          exam.name
+        ) +
+        '</div>' +
+
+        '<div class="exam-manage-meta">' +
+
+        shortDate(
+          exam.exam_date
+        ) +
+
+        ' · kans ' +
+        exam.attempt +
+
+        (
+          exam.study_year
+            ? ' · jaar ' +
+              exam.study_year
+            : ''
+        ) +
+
+        '</div>';
+
+
+      const del =
+        document.createElement(
+          "button"
+        );
+
+
+      del.className =
+        "btn btn-danger";
+
+
+      del.textContent =
+        "Verwijderen";
+
+
+      del.addEventListener(
+        "click",
+        () =>
+          deleteExam(exam)
+      );
+
+
+      item.appendChild(
+        info
+      );
+
+
+      item.appendChild(
+        del
+      );
+
+
+      list.appendChild(
+        item
+      );
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   TOETS VERWIJDEREN
+   ========================================================= */
+
+async function deleteExam(exam) {
+
+  const ok =
+    confirm(
+      "Weet je zeker dat je deze toets wilt verwijderen?\n\n" +
+      exam.name +
+      "\n" +
+      shortDate(
+        exam.exam_date
+      )
+    );
+
+
+  if (
+    !ok
+  )
+    return;
+
+
+  const {
+    error
+  } =
+    await sb
+      .from("exams")
+      .delete()
+      .eq(
+        "id",
+        exam.id
+      );
+
+
+  if (error) {
+
+    console.error(error);
+
+    alert(
+      "Toets verwijderen lukte niet: " +
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  state.exams =
+    state.exams.filter(
+      x =>
+        x.id !==
+        exam.id
+    );
+
+
+  fillSubjectMenu();
+
+  renderAll();
+
+  renderManageExams();
+
+}
+
+
+/* =========================================================
+   GEMISTE TAKEN VERDELEN
+   ========================================================= */
+
+async function redistributeMissed() {
+
+  const td =
+    today();
+
+
+  const missed =
+    state.tasks.filter(
+      t =>
+        !t.done &&
+        t.planned_date <
+        td
+    );
+
+
+  if (
+    !missed.length
+  )
+    return;
+
+
+  const load = {};
+
+
+  state.tasks.forEach(
+    t => {
+
+      if (
+        !t.done &&
+        t.planned_date >= td &&
+        !missed.includes(t)
+      ) {
+
+        load[t.planned_date] =
+          (
+            load[
+              t.planned_date
+            ] ||
+            0
+          ) +
+          1;
+
+      }
+
+    }
+  );
+
+
+  missed.sort(
+    (a, b) =>
+      (
+        a.deadline ||
+        "9999-12-31"
+      )
+      .localeCompare(
+        b.deadline ||
+        "9999-12-31"
+      )
+  );
+
+
+  const updates =
+    [];
+
+
+  missed.forEach(
+    t => {
+
+      let end =
+        (
+          t.deadline &&
+          t.deadline >= td
+        )
+          ? t.deadline
+          : addDays(
+              td,
+              13
+            );
+
+
+      const window =
+        rangeInclusive(
+          td,
+          end
+        );
+
+
+      let best =
+        window[0];
+
+
+      let bestLoad =
+        Infinity;
+
+
+      window.forEach(
+        d => {
+
+          const l =
+            load[d] ||
+            0;
+
+
+          if (
+            l < bestLoad
+          ) {
+
+            bestLoad =
+              l;
+
+            best =
+              d;
+
+          }
+
+        }
+      );
+
+
+      load[best] =
+        (
+          load[best] ||
+          0
+        ) +
+        1;
+
+
+      t.planned_date =
+        best;
+
+
+      updates.push({
+
+        id:
+          t.id,
+
+        date:
+          best
+
+      });
+
+    }
+  );
+
+
+  renderAll();
+
+
+  for (
+    const u of updates
+  ) {
+
+    const {
+      error
+    } =
+      await sb
+        .from("tasks")
+        .update({
+
+          planned_date:
+            u.date
+
+        })
+        .eq(
+          "id",
+          u.id
+        );
+
+
+    if (error) {
+
+      console.error(
+        error
+      );
+
+    }
+
+  }
+
+}
+
 </script>
+
 </body>
 </html>
