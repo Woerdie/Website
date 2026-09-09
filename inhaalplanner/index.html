@@ -127,6 +127,7 @@ const safeStorage = {
 };
 
 let sb = null;
+let mode = "login"; // "login" of "signup"
 const configured = SUPABASE_URL && !SUPABASE_URL.startsWith("JOUW") && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith("JOUW");
 
 const state = {
@@ -217,8 +218,6 @@ if (!configured) {
 }
 
 // =================== AUTH ===================
-let mode = "login"; // or "signup"
-
 function updateAuthMode(){
   const isLogin = mode === "login";
   el("authBtn").textContent = isLogin ? "Inloggen" : "Account aanmaken";
