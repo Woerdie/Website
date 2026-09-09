@@ -51,6 +51,78 @@
 
 
 /* =========================================================
+   TOETSEN BOVENAAN
+   ========================================================= */
+
+.toetsrow {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.toetsrow .chip {
+  min-width: 0;
+  height: auto;
+}
+
+.exam-attempts {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.exam-attempt-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  padding-top: 6px;
+  border-top: 1px solid rgba(0,0,0,.06);
+
+  font-size: 12px;
+}
+
+.exam-attempt-line:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.exam-attempt-date {
+  color: #616a77;
+}
+
+.exam-attempt-count {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.exam-attempt-count.ok {
+  color: #2e7d55;
+}
+
+.exam-attempt-count.soon {
+  color: #b66b00;
+}
+
+.exam-attempt-count.past {
+  color: #8b929c;
+}
+
+.exam-task-progress {
+  margin-top: 10px;
+  padding-top: 8px;
+
+  border-top: 1px solid rgba(0,0,0,.07);
+
+  font-size: 12px;
+  color: #66707e;
+}
+
+
+/* =========================================================
    MODAL
    ========================================================= */
 
@@ -130,62 +202,6 @@
 
 
 /* =========================================================
-   TOETS KEUZELIJST
-   ========================================================= */
-
-.exam-selector {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-
-  margin-bottom: 22px;
-}
-
-.exam-choice {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-
-  padding: 14px;
-
-  border: 1px solid #e1e5eb;
-  border-radius: 12px;
-
-  cursor: pointer;
-}
-
-.exam-choice:hover {
-  background: #f8fafc;
-}
-
-.exam-choice input {
-  margin-top: 4px;
-}
-
-.exam-choice-content {
-  flex: 1;
-}
-
-.exam-choice-name {
-  font-weight: 600;
-  font-size: 14px;
-}
-
-.exam-choice-meta {
-  margin-top: 4px;
-
-  color: #717986;
-  font-size: 12px;
-}
-
-.exam-choice.already-added {
-  opacity: .55;
-  background: #f5f7f8;
-  cursor: default;
-}
-
-
-/* =========================================================
    FORM
    ========================================================= */
 
@@ -195,7 +211,6 @@
 
 .modal-field label {
   display: block;
-
   margin-bottom: 6px;
 
   font-size: 13px;
@@ -227,7 +242,7 @@
 
 
 /* =========================================================
-   GEKOZEN TOETSEN
+   TOETSEN BEHEREN
    ========================================================= */
 
 .exam-manage-list {
@@ -237,6 +252,21 @@
   gap: 10px;
 }
 
+.exam-manage-group {
+  border: 1px solid #e1e5eb;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.exam-manage-group-title {
+  padding: 13px 14px;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  background: #f7f9fb;
+}
+
 .exam-manage-item {
   display: flex;
   align-items: center;
@@ -244,10 +274,9 @@
 
   gap: 15px;
 
-  padding: 13px;
+  padding: 12px 14px;
 
-  border: 1px solid #e1e5eb;
-  border-radius: 10px;
+  border-top: 1px solid #e8ebef;
 }
 
 .exam-manage-info {
@@ -260,8 +289,6 @@
 }
 
 .exam-manage-meta {
-  margin-top: 4px;
-
   font-size: 12px;
   color: #6f7784;
 }
@@ -285,7 +312,6 @@
 </style>
 </head>
 
-
 <body>
 
 
@@ -294,9 +320,7 @@
      ========================================================= -->
 
 <div id="configWarn" class="config-warn hidden">
-
   <h2>Even instellen</h2>
-
   <p>
     Vul bovenin dit bestand je eigen
     <code>SUPABASE_URL</code>
@@ -304,7 +328,6 @@
     <code>SUPABASE_ANON_KEY</code>
     in.
   </p>
-
 </div>
 
 
@@ -322,12 +345,8 @@
       Log in om je planning te zien.
     </p>
 
-
     <div class="field">
-
-      <label for="email">
-        E-mail
-      </label>
+      <label for="email">E-mail</label>
 
       <input
         id="email"
@@ -335,15 +354,10 @@
         autocomplete="email"
         placeholder="jij@voorbeeld.nl"
       />
-
     </div>
 
-
     <div class="field">
-
-      <label for="password">
-        Wachtwoord
-      </label>
+      <label for="password">Wachtwoord</label>
 
       <input
         id="password"
@@ -351,9 +365,7 @@
         autocomplete="current-password"
         placeholder="Minimaal 6 tekens"
       />
-
     </div>
-
 
     <button
       class="btn btn-primary"
@@ -362,12 +374,10 @@
       Inloggen
     </button>
 
-
     <div
       id="authMsg"
       class="msg"
     ></div>
-
 
     <p
       class="switch"
@@ -390,9 +400,6 @@
 
 <div id="appScreen" class="hidden">
 
-
-  <!-- TOPBAR -->
-
   <div class="topbar">
 
     <div class="brand">
@@ -406,7 +413,6 @@
       </span>
 
     </div>
-
 
     <div class="topbar-right">
 
@@ -438,9 +444,9 @@
 
       <button
         class="btn btn-primary"
-        id="chooseYear2Btn"
+        id="addYear2Btn"
       >
-        + Jaar 2 toetsen kiezen
+        + Alle Jaar 2 toetsen toevoegen
       </button>
 
       <button
@@ -460,7 +466,9 @@
     </div>
 
 
-    <!-- TOETS CHIPS -->
+    <!-- =====================================================
+         TOETSEN
+         ===================================================== -->
 
     <div
       class="toetsrow"
@@ -468,7 +476,9 @@
     ></div>
 
 
-    <!-- GEMISTE TAKEN -->
+    <!-- =====================================================
+         GEMISTE TAKEN
+         ===================================================== -->
 
     <div
       class="banner"
@@ -509,12 +519,10 @@
             &lsaquo;
           </button>
 
-
           <span
             class="month"
             id="monthLabel"
           ></span>
-
 
           <button
             class="nav-btn"
@@ -528,7 +536,6 @@
 
 
         <div class="weekdays">
-
           <span>ma</span>
           <span>di</span>
           <span>wo</span>
@@ -536,7 +543,6 @@
           <span>vr</span>
           <span>za</span>
           <span>zo</span>
-
         </div>
 
 
@@ -617,73 +623,7 @@
 
 
 <!-- =========================================================
-     MODAL: JAAR 2 KIEZEN
-     ========================================================= -->
-
-<div
-  id="year2Modal"
-  class="modal-backdrop hidden"
->
-
-  <div class="modal">
-
-    <div class="modal-head">
-
-      <div>
-
-        <h2>
-          Jaar 2 toetsen kiezen
-        </h2>
-
-        <p>
-          Kies alleen de toetsen die jij nog moet maken.
-        </p>
-
-      </div>
-
-
-      <button
-        class="modal-close"
-        data-close="year2Modal"
-      >
-        ×
-      </button>
-
-    </div>
-
-
-    <div
-      class="exam-selector"
-      id="year2ExamList"
-    ></div>
-
-
-    <div class="modal-actions">
-
-      <button
-        class="btn btn-secondary"
-        data-close="year2Modal"
-      >
-        Annuleren
-      </button>
-
-      <button
-        class="btn btn-primary"
-        id="saveYear2Btn"
-      >
-        Geselecteerde toetsen toevoegen
-      </button>
-
-    </div>
-
-  </div>
-
-</div>
-
-
-
-<!-- =========================================================
-     MODAL: EIGEN TOETS
+     MODAL: EIGEN TOETS TOEVOEGEN
      ========================================================= -->
 
 <div
@@ -706,7 +646,6 @@
         </p>
 
       </div>
-
 
       <button
         class="modal-close"
@@ -853,11 +792,10 @@
         </h2>
 
         <p>
-          Hier kun je toetsen verwijderen die je niet meer nodig hebt.
+          Hier kun je een toetsmoment verwijderen dat je niet meer nodig hebt.
         </p>
 
       </div>
-
 
       <button
         class="modal-close"
@@ -958,6 +896,7 @@ const safeStorage = {
    ========================================================= */
 
 let sb = null;
+
 let mode = "login";
 
 const state = {
@@ -1113,7 +1052,10 @@ function longDate(s) {
 function daysBetween(a, b) {
 
   return Math.round(
-    (parse(b) - parse(a)) /
+    (
+      parse(b) -
+      parse(a)
+    ) /
     86400000
   );
 
@@ -1190,13 +1132,17 @@ function boot() {
 
           auth: {
 
-            storage: safeStorage,
+            storage:
+              safeStorage,
 
-            persistSession: true,
+            persistSession:
+              true,
 
-            autoRefreshToken: true,
+            autoRefreshToken:
+              true,
 
-            detectSessionInUrl: false
+            detectSessionInUrl:
+              false
 
           }
 
@@ -1211,7 +1157,9 @@ function boot() {
       .getSession()
       .then(({ data }) => {
 
-        if (data.session) {
+        if (
+          data.session
+        ) {
 
           enterApp(
             data.session.user
@@ -1230,7 +1178,9 @@ function boot() {
       .onAuthStateChange(
         (_event, session) => {
 
-          if (session) {
+          if (
+            session
+          ) {
 
             enterApp(
               session.user
@@ -1513,7 +1463,9 @@ async function doAuth() {
       mode === "login"
     ) {
 
-      const { error } =
+      const {
+        error
+      } =
         await sb.auth
           .signInWithPassword({
 
@@ -1620,13 +1572,17 @@ function vertaalFout(m) {
 
 function showAuth() {
 
-  state.user = null;
+  state.user =
+    null;
 
-  state.tasks = [];
+  state.tasks =
+    [];
 
-  state.exams = [];
+  state.exams =
+    [];
 
-  state.examPresets = [];
+  state.examPresets =
+    [];
 
 
   el("appScreen")
@@ -1707,7 +1663,8 @@ async function enterApp(user) {
    EVENTS
    ========================================================= */
 
-let eventsBound = false;
+let eventsBound =
+  false;
 
 
 function bindAppEvents() {
@@ -1769,10 +1726,10 @@ function bindAppEvents() {
     );
 
 
-  el("chooseYear2Btn")
+  el("addYear2Btn")
     .addEventListener(
       "click",
-      openYear2Modal
+      addAllYear2Exams
     );
 
 
@@ -1790,13 +1747,6 @@ function bindAppEvents() {
     .addEventListener(
       "click",
       openManageModal
-    );
-
-
-  el("saveYear2Btn")
-    .addEventListener(
-      "click",
-      saveSelectedYear2Exams
     );
 
 
@@ -1998,7 +1948,7 @@ async function loadExamPresets() {
 
 
 /* =========================================================
-   SUBJECT MENU
+   VAK MENU
    ========================================================= */
 
 function fillSubjectMenu() {
@@ -2071,7 +2021,8 @@ function shiftMonth(delta) {
     state.viewMonth < 0
   ) {
 
-    state.viewMonth = 11;
+    state.viewMonth =
+      11;
 
     state.viewYear--;
 
@@ -2082,7 +2033,8 @@ function shiftMonth(delta) {
     state.viewMonth > 11
   ) {
 
-    state.viewMonth = 0;
+    state.viewMonth =
+      0;
 
     state.viewYear++;
 
@@ -2112,7 +2064,75 @@ function renderAll() {
 
 
 /* =========================================================
-   TOETS CHIPS
+   TOETSEN GROEPEREN
+   ========================================================= */
+
+function getGroupedExams() {
+
+  const groups =
+    {};
+
+
+  state.exams.forEach(
+    exam => {
+
+      if (
+        !groups[exam.name]
+      ) {
+
+        groups[exam.name] =
+          [];
+
+      }
+
+
+      groups[exam.name]
+        .push(exam);
+
+    }
+  );
+
+
+  Object.values(groups)
+    .forEach(exams => {
+
+      exams.sort(
+        (a, b) =>
+          a.exam_date
+            .localeCompare(
+              b.exam_date
+            )
+      );
+
+    });
+
+
+  return Object.entries(groups)
+    .sort(
+      (a, b) => {
+
+        const dateA =
+          a[1][0]
+            .exam_date;
+
+        const dateB =
+          b[1][0]
+            .exam_date;
+
+
+        return dateA
+          .localeCompare(
+            dateB
+          );
+
+      }
+    );
+
+}
+
+
+/* =========================================================
+   TOETS BLOKKEN
    ========================================================= */
 
 function renderToetsRow() {
@@ -2140,7 +2160,7 @@ function renderToetsRow() {
 
 
     empty.textContent =
-      "Je hebt nog geen toetsen toegevoegd. Kies Jaar 2 toetsen of voeg zelf een toets toe.";
+      "Je hebt nog geen toetsen toegevoegd. Voeg Jaar 2 toe of voeg zelf een toets toe.";
 
 
     row.appendChild(
@@ -2153,83 +2173,12 @@ function renderToetsRow() {
   }
 
 
-  state.exams.forEach(
-    exam => {
-
-      const d =
-        daysBetween(
-          today(),
-          exam.exam_date
-        );
+  const groups =
+    getGroupedExams();
 
 
-      let cls =
-        "ok";
-
-      let label;
-
-
-      if (
-        d < 0
-      ) {
-
-        cls =
-          "past";
-
-        label =
-          "gehad";
-
-      } else if (
-        d === 0
-      ) {
-
-        cls =
-          "soon";
-
-        label =
-          "vandaag";
-
-      } else {
-
-        cls =
-          d <= 10
-            ? "soon"
-            : "ok";
-
-
-        label =
-          "nog " +
-          d +
-          " " +
-          (
-            d === 1
-              ? "dag"
-              : "dagen"
-          );
-
-      }
-
-
-      const done =
-        state.tasks
-          .filter(
-            t =>
-              t.subject ===
-                exam.name &&
-              t.done
-          )
-          .length;
-
-
-      const total =
-        state.tasks
-          .filter(
-            t =>
-              t.subject ===
-              exam.name
-          )
-          .length;
-
+  groups.forEach(
+    ([name, exams]) => {
 
       const div =
         document.createElement(
@@ -2241,43 +2190,144 @@ function renderToetsRow() {
         "chip";
 
 
+      const done =
+        state.tasks.filter(
+          t =>
+            t.subject ===
+              name &&
+            t.done
+        ).length;
+
+
+      const total =
+        state.tasks.filter(
+          t =>
+            t.subject ===
+            name
+        ).length;
+
+
+      let attemptsHtml =
+        "";
+
+
+      exams.forEach(
+        exam => {
+
+          const d =
+            daysBetween(
+              today(),
+              exam.exam_date
+            );
+
+
+          let cls =
+            "ok";
+
+          let label =
+            "";
+
+
+          if (
+            d < 0
+          ) {
+
+            cls =
+              "past";
+
+            label =
+              "gehad";
+
+          } else if (
+            d === 0
+          ) {
+
+            cls =
+              "soon";
+
+            label =
+              "vandaag";
+
+          } else {
+
+            cls =
+              d <= 10
+                ? "soon"
+                : "ok";
+
+
+            label =
+              "nog " +
+              d +
+              " " +
+              (
+                d === 1
+                  ? "dag"
+                  : "dagen"
+              );
+
+          }
+
+
+          attemptsHtml +=
+
+            '<div class="exam-attempt-line">' +
+
+              '<div>' +
+
+                '<strong>kans ' +
+                exam.attempt +
+                '</strong>' +
+
+                '<span class="exam-attempt-date"> · ' +
+                longDate(
+                  exam.exam_date
+                )
+                .replace(
+                  /^\w+\s/,
+                  ""
+                ) +
+                '</span>' +
+
+              '</div>' +
+
+              '<div class="exam-attempt-count ' +
+              cls +
+              '">' +
+
+                label +
+
+              '</div>' +
+
+            '</div>';
+
+        }
+      );
+
+
       div.innerHTML =
 
         '<div class="name">' +
         escapeHtml(
-          exam.name
+          name
         ) +
         '</div>' +
 
-        '<div class="meta">' +
-        'kans ' +
-        exam.attempt +
-        ': ' +
-        longDate(
-          exam.exam_date
-        ).replace(
-          /^\w+\s/,
-          ""
-        ) +
+        '<div class="exam-attempts">' +
+        attemptsHtml +
         '</div>' +
-
-        '<div class="count ' +
-        cls +
-        '">' +
-
-        label +
 
         (
           total
-            ? ' · ' +
+            ?
+              '<div class="exam-task-progress">' +
               done +
               '/' +
               total +
-              ' taken'
-            : ''
-        ) +
-
-        '</div>';
+              ' taken afgerond</div>'
+            :
+              ''
+        );
 
 
       row.appendChild(
@@ -2462,36 +2512,38 @@ function renderCalendar() {
       const dots =
         dayTasks
           .slice(0, 3)
-          .map(t => {
+          .map(
+            t => {
 
-            let c =
-              "";
+              let c =
+                "";
 
 
-            if (
-              t.done
-            ) {
+              if (
+                t.done
+              ) {
 
-              c =
-                "done";
+                c =
+                  "done";
 
-            } else if (
-              ds < td
-            ) {
+              } else if (
+                ds < td
+              ) {
 
-              c =
-                "missed";
+                c =
+                  "missed";
+
+              }
+
+
+              return (
+                '<i class="' +
+                c +
+                '"></i>'
+              );
 
             }
-
-
-            return (
-              '<i class="' +
-              c +
-              '"></i>'
-            );
-
-          })
+          )
           .join("");
 
 
@@ -2576,7 +2628,8 @@ function renderDay() {
 
   } else {
 
-    tl.textContent = "";
+    tl.textContent =
+      "";
 
     tl.classList
       .remove("show");
@@ -2740,10 +2793,14 @@ function renderDay() {
 
         (
           sub
-            ? '<div class="sub">' +
-              escapeHtml(sub) +
+            ?
+              '<div class="sub">' +
+              escapeHtml(
+                sub
+              ) +
               '</div>'
-            : ''
+            :
+              ''
         );
 
 
@@ -2778,11 +2835,9 @@ function renderDay() {
         check
       );
 
-
       row.appendChild(
         body
       );
-
 
       row.appendChild(
         del
@@ -3127,178 +3182,55 @@ async function deleteTask(t) {
 
 
 /* =========================================================
-   JAAR 2 MODAL
+   ALLE JAAR 2 TOETSEN TOEVOEGEN
    ========================================================= */
 
-function openYear2Modal() {
-
-  renderYear2Choices();
-
-  openModal(
-    "year2Modal"
-  );
-
-}
-
-
-function renderYear2Choices() {
-
-  const list =
-    el("year2ExamList");
-
-
-  list.innerHTML =
-    "";
-
+async function addAllYear2Exams() {
 
   if (
     !state.examPresets.length
   ) {
 
-    list.innerHTML =
-      '<div class="exam-empty">Er zijn geen Jaar 2 toetsen gevonden.</div>';
+    alert(
+      "Er zijn geen Jaar 2 toetsen gevonden."
+    );
 
     return;
 
   }
 
 
-  state.examPresets.forEach(
-    preset => {
-
-      const exists =
-        state.exams.some(
+  const missing =
+    state.examPresets.filter(
+      preset =>
+        !state.exams.some(
           exam =>
-            exam.preset_id ===
-              preset.id ||
+            (
+              exam.preset_id ===
+              preset.id
+            ) ||
             (
               exam.name ===
                 preset.name &&
               exam.exam_date ===
                 preset.exam_date &&
-              Number(exam.attempt) ===
-                Number(preset.attempt)
+              Number(
+                exam.attempt
+              ) ===
+                Number(
+                  preset.attempt
+                )
             )
-        );
-
-
-      const label =
-        document.createElement(
-          "label"
-        );
-
-
-      label.className =
-        "exam-choice" +
-        (
-          exists
-            ? " already-added"
-            : ""
-        );
-
-
-      const checkbox =
-        document.createElement(
-          "input"
-        );
-
-
-      checkbox.type =
-        "checkbox";
-
-
-      checkbox.value =
-        preset.id;
-
-
-      checkbox.disabled =
-        exists;
-
-
-      checkbox.className =
-        "year2-checkbox";
-
-
-      const content =
-        document.createElement(
-          "div"
-        );
-
-
-      content.className =
-        "exam-choice-content";
-
-
-      content.innerHTML =
-
-        '<div class="exam-choice-name">' +
-        escapeHtml(
-          preset.name
-        ) +
-        '</div>' +
-
-        '<div class="exam-choice-meta">' +
-
-        shortDate(
-          preset.exam_date
-        ) +
-
-        ' · kans ' +
-        preset.attempt +
-
-        (
-          exists
-            ? ' · al toegevoegd'
-            : ''
-        ) +
-
-        '</div>';
-
-
-      label.appendChild(
-        checkbox
-      );
-
-
-      label.appendChild(
-        content
-      );
-
-
-      list.appendChild(
-        label
-      );
-
-    }
-  );
-
-}
-
-
-/* =========================================================
-   JAAR 2 OPSLAAN
-   ========================================================= */
-
-async function saveSelectedYear2Exams() {
-
-  const selectedIds =
-    [
-      ...document.querySelectorAll(
-        ".year2-checkbox:checked"
-      )
-    ]
-    .map(
-      input =>
-        input.value
+        )
     );
 
 
   if (
-    !selectedIds.length
+    !missing.length
   ) {
 
     alert(
-      "Selecteer eerst minimaal één toets."
+      "Alle Jaar 2 toetsen staan al in je planner."
     );
 
     return;
@@ -3306,17 +3238,24 @@ async function saveSelectedYear2Exams() {
   }
 
 
-  const selectedPresets =
-    state.examPresets.filter(
-      preset =>
-        selectedIds.includes(
-          preset.id
-        )
-    );
+  const btn =
+    el("addYear2Btn");
+
+
+  const oldText =
+    btn.textContent;
+
+
+  btn.disabled =
+    true;
+
+
+  btn.textContent =
+    "Bezig met toevoegen...";
 
 
   const rows =
-    selectedPresets.map(
+    missing.map(
       preset => ({
 
         user_id:
@@ -3351,12 +3290,20 @@ async function saveSelectedYear2Exams() {
       .select();
 
 
+  btn.disabled =
+    false;
+
+
+  btn.textContent =
+    oldText;
+
+
   if (error) {
 
     console.error(error);
 
     alert(
-      "Toetsen toevoegen lukte niet: " +
+      "Jaar 2 toetsen toevoegen lukte niet: " +
       error.message
     );
 
@@ -3385,8 +3332,16 @@ async function saveSelectedYear2Exams() {
 
   renderAll();
 
-  closeModal(
-    "year2Modal"
+
+  alert(
+    missing.length +
+    " Jaar 2 toetsmoment" +
+    (
+      missing.length === 1
+        ? ""
+        : "en"
+    ) +
+    " toegevoegd."
   );
 
 }
@@ -3423,7 +3378,9 @@ async function saveCustomExam() {
 
   const studyYear =
     yearValue
-      ? Number(yearValue)
+      ? Number(
+          yearValue
+        )
       : null;
 
 
@@ -3458,10 +3415,12 @@ async function saveCustomExam() {
       exam =>
         exam.name
           .toLowerCase() ===
-        name.toLowerCase() &&
+          name.toLowerCase() &&
         exam.exam_date ===
           examDate &&
-        Number(exam.attempt) ===
+        Number(
+          exam.attempt
+        ) ===
           attempt
     );
 
@@ -3608,89 +3567,131 @@ function renderManageExams() {
   }
 
 
-  state.exams.forEach(
-    exam => {
+  const groups =
+    getGroupedExams();
 
-      const item =
+
+  groups.forEach(
+    ([name, exams]) => {
+
+      const group =
         document.createElement(
           "div"
         );
 
 
-      item.className =
-        "exam-manage-item";
+      group.className =
+        "exam-manage-group";
 
 
-      const info =
+      const title =
         document.createElement(
           "div"
         );
 
 
-      info.className =
-        "exam-manage-info";
+      title.className =
+        "exam-manage-group-title";
 
 
-      info.innerHTML =
+      title.textContent =
+        name;
 
-        '<div class="exam-manage-name">' +
-        escapeHtml(
-          exam.name
-        ) +
-        '</div>' +
 
-        '<div class="exam-manage-meta">' +
+      group.appendChild(
+        title
+      );
 
-        shortDate(
-          exam.exam_date
-        ) +
 
-        ' · kans ' +
-        exam.attempt +
+      exams.forEach(
+        exam => {
 
-        (
-          exam.study_year
-            ? ' · jaar ' +
+          const item =
+            document.createElement(
+              "div"
+            );
+
+
+          item.className =
+            "exam-manage-item";
+
+
+          const info =
+            document.createElement(
+              "div"
+            );
+
+
+          info.className =
+            "exam-manage-info";
+
+
+          info.innerHTML =
+
+            '<div class="exam-manage-meta">' +
+
+            shortDate(
+              exam.exam_date
+            ) +
+
+            ' · kans ' +
+            exam.attempt +
+
+            (
               exam.study_year
-            : ''
-        ) +
+                ?
+                  ' · jaar ' +
+                  exam.study_year
+                :
+                  ''
+            ) +
 
-        '</div>';
-
-
-      const del =
-        document.createElement(
-          "button"
-        );
+            '</div>';
 
 
-      del.className =
-        "btn btn-danger";
+          const del =
+            document.createElement(
+              "button"
+            );
 
 
-      del.textContent =
-        "Verwijderen";
+          del.className =
+            "btn btn-danger";
 
 
-      del.addEventListener(
-        "click",
-        () =>
-          deleteExam(exam)
-      );
+          del.textContent =
+            "Verwijderen";
 
 
-      item.appendChild(
-        info
-      );
+          del.addEventListener(
+            "click",
+            () =>
+              deleteExam(
+                exam
+              )
+          );
 
 
-      item.appendChild(
-        del
+          item.appendChild(
+            info
+          );
+
+
+          item.appendChild(
+            del
+          );
+
+
+          group.appendChild(
+            item
+          );
+
+        }
       );
 
 
       list.appendChild(
-        item
+        group
       );
 
     }
@@ -3707,9 +3708,11 @@ async function deleteExam(exam) {
 
   const ok =
     confirm(
-      "Weet je zeker dat je deze toets wilt verwijderen?\n\n" +
+      "Weet je zeker dat je dit toetsmoment wilt verwijderen?\n\n" +
       exam.name +
-      "\n" +
+      "\nKans " +
+      exam.attempt +
+      " · " +
       shortDate(
         exam.exam_date
       )
@@ -3790,7 +3793,8 @@ async function redistributeMissed() {
     return;
 
 
-  const load = {};
+  const load =
+    {};
 
 
   state.tasks.forEach(
@@ -3842,8 +3846,10 @@ async function redistributeMissed() {
           t.deadline &&
           t.deadline >= td
         )
-          ? t.deadline
-          : addDays(
+          ?
+            t.deadline
+          :
+            addDays(
               td,
               13
             );
