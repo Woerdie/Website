@@ -3,4853 +3,1329 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Inhaalplanner</title>
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="style.css">
-
 <style>
-
-/* =========================================================
-   ALGEMEEN EXTRA
-   ========================================================= */
-
-.exam-toolbar {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-bottom: 18px;
-}
-
-.exam-toolbar .btn {
-  white-space: nowrap;
-}
-
-.btn-secondary {
-  background: #fff;
-  border: 1px solid #d8dde5;
-  color: #252b35;
-}
-
-.btn-secondary:hover {
-  background: #f5f7fa;
-}
-
-.btn-danger {
-  background: #fff1f1;
-  border: 1px solid #f2c6c6;
-  color: #b42318;
-}
-
-.btn-danger:hover {
-  background: #ffe4e4;
-}
-
-.btn-small {
-  padding: 6px 9px;
-  font-size: 11px;
-}
-
-
-/* =========================================================
-   TOETSKAARTEN
-   ========================================================= */
-
-.toetsrow {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(255px, 1fr));
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.toetsrow .chip {
-  min-width: 0;
-  height: auto;
-}
-
-.exam-card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.exam-priority {
-  flex-shrink: 0;
-  padding: 4px 7px;
-  border-radius: 999px;
-  font-size: 10px;
-  font-weight: 700;
-}
-
-.exam-priority.high {
-  background: #fff0ed;
-  color: #b42318;
-}
-
-.exam-priority.medium {
-  background: #fff6e5;
-  color: #9a6700;
-}
-
-.exam-priority.low {
-  background: #ebf8ef;
-  color: #227447;
-}
-
-.exam-attempts {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-top: 9px;
-}
-
-.exam-attempt-line {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-
-  padding-top: 6px;
-  border-top: 1px solid rgba(0,0,0,.06);
-
-  font-size: 12px;
-}
-
-.exam-attempt-line:first-child {
-  padding-top: 0;
-  border-top: 0;
-}
-
-.exam-attempt-date {
-  color: #616a77;
-}
-
-.exam-attempt-count {
-  white-space: nowrap;
-  font-weight: 600;
-}
-
-.exam-attempt-count.ok {
-  color: #2e7d55;
-}
-
-.exam-attempt-count.soon {
-  color: #b66b00;
-}
-
-.exam-attempt-count.past {
-  color: #8b929c;
-}
-
-.exam-progress {
-  margin-top: 10px;
-  padding-top: 8px;
-
-  border-top: 1px solid rgba(0,0,0,.07);
-
-  font-size: 12px;
-  color: #66707e;
-}
-
-.progress-bar {
-  height: 5px;
-  margin-top: 6px;
-
-  overflow: hidden;
-
-  background: #edf0f3;
-  border-radius: 999px;
-}
-
-.progress-fill {
-  height: 100%;
-  background: currentColor;
-  border-radius: 999px;
-}
-
-
-/* =========================================================
-   DAGTOTAAL
-   ========================================================= */
-
-.day-hours {
-  margin-top: 5px;
-
-  font-size: 12px;
-  color: #66707e;
-}
-
-.day-hours strong {
-  color: #252b35;
-}
-
-
-/* =========================================================
-   TAKEN / UREN
-   ========================================================= */
-
-.task-time-info {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-
-  margin-top: 5px;
-}
-
-.time-pill {
-  display: inline-flex;
-  align-items: center;
-
-  padding: 3px 7px;
-
-  border-radius: 7px;
-
-  background: #f1f4f7;
-
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.time-pill.done {
-  background: #e9f7ee;
-  color: #24734b;
-}
-
-.time-pill.remaining {
-  background: #fff4e6;
-  color: #9a6500;
-}
-
-.task-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-
-/* =========================================================
-   DUUR KIEZEN
-   ========================================================= */
-
-.duration-picker {
-  display: grid;
-  grid-template-columns: 1fr auto 1fr auto;
-  align-items: center;
-  gap: 7px;
-}
-
-.duration-picker input,
-.duration-picker select {
-  width: 100%;
-}
-
-.duration-unit {
-  font-size: 12px;
-  color: #66707e;
-}
-
-.inline-duration {
-  display: grid;
-  grid-template-columns: 60px auto 70px auto;
-  align-items: center;
-  gap: 5px;
-}
-
-
-/* =========================================================
-   MODALS
-   ========================================================= */
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 9999;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 20px;
-
-  background: rgba(20,25,35,.50);
-}
-
-.modal-backdrop.hidden {
-  display: none;
-}
-
-.modal {
-  width: min(720px, 100%);
-  max-height: 88vh;
-
-  overflow-y: auto;
-
-  padding: 24px;
-
-  background: #fff;
-  border-radius: 18px;
-
-  box-shadow: 0 24px 70px rgba(0,0,0,.20);
-}
-
-.modal-small {
-  width: min(540px, 100%);
-}
-
-.modal-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-
-  gap: 20px;
-
-  margin-bottom: 20px;
-}
-
-.modal-head h2 {
-  margin: 0 0 5px;
-}
-
-.modal-head p {
-  margin: 0;
-
-  color: #687180;
-  font-size: 14px;
-}
-
-.modal-close {
-  width: 38px;
-  height: 38px;
-
-  border: 1px solid #d8dde5;
-  border-radius: 50%;
-
-  background: #fff;
-
-  font-size: 22px;
-  cursor: pointer;
-}
-
-.modal-close:hover {
-  background: #f5f7fa;
-}
-
-.modal-field {
-  margin-bottom: 16px;
-}
-
-.modal-field label {
-  display: block;
-  margin-bottom: 6px;
-
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.modal-field input,
-.modal-field select {
-  box-sizing: border-box;
-  width: 100%;
-
-  padding: 11px 12px;
-
-  border: 1px solid #d5dae2;
-  border-radius: 9px;
-
-  font-family: inherit;
-  font-size: 14px;
-}
-
-.modal-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-
-  margin-top: 20px;
-}
-
-
-/* =========================================================
-   STUDIEPLAN
-   ========================================================= */
-
-.plan-summary {
-  margin: 15px 0;
-  padding: 14px;
-
-  border-radius: 12px;
-  background: #f5f8fb;
-
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-.plan-summary strong {
-  color: #1f2937;
-}
-
-.skip-title {
-  margin-bottom: 8px;
-
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.weekday-selector {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-
-  margin-bottom: 16px;
-}
-
-.weekday-btn {
-  padding: 8px 10px;
-
-  border: 1px solid #d9dee5;
-  border-radius: 8px;
-
-  background: #fff;
-
-  cursor: pointer;
-  font-family: inherit;
-  font-size: 12px;
+.exam-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.exam-toolbar .btn{white-space:nowrap}
+.btn-secondary{background:#fff;border:1px solid #d8dde5;color:#252b35}
+.btn-secondary:hover{background:#f5f7fa}
+.btn-danger{background:#fff1f1;border:1px solid #f2c6c6;color:#b42318}
+.btn-danger:hover{background:#ffe4e4}
+.btn-small{padding:6px 9px;font-size:11px}
+
+.toetsrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(255px,1fr));gap:12px;margin-bottom:18px}
+.toetsrow .chip{min-width:0;height:auto}
+.exam-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.exam-priority{flex-shrink:0;padding:4px 7px;border-radius:999px;font-size:10px;font-weight:700}
+.exam-priority.high{background:#fff0ed;color:#b42318}
+.exam-priority.medium{background:#fff6e5;color:#9a6700}
+.exam-priority.low{background:#ebf8ef;color:#227447}
+.exam-attempts{display:flex;flex-direction:column;gap:6px;margin-top:9px}
+.exam-attempt-line{display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:6px;border-top:1px solid rgba(0,0,0,.06);font-size:12px}
+.exam-attempt-line:first-child{padding-top:0;border-top:0}
+.exam-attempt-date{color:#616a77}
+.exam-attempt-count{white-space:nowrap;font-weight:600}
+.exam-attempt-count.ok{color:#2e7d55}
+.exam-attempt-count.soon{color:#b66b00}
+.exam-attempt-count.past{color:#8b929c}
+.exam-progress{margin-top:10px;padding-top:8px;border-top:1px solid rgba(0,0,0,.07);font-size:12px;color:#66707e}
+.progress-bar{height:5px;margin-top:6px;overflow:hidden;background:#edf0f3;border-radius:999px}
+.progress-fill{height:100%;background:currentColor;border-radius:999px}
+
+.day-hours{margin-top:5px;font-size:12px;color:#66707e}
+.day-hours strong{color:#252b35}
+.task-time-info{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}
+.time-pill{display:inline-flex;align-items:center;padding:3px 7px;border-radius:7px;background:#f1f4f7;font-size:11px;font-weight:600}
+.time-pill.done{background:#e9f7ee;color:#24734b}
+.time-pill.remaining{background:#fff4e6;color:#9a6500}
+.task-actions{display:flex;align-items:center;gap:6px}
+
+.duration-picker{display:grid;grid-template-columns:1fr auto 1fr auto;align-items:center;gap:7px}
+.duration-picker input,.duration-picker select{width:100%}
+.duration-unit{font-size:12px;color:#66707e}
+.inline-duration{display:grid;grid-template-columns:60px auto 70px auto;align-items:center;gap:5px}
+
+.more-tasks{margin-left:3px;font-size:9px;font-weight:700;line-height:1;color:#66707e}
+
+.modal-backdrop{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(20,25,35,.50)}
+.modal-backdrop.hidden{display:none}
+.modal{width:min(720px,100%);max-height:88vh;overflow-y:auto;padding:24px;background:#fff;border-radius:18px;box-shadow:0 24px 70px rgba(0,0,0,.20)}
+.modal-small{width:min(540px,100%)}
+.modal-head{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:20px}
+.modal-head h2{margin:0 0 5px}
+.modal-head p{margin:0;color:#687180;font-size:14px}
+.modal-close{width:38px;height:38px;border:1px solid #d8dde5;border-radius:50%;background:#fff;font-size:22px;cursor:pointer}
+.modal-close:hover{background:#f5f7fa}
+.modal-field{margin-bottom:16px}
+.modal-field label{display:block;margin-bottom:6px;font-size:13px;font-weight:600}
+.modal-field input,.modal-field select{box-sizing:border-box;width:100%;padding:11px 12px;border:1px solid #d5dae2;border-radius:9px;font-family:inherit;font-size:14px}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+
+.plan-summary{margin:15px 0;padding:14px;border-radius:12px;background:#f5f8fb;font-size:13px;line-height:1.6}
+.plan-summary strong{color:#1f2937}
+.skip-title{margin-bottom:8px;font-size:13px;font-weight:600}
+.weekday-selector{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px}
+.weekday-btn{padding:8px 10px;border:1px solid #d9dee5;border-radius:8px;background:#fff;cursor:pointer;font-family:inherit;font-size:12px}
+.weekday-btn.skip{background:#252b35;border-color:#252b35;color:#fff}
+.skip-date-row{display:flex;gap:8px}
+.skip-date-row input{flex:1}
+.skip-dates{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.skip-date-chip{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;background:#f0f2f5;font-size:11px}
+.skip-date-chip button{border:0;padding:0;background:none;cursor:pointer;font-weight:700}
+.time-summary-box{margin-bottom:17px;padding:13px;background:#f5f8fb;border-radius:10px;font-size:13px;line-height:1.6}
+
+.exam-manage-list{display:flex;flex-direction:column;gap:10px}
+.exam-manage-group{overflow:hidden;border:1px solid #e1e5eb;border-radius:12px}
+.exam-manage-group-title{padding:13px 14px;background:#f7f9fb;font-size:14px;font-weight:700}
+.exam-manage-item{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:12px 14px;border-top:1px solid #e8ebef}
+.exam-manage-meta{font-size:12px;color:#6f7784}
+.exam-empty{box-sizing:border-box;width:100%;padding:20px;border-radius:12px;background:#f6f8fa;color:#727b88;text-align:center;font-size:14px}
+
+@media(max-width:700px){
+  .modal-row{grid-template-columns:1fr}
+  .duration-picker{grid-template-columns:1fr auto 1fr auto}
 }
-
-.weekday-btn.skip {
-  background: #252b35;
-  border-color: #252b35;
-  color: #fff;
-}
-
-.skip-date-row {
-  display: flex;
-  gap: 8px;
-}
-
-.skip-date-row input {
-  flex: 1;
-}
-
-.skip-dates {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-
-  margin-top: 10px;
-}
-
-.skip-date-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-
-  padding: 5px 9px;
-
-  border-radius: 999px;
-  background: #f0f2f5;
-
-  font-size: 11px;
-}
-
-.skip-date-chip button {
-  border: 0;
-  padding: 0;
-
-  background: none;
-
-  cursor: pointer;
-  font-weight: 700;
-}
-
-
-/* =========================================================
-   TIJD REGISTREREN
-   ========================================================= */
-
-.time-summary-box {
-  margin-bottom: 17px;
-  padding: 13px;
-
-  background: #f5f8fb;
-  border-radius: 10px;
-
-  font-size: 13px;
-  line-height: 1.6;
-}
-
-
-/* =========================================================
-   TOETSEN BEHEREN
-   ========================================================= */
-
-.exam-manage-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.exam-manage-group {
-  overflow: hidden;
-
-  border: 1px solid #e1e5eb;
-  border-radius: 12px;
-}
-
-.exam-manage-group-title {
-  padding: 13px 14px;
-
-  background: #f7f9fb;
-
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.exam-manage-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  gap: 15px;
-
-  padding: 12px 14px;
-
-  border-top: 1px solid #e8ebef;
-}
-
-.exam-manage-meta {
-  font-size: 12px;
-  color: #6f7784;
-}
-
-.exam-empty {
-  box-sizing: border-box;
-  width: 100%;
-
-  padding: 20px;
-
-  border-radius: 12px;
-  background: #f6f8fa;
-
-  color: #727b88;
-  text-align: center;
-  font-size: 14px;
-}
-
-
-@media (max-width: 700px) {
-
-  .modal-row {
-    grid-template-columns: 1fr;
-  }
-
-  .duration-picker {
-    grid-template-columns: 1fr auto 1fr auto;
-  }
-
-}
-
 </style>
 </head>
 
 <body>
 
-
-<!-- =========================================================
-     WARNING
-     ========================================================= -->
-
 <div id="configWarn" class="config-warn hidden">
-
   <h2>Even instellen</h2>
-
-  <p>
-    Controleer de Supabase instellingen.
-  </p>
-
+  <p>Controleer de Supabase instellingen.</p>
 </div>
-
-
-<!-- =========================================================
-     AUTH
-     ========================================================= -->
 
 <div id="authScreen" class="auth-wrap hidden">
-
   <div class="auth">
-
     <h1>Inhaalplanner</h1>
-
-    <p class="lead" id="authLead">
-      Log in om je planning te zien.
-    </p>
-
-
+    <p class="lead" id="authLead">Log in om je planning te zien.</p>
     <div class="field">
-
-      <label for="email">
-        E-mail
-      </label>
-
-      <input
-        id="email"
-        type="email"
-        autocomplete="email"
-        placeholder="jij@voorbeeld.nl"
-      >
-
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="email" placeholder="jij@voorbeeld.nl">
     </div>
-
-
     <div class="field">
-
-      <label for="password">
-        Wachtwoord
-      </label>
-
-      <input
-        id="password"
-        type="password"
-        autocomplete="current-password"
-        placeholder="Minimaal 6 tekens"
-      >
-
+      <label for="password">Wachtwoord</label>
+      <input id="password" type="password" autocomplete="current-password" placeholder="Minimaal 6 tekens">
     </div>
-
-
-    <button
-      class="btn btn-primary"
-      id="authBtn"
-    >
-      Inloggen
-    </button>
-
-
-    <div
-      id="authMsg"
-      class="msg"
-    ></div>
-
-
-    <p
-      class="switch"
-      id="authSwitch"
-    >
-      Nog geen account?
-      <a id="switchLink">
-        Maak er een aan
-      </a>
-    </p>
-
+    <button class="btn btn-primary" id="authBtn">Inloggen</button>
+    <div id="authMsg" class="msg"></div>
+    <p class="switch" id="authSwitch">Nog geen account? <a id="switchLink">Maak er een aan</a></p>
   </div>
-
 </div>
 
-
-<!-- =========================================================
-     APP
-     ========================================================= -->
-
 <div id="appScreen" class="hidden">
-
-
   <div class="topbar">
-
     <div class="brand">
-
-      <h1>
-        Inhaalplanner
-      </h1>
-
-      <span class="tag">
-        grip op je studievoortgang
-      </span>
-
+      <h1>Inhaalplanner</h1>
+      <span class="tag">grip op je studievoortgang</span>
     </div>
-
-
     <div class="topbar-right">
-
-      <span
-        id="userEmail"
-        class="tnum"
-      ></span>
-
-      <button
-        class="btn"
-        id="logoutBtn"
-      >
-        Uitloggen
-      </button>
-
+      <span id="userEmail" class="tnum"></span>
+      <button class="btn" id="logoutBtn">Uitloggen</button>
     </div>
-
   </div>
 
-
   <div class="wrap">
-
-
-    <!-- KNOPPEN -->
-
     <div class="exam-toolbar">
-
-      <button
-        class="btn btn-primary"
-        id="studyPlanBtn"
-      >
-        ⚡ Studieplan maken
-      </button>
-
-
-      <button
-        class="btn btn-secondary"
-        id="addYear2Btn"
-      >
-        + Alle Jaar 2 toetsen toevoegen
-      </button>
-
-
-      <button
-        class="btn btn-secondary"
-        id="customExamBtn"
-      >
-        + Andere toets toevoegen
-      </button>
-
-
-      <button
-        class="btn btn-secondary"
-        id="manageExamsBtn"
-      >
-        Mijn toetsen beheren
-      </button>
-
+      <button class="btn btn-primary" id="studyPlanBtn">⚡ Studieplan maken</button>
+      <button class="btn btn-secondary" id="addYear2Btn">+ Alle Jaar 2 toetsen toevoegen</button>
+      <button class="btn btn-secondary" id="customExamBtn">+ Andere toets toevoegen</button>
+      <button class="btn btn-secondary" id="manageExamsBtn">Mijn toetsen beheren</button>
     </div>
 
+    <div class="toetsrow" id="toetsRow"></div>
 
-    <!-- TOETSEN -->
-
-    <div
-      class="toetsrow"
-      id="toetsRow"
-    ></div>
-
-
-    <!-- GEMIST -->
-
-    <div
-      class="banner"
-      id="missedBanner"
-    >
-
-      <span
-        class="txt"
-        id="missedTxt"
-      ></span>
-
-      <button
-        class="btn btn-missed"
-        id="redistributeBtn"
-      >
-        Verdeel resterende tijd
-      </button>
-
+    <div class="banner" id="missedBanner">
+      <span class="txt" id="missedTxt"></span>
+      <button class="btn btn-missed" id="redistributeBtn">Verdeel resterende tijd</button>
     </div>
-
 
     <div class="grid">
-
-
-      <!-- ===================================================
-           KALENDER
-           =================================================== -->
-
       <div class="panel">
-
         <div class="cal-head">
-
-          <button
-            class="nav-btn"
-            id="prevMonth"
-          >
-            &lsaquo;
-          </button>
-
-          <span
-            class="month"
-            id="monthLabel"
-          ></span>
-
-          <button
-            class="nav-btn"
-            id="nextMonth"
-          >
-            &rsaquo;
-          </button>
-
+          <button class="nav-btn" id="prevMonth">&lsaquo;</button>
+          <span class="month" id="monthLabel"></span>
+          <button class="nav-btn" id="nextMonth">&rsaquo;</button>
         </div>
-
-
         <div class="weekdays">
-
-          <span>ma</span>
-          <span>di</span>
-          <span>wo</span>
-          <span>do</span>
-          <span>vr</span>
-          <span>za</span>
-          <span>zo</span>
-
+          <span>ma</span><span>di</span><span>wo</span><span>do</span><span>vr</span><span>za</span><span>zo</span>
         </div>
-
-
-        <div
-          class="days"
-          id="calDays"
-        ></div>
-
+        <div class="days" id="calDays"></div>
       </div>
 
-
-      <!-- ===================================================
-           DAGPANEEL
-           =================================================== -->
-
       <div class="panel">
-
         <div class="day-head">
-
-          <div
-            class="date"
-            id="dayDate"
-          ></div>
-
-          <div
-            class="day-hours"
-            id="dayHours"
-          ></div>
-
-          <div
-            class="toetsline"
-            id="dayToets"
-          ></div>
-
+          <div class="date" id="dayDate"></div>
+          <div class="day-hours" id="dayHours"></div>
+          <div class="toetsline" id="dayToets"></div>
         </div>
 
-
-        <div
-          class="tasklist"
-          id="taskList"
-        ></div>
-
+        <div class="tasklist" id="taskList"></div>
 
         <div class="add">
-
-          <input
-            id="newTitle"
-            type="text"
-            placeholder="Wat ga je die dag doen?"
-          >
-
-
-          <div
-            class="add-row"
-            style="flex-wrap:wrap;"
-          >
-
-            <select id="newSubject">
-
-              <option value="">
-                Geen vak
-              </option>
-
-            </select>
-
-
+          <input id="newTitle" type="text" placeholder="Wat ga je die dag doen?">
+          <div class="add-row" style="flex-wrap:wrap">
+            <select id="newSubject"><option value="">Geen vak</option></select>
             <div class="inline-duration">
-
-              <input
-                id="newHours"
-                type="number"
-                min="0"
-                max="24"
-                step="1"
-                value="0"
-              >
-
-              <span class="duration-unit">
-                uur
-              </span>
-
+              <input id="newHours" type="number" min="0" max="24" step="1" value="0">
+              <span class="duration-unit">uur</span>
               <select id="newMinutes">
-
                 <option value="0">00</option>
                 <option value="15">15</option>
                 <option value="30">30</option>
                 <option value="45">45</option>
-
               </select>
-
-              <span class="duration-unit">
-                min
-              </span>
-
+              <span class="duration-unit">min</span>
             </div>
-
-
-            <button
-              class="btn btn-primary"
-              id="addBtn"
-            >
-              Toevoegen
-            </button>
-
+            <button class="btn btn-primary" id="addBtn">Toevoegen</button>
           </div>
-
         </div>
-
       </div>
-
     </div>
-
   </div>
-
 </div>
 
-
-<!-- =========================================================
-     STUDIEPLAN
-     ========================================================= -->
-
-<div
-  id="studyPlanModal"
-  class="modal-backdrop hidden"
->
-
+<div id="studyPlanModal" class="modal-backdrop hidden">
   <div class="modal modal-small">
-
     <div class="modal-head">
-
       <div>
-
-        <h2>
-          Studieplan maken
-        </h2>
-
-        <p>
-          De planner verdeelt je leertijd automatisch vóór je toets.
-        </p>
-
+        <h2>Studieplan maken</h2>
+        <p>De planner verdeelt je leertijd automatisch vóór je toets.</p>
       </div>
-
-
-      <button
-        class="modal-close"
-        data-close="studyPlanModal"
-      >
-        ×
-      </button>
-
+      <button class="modal-close" data-close="studyPlanModal">×</button>
     </div>
 
-
     <div class="modal-field">
-
-      <label for="planSubject">
-        Vak
-      </label>
-
+      <label for="planSubject">Vak</label>
       <select id="planSubject"></select>
-
     </div>
 
-
     <div class="modal-field">
-
-      <label>
-        Hoeveel wil je in totaal leren?
-      </label>
-
+      <label>Hoeveel wil je in totaal leren?</label>
       <div class="duration-picker">
-
-        <input
-          id="planTotalHours"
-          type="number"
-          min="0"
-          max="200"
-          step="1"
-          value="10"
-        >
-
-        <span class="duration-unit">
-          uur
-        </span>
-
+        <input id="planTotalHours" type="number" min="0" max="200" step="1" value="10">
+        <span class="duration-unit">uur</span>
         <select id="planTotalMinutes">
-
           <option value="0">00</option>
           <option value="15">15</option>
           <option value="30">30</option>
           <option value="45">45</option>
-
         </select>
-
-        <span class="duration-unit">
-          min
-        </span>
-
+        <span class="duration-unit">min</span>
       </div>
-
     </div>
 
-
     <div class="modal-field">
-
-      <label>
-        Maximaal per studiedag
-      </label>
-
+      <label>Maximaal per studiedag</label>
       <div class="duration-picker">
-
-        <input
-          id="planDayHours"
-          type="number"
-          min="0"
-          max="24"
-          step="1"
-          value="2"
-        >
-
-        <span class="duration-unit">
-          uur
-        </span>
-
+        <input id="planDayHours" type="number" min="0" max="24" step="1" value="2">
+        <span class="duration-unit">uur</span>
         <select id="planDayMinutes">
-
           <option value="0">00</option>
           <option value="15">15</option>
           <option value="30">30</option>
           <option value="45">45</option>
-
         </select>
-
-        <span class="duration-unit">
-          min
-        </span>
-
+        <span class="duration-unit">min</span>
       </div>
-
     </div>
-
 
     <div class="modal-field">
-
-      <label for="planStartDate">
-        Beginnen vanaf
-      </label>
-
-      <input
-        id="planStartDate"
-        type="date"
-      >
-
+      <label for="planStartDate">Beginnen vanaf</label>
+      <input id="planStartDate" type="date">
     </div>
 
-
-    <div class="skip-title">
-      Deze dagen standaard overslaan
-    </div>
-
-
+    <div class="skip-title">Deze dagen standaard overslaan</div>
     <div class="weekday-selector">
-
-      <button type="button" class="weekday-btn" data-day="1">
-        Ma
-      </button>
-
-      <button type="button" class="weekday-btn" data-day="2">
-        Di
-      </button>
-
-      <button type="button" class="weekday-btn" data-day="3">
-        Wo
-      </button>
-
-      <button type="button" class="weekday-btn" data-day="4">
-        Do
-      </button>
-
-      <button type="button" class="weekday-btn" data-day="5">
-        Vr
-      </button>
-
-      <button type="button" class="weekday-btn" data-day="6">
-        Za
-      </button>
-
-      <button type="button" class="weekday-btn" data-day="0">
-        Zo
-      </button>
-
+      <button type="button" class="weekday-btn" data-day="1">Ma</button>
+      <button type="button" class="weekday-btn" data-day="2">Di</button>
+      <button type="button" class="weekday-btn" data-day="3">Wo</button>
+      <button type="button" class="weekday-btn" data-day="4">Do</button>
+      <button type="button" class="weekday-btn" data-day="5">Vr</button>
+      <button type="button" class="weekday-btn" data-day="6">Za</button>
+      <button type="button" class="weekday-btn" data-day="0">Zo</button>
     </div>
-
 
     <div class="modal-field">
-
-      <label>
-        Losse dag overslaan
-      </label>
-
-
+      <label>Losse dag overslaan</label>
       <div class="skip-date-row">
-
-        <input
-          id="skipDateInput"
-          type="date"
-        >
-
-        <button
-          class="btn btn-secondary"
-          type="button"
-          id="addSkipDateBtn"
-        >
-          Overslaan
-        </button>
-
+        <input id="skipDateInput" type="date">
+        <button class="btn btn-secondary" type="button" id="addSkipDateBtn">Overslaan</button>
       </div>
-
-
-      <div
-        class="skip-dates"
-        id="skipDatesList"
-      ></div>
-
+      <div class="skip-dates" id="skipDatesList"></div>
     </div>
 
-
-    <div
-      class="plan-summary"
-      id="planSummary"
-    ></div>
-
+    <div class="plan-summary" id="planSummary"></div>
 
     <div class="modal-actions">
-
-      <button
-        class="btn btn-secondary"
-        data-close="studyPlanModal"
-      >
-        Annuleren
-      </button>
-
-      <button
-        class="btn btn-primary"
-        id="generatePlanBtn"
-      >
-        Planning maken
-      </button>
-
+      <button class="btn btn-secondary" data-close="studyPlanModal">Annuleren</button>
+      <button class="btn btn-primary" id="generatePlanBtn">Planning maken</button>
     </div>
-
   </div>
-
 </div>
 
-
-<!-- =========================================================
-     TIJD REGISTREREN
-     ========================================================= -->
-
-<div
-  id="timeModal"
-  class="modal-backdrop hidden"
->
-
+<div id="timeModal" class="modal-backdrop hidden">
   <div class="modal modal-small">
-
     <div class="modal-head">
-
       <div>
-
-        <h2>
-          Leertijd invullen
-        </h2>
-
+        <h2>Leertijd invullen</h2>
         <p id="timeTaskName"></p>
-
       </div>
-
-      <button
-        class="modal-close"
-        data-close="timeModal"
-      >
-        ×
-      </button>
-
+      <button class="modal-close" data-close="timeModal">×</button>
     </div>
 
-
-    <div
-      class="time-summary-box"
-      id="timeTaskSummary"
-    ></div>
-
+    <div class="time-summary-box" id="timeTaskSummary"></div>
 
     <div class="modal-field">
-
-      <label>
-        Hoeveel heb je daadwerkelijk geleerd?
-      </label>
-
-
+      <label>Hoeveel heb je daadwerkelijk geleerd?</label>
       <div class="duration-picker">
-
-        <input
-          id="actualHours"
-          type="number"
-          min="0"
-          max="24"
-          step="1"
-          value="0"
-        >
-
-        <span class="duration-unit">
-          uur
-        </span>
-
-
+        <input id="actualHours" type="number" min="0" max="24" step="1" value="0">
+        <span class="duration-unit">uur</span>
         <select id="actualMinutes">
-
           <option value="0">00</option>
           <option value="15">15</option>
           <option value="30">30</option>
           <option value="45">45</option>
-
         </select>
-
-        <span class="duration-unit">
-          min
-        </span>
-
+        <span class="duration-unit">min</span>
       </div>
-
     </div>
-
 
     <div class="modal-actions">
-
-      <button
-        class="btn btn-secondary"
-        data-close="timeModal"
-      >
-        Annuleren
-      </button>
-
-      <button
-        class="btn btn-primary"
-        id="saveTimeBtn"
-      >
-        Opslaan
-      </button>
-
+      <button class="btn btn-secondary" data-close="timeModal">Annuleren</button>
+      <button class="btn btn-primary" id="saveTimeBtn">Opslaan</button>
     </div>
-
   </div>
-
 </div>
 
-
-<!-- =========================================================
-     EIGEN TOETS
-     ========================================================= -->
-
-<div
-  id="customExamModal"
-  class="modal-backdrop hidden"
->
-
+<div id="customExamModal" class="modal-backdrop hidden">
   <div class="modal modal-small">
-
     <div class="modal-head">
-
       <div>
-
-        <h2>
-          Andere toets toevoegen
-        </h2>
-
-        <p>
-          Voeg zelf een toets of herkansing toe.
-        </p>
-
+        <h2>Andere toets toevoegen</h2>
+        <p>Voeg zelf een toets of herkansing toe.</p>
       </div>
-
-      <button
-        class="modal-close"
-        data-close="customExamModal"
-      >
-        ×
-      </button>
-
+      <button class="modal-close" data-close="customExamModal">×</button>
     </div>
 
-
     <div class="modal-field">
-
-      <label>
-        Naam
-      </label>
-
-      <input
-        id="customExamName"
-        type="text"
-      >
-
+      <label>Naam</label>
+      <input id="customExamName" type="text">
     </div>
 
-
     <div class="modal-field">
-
-      <label>
-        Datum
-      </label>
-
-      <input
-        id="customExamDate"
-        type="date"
-      >
-
+      <label>Datum</label>
+      <input id="customExamDate" type="date">
     </div>
 
-
     <div class="modal-field">
-
-      <label>
-        Kans
-      </label>
-
+      <label>Kans</label>
       <select id="customExamAttempt">
-
         <option value="1">Kans 1</option>
         <option value="2">Kans 2</option>
         <option value="3">Kans 3</option>
         <option value="4">Kans 4</option>
-
       </select>
-
     </div>
 
-
     <div class="modal-field">
-
-      <label>
-        Studiejaar
-      </label>
-
+      <label>Studiejaar</label>
       <select id="customExamYear">
-
         <option value="">Niet aangeven</option>
         <option value="1">Jaar 1</option>
         <option value="2">Jaar 2</option>
         <option value="3">Jaar 3</option>
         <option value="4">Jaar 4</option>
-
       </select>
-
     </div>
-
 
     <div class="modal-actions">
-
-      <button
-        class="btn btn-secondary"
-        data-close="customExamModal"
-      >
-        Annuleren
-      </button>
-
-      <button
-        class="btn btn-primary"
-        id="saveCustomExamBtn"
-      >
-        Toets toevoegen
-      </button>
-
+      <button class="btn btn-secondary" data-close="customExamModal">Annuleren</button>
+      <button class="btn btn-primary" id="saveCustomExamBtn">Toets toevoegen</button>
     </div>
-
   </div>
-
 </div>
 
-
-<!-- =========================================================
-     TOETSEN BEHEREN
-     ========================================================= -->
-
-<div
-  id="manageExamsModal"
-  class="modal-backdrop hidden"
->
-
+<div id="manageExamsModal" class="modal-backdrop hidden">
   <div class="modal">
-
     <div class="modal-head">
-
       <div>
-
-        <h2>
-          Mijn toetsen
-        </h2>
-
-        <p>
-          Verwijder toetsmomenten die je niet meer nodig hebt.
-        </p>
-
+        <h2>Mijn toetsen</h2>
+        <p>Verwijder toetsmomenten die je niet meer nodig hebt.</p>
       </div>
-
-      <button
-        class="modal-close"
-        data-close="manageExamsModal"
-      >
-        ×
-      </button>
-
+      <button class="modal-close" data-close="manageExamsModal">×</button>
     </div>
-
-
-    <div
-      class="exam-manage-list"
-      id="manageExamList"
-    ></div>
-
+    <div class="exam-manage-list" id="manageExamList"></div>
   </div>
-
 </div>
-
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-
 <script>
+const SUPABASE_URL="https://rdlkdglzfjniwamumucb.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
 
-/* =========================================================
-   CONFIG
-   ========================================================= */
-
-const SUPABASE_URL =
-  "https://rdlkdglzfjniwamumucb.supabase.co";
-
-const SUPABASE_ANON_KEY =
-  "sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
-
-
-/* =========================================================
-   STATE
-   ========================================================= */
-
-const memStore = {};
-
-const safeStorage = {
-
-  getItem(k) {
-
-    try {
-      return localStorage.getItem(k);
-    } catch {
-      return memStore[k] ?? null;
-    }
-
-  },
-
-  setItem(k,v) {
-
-    try {
-      localStorage.setItem(k,v);
-    } catch {
-      memStore[k] = v;
-    }
-
-  },
-
-  removeItem(k) {
-
-    try {
-      localStorage.removeItem(k);
-    } catch {
-      delete memStore[k];
-    }
-
-  }
-
+const memStore={};
+const safeStorage={
+  getItem(k){try{return localStorage.getItem(k)}catch{return memStore[k]??null}},
+  setItem(k,v){try{localStorage.setItem(k,v)}catch{memStore[k]=v}},
+  removeItem(k){try{localStorage.removeItem(k)}catch{delete memStore[k]}}
 };
 
+let sb=null;
+let mode="login";
+let eventsBound=false;
+let currentTimeTask=null;
 
-let sb = null;
-
-let mode = "login";
-
-let eventsBound = false;
-
-let currentTimeTask = null;
-
-
-const state = {
-
-  user: null,
-
-  tasks: [],
-
-  exams: [],
-
-  examPresets: [],
-
-  studyPlans: [],
-
-  viewYear: 0,
-
-  viewMonth: 0,
-
-  selected: "",
-
-  skipWeekdays:
-    new Set(),
-
-  skipDates:
-    new Set()
-
+const state={
+  user:null,
+  tasks:[],
+  exams:[],
+  examPresets:[],
+  studyPlans:[],
+  viewYear:0,
+  viewMonth:0,
+  selected:"",
+  skipWeekdays:new Set(),
+  skipDates:new Set()
 };
 
+const el=id=>document.getElementById(id);
 
-/* =========================================================
-   HELPERS
-   ========================================================= */
+function pad(n){return String(n).padStart(2,"0")}
+function ymd(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())}
+function today(){return ymd(new Date())}
+function parse(s){const[y,m,d]=s.split("-").map(Number);return new Date(y,m-1,d)}
+function addDays(s,n){const d=parse(s);d.setDate(d.getDate()+n);return ymd(d)}
+function daysBetween(a,b){return Math.round((parse(b)-parse(a))/86400000)}
 
-const el =
-  id =>
-    document.getElementById(id);
+const MONTHS=["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
+const DAYS_FULL=["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
 
-
-function pad(n) {
-
-  return String(n)
-    .padStart(2,"0");
-
+function longDate(s){
+  const d=parse(s);
+  return DAYS_FULL[d.getDay()]+" "+d.getDate()+" "+MONTHS[d.getMonth()];
 }
 
-
-function ymd(d) {
-
-  return (
-    d.getFullYear() +
-    "-" +
-    pad(d.getMonth()+1) +
-    "-" +
-    pad(d.getDate())
-  );
-
+function shortDate(s){
+  const d=parse(s);
+  return pad(d.getDate())+"-"+pad(d.getMonth()+1)+"-"+d.getFullYear();
 }
 
-
-function today() {
-
-  return ymd(
-    new Date()
-  );
-
+function escapeHtml(s){
+  if(s===null||s===undefined)return "";
+  return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
-
-function parse(s) {
-
-  const [y,m,d] =
-    s.split("-")
-      .map(Number);
-
-  return new Date(
-    y,
-    m-1,
-    d
-  );
-
+function makeMinutes(hours,minutes){
+  return Math.max(0,Number(hours||0))*60+Math.max(0,Number(minutes||0));
 }
 
-
-function addDays(s,n) {
-
-  const d =
-    parse(s);
-
-  d.setDate(
-    d.getDate()+n
-  );
-
-  return ymd(d);
-
+function splitMinutes(total){
+  total=Math.max(0,Number(total||0));
+  return{hours:Math.floor(total/60),minutes:total%60};
 }
 
-
-function daysBetween(a,b) {
-
-  return Math.round(
-    (
-      parse(b) -
-      parse(a)
-    ) /
-    86400000
-  );
-
+function formatMinutes(total){
+  total=Math.max(0,Math.round(Number(total||0)));
+  const hours=Math.floor(total/60);
+  const minutes=total%60;
+  if(hours&&minutes)return hours+" uur "+minutes+" min";
+  if(hours)return hours+" uur";
+  return minutes+" min";
 }
 
-
-const MONTHS = [
-  "januari",
-  "februari",
-  "maart",
-  "april",
-  "mei",
-  "juni",
-  "juli",
-  "augustus",
-  "september",
-  "oktober",
-  "november",
-  "december"
-];
-
-
-const DAYS_FULL = [
-  "zondag",
-  "maandag",
-  "dinsdag",
-  "woensdag",
-  "donderdag",
-  "vrijdag",
-  "zaterdag"
-];
-
-
-function longDate(s) {
-
-  const d =
-    parse(s);
-
-  return (
-    DAYS_FULL[d.getDay()] +
-    " " +
-    d.getDate() +
-    " " +
-    MONTHS[d.getMonth()]
-  );
-
-}
-
-
-function shortDate(s) {
-
-  const d =
-    parse(s);
-
-  return (
-    pad(d.getDate()) +
-    "-" +
-    pad(d.getMonth()+1) +
-    "-" +
-    d.getFullYear()
-  );
-
-}
-
-
-function escapeHtml(s) {
-
-  if (
-    s === null ||
-    s === undefined
-  ) {
-
-    return "";
-
-  }
-
-  return String(s)
-    .replace(
-      /[&<>"']/g,
-      c => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#39;"
-      }[c])
-    );
-
-}
-
-
-/* =========================================================
-   TIJD HELPERS
-   ========================================================= */
-
-function makeMinutes(
-  hours,
-  minutes
-) {
-
-  return (
-    Math.max(
-      0,
-      Number(hours || 0)
-    ) *
-    60
-  ) +
-  Math.max(
-    0,
-    Number(minutes || 0)
-  );
-
-}
-
-
-function splitMinutes(total) {
-
-  total =
-    Math.max(
-      0,
-      Number(total || 0)
-    );
-
-  return {
-    hours:
-      Math.floor(total / 60),
-
-    minutes:
-      total % 60
-  };
-
-}
-
-
-function formatMinutes(total) {
-
-  total =
-    Math.max(
-      0,
-      Math.round(
-        Number(total || 0)
-      )
-    );
-
-
-  const hours =
-    Math.floor(
-      total / 60
-    );
-
-  const minutes =
-    total % 60;
-
-
-  if (
-    hours &&
-    minutes
-  ) {
-
-    return (
-      hours +
-      " uur " +
-      minutes +
-      " min"
-    );
-
-  }
-
-
-  if (hours) {
-
-    return (
-      hours +
-      " uur"
-    );
-
-  }
-
-
-  return (
-    minutes +
-    " min"
-  );
-
-}
-
-
-/* =========================================================
-   SUPABASE START
-   ========================================================= */
-
-function laadSupabase(
-  klaar,
-  mislukt
-) {
-
-  if (
-    typeof supabase !==
-    "undefined"
-  ) {
-
-    klaar();
-
-    return;
-
-  }
-
-
-  const bronnen = [
-
+function laadSupabase(klaar,mislukt){
+  if(typeof supabase!=="undefined"){klaar();return}
+  const bronnen=[
     "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2",
-
     "https://unpkg.com/@supabase/supabase-js@2",
-
     "https://esm.sh/@supabase/supabase-js@2?bundle"
-
   ];
-
-
-  let i = 0;
-
-
-  function volgende() {
-
-    if (
-      i >=
-      bronnen.length
-    ) {
-
-      mislukt();
-
-      return;
-
-    }
-
-
-    const s =
-      document.createElement(
-        "script"
-      );
-
-
-    s.src =
-      bronnen[i++];
-
-
-    s.onload =
-      () =>
-        typeof supabase !==
-        "undefined"
-          ? klaar()
-          : volgende();
-
-
-    s.onerror =
-      volgende;
-
-
-    document.head
-      .appendChild(s);
-
+  let i=0;
+  function volgende(){
+    if(i>=bronnen.length){mislukt();return}
+    const s=document.createElement("script");
+    s.src=bronnen[i++];
+    s.onload=()=>typeof supabase!=="undefined"?klaar():volgende();
+    s.onerror=volgende;
+    document.head.appendChild(s);
   }
-
-
   volgende();
-
 }
 
-
-function fatal(
-  title,
-  text
-) {
-
-  el("configWarn")
-    .classList
-    .remove("hidden");
-
-
-  el("configWarn")
-    .querySelector("h2")
-    .textContent =
-    title;
-
-
-  el("configWarn")
-    .querySelector("p")
-    .textContent =
-    text;
-
-
-  el("authScreen")
-    .classList
-    .add("hidden");
-
-
-  el("appScreen")
-    .classList
-    .add("hidden");
-
+function fatal(title,text){
+  el("configWarn").classList.remove("hidden");
+  el("configWarn").querySelector("h2").textContent=title;
+  el("configWarn").querySelector("p").textContent=text;
+  el("authScreen").classList.add("hidden");
+  el("appScreen").classList.add("hidden");
 }
 
-
-function boot() {
-
-  try {
-
-    sb =
-      supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY,
-        {
-          auth: {
-            storage:
-              safeStorage,
-
-            persistSession:
-              true,
-
-            autoRefreshToken:
-              true,
-
-            detectSessionInUrl:
-              false
-          }
-        }
-      );
-
+function boot(){
+  try{
+    sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY,{
+      auth:{
+        storage:safeStorage,
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:false
+      }
+    });
 
     initAuthUI();
 
+    sb.auth.getSession().then(({data})=>{
+      if(data.session)enterApp(data.session.user);
+      else showAuth();
+    });
 
-    sb.auth
-      .getSession()
-      .then(
-        ({data}) => {
-
-          if (
-            data.session
-          ) {
-
-            enterApp(
-              data.session.user
-            );
-
-          } else {
-
-            showAuth();
-
-          }
-
-        }
-      );
-
-
-    sb.auth
-      .onAuthStateChange(
-        (_event,session) => {
-
-          if (
-            session
-          ) {
-
-            enterApp(
-              session.user
-            );
-
-          } else {
-
-            showAuth();
-
-          }
-
-        }
-      );
-
-
-  } catch(e) {
-
-    fatal(
-      "Er ging iets mis",
-      e.message ||
-      String(e)
-    );
-
+    sb.auth.onAuthStateChange((_event,session)=>{
+      if(session)enterApp(session.user);
+      else showAuth();
+    });
+  }catch(e){
+    fatal("Er ging iets mis",e.message||String(e));
   }
-
 }
 
+laadSupabase(boot,()=>fatal("Supabase kon niet laden","Controleer je internetverbinding."));
 
-laadSupabase(
-  boot,
-  () =>
-    fatal(
-      "Supabase kon niet laden",
-      "Controleer je internetverbinding."
-    )
-);
-
-
-/* =========================================================
-   AUTH
-   ========================================================= */
-
-function updateAuthMode() {
-
-  const login =
-    mode ===
-    "login";
-
-
-  el("authBtn")
-    .textContent =
-    login
-      ? "Inloggen"
-      : "Account aanmaken";
-
-
-  el("authLead")
-    .textContent =
-    login
-      ? "Log in om je planning te zien."
-      : "Maak een account om te beginnen.";
-
-
-  el("authSwitch")
-    .innerHTML =
-    login
-      ? 'Nog geen account? <a id="switchLink">Maak er een aan</a>'
-      : 'Al een account? <a id="switchLink">Log in</a>';
-
-
-  el("switchLink")
-    .onclick =
-    () => {
-
-      mode =
-        login
-          ? "signup"
-          : "login";
-
-      updateAuthMode();
-
-    };
-
+function updateAuthMode(){
+  const login=mode==="login";
+  el("authBtn").textContent=login?"Inloggen":"Account aanmaken";
+  el("authLead").textContent=login?"Log in om je planning te zien.":"Maak een account om te beginnen.";
+  el("authSwitch").innerHTML=login
+    ?'Nog geen account? <a id="switchLink">Maak er een aan</a>'
+    :'Al een account? <a id="switchLink">Log in</a>';
+  el("switchLink").onclick=()=>{
+    mode=login?"signup":"login";
+    updateAuthMode();
+  };
 }
 
-
-function initAuthUI() {
-
+function initAuthUI(){
   updateAuthMode();
-
-
-  el("authBtn")
-    .onclick =
-    doAuth;
-
-
-  el("password")
-    .onkeydown =
-    e => {
-
-      if (
-        e.key ===
-        "Enter"
-      ) {
-
-        doAuth();
-
-      }
-
-    };
-
+  el("authBtn").onclick=doAuth;
+  el("password").onkeydown=e=>{if(e.key==="Enter")doAuth()};
 }
 
+async function doAuth(){
+  const email=el("email").value.trim();
+  const password=el("password").value;
+  if(!email||!password)return;
 
-async function doAuth() {
+  el("authBtn").disabled=true;
 
-  const email =
-    el("email")
-      .value
-      .trim();
-
-
-  const password =
-    el("password")
-      .value;
-
-
-  if (
-    !email ||
-    !password
-  ) {
-
-    return;
-
-  }
-
-
-  el("authBtn")
-    .disabled =
-    true;
-
-
-  try {
-
-    if (
-      mode ===
-      "login"
-    ) {
-
-      const {
-        error
-      } =
-        await sb.auth
-          .signInWithPassword({
-            email,
-            password
-          });
-
-
-      if (error) {
-        throw error;
-      }
-
-
-    } else {
-
-      const {
-        error
-      } =
-        await sb.auth
-          .signUp({
-            email,
-            password
-          });
-
-
-      if (error) {
-        throw error;
-      }
-
+  try{
+    if(mode==="login"){
+      const{error}=await sb.auth.signInWithPassword({email,password});
+      if(error)throw error;
+    }else{
+      const{error}=await sb.auth.signUp({email,password});
+      if(error)throw error;
     }
-
-
-  } catch(e) {
-
-    alert(
-      e.message
-    );
-
+  }catch(e){
+    alert(e.message);
   }
 
-
-  el("authBtn")
-    .disabled =
-    false;
-
+  el("authBtn").disabled=false;
 }
 
-
-function showAuth() {
-
-  state.user =
-    null;
-
-
-  el("appScreen")
-    .classList
-    .add("hidden");
-
-
-  el("authScreen")
-    .classList
-    .remove("hidden");
-
+function showAuth(){
+  state.user=null;
+  el("appScreen").classList.add("hidden");
+  el("authScreen").classList.remove("hidden");
 }
 
+el("logoutBtn").onclick=()=>sb.auth.signOut();
 
-el("logoutBtn")
-  .onclick =
-  () =>
-    sb.auth.signOut();
+async function enterApp(user){
+  state.user=user;
+  el("authScreen").classList.add("hidden");
+  el("appScreen").classList.remove("hidden");
+  el("userEmail").textContent=user.email;
 
-
-/* =========================================================
-   APP
-   ========================================================= */
-
-async function enterApp(user) {
-
-  state.user =
-    user;
-
-
-  el("authScreen")
-    .classList
-    .add("hidden");
-
-
-  el("appScreen")
-    .classList
-    .remove("hidden");
-
-
-  el("userEmail")
-    .textContent =
-    user.email;
-
-
-  const now =
-    new Date();
-
-
-  state.viewYear =
-    now.getFullYear();
-
-
-  state.viewMonth =
-    now.getMonth();
-
-
-  state.selected =
-    today();
-
+  const now=new Date();
+  state.viewYear=now.getFullYear();
+  state.viewMonth=now.getMonth();
+  state.selected=today();
 
   bindEvents();
 
-
   await Promise.all([
-
     loadTasks(),
-
     loadExams(),
-
     loadExamPresets(),
-
     loadStudyPlans()
-
   ]);
 
-
   fillSubjectMenus();
-
   renderAll();
-
 }
 
+function bindEvents(){
+  if(eventsBound)return;
+  eventsBound=true;
 
-/* =========================================================
-   EVENTS
-   ========================================================= */
+  el("prevMonth").onclick=()=>shiftMonth(-1);
+  el("nextMonth").onclick=()=>shiftMonth(1);
+  el("addBtn").onclick=addTask;
+  el("newTitle").onkeydown=e=>{if(e.key==="Enter")addTask()};
+  el("redistributeBtn").onclick=redistributeRemainingTime;
+  el("studyPlanBtn").onclick=openStudyPlan;
+  el("generatePlanBtn").onclick=generateStudyPlan;
+  el("addSkipDateBtn").onclick=addSkipDate;
+  el("saveTimeBtn").onclick=saveActualTime;
+  el("addYear2Btn").onclick=addAllYear2Exams;
+  el("customExamBtn").onclick=()=>openModal("customExamModal");
+  el("saveCustomExamBtn").onclick=saveCustomExam;
+  el("manageExamsBtn").onclick=openManageModal;
 
-function bindEvents() {
+  document.querySelectorAll(".weekday-btn").forEach(btn=>{
+    btn.onclick=()=>{
+      const day=Number(btn.dataset.day);
+      if(state.skipWeekdays.has(day)){
+        state.skipWeekdays.delete(day);
+        btn.classList.remove("skip");
+      }else{
+        state.skipWeekdays.add(day);
+        btn.classList.add("skip");
+      }
+      updatePlanSummary();
+    };
+  });
 
-  if (
-    eventsBound
-  ) {
+  ["planSubject","planTotalHours","planTotalMinutes","planDayHours","planDayMinutes","planStartDate"].forEach(id=>{
+    el(id).addEventListener("input",updatePlanSummary);
+    el(id).addEventListener("change",updatePlanSummary);
+  });
 
-    return;
+  document.querySelectorAll("[data-close]").forEach(btn=>{
+    btn.onclick=()=>closeModal(btn.dataset.close);
+  });
 
+  document.querySelectorAll(".modal-backdrop").forEach(backdrop=>{
+    backdrop.onclick=e=>{
+      if(e.target===backdrop)closeModal(backdrop.id);
+    };
+  });
+}
+
+async function loadTasks(){
+  const{data,error}=await sb.from("tasks").select("*").order("planned_date");
+  if(error){console.error(error);alert("Taken laden lukte niet: "+error.message);return}
+  state.tasks=data||[];
+}
+
+async function loadExams(){
+  const{data,error}=await sb.from("exams").select("*").order("exam_date");
+  if(error){console.error(error);return}
+  state.exams=data||[];
+}
+
+async function loadExamPresets(){
+  const{data,error}=await sb.from("exam_presets").select("*").eq("study_year",2).order("exam_date");
+  if(error){console.error(error);return}
+  state.examPresets=data||[];
+}
+
+async function loadStudyPlans(){
+  const{data,error}=await sb.from("study_plans").select("*");
+  if(error){console.error(error);return}
+  state.studyPlans=data||[];
+}
+
+function getSubjects(){
+  return[...new Set(state.exams.map(e=>e.name))];
+}
+
+function fillSubjectMenus(){
+  const subjects=getSubjects();
+  const taskSelect=el("newSubject");
+  const planSelect=el("planSubject");
+
+  taskSelect.innerHTML='<option value="">Geen vak</option>';
+  planSelect.innerHTML="";
+
+  subjects.forEach(subject=>{
+    const a=document.createElement("option");
+    a.value=subject;
+    a.textContent=subject;
+    taskSelect.appendChild(a);
+
+    const b=document.createElement("option");
+    b.value=subject;
+    b.textContent=subject;
+    planSelect.appendChild(b);
+  });
+}
+
+function nextExamForSubject(subject){
+  const td=today();
+  return state.exams
+    .filter(e=>e.name===subject&&e.exam_date>=td)
+    .sort((a,b)=>a.exam_date.localeCompare(b.exam_date))[0]||null;
+}
+
+function examsOn(date){
+  return state.exams.filter(e=>e.exam_date===date);
+}
+
+function subjectStats(subject){
+  const exam=nextExamForSubject(subject);
+  const subjectTasks=state.tasks.filter(t=>t.subject===subject);
+
+  const total=subjectTasks.reduce((sum,t)=>sum+Number(t.planned_minutes||0),0);
+
+  const actual=subjectTasks.reduce((sum,t)=>
+    sum+Math.min(Number(t.actual_minutes||0),Number(t.planned_minutes||0)),0
+  );
+
+  const remaining=Math.max(total-actual,0);
+  const days=exam?Math.max(daysBetween(today(),exam.exam_date),0):999;
+  const requiredPerDay=remaining/Math.max(days,1);
+
+  let score=0;
+  if(exam)score+=400/Math.max(days+1,1);
+  score+=requiredPerDay*2;
+  score+=remaining/120;
+
+  let level="low";
+  let label="Rustig";
+
+  if(days<=14||requiredPerDay>=90){
+    level="high";
+    label="Hoge prioriteit";
+  }else if(days<=35||requiredPerDay>=45){
+    level="medium";
+    label="Prioriteit";
   }
 
+  return{exam,total,actual,remaining,days,score,level,label};
+}
 
-  eventsBound =
-    true;
+function groupedExams(){
+  const groups={};
 
+  state.exams.forEach(exam=>{
+    if(!groups[exam.name])groups[exam.name]=[];
+    groups[exam.name].push(exam);
+  });
 
-  el("prevMonth")
-    .onclick =
-    () =>
-      shiftMonth(-1);
+  Object.values(groups).forEach(items=>{
+    items.sort((a,b)=>a.exam_date.localeCompare(b.exam_date));
+  });
 
+  return Object.entries(groups).sort((a,b)=>subjectStats(b[0]).score-subjectStats(a[0]).score);
+}
 
-  el("nextMonth")
-    .onclick =
-    () =>
-      shiftMonth(1);
+function renderToetsRow(){
+  const row=el("toetsRow");
+  row.innerHTML="";
 
+  if(!state.exams.length){
+    row.innerHTML='<div class="exam-empty">Je hebt nog geen toetsen toegevoegd.</div>';
+    return;
+  }
 
-  el("addBtn")
-    .onclick =
-    addTask;
+  groupedExams().forEach(([name,exams])=>{
+    const stats=subjectStats(name);
+    const card=document.createElement("div");
+    card.className="chip";
 
+    let attempts="";
 
-  el("newTitle")
-    .onkeydown =
-    e => {
+    exams.forEach(exam=>{
+      const days=daysBetween(today(),exam.exam_date);
+      let cls="ok";
+      let text;
 
-      if (
-        e.key ===
-        "Enter"
-      ) {
-
-        addTask();
-
+      if(days<0){
+        cls="past";
+        text="gehad";
+      }else if(days===0){
+        cls="soon";
+        text="vandaag";
+      }else{
+        cls=days<=10?"soon":"ok";
+        text="nog "+days+(days===1?" dag":" dagen");
       }
 
+      attempts+=`
+        <div class="exam-attempt-line">
+          <div>
+            <strong>Kans ${exam.attempt}</strong>
+            <span class="exam-attempt-date"> · ${longDate(exam.exam_date).replace(/^\w+\s/,"")}</span>
+          </div>
+          <div class="exam-attempt-count ${cls}">${text}</div>
+        </div>
+      `;
+    });
+
+    let progress="";
+
+    if(stats.total>0){
+      const percent=Math.min(100,Math.round(stats.actual/stats.total*100));
+
+      progress=`
+        <div class="exam-progress">
+          ${formatMinutes(stats.actual)} gedaan van ${formatMinutes(stats.total)}
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:${percent}%"></div>
+          </div>
+        </div>
+      `;
+    }
+
+    card.innerHTML=`
+      <div class="exam-card-top">
+        <div class="name">${escapeHtml(name)}</div>
+        <span class="exam-priority ${stats.level}">${stats.label}</span>
+      </div>
+      <div class="exam-attempts">${attempts}</div>
+      ${progress}
+    `;
+
+    row.appendChild(card);
+  });
+}
+
+function shiftMonth(delta){
+  state.viewMonth+=delta;
+
+  if(state.viewMonth<0){
+    state.viewMonth=11;
+    state.viewYear--;
+  }
+
+  if(state.viewMonth>11){
+    state.viewMonth=0;
+    state.viewYear++;
+  }
+
+  renderCalendar();
+}
+
+function renderCalendar(){
+  el("monthLabel").textContent=MONTHS[state.viewMonth]+" "+state.viewYear;
+
+  const first=new Date(state.viewYear,state.viewMonth,1);
+  const offset=(first.getDay()+6)%7;
+  const start=new Date(state.viewYear,state.viewMonth,1-offset);
+  const container=el("calDays");
+
+  container.innerHTML="";
+
+  for(let i=0;i<42;i++){
+    const d=new Date(start);
+    d.setDate(start.getDate()+i);
+
+    const ds=ymd(d);
+    const cell=document.createElement("button");
+
+    cell.className="day tnum";
+
+    if(d.getMonth()!==state.viewMonth)cell.classList.add("other");
+    if(ds===today())cell.classList.add("today");
+    if(ds===state.selected)cell.classList.add("selected");
+    if(examsOn(ds).length)cell.classList.add("toets");
+
+    let html=`<span>${d.getDate()}</span>`;
+
+    if(examsOn(ds).length)html+='<span class="tflag"></span>';
+
+    const tasks=state.tasks.filter(t=>t.planned_date===ds);
+
+    if(tasks.length){
+      const visibleTasks=tasks.slice(0,3);
+      const extraCount=tasks.length-3;
+
+      html+='<span class="dot">'+
+        visibleTasks.map(t=>{
+          let c="";
+          if(t.done)c="done";
+          else if(ds<today())c="missed";
+          return `<i class="${c}"></i>`;
+        }).join("")+
+        (extraCount>0?`<span class="more-tasks">+${extraCount}</span>`:"")+
+        "</span>";
+    }
+
+    cell.innerHTML=html;
+
+    cell.onclick=()=>{
+      state.selected=ds;
+      renderCalendar();
+      renderDay();
     };
 
-
-  el("redistributeBtn")
-    .onclick =
-    redistributeRemainingTime;
-
-
-  el("studyPlanBtn")
-    .onclick =
-    openStudyPlan;
-
-
-  el("generatePlanBtn")
-    .onclick =
-    generateStudyPlan;
-
-
-  el("addSkipDateBtn")
-    .onclick =
-    addSkipDate;
-
-
-  el("saveTimeBtn")
-    .onclick =
-    saveActualTime;
-
-
-  el("addYear2Btn")
-    .onclick =
-    addAllYear2Exams;
-
-
-  el("customExamBtn")
-    .onclick =
-    () =>
-      openModal(
-        "customExamModal"
-      );
-
-
-  el("saveCustomExamBtn")
-    .onclick =
-    saveCustomExam;
-
-
-  el("manageExamsBtn")
-    .onclick =
-    openManageModal;
-
-
-  document
-    .querySelectorAll(
-      ".weekday-btn"
-    )
-    .forEach(
-      btn => {
-
-        btn.onclick =
-          () => {
-
-            const day =
-              Number(
-                btn.dataset.day
-              );
-
-
-            if (
-              state.skipWeekdays
-                .has(day)
-            ) {
-
-              state.skipWeekdays
-                .delete(day);
-
-              btn.classList
-                .remove("skip");
-
-            } else {
-
-              state.skipWeekdays
-                .add(day);
-
-              btn.classList
-                .add("skip");
-
-            }
-
-
-            updatePlanSummary();
-
-          };
-
-      }
-    );
-
-
-  [
-    "planSubject",
-    "planTotalHours",
-    "planTotalMinutes",
-    "planDayHours",
-    "planDayMinutes",
-    "planStartDate"
-  ]
-    .forEach(
-      id => {
-
-        el(id)
-          .addEventListener(
-            "input",
-            updatePlanSummary
-          );
-
-        el(id)
-          .addEventListener(
-            "change",
-            updatePlanSummary
-          );
-
-      }
-    );
-
-
-  document
-    .querySelectorAll(
-      "[data-close]"
-    )
-    .forEach(
-      btn => {
-
-        btn.onclick =
-          () =>
-            closeModal(
-              btn.dataset.close
-            );
-
-      }
-    );
-
-
-  document
-    .querySelectorAll(
-      ".modal-backdrop"
-    )
-    .forEach(
-      backdrop => {
-
-        backdrop.onclick =
-          e => {
-
-            if (
-              e.target ===
-              backdrop
-            ) {
-
-              closeModal(
-                backdrop.id
-              );
-
-            }
-
-          };
-
-      }
-    );
-
+    container.appendChild(cell);
+  }
 }
 
+function renderDay(){
+  el("dayDate").textContent=longDate(state.selected);
 
-/* =========================================================
-   DATA
-   ========================================================= */
+  const tasks=state.tasks.filter(t=>t.planned_date===state.selected);
 
-async function loadTasks() {
+  const planned=tasks.reduce((sum,t)=>sum+Number(t.planned_minutes||0),0);
+  const actual=tasks.reduce((sum,t)=>sum+Number(t.actual_minutes||0),0);
+  const remaining=Math.max(planned-actual,0);
 
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("tasks")
-      .select("*")
-      .order(
-        "planned_date"
-      );
+  if(planned>0){
+    el("dayHours").innerHTML=`
+      <strong>${formatMinutes(planned)}</strong> gepland ·
+      <strong>${formatMinutes(actual)}</strong> gedaan ·
+      <strong>${formatMinutes(remaining)}</strong> resterend
+    `;
+  }else{
+    el("dayHours").textContent="Geen studie-uren gepland.";
+  }
 
+  const exams=examsOn(state.selected);
 
-  if (error) {
+  if(exams.length){
+    el("dayToets").textContent=
+      "Toetsdag: "+
+      exams.map(e=>e.name+" (kans "+e.attempt+")").join(", ");
 
-    console.error(
-      error
-    );
+    el("dayToets").classList.add("show");
+  }else{
+    el("dayToets").textContent="";
+    el("dayToets").classList.remove("show");
+  }
 
-    alert(
-      "Taken laden lukte niet: " +
-      error.message
-    );
+  const list=el("taskList");
+  list.innerHTML="";
 
+  if(!tasks.length){
+    list.innerHTML='<div class="empty">Nog niets gepland voor deze dag.</div>';
     return;
-
   }
 
+  tasks.forEach(task=>{
+    const taskPlanned=Number(task.planned_minutes||0);
+    const taskActual=Number(task.actual_minutes||0);
+    const taskRemaining=Math.max(taskPlanned-taskActual,0);
+    const overdue=!task.done&&task.planned_date<today();
 
-  state.tasks =
-    data || [];
+    const row=document.createElement("div");
 
-}
+    row.className=
+      "task"+
+      (task.done?" done":"")+
+      (overdue?" overdue":"");
 
+    const check=document.createElement("button");
+    check.className="check"+(task.done?" on":"");
+    check.onclick=()=>markTaskComplete(task);
 
-async function loadExams() {
+    const body=document.createElement("div");
+    body.className="body";
 
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("exams")
-      .select("*")
-      .order(
-        "exam_date"
-      );
+    let sub=task.subject||"";
 
-
-  if (error) {
-
-    console.error(
-      error
-    );
-
-    return;
-
-  }
-
-
-  state.exams =
-    data || [];
-
-}
-
-
-async function loadExamPresets() {
-
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("exam_presets")
-      .select("*")
-      .eq(
-        "study_year",
-        2
-      )
-      .order(
-        "exam_date"
-      );
-
-
-  if (error) {
-
-    console.error(
-      error
-    );
-
-    return;
-
-  }
-
-
-  state.examPresets =
-    data || [];
-
-}
-
-
-async function loadStudyPlans() {
-
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("study_plans")
-      .select("*");
-
-
-  if (error) {
-
-    console.error(
-      error
-    );
-
-    return;
-
-  }
-
-
-  state.studyPlans =
-    data || [];
-
-}
-
-
-/* =========================================================
-   VAKKEN
-   ========================================================= */
-
-function getSubjects() {
-
-  return [
-    ...new Set(
-      state.exams
-        .map(
-          e =>
-            e.name
-        )
-    )
-  ];
-
-}
-
-
-function fillSubjectMenus() {
-
-  const subjects =
-    getSubjects();
-
-
-  const taskSelect =
-    el("newSubject");
-
-
-  const planSelect =
-    el("planSubject");
-
-
-  taskSelect.innerHTML =
-    '<option value="">Geen vak</option>';
-
-
-  planSelect.innerHTML =
-    "";
-
-
-  subjects
-    .forEach(
-      subject => {
-
-        const a =
-          document.createElement(
-            "option"
-          );
-
-
-        a.value =
-          subject;
-
-
-        a.textContent =
-          subject;
-
-
-        taskSelect
-          .appendChild(a);
-
-
-        const b =
-          document.createElement(
-            "option"
-          );
-
-
-        b.value =
-          subject;
-
-
-        b.textContent =
-          subject;
-
-
-        planSelect
-          .appendChild(b);
-
-      }
-    );
-
-}
-
-
-/* =========================================================
-   TOETS HELPERS
-   ========================================================= */
-
-function nextExamForSubject(
-  subject
-) {
-
-  const td =
-    today();
-
-
-  return state.exams
-    .filter(
-      e =>
-        e.name ===
-          subject &&
-        e.exam_date >=
-          td
-    )
-    .sort(
-      (a,b) =>
-        a.exam_date
-          .localeCompare(
-            b.exam_date
-          )
-    )[0] || null;
-
-}
-
-
-function examsOn(date) {
-
-  return state.exams
-    .filter(
-      e =>
-        e.exam_date ===
-        date
-    );
-
-}
-
-
-/* =========================================================
-   PRIORITEIT
-   ========================================================= */
-
-function subjectStats(
-  subject
-) {
-
-  const exam =
-    nextExamForSubject(
-      subject
-    );
-
-
-  const subjectTasks =
-    state.tasks
-      .filter(
-        t =>
-          t.subject ===
-          subject
-      );
-
-
-  const total =
-    subjectTasks
-      .reduce(
-        (sum,t) =>
-          sum +
-          Number(
-            t.planned_minutes ||
-            0
-          ),
-        0
-      );
-
-
-  const actual =
-    subjectTasks
-      .reduce(
-        (sum,t) =>
-          sum +
-          Math.min(
-            Number(
-              t.actual_minutes ||
-              0
-            ),
-            Number(
-              t.planned_minutes ||
-              0
-            )
-          ),
-        0
-      );
-
-
-  const remaining =
-    Math.max(
-      total -
-      actual,
-      0
-    );
-
-
-  const days =
-    exam
-      ? Math.max(
-          daysBetween(
-            today(),
-            exam.exam_date
-          ),
-          0
-        )
-      : 999;
-
-
-  const requiredPerDay =
-    remaining /
-    Math.max(
-      days,
-      1
-    );
-
-
-  let score =
-    0;
-
-
-  if (exam) {
-
-    score +=
-      400 /
-      Math.max(
-        days + 1,
-        1
-      );
-
-  }
-
-
-  score +=
-    requiredPerDay *
-    2;
-
-
-  score +=
-    remaining /
-    120;
-
-
-  let level =
-    "low";
-
-
-  let label =
-    "Rustig";
-
-
-  if (
-    days <= 14 ||
-    requiredPerDay >= 90
-  ) {
-
-    level =
-      "high";
-
-    label =
-      "Hoge prioriteit";
-
-  } else if (
-    days <= 35 ||
-    requiredPerDay >= 45
-  ) {
-
-    level =
-      "medium";
-
-    label =
-      "Prioriteit";
-
-  }
-
-
-  return {
-    exam,
-    total,
-    actual,
-    remaining,
-    days,
-    score,
-    level,
-    label
-  };
-
-}
-
-
-/* =========================================================
-   TOETSEN GROEPEREN
-   ========================================================= */
-
-function groupedExams() {
-
-  const groups =
-    {};
-
-
-  state.exams
-    .forEach(
-      exam => {
-
-        if (
-          !groups[
-            exam.name
-          ]
-        ) {
-
-          groups[
-            exam.name
-          ] =
-            [];
-
-        }
-
-
-        groups[
-          exam.name
-        ]
-          .push(
-            exam
-          );
-
-      }
-    );
-
-
-  Object
-    .values(
-      groups
-    )
-    .forEach(
-      items => {
-
-        items.sort(
-          (a,b) =>
-            a.exam_date
-              .localeCompare(
-                b.exam_date
-              )
-        );
-
-      }
-    );
-
-
-  return Object
-    .entries(
-      groups
-    )
-    .sort(
-      (a,b) =>
-        subjectStats(
-          b[0]
-        ).score -
-        subjectStats(
-          a[0]
-        ).score
-    );
-
-}
-
-
-/* =========================================================
-   RENDER TOETSEN
-   ========================================================= */
-
-function renderToetsRow() {
-
-  const row =
-    el("toetsRow");
-
-
-  row.innerHTML =
-    "";
-
-
-  if (
-    !state.exams.length
-  ) {
-
-    row.innerHTML =
-      '<div class="exam-empty">Je hebt nog geen toetsen toegevoegd.</div>';
-
-    return;
-
-  }
-
-
-  groupedExams()
-    .forEach(
-      ([name,exams]) => {
-
-        const stats =
-          subjectStats(
-            name
-          );
-
-
-        const card =
-          document.createElement(
-            "div"
-          );
-
-
-        card.className =
-          "chip";
-
-
-        let attempts =
-          "";
-
-
-        exams
-          .forEach(
-            exam => {
-
-              const days =
-                daysBetween(
-                  today(),
-                  exam.exam_date
-                );
-
-
-              let cls =
-                "ok";
-
-
-              let text;
-
-
-              if (
-                days < 0
-              ) {
-
-                cls =
-                  "past";
-
-                text =
-                  "gehad";
-
-              } else if (
-                days === 0
-              ) {
-
-                cls =
-                  "soon";
-
-                text =
-                  "vandaag";
-
-              } else {
-
-                cls =
-                  days <= 10
-                    ? "soon"
-                    : "ok";
-
-
-                text =
-                  "nog " +
-                  days +
-                  (
-                    days === 1
-                      ? " dag"
-                      : " dagen"
-                  );
-
-              }
-
-
-              attempts += `
-                <div class="exam-attempt-line">
-
-                  <div>
-                    <strong>
-                      Kans ${exam.attempt}
-                    </strong>
-
-                    <span class="exam-attempt-date">
-                      · ${longDate(exam.exam_date).replace(/^\w+\s/,"")}
-                    </span>
-                  </div>
-
-                  <div class="exam-attempt-count ${cls}">
-                    ${text}
-                  </div>
-
-                </div>
-              `;
-
-            }
-          );
-
-
-        let progress =
-          "";
-
-
-        if (
-          stats.total >
-          0
-        ) {
-
-          const percent =
-            Math.min(
-              100,
-              Math.round(
-                stats.actual /
-                stats.total *
-                100
-              )
-            );
-
-
-          progress = `
-            <div class="exam-progress">
-
-              ${formatMinutes(stats.actual)}
-              gedaan van
-              ${formatMinutes(stats.total)}
-
-              <div class="progress-bar">
-                <div
-                  class="progress-fill"
-                  style="width:${percent}%"
-                ></div>
-              </div>
-
-            </div>
-          `;
-
-        }
-
-
-        card.innerHTML = `
-
-          <div class="exam-card-top">
-
-            <div class="name">
-              ${escapeHtml(name)}
-            </div>
-
-            <span class="exam-priority ${stats.level}">
-              ${stats.label}
-            </span>
-
-          </div>
-
-          <div class="exam-attempts">
-            ${attempts}
-          </div>
-
-          ${progress}
-        `;
-
-
-        row.appendChild(
-          card
-        );
-
-      }
-    );
-
-}
-
-
-/* =========================================================
-   MAAND
-   ========================================================= */
-
-function shiftMonth(delta) {
-
-  state.viewMonth +=
-    delta;
-
-
-  if (
-    state.viewMonth <
-    0
-  ) {
-
-    state.viewMonth =
-      11;
-
-    state.viewYear--;
-
-  }
-
-
-  if (
-    state.viewMonth >
-    11
-  ) {
-
-    state.viewMonth =
-      0;
-
-    state.viewYear++;
-
-  }
-
-
-  renderCalendar();
-
-}
-
-
-/* =========================================================
-   KALENDER
-   ========================================================= */
-
-function renderCalendar() {
-
-  el("monthLabel")
-    .textContent =
-    MONTHS[
-      state.viewMonth
-    ] +
-    " " +
-    state.viewYear;
-
-
-  const first =
-    new Date(
-      state.viewYear,
-      state.viewMonth,
-      1
-    );
-
-
-  const offset =
-    (
-      first.getDay() +
-      6
-    ) %
-    7;
-
-
-  const start =
-    new Date(
-      state.viewYear,
-      state.viewMonth,
-      1 -
-      offset
-    );
-
-
-  const container =
-    el("calDays");
-
-
-  container.innerHTML =
-    "";
-
-
-  for (
-    let i = 0;
-    i < 42;
-    i++
-  ) {
-
-    const d =
-      new Date(
-        start
-      );
-
-
-    d.setDate(
-      start.getDate() +
-      i
-    );
-
-
-    const ds =
-      ymd(d);
-
-
-    const cell =
-      document.createElement(
-        "button"
-      );
-
-
-    cell.className =
-      "day tnum";
-
-
-    if (
-      d.getMonth() !==
-      state.viewMonth
-    ) {
-
-      cell.classList
-        .add("other");
-
+    if(overdue){
+      sub+=(sub?" · ":"")+"gemist";
     }
 
-
-    if (
-      ds ===
-      today()
-    ) {
-
-      cell.classList
-        .add("today");
-
-    }
-
-
-    if (
-      ds ===
-      state.selected
-    ) {
-
-      cell.classList
-        .add("selected");
-
-    }
-
-
-    if (
-      examsOn(ds).length
-    ) {
-
-      cell.classList
-        .add("toets");
-
-    }
-
-
-    let html =
-      `<span>${d.getDate()}</span>`;
-
-
-    if (
-      examsOn(ds).length
-    ) {
-
-      html +=
-        '<span class="tflag"></span>';
-
-    }
-
-
-    const tasks =
-      state.tasks
-        .filter(
-          t =>
-            t.planned_date ===
-            ds
-        );
-
-
-    if (
-      tasks.length
-    ) {
-
-      html +=
-        '<span class="dot">' +
-
-        tasks
-          .slice(
-            0,
-            3
-          )
-          .map(
-            t => {
-
-              let c =
-                "";
-
-
-              if (
-                t.done
-              ) {
-
-                c =
-                  "done";
-
-              } else if (
-                ds <
-                today()
-              ) {
-
-                c =
-                  "missed";
-
-              }
-
-
-              return (
-                `<i class="${c}"></i>`
-              );
-
-            }
-          )
-          .join("") +
-
-        "</span>";
-
-    }
-
-
-    cell.innerHTML =
-      html;
-
-
-    cell.onclick =
-      () => {
-
-        state.selected =
-          ds;
-
-
-        renderCalendar();
-
-        renderDay();
-
-      };
-
-
-    container
-      .appendChild(
-        cell
-      );
-
-  }
-
-}
-
-
-/* =========================================================
-   DAG
-   ========================================================= */
-
-function renderDay() {
-
-  el("dayDate")
-    .textContent =
-    longDate(
-      state.selected
-    );
-
-
-  const tasks =
-    state.tasks
-      .filter(
-        t =>
-          t.planned_date ===
-          state.selected
-      );
-
-
-  const planned =
-    tasks
-      .reduce(
-        (sum,t) =>
-          sum +
-          Number(
-            t.planned_minutes ||
-            0
-          ),
-        0
-      );
-
-
-  const actual =
-    tasks
-      .reduce(
-        (sum,t) =>
-          sum +
-          Number(
-            t.actual_minutes ||
-            0
-          ),
-        0
-      );
-
-
-  const remaining =
-    Math.max(
-      planned -
-      actual,
-      0
-    );
-
-
-  if (
-    planned > 0
-  ) {
-
-    el("dayHours")
-      .innerHTML = `
-
-        <strong>
-          ${formatMinutes(planned)}
-        </strong>
-        gepland
-
-        ·
-
-        <strong>
-          ${formatMinutes(actual)}
-        </strong>
-        gedaan
-
-        ·
-
-        <strong>
-          ${formatMinutes(remaining)}
-        </strong>
-        resterend
+    let timeHtml="";
+
+    if(taskPlanned>0){
+      timeHtml=`
+        <div class="task-time-info">
+          <span class="time-pill">${formatMinutes(taskPlanned)} gepland</span>
+          <span class="time-pill done">${formatMinutes(taskActual)} gedaan</span>
+          ${taskRemaining>0?`<span class="time-pill remaining">${formatMinutes(taskRemaining)} over</span>`:""}
+        </div>
       `;
-
-  } else {
-
-    el("dayHours")
-      .textContent =
-      "Geen studie-uren gepland.";
-
-  }
-
-
-  const exams =
-    examsOn(
-      state.selected
-    );
-
-
-  if (
-    exams.length
-  ) {
-
-    el("dayToets")
-      .textContent =
-      "Toetsdag: " +
-      exams
-        .map(
-          e =>
-            e.name +
-            " (kans " +
-            e.attempt +
-            ")"
-        )
-        .join(", ");
-
-
-    el("dayToets")
-      .classList
-      .add("show");
-
-  } else {
-
-    el("dayToets")
-      .textContent =
-      "";
-
-
-    el("dayToets")
-      .classList
-      .remove("show");
-
-  }
-
-
-  const list =
-    el("taskList");
-
-
-  list.innerHTML =
-    "";
-
-
-  if (
-    !tasks.length
-  ) {
-
-    list.innerHTML =
-      '<div class="empty">Nog niets gepland voor deze dag.</div>';
-
-    return;
-
-  }
-
-
-  tasks
-    .forEach(
-      task => {
-
-        const taskPlanned =
-          Number(
-            task.planned_minutes ||
-            0
-          );
-
-
-        const taskActual =
-          Number(
-            task.actual_minutes ||
-            0
-          );
-
-
-        const taskRemaining =
-          Math.max(
-            taskPlanned -
-            taskActual,
-            0
-          );
-
-
-        const overdue =
-          !task.done &&
-          task.planned_date <
-          today();
-
-
-        const row =
-          document.createElement(
-            "div"
-          );
-
-
-        row.className =
-          "task" +
-          (
-            task.done
-              ? " done"
-              : ""
-          ) +
-          (
-            overdue
-              ? " overdue"
-              : ""
-          );
-
-
-        const check =
-          document.createElement(
-            "button"
-          );
-
-
-        check.className =
-          "check" +
-          (
-            task.done
-              ? " on"
-              : ""
-          );
-
-
-        check.onclick =
-          () =>
-            markTaskComplete(
-              task
-            );
-
-
-        const body =
-          document.createElement(
-            "div"
-          );
-
-
-        body.className =
-          "body";
-
-
-        let sub =
-          task.subject ||
-          "";
-
-
-        if (
-          overdue
-        ) {
-
-          sub +=
-            (
-              sub
-                ? " · "
-                : ""
-            ) +
-            "gemist";
-
-        }
-
-
-        let timeHtml =
-          "";
-
-
-        if (
-          taskPlanned >
-          0
-        ) {
-
-          timeHtml = `
-
-            <div class="task-time-info">
-
-              <span class="time-pill">
-                ${formatMinutes(taskPlanned)} gepland
-              </span>
-
-              <span class="time-pill done">
-                ${formatMinutes(taskActual)} gedaan
-              </span>
-
-              ${
-                taskRemaining > 0
-                  ? `
-                    <span class="time-pill remaining">
-                      ${formatMinutes(taskRemaining)} over
-                    </span>
-                  `
-                  : ""
-              }
-
-            </div>
-          `;
-
-        }
-
-
-        body.innerHTML = `
-
-          <div class="title">
-            ${escapeHtml(task.title)}
-          </div>
-
-          ${
-            sub
-              ? `
-                <div class="sub">
-                  ${escapeHtml(sub)}
-                </div>
-              `
-              : ""
-          }
-
-          ${timeHtml}
-        `;
-
-
-        const actions =
-          document.createElement(
-            "div"
-          );
-
-
-        actions.className =
-          "task-actions";
-
-
-        if (
-          taskPlanned >
-          0
-        ) {
-
-          const timeButton =
-            document.createElement(
-              "button"
-            );
-
-
-          timeButton.className =
-            "btn btn-secondary btn-small";
-
-
-          timeButton.textContent =
-            "Tijd invullen";
-
-
-          timeButton.onclick =
-            () =>
-              openTimeModal(
-                task
-              );
-
-
-          actions.appendChild(
-            timeButton
-          );
-
-        }
-
-
-        const del =
-          document.createElement(
-            "button"
-          );
-
-
-        del.className =
-          "del";
-
-
-        del.textContent =
-          "×";
-
-
-        del.onclick =
-          () =>
-            deleteTask(
-              task
-            );
-
-
-        actions.appendChild(
-          del
-        );
-
-
-        row.appendChild(
-          check
-        );
-
-
-        row.appendChild(
-          body
-        );
-
-
-        row.appendChild(
-          actions
-        );
-
-
-        list.appendChild(
-          row
-        );
-
-      }
-    );
-
+    }
+
+    body.innerHTML=`
+      <div class="title">${escapeHtml(task.title)}</div>
+      ${sub?`<div class="sub">${escapeHtml(sub)}</div>`:""}
+      ${timeHtml}
+    `;
+
+    const actions=document.createElement("div");
+    actions.className="task-actions";
+
+    if(taskPlanned>0){
+      const timeButton=document.createElement("button");
+      timeButton.className="btn btn-secondary btn-small";
+      timeButton.textContent="Tijd invullen";
+      timeButton.onclick=()=>openTimeModal(task);
+      actions.appendChild(timeButton);
+    }
+
+    const del=document.createElement("button");
+    del.className="del";
+    del.textContent="×";
+    del.onclick=()=>deleteTask(task);
+
+    actions.appendChild(del);
+
+    row.appendChild(check);
+    row.appendChild(body);
+    row.appendChild(actions);
+
+    list.appendChild(row);
+  });
 }
 
-
-/* =========================================================
-   GEMIST BANNER
-   ========================================================= */
-
-function getRedistributableTasks() {
-
-  return state.tasks
-    .filter(
-      task => {
-
-        const remaining =
-          Math.max(
-            Number(
-              task.planned_minutes ||
-              0
-            ) -
-            Number(
-              task.actual_minutes ||
-              0
-            ),
-            0
-          );
-
-
-        if (
-          remaining <=
-          0
-        ) {
-
-          return false;
-
-        }
-
-
-        return (
-          task.planned_date <
-          today()
-        ) ||
-        (
-          task.planned_date ===
-            today() &&
-          Number(
-            task.actual_minutes ||
-            0
-          ) >
-            0
-        );
-
-      }
+function getRedistributableTasks(){
+  return state.tasks.filter(task=>{
+    const remaining=Math.max(
+      Number(task.planned_minutes||0)-Number(task.actual_minutes||0),
+      0
     );
 
+    if(remaining<=0)return false;
+
+    return(
+      task.planned_date<today()||
+      (
+        task.planned_date===today()&&
+        Number(task.actual_minutes||0)>0
+      )
+    );
+  });
 }
 
+function renderMissedBanner(){
+  const items=getRedistributableTasks();
 
-function renderMissedBanner() {
+  const minutes=items.reduce((sum,t)=>
+    sum+
+    Math.max(
+      Number(t.planned_minutes||0)-Number(t.actual_minutes||0),
+      0
+    ),0
+  );
 
-  const items =
-    getRedistributableTasks();
-
-
-  const minutes =
-    items
-      .reduce(
-        (sum,t) =>
-          sum +
-          Math.max(
-            Number(
-              t.planned_minutes ||
-              0
-            ) -
-            Number(
-              t.actual_minutes ||
-              0
-            ),
-            0
-          ),
-        0
-      );
-
-
-  if (
-    items.length
-  ) {
-
-    el("missedTxt")
-      .textContent =
-      "Je hebt " +
-      formatMinutes(
-        minutes
-      ) +
+  if(items.length){
+    el("missedTxt").textContent=
+      "Je hebt "+
+      formatMinutes(minutes)+
       " resterende studietijd die opnieuw verdeeld kan worden.";
 
-
-    el("missedBanner")
-      .classList
-      .add("show");
-
-  } else {
-
-    el("missedBanner")
-      .classList
-      .remove("show");
-
+    el("missedBanner").classList.add("show");
+  }else{
+    el("missedBanner").classList.remove("show");
   }
-
 }
 
-
-/* =========================================================
-   RENDER ALL
-   ========================================================= */
-
-function renderAll() {
-
+function renderAll(){
   renderToetsRow();
-
   renderCalendar();
-
   renderDay();
-
   renderMissedBanner();
-
 }
 
+async function addTask(){
+  const title=el("newTitle").value.trim();
+  if(!title)return;
 
-/* =========================================================
-   HANDMATIGE TAAK
-   ========================================================= */
+  const subject=el("newSubject").value||null;
+  const minutes=makeMinutes(el("newHours").value,el("newMinutes").value);
+  const exam=subject?nextExamForSubject(subject):null;
 
-async function addTask() {
-
-  const title =
-    el("newTitle")
-      .value
-      .trim();
-
-
-  if (
-    !title
-  ) {
-
-    return;
-
-  }
-
-
-  const subject =
-    el("newSubject")
-      .value ||
-    null;
-
-
-  const minutes =
-    makeMinutes(
-      el("newHours").value,
-      el("newMinutes").value
-    );
-
-
-  const exam =
-    subject
-      ? nextExamForSubject(
-          subject
-        )
-      : null;
-
-
-  const row = {
-
-    user_id:
-      state.user.id,
-
+  const row={
+    user_id:state.user.id,
     title,
-
     subject,
-
-    deadline:
-      exam
-        ? exam.exam_date
-        : null,
-
-    planned_date:
-      state.selected,
-
-    done:
-      false,
-
-    planned_minutes:
-      minutes,
-
-    actual_minutes:
-      0,
-
-    auto_generated:
-      false,
-
-    study_plan_id:
-      null
-
+    deadline:exam?exam.exam_date:null,
+    planned_date:state.selected,
+    done:false,
+    planned_minutes:minutes,
+    actual_minutes:0,
+    auto_generated:false,
+    study_plan_id:null
   };
 
+  const{data,error}=await sb.from("tasks").insert(row).select().single();
 
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("tasks")
-      .insert(row)
-      .select()
-      .single();
-
-
-  if (
-    error
-  ) {
-
-    alert(
-      error.message
-    );
-
+  if(error){
+    alert(error.message);
     return;
-
   }
 
+  state.tasks.push(data);
 
-  state.tasks
-    .push(
-      data
-    );
-
-
-  el("newTitle")
-    .value =
-    "";
-
-
-  el("newHours")
-    .value =
-    "0";
-
-
-  el("newMinutes")
-    .value =
-    "0";
-
+  el("newTitle").value="";
+  el("newHours").value="0";
+  el("newMinutes").value="0";
 
   renderAll();
-
 }
 
+async function markTaskComplete(task){
+  const newDone=!task.done;
+  const newActual=newDone?Number(task.planned_minutes||0):0;
 
-/* =========================================================
-   TAAK VOLLEDIG AFVINKEN
-   ========================================================= */
+  const{error}=await sb
+    .from("tasks")
+    .update({
+      done:newDone,
+      actual_minutes:newActual
+    })
+    .eq("id",task.id);
 
-async function markTaskComplete(
-  task
-) {
-
-  const newDone =
-    !task.done;
-
-
-  const newActual =
-    newDone
-      ? Number(
-          task.planned_minutes ||
-          0
-        )
-      : 0;
-
-
-  const {
-    error
-  } =
-    await sb
-      .from("tasks")
-      .update({
-        done:
-          newDone,
-
-        actual_minutes:
-          newActual
-      })
-      .eq(
-        "id",
-        task.id
-      );
-
-
-  if (
-    error
-  ) {
-
-    alert(
-      error.message
-    );
-
+  if(error){
+    alert(error.message);
     return;
-
   }
 
-
-  task.done =
-    newDone;
-
-
-  task.actual_minutes =
-    newActual;
-
+  task.done=newDone;
+  task.actual_minutes=newActual;
 
   renderAll();
-
 }
 
+function openTimeModal(task){
+  currentTimeTask=task;
 
-/* =========================================================
-   TIJD INVULLEN
-   ========================================================= */
+  el("timeTaskName").textContent=
+    task.subject?task.subject:task.title;
 
-function openTimeModal(
-  task
-) {
-
-  currentTimeTask =
-    task;
-
-
-  el("timeTaskName")
-    .textContent =
-    task.subject
-      ? task.subject
-      : task.title;
-
-
-  el("timeTaskSummary")
-    .innerHTML = `
-
-      Gepland:
-      <strong>
-        ${formatMinutes(task.planned_minutes)}
-      </strong>
-      <br>
-
-      Tot nu toe ingevuld:
-      <strong>
-        ${formatMinutes(task.actual_minutes)}
-      </strong>
+  el("timeTaskSummary").innerHTML=`
+    Gepland: <strong>${formatMinutes(task.planned_minutes)}</strong><br>
+    Tot nu toe ingevuld: <strong>${formatMinutes(task.actual_minutes)}</strong>
   `;
 
+  const split=splitMinutes(task.actual_minutes);
 
-  const split =
-    splitMinutes(
-      task.actual_minutes
-    );
+  el("actualHours").value=split.hours;
 
-
-  el("actualHours")
-    .value =
-    split.hours;
-
-
-  const rounded =
-    Math.min(
-      45,
-      Math.round(
-        split.minutes /
-        15
-      ) *
-      15
-    );
-
-
-  el("actualMinutes")
-    .value =
-    String(
-      rounded === 60
-        ? 45
-        : rounded
-    );
-
-
-  openModal(
-    "timeModal"
+  const rounded=Math.min(
+    45,
+    Math.round(split.minutes/15)*15
   );
 
+  el("actualMinutes").value=String(
+    rounded===60?45:rounded
+  );
+
+  openModal("timeModal");
 }
 
+async function saveActualTime(){
+  if(!currentTimeTask)return;
 
-/* =========================================================
-   ACTUELE TIJD OPSLAAN
-   ========================================================= */
-
-async function saveActualTime() {
-
-  if (
-    !currentTimeTask
-  ) {
-
-    return;
-
-  }
-
-
-  let actual =
-    makeMinutes(
-      el("actualHours").value,
-      el("actualMinutes").value
-    );
-
-
-  const planned =
-    Number(
-      currentTimeTask
-        .planned_minutes ||
-      0
-    );
-
-
-  if (
-    actual >
-    planned
-  ) {
-
-    const use =
-      confirm(
-        "Je hebt meer tijd ingevuld dan gepland.\n\nWil je de geplande tijd automatisch verhogen naar " +
-        formatMinutes(
-          actual
-        ) +
-        "?"
-      );
-
-
-    if (
-      !use
-    ) {
-
-      return;
-
-    }
-
-  }
-
-
-  const newPlanned =
-    Math.max(
-      planned,
-      actual
-    );
-
-
-  const done =
-    actual >=
-    newPlanned;
-
-
-  const {
-    error
-  } =
-    await sb
-      .from("tasks")
-      .update({
-        planned_minutes:
-          newPlanned,
-
-        actual_minutes:
-          actual,
-
-        done
-      })
-      .eq(
-        "id",
-        currentTimeTask.id
-      );
-
-
-  if (
-    error
-  ) {
-
-    alert(
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  currentTimeTask
-    .planned_minutes =
-    newPlanned;
-
-
-  currentTimeTask
-    .actual_minutes =
-    actual;
-
-
-  currentTimeTask
-    .done =
-    done;
-
-
-  closeModal(
-    "timeModal"
+  const actual=makeMinutes(
+    el("actualHours").value,
+    el("actualMinutes").value
   );
 
+  const planned=Number(
+    currentTimeTask.planned_minutes||0
+  );
 
-  currentTimeTask =
-    null;
+  if(actual>planned){
+    const use=confirm(
+      "Je hebt meer tijd ingevuld dan gepland.\n\nWil je de geplande tijd automatisch verhogen naar "+
+      formatMinutes(actual)+
+      "?"
+    );
 
+    if(!use)return;
+  }
+
+  const newPlanned=Math.max(planned,actual);
+  const done=actual>=newPlanned;
+
+  const{error}=await sb
+    .from("tasks")
+    .update({
+      planned_minutes:newPlanned,
+      actual_minutes:actual,
+      done
+    })
+    .eq("id",currentTimeTask.id);
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  currentTimeTask.planned_minutes=newPlanned;
+  currentTimeTask.actual_minutes=actual;
+  currentTimeTask.done=done;
+
+  closeModal("timeModal");
+
+  currentTimeTask=null;
 
   renderAll();
-
 }
 
+async function deleteTask(task){
+  const{error}=await sb
+    .from("tasks")
+    .delete()
+    .eq("id",task.id);
 
-/* =========================================================
-   TAAK VERWIJDEREN
-   ========================================================= */
-
-async function deleteTask(
-  task
-) {
-
-  const {
-    error
-  } =
-    await sb
-      .from("tasks")
-      .delete()
-      .eq(
-        "id",
-        task.id
-      );
-
-
-  if (
-    error
-  ) {
-
-    alert(
-      error.message
-    );
-
+  if(error){
+    alert(error.message);
     return;
-
   }
 
-
-  state.tasks =
-    state.tasks
-      .filter(
-        t =>
-          t.id !==
-          task.id
-      );
-
+  state.tasks=state.tasks.filter(t=>t.id!==task.id);
 
   renderAll();
-
 }
 
-
-/* =========================================================
-   STUDIEPLAN OPENEN
-   ========================================================= */
-
-function openStudyPlan() {
-
-  if (
-    !state.exams.length
-  ) {
-
-    alert(
-      "Voeg eerst minimaal één toets toe."
-    );
-
+function openStudyPlan(){
+  if(!state.exams.length){
+    alert("Voeg eerst minimaal één toets toe.");
     return;
-
   }
 
+  state.skipWeekdays=new Set();
+  state.skipDates=new Set();
 
-  state.skipWeekdays =
-    new Set();
+  document.querySelectorAll(".weekday-btn").forEach(btn=>{
+    btn.classList.remove("skip");
+  });
 
-
-  state.skipDates =
-    new Set();
-
-
-  document
-    .querySelectorAll(
-      ".weekday-btn"
-    )
-    .forEach(
-      btn =>
-        btn.classList
-          .remove("skip")
-    );
-
-
-  el("planStartDate")
-    .value =
-    today();
-
-
-  el("planTotalHours")
-    .value =
-    "10";
-
-
-  el("planTotalMinutes")
-    .value =
-    "0";
-
-
-  el("planDayHours")
-    .value =
-    "2";
-
-
-  el("planDayMinutes")
-    .value =
-    "0";
-
+  el("planStartDate").value=today();
+  el("planTotalHours").value="10";
+  el("planTotalMinutes").value="0";
+  el("planDayHours").value="2";
+  el("planDayMinutes").value="0";
 
   renderSkipDates();
-
   updatePlanSummary();
-
-  openModal(
-    "studyPlanModal"
-  );
-
+  openModal("studyPlanModal");
 }
 
+function addSkipDate(){
+  const date=el("skipDateInput").value;
+  if(!date)return;
 
-/* =========================================================
-   SKIP DATUM
-   ========================================================= */
+  state.skipDates.add(date);
 
-function addSkipDate() {
-
-  const date =
-    el("skipDateInput")
-      .value;
-
-
-  if (
-    !date
-  ) {
-
-    return;
-
-  }
-
-
-  state.skipDates
-    .add(
-      date
-    );
-
-
-  el("skipDateInput")
-    .value =
-    "";
-
+  el("skipDateInput").value="";
 
   renderSkipDates();
-
   updatePlanSummary();
-
 }
 
+function renderSkipDates(){
+  const list=el("skipDatesList");
+  list.innerHTML="";
 
-function renderSkipDates() {
+  [...state.skipDates].sort().forEach(date=>{
+    const chip=document.createElement("span");
 
-  const list =
-    el("skipDatesList");
+    chip.className="skip-date-chip";
 
+    chip.innerHTML=`
+      ${shortDate(date)}
+      <button type="button">×</button>
+    `;
 
-  list.innerHTML =
-    "";
+    chip.querySelector("button").onclick=()=>{
+      state.skipDates.delete(date);
+      renderSkipDates();
+      updatePlanSummary();
+    };
 
-
-  [
-    ...state.skipDates
-  ]
-    .sort()
-    .forEach(
-      date => {
-
-        const chip =
-          document.createElement(
-            "span"
-          );
-
-
-        chip.className =
-          "skip-date-chip";
-
-
-        chip.innerHTML = `
-
-          ${shortDate(date)}
-
-          <button type="button">
-            ×
-          </button>
-        `;
-
-
-        chip
-          .querySelector(
-            "button"
-          )
-          .onclick =
-          () => {
-
-            state.skipDates
-              .delete(
-                date
-              );
-
-
-            renderSkipDates();
-
-            updatePlanSummary();
-
-          };
-
-
-        list.appendChild(
-          chip
-        );
-
-      }
-    );
-
+    list.appendChild(chip);
+  });
 }
 
+function availableStudyDays(start,deadline,skipWeekdays,skipDates){
+  const result=[];
+  let current=start;
+  const last=addDays(deadline,-1);
+  let guard=0;
 
-/* =========================================================
-   BESCHIKBARE DAGEN
-   ========================================================= */
+  while(current<=last&&guard<500){
+    const weekday=parse(current).getDay();
 
-function availableStudyDays(
-  start,
-  deadline,
-  skipWeekdays,
-  skipDates
-) {
-
-  const result =
-    [];
-
-
-  let current =
-    start;
-
-
-  const last =
-    addDays(
-      deadline,
-      -1
-    );
-
-
-  let guard =
-    0;
-
-
-  while (
-    current <=
-      last &&
-    guard <
-      500
-  ) {
-
-    const weekday =
-      parse(
-        current
-      )
-        .getDay();
-
-
-    if (
-      !skipWeekdays
-        .has(
-          weekday
-        ) &&
-      !skipDates
-        .has(
-          current
-        )
-    ) {
-
-      result.push(
-        current
-      );
-
+    if(!skipWeekdays.has(weekday)&&!skipDates.has(current)){
+      result.push(current);
     }
 
-
-    current =
-      addDays(
-        current,
-        1
-      );
-
-
+    current=addDays(current,1);
     guard++;
-
   }
-
 
   return result;
-
 }
 
+function chooseSpreadDays(available,count){
+  if(count>=available.length)return available.slice();
+  if(count===1)return[available[0]];
 
-/* =========================================================
-   DAGEN VERSPREID KIEZEN
-   ========================================================= */
+  const result=[];
 
-function chooseSpreadDays(
-  available,
-  count
-) {
+  for(let i=0;i<count;i++){
+    const index=Math.round(
+      i*(available.length-1)/(count-1)
+    );
 
-  if (
-    count >=
-    available.length
-  ) {
+    const date=available[index];
 
-    return available
-      .slice();
-
-  }
-
-
-  if (
-    count === 1
-  ) {
-
-    return [
-      available[0]
-    ];
-
-  }
-
-
-  const result =
-    [];
-
-
-  for (
-    let i = 0;
-    i < count;
-    i++
-  ) {
-
-    const index =
-      Math.round(
-        i *
-        (
-          available.length -
-          1
-        ) /
-        (
-          count -
-          1
-        )
-      );
-
-
-    const date =
-      available[
-        index
-      ];
-
-
-    if (
-      !result.includes(
-        date
-      )
-    ) {
-
-      result.push(
-        date
-      );
-
+    if(!result.includes(date)){
+      result.push(date);
     }
-
   }
 
-
-  for (
-    const date
-    of available
-  ) {
-
-    if (
-      result.length >=
-      count
-    ) {
-
-      break;
-
+  for(const date of available){
+    if(result.length>=count)break;
+    if(!result.includes(date)){
+      result.push(date);
     }
-
-
-    if (
-      !result.includes(
-        date
-      )
-    ) {
-
-      result.push(
-        date
-      );
-
-    }
-
   }
 
-
-  return result
-    .sort();
-
+  return result.sort();
 }
 
+function getPlanInfo(){
+  const subject=el("planSubject").value;
 
-/* =========================================================
-   PLAN INFO
-   ========================================================= */
+  const totalMinutes=makeMinutes(
+    el("planTotalHours").value,
+    el("planTotalMinutes").value
+  );
 
-function getPlanInfo() {
+  const maxMinutes=makeMinutes(
+    el("planDayHours").value,
+    el("planDayMinutes").value
+  );
 
-  const subject =
-    el("planSubject")
-      .value;
+  const start=el("planStartDate").value;
+  const exam=nextExamForSubject(subject);
 
-
-  const totalMinutes =
-    makeMinutes(
-      el("planTotalHours").value,
-      el("planTotalMinutes").value
-    );
-
-
-  const maxMinutes =
-    makeMinutes(
-      el("planDayHours").value,
-      el("planDayMinutes").value
-    );
-
-
-  const start =
-    el("planStartDate")
-      .value;
-
-
-  const exam =
-    nextExamForSubject(
-      subject
-    );
-
-
-  if (
-    !subject ||
-    !exam ||
-    !start ||
-    totalMinutes <= 0 ||
-    maxMinutes <= 0
-  ) {
-
+  if(
+    !subject||
+    !exam||
+    !start||
+    totalMinutes<=0||
+    maxMinutes<=0
+  ){
     return null;
-
   }
 
+  const available=availableStudyDays(
+    start,
+    exam.exam_date,
+    state.skipWeekdays,
+    state.skipDates
+  );
 
-  const available =
-    availableStudyDays(
-      start,
-      exam.exam_date,
-      state.skipWeekdays,
-      state.skipDates
-    );
+  const neededDays=Math.ceil(
+    totalMinutes/maxMinutes
+  );
 
-
-  const neededDays =
-    Math.ceil(
-      totalMinutes /
-      maxMinutes
-    );
-
-
-  return {
+  return{
     subject,
     totalMinutes,
     maxMinutes,
@@ -4858,1634 +1334,637 @@ function getPlanInfo() {
     available,
     neededDays
   };
-
 }
 
+function updatePlanSummary(){
+  const info=getPlanInfo();
 
-/* =========================================================
-   PLAN SAMENVATTING
-   ========================================================= */
-
-function updatePlanSummary() {
-
-  const info =
-    getPlanInfo();
-
-
-  if (
-    !info
-  ) {
-
-    el("planSummary")
-      .textContent =
-      "Vul hierboven je leertijd in.";
-
+  if(!info){
+    el("planSummary").textContent="Vul hierboven je leertijd in.";
     return;
-
   }
 
-
-  if (
-    !info.available.length
-  ) {
-
-    el("planSummary")
-      .innerHTML = `
-        <strong>
-          Geen beschikbare studiedagen.
-        </strong>
-        <br>
-        Pas de startdatum of overgeslagen dagen aan.
-      `;
-
+  if(!info.available.length){
+    el("planSummary").innerHTML=
+      "<strong>Geen beschikbare studiedagen.</strong><br>Pas de startdatum of overgeslagen dagen aan.";
     return;
-
   }
 
+  const enough=info.neededDays<=info.available.length;
 
-  const enough =
-    info.neededDays <=
-    info.available.length;
+  const average=Math.ceil(
+    info.totalMinutes/info.available.length
+  );
 
-
-  const average =
-    Math.ceil(
-      info.totalMinutes /
-      info.available.length
-    );
-
-
-  el("planSummary")
-    .innerHTML = `
-
-      <strong>
-        ${escapeHtml(info.subject)}
-      </strong>
-
-      <br><br>
-
-      Eerstvolgende toets:
-      <strong>
-        ${shortDate(info.exam.exam_date)}
-      </strong>
-
-      <br>
-
-      Totaal leren:
-      <strong>
-        ${formatMinutes(info.totalMinutes)}
-      </strong>
-
-      <br>
-
-      Maximaal per studiedag:
-      <strong>
-        ${formatMinutes(info.maxMinutes)}
-      </strong>
-
-      <br>
-
-      Nodig:
-      <strong>
-        ${info.neededDays} studiedagen
-      </strong>
-
-      <br>
-
-      Beschikbaar:
-      <strong>
-        ${info.available.length} dagen
-      </strong>
-
-      <br>
-
-      Gemiddeld als je iedere beschikbare dag gebruikt:
-      <strong>
-        ${formatMinutes(average)}
-      </strong>
-
-      <br><br>
-
-      ${
-        enough
-          ? "✓ Dit past vóór je toets."
-          : "⚠ Dit past niet met je huidige maximum per dag."
-      }
-    `;
-
+  el("planSummary").innerHTML=`
+    <strong>${escapeHtml(info.subject)}</strong><br><br>
+    Eerstvolgende toets: <strong>${shortDate(info.exam.exam_date)}</strong><br>
+    Totaal leren: <strong>${formatMinutes(info.totalMinutes)}</strong><br>
+    Maximaal per studiedag: <strong>${formatMinutes(info.maxMinutes)}</strong><br>
+    Nodig: <strong>${info.neededDays} studiedagen</strong><br>
+    Beschikbaar: <strong>${info.available.length} dagen</strong><br>
+    Gemiddeld als je iedere beschikbare dag gebruikt:
+    <strong>${formatMinutes(average)}</strong><br><br>
+    ${
+      enough
+        ?"✓ Dit past vóór je toets."
+        :"⚠ Dit past niet met je huidige maximum per dag."
+    }
+  `;
 }
 
+async function generateStudyPlan(){
+  const info=getPlanInfo();
 
-/* =========================================================
-   NIEUW STUDIEPLAN
-   ========================================================= */
+  if(!info)return;
 
-async function generateStudyPlan() {
-
-  const info =
-    getPlanInfo();
-
-
-  if (
-    !info
-  ) {
-
-    return;
-
-  }
-
-
-  if (
-    info.neededDays >
-    info.available.length
-  ) {
-
+  if(info.neededDays>info.available.length){
     alert(
       "Er zijn te weinig beschikbare studiedagen. Verhoog je maximale leertijd per dag of sla minder dagen over."
     );
-
     return;
-
   }
 
+  const oldPlans=state.studyPlans.filter(
+    plan=>plan.subject===info.subject
+  );
 
-  const oldPlans =
-    state.studyPlans
-      .filter(
-        plan =>
-          plan.subject ===
-          info.subject
-      );
+  if(oldPlans.length){
+    const replace=confirm(
+      "Er bestaat al een studieplan voor dit vak.\n\nWil je de nog openstaande automatische planning vervangen?"
+    );
 
+    if(!replace)return;
 
-  if (
-    oldPlans.length
-  ) {
+    const oldIds=oldPlans.map(p=>p.id);
 
-    const replace =
-      confirm(
-        "Er bestaat al een studieplan voor dit vak.\n\nWil je de nog openstaande automatische planning vervangen?"
-      );
+    const openAutoTasks=state.tasks.filter(
+      t=>
+        t.study_plan_id&&
+        oldIds.includes(t.study_plan_id)&&
+        !t.done
+    );
 
+    if(openAutoTasks.length){
+      const taskIds=openAutoTasks.map(t=>t.id);
 
-    if (
-      !replace
-    ) {
+      const{error}=await sb
+        .from("tasks")
+        .delete()
+        .in("id",taskIds);
 
-      return;
-
-    }
-
-
-    const oldIds =
-      oldPlans
-        .map(
-          p =>
-            p.id
-        );
-
-
-    const openAutoTasks =
-      state.tasks
-        .filter(
-          t =>
-            t.study_plan_id &&
-            oldIds.includes(
-              t.study_plan_id
-            ) &&
-            !t.done
-        );
-
-
-    if (
-      openAutoTasks.length
-    ) {
-
-      const taskIds =
-        openAutoTasks
-          .map(
-            t =>
-              t.id
-          );
-
-
-      const {
-        error
-      } =
-        await sb
-          .from("tasks")
-          .delete()
-          .in(
-            "id",
-            taskIds
-          );
-
-
-      if (
-        error
-      ) {
-
-        alert(
-          error.message
-        );
-
+      if(error){
+        alert(error.message);
         return;
-
       }
 
-
-      state.tasks =
-        state.tasks
-          .filter(
-            t =>
-              !taskIds.includes(
-                t.id
-              )
-          );
-
-    }
-
-
-    const {
-      error:
-      planDeleteError
-    } =
-      await sb
-        .from("study_plans")
-        .delete()
-        .in(
-          "id",
-          oldIds
-        );
-
-
-    if (
-      planDeleteError
-    ) {
-
-      alert(
-        planDeleteError.message
+      state.tasks=state.tasks.filter(
+        t=>!taskIds.includes(t.id)
       );
-
-      return;
-
     }
 
+    const{error:planDeleteError}=await sb
+      .from("study_plans")
+      .delete()
+      .in("id",oldIds);
 
-    state.studyPlans =
-      state.studyPlans
-        .filter(
-          p =>
-            !oldIds.includes(
-              p.id
-            )
-        );
+    if(planDeleteError){
+      alert(planDeleteError.message);
+      return;
+    }
 
+    state.studyPlans=state.studyPlans.filter(
+      p=>!oldIds.includes(p.id)
+    );
   }
 
+  const{data:plan,error:planError}=await sb
+    .from("study_plans")
+    .insert({
+      user_id:state.user.id,
+      subject:info.subject,
+      total_minutes:info.totalMinutes,
+      max_minutes_per_day:info.maxMinutes,
+      start_date:info.start,
+      deadline:info.exam.exam_date,
+      skip_weekdays:[...state.skipWeekdays],
+      skip_dates:[...state.skipDates]
+    })
+    .select()
+    .single();
 
-  const {
-    data:
-    plan,
-    error:
-    planError
-  } =
+  if(planError){
+    alert(planError.message);
+    return;
+  }
+
+  const chosen=chooseSpreadDays(
+    info.available,
+    info.neededDays
+  );
+
+  let remaining=info.totalMinutes;
+  const rows=[];
+
+  chosen.forEach(date=>{
+    if(remaining<=0)return;
+
+    const minutes=Math.min(
+      info.maxMinutes,
+      remaining
+    );
+
+    remaining-=minutes;
+
+    rows.push({
+      user_id:state.user.id,
+      title:"Studeren",
+      subject:info.subject,
+      deadline:info.exam.exam_date,
+      planned_date:date,
+      done:false,
+      planned_minutes:minutes,
+      actual_minutes:0,
+      auto_generated:true,
+      study_plan_id:plan.id
+    });
+  });
+
+  const{data,error}=await sb
+    .from("tasks")
+    .insert(rows)
+    .select();
+
+  if(error){
     await sb
       .from("study_plans")
-      .insert({
-        user_id:
-          state.user.id,
-
-        subject:
-          info.subject,
-
-        total_minutes:
-          info.totalMinutes,
-
-        max_minutes_per_day:
-          info.maxMinutes,
-
-        start_date:
-          info.start,
-
-        deadline:
-          info.exam.exam_date,
-
-        skip_weekdays:
-          [
-            ...state.skipWeekdays
-          ],
-
-        skip_dates:
-          [
-            ...state.skipDates
-          ]
-      })
-      .select()
-      .single();
-
-
-  if (
-    planError
-  ) {
-
-    alert(
-      planError.message
-    );
-
-    return;
-
-  }
-
-
-  const chosen =
-    chooseSpreadDays(
-      info.available,
-      info.neededDays
-    );
-
-
-  let remaining =
-    info.totalMinutes;
-
-
-  const rows =
-    [];
-
-
-  chosen
-    .forEach(
-      date => {
-
-        if (
-          remaining <=
-          0
-        ) {
-
-          return;
-
-        }
-
-
-        const minutes =
-          Math.min(
-            info.maxMinutes,
-            remaining
-          );
-
-
-        remaining -=
-          minutes;
-
-
-        rows.push({
-          user_id:
-            state.user.id,
-
-          title:
-            "Studeren",
-
-          subject:
-            info.subject,
-
-          deadline:
-            info.exam.exam_date,
-
-          planned_date:
-            date,
-
-          done:
-            false,
-
-          planned_minutes:
-            minutes,
-
-          actual_minutes:
-            0,
-
-          auto_generated:
-            true,
-
-          study_plan_id:
-            plan.id
-        });
-
-      }
-    );
-
-
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("tasks")
-      .insert(
-        rows
-      )
-      .select();
-
-
-  if (
-    error
-  ) {
-
-    await sb
-      .from(
-        "study_plans"
-      )
       .delete()
-      .eq(
-        "id",
-        plan.id
-      );
+      .eq("id",plan.id);
 
-
-    alert(
-      error.message
-    );
-
+    alert(error.message);
     return;
-
   }
 
+  state.studyPlans.push(plan);
+  state.tasks.push(...(data||[]));
 
-  state.studyPlans
-    .push(
-      plan
-    );
-
-
-  state.tasks
-    .push(
-      ...(data || [])
-    );
-
-
-  closeModal(
-    "studyPlanModal"
-  );
-
-
+  closeModal("studyPlanModal");
   renderAll();
 
-
   alert(
-    formatMinutes(
-      info.totalMinutes
-    ) +
-    " is verdeeld over " +
-    rows.length +
+    formatMinutes(info.totalMinutes)+
+    " is verdeeld over "+
+    rows.length+
     " studiedagen."
   );
-
 }
 
+async function redistributeRemainingTime(){
+  const candidates=getRedistributableTasks();
 
-/* =========================================================
-   RESTERENDE TIJD OPNIEUW VERDELEN
-   ========================================================= */
+  if(!candidates.length)return;
 
-async function redistributeRemainingTime() {
-
-  const candidates =
-    getRedistributableTasks();
-
-
-  if (
-    !candidates.length
-  ) {
-
-    return;
-
-  }
-
-
-  const grouped =
-    {};
-
+  const grouped={};
 
   candidates
-    .filter(
-      t =>
-        t.auto_generated &&
-        t.study_plan_id
-    )
-    .forEach(
-      task => {
-
-        if (
-          !grouped[
-            task.study_plan_id
-          ]
-        ) {
-
-          grouped[
-            task.study_plan_id
-          ] =
-            [];
-
-        }
-
-
-        grouped[
-          task.study_plan_id
-        ]
-          .push(
-            task
-          );
-
+    .filter(t=>t.auto_generated&&t.study_plan_id)
+    .forEach(task=>{
+      if(!grouped[task.study_plan_id]){
+        grouped[task.study_plan_id]=[];
       }
+
+      grouped[task.study_plan_id].push(task);
+    });
+
+  let unplannedMinutes=0;
+
+  for(const[planId,oldTasks]of Object.entries(grouped)){
+    const plan=state.studyPlans.find(p=>p.id===planId);
+
+    if(!plan)continue;
+
+    let remainingToMove=0;
+
+    for(const task of oldTasks){
+      const planned=Number(task.planned_minutes||0);
+
+      const actual=Math.min(
+        Number(task.actual_minutes||0),
+        planned
+      );
+
+      remainingToMove+=Math.max(
+        planned-actual,
+        0
+      );
+
+      if(actual>0){
+        const{error}=await sb
+          .from("tasks")
+          .update({
+            planned_minutes:actual,
+            actual_minutes:actual,
+            done:true
+          })
+          .eq("id",task.id);
+
+        if(!error){
+          task.planned_minutes=actual;
+          task.actual_minutes=actual;
+          task.done=true;
+        }
+      }else{
+        const{error}=await sb
+          .from("tasks")
+          .delete()
+          .eq("id",task.id);
+
+        if(!error){
+          state.tasks=state.tasks.filter(
+            t=>t.id!==task.id
+          );
+        }
+      }
+    }
+
+    if(remainingToMove<=0)continue;
+
+    const skipWeekdays=new Set(plan.skip_weekdays||[]);
+    const skipDates=new Set(plan.skip_dates||[]);
+
+    const hadTodayPartial=oldTasks.some(
+      t=>
+        t.planned_date===today()&&
+        Number(t.actual_minutes||0)>0
     );
 
+    const start=hadTodayPartial
+      ?addDays(today(),1)
+      :today();
 
-  let unplannedMinutes =
-    0;
+    const available=availableStudyDays(
+      start,
+      plan.deadline,
+      skipWeekdays,
+      skipDates
+    );
 
-
-  for (
-    const [
-      planId,
-      oldTasks
-    ]
-    of Object.entries(
-      grouped
-    )
-  ) {
-
-    const plan =
-      state.studyPlans
-        .find(
-          p =>
-            p.id ===
-            planId
-        );
-
-
-    if (
-      !plan
-    ) {
-
-      continue;
-
-    }
-
-
-    let remainingToMove =
-      0;
-
-
-    for (
-      const task
-      of oldTasks
-    ) {
-
-      const planned =
-        Number(
-          task.planned_minutes ||
-          0
-        );
-
-
-      const actual =
-        Math.min(
-          Number(
-            task.actual_minutes ||
-            0
-          ),
-          planned
-        );
-
-
-      remainingToMove +=
-        Math.max(
-          planned -
-          actual,
-          0
-        );
-
-
-      if (
-        actual >
-        0
-      ) {
-
-        const {
-          error
-        } =
-          await sb
-            .from("tasks")
-            .update({
-              planned_minutes:
-                actual,
-
-              actual_minutes:
-                actual,
-
-              done:
-                true
-            })
-            .eq(
-              "id",
-              task.id
-            );
-
-
-        if (
-          !error
-        ) {
-
-          task.planned_minutes =
-            actual;
-
-          task.actual_minutes =
-            actual;
-
-          task.done =
-            true;
-
-        }
-
-
-      } else {
-
-        const {
-          error
-        } =
-          await sb
-            .from("tasks")
-            .delete()
-            .eq(
-              "id",
-              task.id
-            );
-
-
-        if (
-          !error
-        ) {
-
-          state.tasks =
-            state.tasks
-              .filter(
-                t =>
-                  t.id !==
-                  task.id
-              );
-
-        }
-
-      }
-
-    }
-
-
-    if (
-      remainingToMove <=
-      0
-    ) {
-
-      continue;
-
-    }
-
-
-    const skipWeekdays =
-      new Set(
-        plan.skip_weekdays ||
-        []
-      );
-
-
-    const skipDates =
-      new Set(
-        plan.skip_dates ||
-        []
-      );
-
-
-    const hadTodayPartial =
-      oldTasks
-        .some(
-          t =>
-            t.planned_date ===
-              today() &&
-            Number(
-              t.actual_minutes ||
-              0
-            ) >
-              0
-        );
-
-
-    const start =
-      hadTodayPartial
-        ? addDays(
-            today(),
-            1
-          )
-        : today();
-
-
-    const available =
-      availableStudyDays(
-        start,
-        plan.deadline,
-        skipWeekdays,
-        skipDates
-      );
-
-
-    const existingLoad =
-      {};
-
+    const existingLoad={};
 
     state.tasks
       .filter(
-        t =>
-          t.study_plan_id ===
-            plan.id &&
-          !t.done &&
-          t.planned_date >=
-            start
+        t=>
+          t.study_plan_id===plan.id&&
+          !t.done&&
+          t.planned_date>=start
       )
-      .forEach(
-        t => {
-
-          existingLoad[
-            t.planned_date
-          ] =
-            (
-              existingLoad[
-                t.planned_date
-              ] ||
-              0
-            ) +
-            Number(
-              t.planned_minutes ||
-              0
-            );
-
-        }
-      );
-
-
-    const newRows =
-      [];
-
-
-    let left =
-      remainingToMove;
-
-
-    const orderedDays =
-      available
-        .slice()
-        .sort(
-          (a,b) => {
-
-            const loadA =
-              existingLoad[a] ||
-              0;
-
-
-            const loadB =
-              existingLoad[b] ||
-              0;
-
-
-            if (
-              loadA !==
-              loadB
-            ) {
-
-              return (
-                loadA -
-                loadB
-              );
-
-            }
-
-
-            return a
-              .localeCompare(
-                b
-              );
-
-          }
-        );
-
-
-    for (
-      const date
-      of orderedDays
-    ) {
-
-      if (
-        left <=
-        0
-      ) {
-
-        break;
-
-      }
-
-
-      const already =
-        existingLoad[
-          date
-        ] ||
-        0;
-
-
-      const capacity =
-        Math.max(
-          Number(
-            plan.max_minutes_per_day
-          ) -
-          already,
-          0
-        );
-
-
-      if (
-        capacity <=
-        0
-      ) {
-
-        continue;
-
-      }
-
-
-      const amount =
-        Math.min(
-          capacity,
-          left
-        );
-
-
-      newRows.push({
-        user_id:
-          state.user.id,
-
-        title:
-          "Studeren",
-
-        subject:
-          plan.subject,
-
-        deadline:
-          plan.deadline,
-
-        planned_date:
-          date,
-
-        done:
-          false,
-
-        planned_minutes:
-          amount,
-
-        actual_minutes:
-          0,
-
-        auto_generated:
-          true,
-
-        study_plan_id:
-          plan.id
+      .forEach(t=>{
+        existingLoad[t.planned_date]=
+          (existingLoad[t.planned_date]||0)+
+          Number(t.planned_minutes||0);
       });
 
+    const newRows=[];
+    let left=remainingToMove;
 
-      existingLoad[
-        date
-      ] =
-        already +
-        amount;
+    const orderedDays=available.slice().sort((a,b)=>{
+      const loadA=existingLoad[a]||0;
+      const loadB=existingLoad[b]||0;
 
-
-      left -=
-        amount;
-
-    }
-
-
-    if (
-      newRows.length
-    ) {
-
-      const {
-        data,
-        error
-      } =
-        await sb
-          .from("tasks")
-          .insert(
-            newRows
-          )
-          .select();
-
-
-      if (
-        error
-      ) {
-
-        alert(
-          error.message
-        );
-
-        return;
-
+      if(loadA!==loadB){
+        return loadA-loadB;
       }
 
+      return a.localeCompare(b);
+    });
 
-      state.tasks
-        .push(
-          ...(data || [])
-        );
+    for(const date of orderedDays){
+      if(left<=0)break;
 
+      const already=existingLoad[date]||0;
+
+      const capacity=Math.max(
+        Number(plan.max_minutes_per_day)-already,
+        0
+      );
+
+      if(capacity<=0)continue;
+
+      const amount=Math.min(
+        capacity,
+        left
+      );
+
+      newRows.push({
+        user_id:state.user.id,
+        title:"Studeren",
+        subject:plan.subject,
+        deadline:plan.deadline,
+        planned_date:date,
+        done:false,
+        planned_minutes:amount,
+        actual_minutes:0,
+        auto_generated:true,
+        study_plan_id:plan.id
+      });
+
+      existingLoad[date]=already+amount;
+      left-=amount;
     }
 
+    if(newRows.length){
+      const{data,error}=await sb
+        .from("tasks")
+        .insert(newRows)
+        .select();
 
-    if (
-      left >
-      0
-    ) {
+      if(error){
+        alert(error.message);
+        return;
+      }
 
-      unplannedMinutes +=
-        left;
-
+      state.tasks.push(...(data||[]));
     }
 
+    if(left>0){
+      unplannedMinutes+=left;
+    }
   }
 
+  const manual=candidates.filter(
+    t=>!t.auto_generated||!t.study_plan_id
+  );
 
-  const manual =
-    candidates
-      .filter(
-        t =>
-          !t.auto_generated ||
-          !t.study_plan_id
-      );
-
-
-  for (
-    const task
-    of manual
-  ) {
-
-    const remaining =
-      Math.max(
-        Number(
-          task.planned_minutes ||
-          0
-        ) -
-        Number(
-          task.actual_minutes ||
-          0
-        ),
-        0
-      );
-
-
-    if (
-      remaining <=
+  for(const task of manual){
+    const remaining=Math.max(
+      Number(task.planned_minutes||0)-
+      Number(task.actual_minutes||0),
       0
-    ) {
+    );
 
-      continue;
+    if(remaining<=0)continue;
 
-    }
+    const actual=Number(
+      task.actual_minutes||0
+    );
 
-
-    const actual =
-      Number(
-        task.actual_minutes ||
-        0
-      );
-
-
-    if (
-      actual >
-      0
-    ) {
-
+    if(actual>0){
       await sb
         .from("tasks")
         .update({
-          planned_minutes:
-            actual,
-
-          actual_minutes:
-            actual,
-
-          done:
-            true
+          planned_minutes:actual,
+          actual_minutes:actual,
+          done:true
         })
-        .eq(
-          "id",
-          task.id
-        );
+        .eq("id",task.id);
 
-
-      task.planned_minutes =
-        actual;
-
-      task.actual_minutes =
-        actual;
-
-      task.done =
-        true;
-
-
-    } else {
-
+      task.planned_minutes=actual;
+      task.actual_minutes=actual;
+      task.done=true;
+    }else{
       await sb
         .from("tasks")
         .delete()
-        .eq(
-          "id",
-          task.id
-        );
+        .eq("id",task.id);
 
-
-      state.tasks =
-        state.tasks
-          .filter(
-            t =>
-              t.id !==
-              task.id
-          );
-
+      state.tasks=state.tasks.filter(
+        t=>t.id!==task.id
+      );
     }
 
-
-    const target =
-      task.planned_date ===
-        today()
-        ? addDays(
-            today(),
-            1
-          )
-        : today();
-
-
-    const {
-      data,
-      error
-    } =
-      await sb
-        .from("tasks")
-        .insert({
-          user_id:
-            state.user.id,
-
-          title:
-            task.title,
-
-          subject:
-            task.subject,
-
-          deadline:
-            task.deadline,
-
-          planned_date:
-            target,
-
-          done:
-            false,
-
-          planned_minutes:
-            remaining,
-
-          actual_minutes:
-            0,
-
-          auto_generated:
-            false,
-
-          study_plan_id:
-            null
-        })
-        .select()
-        .single();
-
-
-    if (
-      !error
-    ) {
-
-      state.tasks
-        .push(
-          data
-        );
-
-    }
-
-  }
-
-
-  state.tasks
-    .sort(
-      (a,b) =>
-        a.planned_date
-          .localeCompare(
-            b.planned_date
-          )
-    );
-
-
-  renderAll();
-
-
-  if (
-    unplannedMinutes >
-    0
-  ) {
-
-    alert(
-      "De planning is opnieuw verdeeld, maar " +
-      formatMinutes(
-        unplannedMinutes
-      ) +
-      " past niet meer vóór de toets binnen jouw maximale tijd per dag.\n\nJe moet meer tijd per dag toestaan of een overgeslagen dag alsnog gebruiken."
-    );
-
-
-  } else {
-
-    alert(
-      "De resterende studietijd is opnieuw over je beschikbare dagen verdeeld."
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   JAAR 2
-   ========================================================= */
-
-async function addAllYear2Exams() {
-
-  const missing =
-    state.examPresets
-      .filter(
-        preset =>
-          !state.exams
-            .some(
-              exam =>
-                exam.preset_id ===
-                  preset.id ||
-                (
-                  exam.name ===
-                    preset.name &&
-                  exam.exam_date ===
-                    preset.exam_date &&
-                  Number(
-                    exam.attempt
-                  ) ===
-                    Number(
-                      preset.attempt
-                    )
-                )
-            )
-      );
-
-
-  if (
-    !missing.length
-  ) {
-
-    alert(
-      "Alle Jaar 2 toetsen staan al in je planner."
-    );
-
-    return;
-
-  }
-
-
-  const rows =
-    missing
-      .map(
-        p => ({
-          user_id:
-            state.user.id,
-
-          preset_id:
-            p.id,
-
-          name:
-            p.name,
-
-          exam_date:
-            p.exam_date,
-
-          attempt:
-            p.attempt,
-
-          study_year:
-            p.study_year
-        })
-      );
-
-
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("exams")
-      .insert(
-        rows
-      )
-      .select();
-
-
-  if (
-    error
-  ) {
-
-    alert(
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  state.exams
-    .push(
-      ...(data || [])
-    );
-
-
-  fillSubjectMenus();
-
-  renderAll();
-
-
-  alert(
-    missing.length +
-    " Jaar 2 toetsmomenten toegevoegd."
-  );
-
-}
-
-
-/* =========================================================
-   EIGEN TOETS
-   ========================================================= */
-
-async function saveCustomExam() {
-
-  const name =
-    el("customExamName")
-      .value
-      .trim();
-
-
-  const date =
-    el("customExamDate")
-      .value;
-
-
-  const attempt =
-    Number(
-      el("customExamAttempt")
-        .value
-    );
-
-
-  const year =
-    el("customExamYear")
-      .value
-      ? Number(
-          el("customExamYear")
-            .value
-        )
-      : null;
-
-
-  if (
-    !name ||
-    !date
-  ) {
-
-    alert(
-      "Vul een naam en datum in."
-    );
-
-    return;
-
-  }
-
-
-  const exists =
-    state.exams
-      .some(
-        exam =>
-          exam.name
-            .toLowerCase() ===
-            name.toLowerCase() &&
-          exam.exam_date ===
-            date &&
-          Number(
-            exam.attempt
-          ) ===
-            attempt
-      );
-
-
-  if (
-    exists
-  ) {
-
-    alert(
-      "Deze toets staat al in je planner."
-    );
-
-    return;
-
-  }
-
-
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from("exams")
+    const target=
+      task.planned_date===today()
+        ?addDays(today(),1)
+        :today();
+
+    const{data,error}=await sb
+      .from("tasks")
       .insert({
-        user_id:
-          state.user.id,
-
-        preset_id:
-          null,
-
-        name,
-
-        exam_date:
-          date,
-
-        attempt,
-
-        study_year:
-          year
+        user_id:state.user.id,
+        title:task.title,
+        subject:task.subject,
+        deadline:task.deadline,
+        planned_date:target,
+        done:false,
+        planned_minutes:remaining,
+        actual_minutes:0,
+        auto_generated:false,
+        study_plan_id:null
       })
       .select()
       .single();
 
-
-  if (
-    error
-  ) {
-
-    alert(
-      error.message
-    );
-
-    return;
-
+    if(!error){
+      state.tasks.push(data);
+    }
   }
 
-
-  state.exams
-    .push(
-      data
-    );
-
-
-  el("customExamName")
-    .value =
-    "";
-
-
-  el("customExamDate")
-    .value =
-    "";
-
-
-  closeModal(
-    "customExamModal"
+  state.tasks.sort(
+    (a,b)=>a.planned_date.localeCompare(b.planned_date)
   );
-
-
-  fillSubjectMenus();
 
   renderAll();
 
+  if(unplannedMinutes>0){
+    alert(
+      "De planning is opnieuw verdeeld, maar "+
+      formatMinutes(unplannedMinutes)+
+      " past niet meer vóór de toets binnen jouw maximale tijd per dag.\n\nJe moet meer tijd per dag toestaan of een overgeslagen dag alsnog gebruiken."
+    );
+  }else{
+    alert(
+      "De resterende studietijd is opnieuw over je beschikbare dagen verdeeld."
+    );
+  }
 }
 
-
-/* =========================================================
-   TOETSEN BEHEREN
-   ========================================================= */
-
-function openManageModal() {
-
-  const list =
-    el("manageExamList");
-
-
-  list.innerHTML =
-    "";
-
-
-  groupedExams()
-    .forEach(
-      ([name,exams]) => {
-
-        const group =
-          document.createElement(
-            "div"
-          );
-
-
-        group.className =
-          "exam-manage-group";
-
-
-        group.innerHTML = `
-          <div class="exam-manage-group-title">
-            ${escapeHtml(name)}
-          </div>
-        `;
-
-
-        exams
-          .forEach(
-            exam => {
-
-              const row =
-                document.createElement(
-                  "div"
-                );
-
-
-              row.className =
-                "exam-manage-item";
-
-
-              row.innerHTML = `
-                <div class="exam-manage-meta">
-
-                  Kans ${exam.attempt}
-
-                  ·
-
-                  ${shortDate(exam.exam_date)}
-
-                  ${
-                    exam.study_year
-                      ? " · Jaar " +
-                        exam.study_year
-                      : ""
-                  }
-
-                </div>
-              `;
-
-
-              const del =
-                document.createElement(
-                  "button"
-                );
-
-
-              del.className =
-                "btn btn-danger";
-
-
-              del.textContent =
-                "Verwijderen";
-
-
-              del.onclick =
-                () =>
-                  deleteExam(
-                    exam
-                  );
-
-
-              row.appendChild(
-                del
-              );
-
-
-              group.appendChild(
-                row
-              );
-
-            }
-          );
-
-
-        list.appendChild(
-          group
-        );
-
-      }
-    );
-
-
-  openModal(
-    "manageExamsModal"
+async function addAllYear2Exams(){
+  const missing=state.examPresets.filter(
+    preset=>
+      !state.exams.some(
+        exam=>
+          exam.preset_id===preset.id||
+          (
+            exam.name===preset.name&&
+            exam.exam_date===preset.exam_date&&
+            Number(exam.attempt)===Number(preset.attempt)
+          )
+      )
   );
 
+  if(!missing.length){
+    alert("Alle Jaar 2 toetsen staan al in je planner.");
+    return;
+  }
+
+  const rows=missing.map(p=>({
+    user_id:state.user.id,
+    preset_id:p.id,
+    name:p.name,
+    exam_date:p.exam_date,
+    attempt:p.attempt,
+    study_year:p.study_year
+  }));
+
+  const{data,error}=await sb
+    .from("exams")
+    .insert(rows)
+    .select();
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  state.exams.push(...(data||[]));
+
+  fillSubjectMenus();
+  renderAll();
+
+  alert(
+    missing.length+
+    " Jaar 2 toetsmomenten toegevoegd."
+  );
 }
 
+async function saveCustomExam(){
+  const name=el("customExamName").value.trim();
+  const date=el("customExamDate").value;
+  const attempt=Number(el("customExamAttempt").value);
 
-async function deleteExam(
-  exam
-) {
+  const year=el("customExamYear").value
+    ?Number(el("customExamYear").value)
+    :null;
 
-  if (
+  if(!name||!date){
+    alert("Vul een naam en datum in.");
+    return;
+  }
+
+  const exists=state.exams.some(
+    exam=>
+      exam.name.toLowerCase()===name.toLowerCase()&&
+      exam.exam_date===date&&
+      Number(exam.attempt)===attempt
+  );
+
+  if(exists){
+    alert("Deze toets staat al in je planner.");
+    return;
+  }
+
+  const{data,error}=await sb
+    .from("exams")
+    .insert({
+      user_id:state.user.id,
+      preset_id:null,
+      name,
+      exam_date:date,
+      attempt,
+      study_year:year
+    })
+    .select()
+    .single();
+
+  if(error){
+    alert(error.message);
+    return;
+  }
+
+  state.exams.push(data);
+
+  el("customExamName").value="";
+  el("customExamDate").value="";
+
+  closeModal("customExamModal");
+
+  fillSubjectMenus();
+  renderAll();
+}
+
+function openManageModal(){
+  const list=el("manageExamList");
+  list.innerHTML="";
+
+  groupedExams().forEach(([name,exams])=>{
+    const group=document.createElement("div");
+
+    group.className="exam-manage-group";
+
+    group.innerHTML=`
+      <div class="exam-manage-group-title">
+        ${escapeHtml(name)}
+      </div>
+    `;
+
+    exams.forEach(exam=>{
+      const row=document.createElement("div");
+
+      row.className="exam-manage-item";
+
+      row.innerHTML=`
+        <div class="exam-manage-meta">
+          Kans ${exam.attempt}
+          · ${shortDate(exam.exam_date)}
+          ${exam.study_year?" · Jaar "+exam.study_year:""}
+        </div>
+      `;
+
+      const del=document.createElement("button");
+
+      del.className="btn btn-danger";
+      del.textContent="Verwijderen";
+      del.onclick=()=>deleteExam(exam);
+
+      row.appendChild(del);
+      group.appendChild(row);
+    });
+
+    list.appendChild(group);
+  });
+
+  openModal("manageExamsModal");
+}
+
+async function deleteExam(exam){
+  if(
     !confirm(
-      "Toets verwijderen?\n\n" +
-      exam.name +
-      "\nKans " +
+      "Toets verwijderen?\n\n"+
+      exam.name+
+      "\nKans "+
       exam.attempt
     )
-  ) {
-
+  ){
     return;
-
   }
 
+  const{error}=await sb
+    .from("exams")
+    .delete()
+    .eq("id",exam.id);
 
-  const {
-    error
-  } =
-    await sb
-      .from("exams")
-      .delete()
-      .eq(
-        "id",
-        exam.id
-      );
-
-
-  if (
-    error
-  ) {
-
-    alert(
-      error.message
-    );
-
+  if(error){
+    alert(error.message);
     return;
-
   }
 
-
-  state.exams =
-    state.exams
-      .filter(
-        e =>
-          e.id !==
-          exam.id
-      );
-
-
-  closeModal(
-    "manageExamsModal"
+  state.exams=state.exams.filter(
+    e=>e.id!==exam.id
   );
 
+  closeModal("manageExamsModal");
 
   fillSubjectMenus();
-
   renderAll();
-
 }
 
-
-/* =========================================================
-   MODALS
-   ========================================================= */
-
-function openModal(id) {
-
-  el(id)
-    .classList
-    .remove("hidden");
-
+function openModal(id){
+  el(id).classList.remove("hidden");
 }
 
-
-function closeModal(id) {
-
-  el(id)
-    .classList
-    .add("hidden");
-
+function closeModal(id){
+  el(id).classList.add("hidden");
 }
-
 </script>
-
 </body>
 </html>
