@@ -1,0 +1,116 @@
+:root {
+  --paper: #F6F7F9;
+  --surface: #FFFFFF;
+  --ink: #182031;
+  --ink-soft: #2A3547;
+  --muted: #667085;
+  --line: #E3E7EC;
+  --teal: #0E7C7B;
+  --amber: #B45309;
+  --indigo: #3949AB;
+  --grid: rgba(14, 124, 123, 0.08);
+  --radius: 16px;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+a { color: inherit; }
+
+/* Topmark */
+.topmark {
+  max-width: 860px; margin: 0 auto;
+  padding: 22px 24px 0;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.topmark .name { font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+.topmark .mail { font-size: 14px; color: var(--muted); text-decoration: none; }
+.topmark .mail:hover { color: var(--teal); }
+
+.page { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+/* Hero */
+.hero { position: relative; padding: 84px 0 72px; overflow: hidden; }
+.hero-grid {
+  position: absolute; inset: -40px -40px auto -40px; height: 340px;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 34px 34px;
+  -webkit-mask-image: radial-gradient(120% 90% at 12% 0%, #000 0%, transparent 68%);
+          mask-image: radial-gradient(120% 90% at 12% 0%, #000 0%, transparent 68%);
+  pointer-events: none;
+}
+.hero-body { position: relative; }
+.hero h1 {
+  font-size: clamp(38px, 8vw, 64px);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+  margin: 0;
+  color: var(--ink);
+}
+.hero p {
+  font-size: 18px; color: var(--ink-soft); max-width: 54ch;
+  margin: 28px 0 0;
+}
+.meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.meta span {
+  font-size: 13px; font-weight: 500; color: var(--muted);
+  background: var(--surface); border: 1px solid var(--line);
+  padding: 6px 12px; border-radius: 999px;
+}
+
+/* Projecten */
+.work { padding-bottom: 40px; }
+.sec-label { font-size: 14px; font-weight: 600; color: var(--muted); margin: 0 0 18px; }
+.projects { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+@media (max-width: 720px) { .projects { grid-template-columns: 1fr; } }
+
+.card {
+  display: flex; flex-direction: column;
+  text-decoration: none;
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px;
+  transition: transform .14s ease, box-shadow .14s ease, border-color .14s ease;
+}
+.card:hover { transform: translateY(-3px); box-shadow: 0 14px 34px rgba(24,32,49,.09); border-color: #D3D9E0; }
+.card:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+.card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+.card .accent { width: 32px; height: 4px; border-radius: 2px; }
+.card .tag {
+  font-size: 12px; font-weight: 500; color: var(--muted);
+  background: var(--paper); border: 1px solid var(--line);
+  padding: 3px 9px; border-radius: 999px;
+}
+.card h3 { font-size: 18px; font-weight: 600; margin: 0 0 6px; letter-spacing: -0.01em; }
+.card p { font-size: 14.5px; color: var(--muted); margin: 0; flex: 1; }
+.card .go { margin-top: 18px; font-size: 14px; font-weight: 500; }
+
+.card.teal   .accent { background: var(--teal); }
+.card.amber  .accent { background: var(--amber); }
+.card.indigo .accent { background: var(--indigo); }
+.card.teal   .go { color: var(--teal); }
+.card.amber  .go { color: var(--amber); }
+.card.indigo .go { color: var(--indigo); }
+
+/* Footer */
+footer {
+  max-width: 860px; margin: 0 auto; padding: 32px 24px 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 14px; color: var(--muted);
+  border-top: 1px solid var(--line);
+}
+footer a { color: var(--teal); text-decoration: none; font-weight: 500; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card { transition: none; }
+  .card:hover { transform: none; }
+}
