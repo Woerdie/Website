@@ -1,0 +1,706 @@
+<!--
+  INHAALPLANNER - studieplanner met Supabase
+  ------------------------------------------------------------------
+  SETUP (eenmalig):
+
+  1. Maak een project op https://supabase.com
+  2. Ga naar Project Settings > API en kopieer de Project URL en de anon public key.
+     Vul die hieronder in bij SUPABASE_URL en SUPABASE_ANON_KEY.
+  3. Ga naar de SQL Editor in Supabase en voer dit uit:
+
+     create table public.tasks (
+       id uuid primary key default gen_random_uuid(),
+       user_id uuid not null references auth.users(id) on delete cascade,
+       title text not null,
+       subject text,
+       deadline date,
+       planned_date date not null,
+       done boolean not null default false,
+       created_at timestamptz not null default now()
+     );
+
+     alter table public.tasks enable row level security;
+
+     create policy "eigen taken lezen"       on public.tasks for select using (auth.uid() = user_id);
+     create policy "eigen taken toevoegen"    on public.tasks for insert with check (auth.uid() = user_id);
+     create policy "eigen taken bijwerken"    on public.tasks for update using (auth.uid() = user_id);
+     create policy "eigen taken verwijderen"  on public.tasks for delete using (auth.uid() = user_id);
+
+  4. Auth > Providers > Email staat standaard aan. Wil je zonder mailbevestiging
+     inloggen tijdens het testen, zet dan "Confirm email" tijdelijk uit onder
+     Auth > Sign In / Providers.
+  5. Host dit bestand op je eigen domein (bijv. daanwoerdman.nl) en log in.
+  ------------------------------------------------------------------
+-->
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Inhaalplanner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F6F7F9;
+    --surface: #FFFFFF;
+    --ink: #182031;
+    --muted: #667085;
+    --line: #E3E7EC;
+    --accent: #0E7C7B;
+    --accent-soft: #E6F2F1;
+    --toets: #B45309;
+    --toets-soft: #FBEFE0;
+    --done: #15803D;
+    --done-soft: #E7F3EA;
+    --missed: #B42318;
+    --missed-soft: #FBEAE8;
+    --radius: 12px;
+    --shadow: 0 1px 2px rgba(24,32,49,.05), 0 6px 20px rgba(24,32,49,.05);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .tnum { font-variant-numeric: tabular-nums; }
+  button { font-family: inherit; cursor: pointer; }
+  input, select { font-family: inherit; }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .brand { display: flex; align-items: baseline; gap: 10px; }
+  .brand h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+  .brand .tag { font-size: 13px; color: var(--muted); }
+  .topbar-right { display: flex; align-items: center; gap: 14px; font-size: 14px; color: var(--muted); }
+  .btn {
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    padding: 8px 14px; border-radius: 9px; font-size: 14px; font-weight: 500;
+    transition: background .12s ease, border-color .12s ease;
+  }
+  .btn:hover { background: var(--paper); }
+  .btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn-primary:hover { background: #0b6564; }
+
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 24px; }
+
+  /* ---------- Toets chips ---------- */
+  .toetsrow { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 20px; }
+  .chip {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px 14px; min-width: 150px; box-shadow: var(--shadow);
+  }
+  .chip .name { font-weight: 600; font-size: 14px; }
+  .chip .meta { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .chip .count { font-size: 13px; font-weight: 600; }
+  .chip .count.soon { color: var(--toets); }
+  .chip .count.ok { color: var(--accent); }
+  .chip .count.past { color: var(--muted); }
+
+  /* ---------- Missed banner ---------- */
+  .banner {
+    display: none; align-items: center; justify-content: space-between; gap: 16px;
+    background: var(--missed-soft); border: 1px solid #F1C7C1; color: #7A160D;
+    padding: 12px 16px; border-radius: var(--radius); margin-bottom: 20px;
+  }
+  .banner.show { display: flex; }
+  .banner .txt { font-size: 14px; font-weight: 500; }
+  .btn-missed { background: var(--missed); color: #fff; border-color: var(--missed); }
+  .btn-missed:hover { background: #97160c; }
+
+  /* ---------- Main grid ---------- */
+  .grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow); }
+
+  /* ---------- Calendar ---------- */
+  .cal-head { display: flex; align-items: center; justify-content: space-between; padding: 16px 18px; border-bottom: 1px solid var(--line); }
+  .cal-head .month { font-size: 16px; font-weight: 600; text-transform: capitalize; }
+  .nav-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: var(--surface); font-size: 16px; line-height: 1; color: var(--ink); }
+  .nav-btn:hover { background: var(--paper); }
+  .weekdays { display: grid; grid-template-columns: repeat(7, 1fr); padding: 10px 12px 0; }
+  .weekdays span { text-align: center; font-size: 12px; font-weight: 600; color: var(--muted); padding-bottom: 6px; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 8px 12px 16px; }
+  .day {
+    position: relative; aspect-ratio: 1 / 1; border: 1px solid transparent; border-radius: 9px;
+    background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 14px; color: var(--ink); transition: background .1s ease;
+  }
+  .day:hover { background: var(--paper); }
+  .day.other { color: #B7BEC9; }
+  .day.today { border-color: var(--accent); font-weight: 600; }
+  .day.selected { background: var(--accent-soft); border-color: var(--accent); font-weight: 600; }
+  .day.toets { background: var(--toets-soft); }
+  .day.toets.selected { box-shadow: inset 0 0 0 2px var(--toets); }
+  .day .dot { position: absolute; bottom: 7px; display: flex; gap: 3px; }
+  .day .dot i { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); display: block; }
+  .day .dot i.missed { background: var(--missed); }
+  .day .dot i.done { background: var(--done); }
+  .day .tflag { position: absolute; top: 5px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--toets); }
+
+  /* ---------- Day panel ---------- */
+  .day-head { padding: 16px 18px; border-bottom: 1px solid var(--line); }
+  .day-head .date { font-size: 16px; font-weight: 600; text-transform: capitalize; }
+  .day-head .toetsline { margin-top: 6px; font-size: 13px; color: var(--toets); font-weight: 500; display: none; }
+  .day-head .toetsline.show { display: block; }
+
+  .tasklist { padding: 8px 12px; min-height: 60px; }
+  .task {
+    display: flex; align-items: flex-start; gap: 11px; padding: 10px 8px; border-radius: 9px;
+  }
+  .task:hover { background: var(--paper); }
+  .task:hover .del { opacity: 1; }
+  .check {
+    flex-shrink: 0; width: 20px; height: 20px; margin-top: 1px; border: 1.5px solid #C3CAD4; border-radius: 6px;
+    background: var(--surface); display: flex; align-items: center; justify-content: center; transition: all .1s ease;
+  }
+  .check:hover { border-color: var(--accent); }
+  .check.on { background: var(--done); border-color: var(--done); }
+  .check.on::after { content: ""; width: 6px; height: 10px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg) translateY(-1px); }
+  .task .body { flex: 1; min-width: 0; }
+  .task .title { font-size: 14.5px; }
+  .task.done .title { color: var(--muted); text-decoration: line-through; }
+  .task .sub { font-size: 12.5px; color: var(--muted); margin-top: 1px; }
+  .task.overdue .sub { color: var(--missed); }
+  .del { opacity: 0; border: none; background: none; color: var(--muted); font-size: 18px; line-height: 1; padding: 0 4px; transition: opacity .1s ease; }
+  .del:hover { color: var(--missed); }
+
+  .empty { padding: 20px 14px; color: var(--muted); font-size: 14px; }
+
+  /* ---------- Add form ---------- */
+  .add { border-top: 1px solid var(--line); padding: 14px 16px; display: flex; flex-direction: column; gap: 10px; }
+  .add input[type=text] {
+    width: 100%; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 14px; color: var(--ink);
+  }
+  .add input[type=text]:focus { outline: none; border-color: var(--accent); }
+  .add-row { display: flex; gap: 10px; }
+  .add select { flex: 1; border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; font-size: 14px; color: var(--ink); background: var(--surface); }
+  .add select:focus { outline: none; border-color: var(--accent); }
+
+  /* ---------- Auth ---------- */
+  .auth-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .auth {
+    width: 100%; max-width: 380px; background: var(--surface); border: 1px solid var(--line);
+    border-radius: 16px; box-shadow: var(--shadow); padding: 32px;
+  }
+  .auth h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 4px; }
+  .auth p.lead { color: var(--muted); font-size: 14px; margin: 0 0 24px; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 6px; }
+  .field input {
+    width: 100%; border: 1px solid var(--line); border-radius: 9px; padding: 11px 13px; font-size: 15px; color: var(--ink);
+  }
+  .field input:focus { outline: none; border-color: var(--accent); }
+  .auth .btn-primary { width: 100%; padding: 12px; font-size: 15px; margin-top: 4px; }
+  .auth .switch { text-align: center; font-size: 14px; color: var(--muted); margin-top: 18px; }
+  .auth .switch a { color: var(--accent); font-weight: 500; text-decoration: none; cursor: pointer; }
+  .msg { font-size: 13.5px; padding: 10px 12px; border-radius: 8px; margin-top: 14px; display: none; }
+  .msg.show { display: block; }
+  .msg.err { background: var(--missed-soft); color: #7A160D; }
+  .msg.ok { background: var(--done-soft); color: #14532D; }
+
+  .config-warn {
+    max-width: 560px; margin: 60px auto; background: var(--toets-soft); border: 1px solid #EBC79A;
+    border-radius: var(--radius); padding: 24px; color: #713F12; font-size: 14.5px;
+  }
+  .config-warn h2 { margin: 0 0 8px; font-size: 18px; }
+  .config-warn code { background: #fff; padding: 1px 6px; border-radius: 4px; font-size: 13px; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- Config warning -->
+<div id="configWarn" class="config-warn hidden">
+  <h2>Even instellen</h2>
+  <p>Vul bovenin dit bestand je eigen <code>SUPABASE_URL</code> en <code>SUPABASE_ANON_KEY</code> in. Die vind je in Supabase onder Project Settings, API.</p>
+</div>
+
+<!-- Auth screen -->
+<div id="authScreen" class="auth-wrap hidden">
+  <div class="auth">
+    <h1>Inhaalplanner</h1>
+    <p class="lead" id="authLead">Log in om je planning te zien.</p>
+    <div class="field">
+      <label for="email">E-mail</label>
+      <input id="email" type="email" autocomplete="email" placeholder="jij@voorbeeld.nl" />
+    </div>
+    <div class="field">
+      <label for="password">Wachtwoord</label>
+      <input id="password" type="password" autocomplete="current-password" placeholder="Minimaal 6 tekens" />
+    </div>
+    <button class="btn btn-primary" id="authBtn">Inloggen</button>
+    <div id="authMsg" class="msg"></div>
+    <p class="switch" id="authSwitch">Nog geen account? <a id="switchLink">Maak er een aan</a></p>
+  </div>
+</div>
+
+<!-- App screen -->
+<div id="appScreen" class="hidden">
+  <div class="topbar">
+    <div class="brand">
+      <h1>Inhaalplanner</h1>
+      <span class="tag">grip op je studievoortgang</span>
+    </div>
+    <div class="topbar-right">
+      <span id="userEmail" class="tnum"></span>
+      <button class="btn" id="logoutBtn">Uitloggen</button>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="toetsrow" id="toetsRow"></div>
+
+    <div class="banner" id="missedBanner">
+      <span class="txt" id="missedTxt"></span>
+      <button class="btn btn-missed" id="redistributeBtn">Verdeel opnieuw</button>
+    </div>
+
+    <div class="grid">
+      <!-- Calendar -->
+      <div class="panel">
+        <div class="cal-head">
+          <button class="nav-btn" id="prevMonth" aria-label="Vorige maand">&lsaquo;</button>
+          <span class="month" id="monthLabel"></span>
+          <button class="nav-btn" id="nextMonth" aria-label="Volgende maand">&rsaquo;</button>
+        </div>
+        <div class="weekdays">
+          <span>ma</span><span>di</span><span>wo</span><span>do</span><span>vr</span><span>za</span><span>zo</span>
+        </div>
+        <div class="days" id="calDays"></div>
+      </div>
+
+      <!-- Day panel -->
+      <div class="panel">
+        <div class="day-head">
+          <div class="date" id="dayDate"></div>
+          <div class="toetsline" id="dayToets"></div>
+        </div>
+        <div class="tasklist" id="taskList"></div>
+        <div class="add">
+          <input id="newTitle" type="text" placeholder="Wat ga je die dag doen?" />
+          <div class="add-row">
+            <select id="newSubject">
+              <option value="">Geen vak</option>
+            </select>
+            <button class="btn btn-primary" id="addBtn">Toevoegen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ======================= CONFIG =======================
+const SUPABASE_URL = "https://rdlkdglzfjniwamumucb.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
+// ======================================================
+
+// Je toetsen met deadline (kans 1) voor het vak-menu, en alle toetsdagen voor de kalender.
+const SUBJECTS = [
+  { key: "Taaltoets 3F",     deadline: "2026-09-30" },
+  { key: "RO en Planologie", deadline: "2026-10-21" },
+  { key: "Mobiliteit",       deadline: "2026-10-23" },
+  { key: "Wegontwerp",       deadline: "2026-12-18" },
+];
+const TOETSDAGEN = [
+  { date: "2026-09-30", name: "Taaltoets 3F",     kans: 1 },
+  { date: "2026-10-21", name: "RO en Planologie", kans: 1 },
+  { date: "2026-10-23", name: "Mobiliteit",       kans: 1 },
+  { date: "2026-10-28", name: "Taaltoets 3F",     kans: 2 },
+  { date: "2026-11-27", name: "Mobiliteit",       kans: 2 },
+  { date: "2026-12-04", name: "RO en Planologie", kans: 2 },
+  { date: "2026-12-18", name: "Wegontwerp",       kans: 1 },
+  { date: "2027-01-22", name: "Wegontwerp",       kans: 2 },
+];
+
+// Storage-adapter die localStorage probeert en anders terugvalt op geheugen,
+// zodat de app ook werkt in omgevingen zonder localStorage.
+const memStore = {};
+const safeStorage = {
+  getItem(k){ try { return window.localStorage.getItem(k); } catch(e){ return k in memStore ? memStore[k] : null; } },
+  setItem(k,v){ try { window.localStorage.setItem(k,v); } catch(e){ memStore[k] = v; } },
+  removeItem(k){ try { window.localStorage.removeItem(k); } catch(e){ delete memStore[k]; } },
+};
+
+let sb = null;
+const configured = SUPABASE_URL && !SUPABASE_URL.startsWith("JOUW") && SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith("JOUW");
+
+const state = {
+  user: null,
+  tasks: [],
+  viewYear: 0,
+  viewMonth: 0,   // 0-11
+  selected: "",   // YYYY-MM-DD
+};
+
+// ---------- date helpers ----------
+function pad(n){ return String(n).padStart(2, "0"); }
+function ymd(d){ return d.getFullYear() + "-" + pad(d.getMonth()+1) + "-" + pad(d.getDate()); }
+function today(){ return ymd(new Date()); }
+function parse(s){ const [y,m,d] = s.split("-").map(Number); return new Date(y, m-1, d); }
+function addDays(s, n){ const d = parse(s); d.setDate(d.getDate()+n); return ymd(d); }
+function rangeInclusive(a, b){
+  const out = []; let cur = a;
+  let guard = 0;
+  while (cur <= b && guard < 400){ out.push(cur); cur = addDays(cur, 1); guard++; }
+  return out;
+}
+const MONTHS = ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december"];
+const DAYS_FULL = ["zondag","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag"];
+function longDate(s){ const d = parse(s); return DAYS_FULL[d.getDay()] + " " + d.getDate() + " " + MONTHS[d.getMonth()]; }
+function daysBetween(a, b){ return Math.round((parse(b) - parse(a)) / 86400000); }
+
+// ---------- DOM ----------
+const el = id => document.getElementById(id);
+
+// =================== BOOT ===================
+if (!configured) {
+  el("configWarn").classList.remove("hidden");
+} else {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: { storage: safeStorage, persistSession: true, autoRefreshToken: true, detectSessionInUrl: false }
+  });
+  initAuthUI();
+  sb.auth.getSession().then(({ data }) => {
+    if (data.session) enterApp(data.session.user);
+    else showAuth();
+  });
+  sb.auth.onAuthStateChange((_e, session) => {
+    if (session) enterApp(session.user);
+    else showAuth();
+  });
+}
+
+// =================== AUTH ===================
+let mode = "login"; // or "signup"
+
+function updateAuthMode(){
+  const isLogin = mode === "login";
+  el("authBtn").textContent = isLogin ? "Inloggen" : "Account aanmaken";
+  el("authLead").textContent = isLogin ? "Log in om je planning te zien." : "Maak een account om te beginnen.";
+  el("authSwitch").innerHTML = isLogin
+    ? 'Nog geen account? <a id="switchLink">Maak er een aan</a>'
+    : 'Al een account? <a id="switchLink">Log in</a>';
+  el("switchLink").addEventListener("click", () => {
+    mode = mode === "login" ? "signup" : "login";
+    hideMsg();
+    updateAuthMode();
+  });
+}
+
+function initAuthUI(){
+  updateAuthMode();
+  el("authBtn").addEventListener("click", doAuth);
+  el("password").addEventListener("keydown", e => { if (e.key === "Enter") doAuth(); });
+}
+
+function showMsg(text, kind){ const m = el("authMsg"); m.textContent = text; m.className = "msg show " + kind; }
+function hideMsg(){ el("authMsg").className = "msg"; }
+
+async function doAuth(){
+  const email = el("email").value.trim();
+  const password = el("password").value;
+  if (!email || !password){ showMsg("Vul je e-mail en wachtwoord in.", "err"); return; }
+  el("authBtn").disabled = true;
+  try {
+    if (mode === "login"){
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    } else {
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if (error) throw error;
+      if (!data.session){ showMsg("Account aangemaakt. Bevestig je e-mail en log daarna in.", "ok"); }
+    }
+  } catch (err) {
+    showMsg(vertaalFout(err.message), "err");
+  } finally {
+    el("authBtn").disabled = false;
+  }
+}
+
+function vertaalFout(m){
+  if (/invalid login/i.test(m)) return "E-mail of wachtwoord klopt niet.";
+  if (/already registered/i.test(m)) return "Dit e-mailadres heeft al een account.";
+  if (/at least 6/i.test(m)) return "Je wachtwoord moet minstens 6 tekens zijn.";
+  if (/confirm/i.test(m)) return "Bevestig eerst je e-mail voordat je inlogt.";
+  return m;
+}
+
+function showAuth(){
+  state.user = null;
+  el("appScreen").classList.add("hidden");
+  el("authScreen").classList.remove("hidden");
+}
+
+el("logoutBtn").addEventListener("click", () => sb.auth.signOut());
+
+// =================== APP ===================
+async function enterApp(user){
+  state.user = user;
+  el("authScreen").classList.add("hidden");
+  el("appScreen").classList.remove("hidden");
+  el("userEmail").textContent = user.email;
+
+  const n = new Date();
+  state.viewYear = n.getFullYear();
+  state.viewMonth = n.getMonth();
+  state.selected = today();
+
+  fillSubjectMenu();
+  bindAppEvents();
+  await loadTasks();
+}
+
+function fillSubjectMenu(){
+  const sel = el("newSubject");
+  SUBJECTS.forEach(s => {
+    const o = document.createElement("option");
+    o.value = s.key; o.textContent = s.key;
+    sel.appendChild(o);
+  });
+}
+
+let eventsBound = false;
+function bindAppEvents(){
+  if (eventsBound) return; eventsBound = true;
+  el("prevMonth").addEventListener("click", () => shiftMonth(-1));
+  el("nextMonth").addEventListener("click", () => shiftMonth(1));
+  el("addBtn").addEventListener("click", addTask);
+  el("newTitle").addEventListener("keydown", e => { if (e.key === "Enter") addTask(); });
+  el("redistributeBtn").addEventListener("click", redistributeMissed);
+}
+
+function shiftMonth(delta){
+  state.viewMonth += delta;
+  if (state.viewMonth < 0){ state.viewMonth = 11; state.viewYear--; }
+  if (state.viewMonth > 11){ state.viewMonth = 0; state.viewYear++; }
+  renderCalendar();
+}
+
+async function loadTasks(){
+  const { data, error } = await sb.from("tasks").select("*").order("planned_date", { ascending: true });
+  if (error){ console.error(error); return; }
+  state.tasks = data || [];
+  renderAll();
+}
+
+function renderAll(){
+  renderToetsRow();
+  renderCalendar();
+  renderDay();
+  renderMissedBanner();
+}
+
+// ---------- toets chips ----------
+function renderToetsRow(){
+  const row = el("toetsRow");
+  row.innerHTML = "";
+  SUBJECTS.forEach(s => {
+    const d = daysBetween(today(), s.deadline);
+    let cls = "ok", label;
+    if (d < 0){ cls = "past"; label = "gehad"; }
+    else if (d === 0){ cls = "soon"; label = "vandaag"; }
+    else { cls = d <= 10 ? "soon" : "ok"; label = "nog " + d + " " + (d === 1 ? "dag" : "dagen"); }
+    const done = state.tasks.filter(t => t.subject === s.key && t.done).length;
+    const total = state.tasks.filter(t => t.subject === s.key).length;
+    const div = document.createElement("div");
+    div.className = "chip";
+    div.innerHTML =
+      '<div class="name">' + s.key + '</div>' +
+      '<div class="meta">kans 1: ' + longDate(s.deadline).replace(/^\w+\s/, "") + '</div>' +
+      '<div class="count ' + cls + '">' + label + (total ? ' \u00b7 ' + done + '/' + total + ' taken' : '') + '</div>';
+    row.appendChild(div);
+  });
+}
+
+// ---------- calendar ----------
+function toetsOn(dateStr){ return TOETSDAGEN.filter(t => t.date === dateStr); }
+
+function renderCalendar(){
+  el("monthLabel").textContent = MONTHS[state.viewMonth] + " " + state.viewYear;
+  const first = new Date(state.viewYear, state.viewMonth, 1);
+  let startOffset = (first.getDay() + 6) % 7; // maandag = 0
+  const gridStart = new Date(state.viewYear, state.viewMonth, 1 - startOffset);
+  const days = el("calDays");
+  days.innerHTML = "";
+  const td = today();
+
+  for (let i = 0; i < 42; i++){
+    const d = new Date(gridStart); d.setDate(gridStart.getDate() + i);
+    const ds = ymd(d);
+    const cell = document.createElement("button");
+    cell.className = "day tnum";
+    if (d.getMonth() !== state.viewMonth) cell.classList.add("other");
+    if (ds === td) cell.classList.add("today");
+    if (ds === state.selected) cell.classList.add("selected");
+    if (toetsOn(ds).length) cell.classList.add("toets");
+
+    let inner = '<span>' + d.getDate() + '</span>';
+    if (toetsOn(ds).length) inner += '<span class="tflag"></span>';
+
+    const dayTasks = state.tasks.filter(t => t.planned_date === ds);
+    if (dayTasks.length){
+      const dots = dayTasks.slice(0, 3).map(t => {
+        let c = "";
+        if (t.done) c = "done";
+        else if (ds < td) c = "missed";
+        return '<i class="' + c + '"></i>';
+      }).join("");
+      inner += '<span class="dot">' + dots + '</span>';
+    }
+    cell.innerHTML = inner;
+    cell.addEventListener("click", () => { state.selected = ds; renderCalendar(); renderDay(); });
+    days.appendChild(cell);
+  }
+}
+
+// ---------- day panel ----------
+function renderDay(){
+  el("dayDate").textContent = longDate(state.selected);
+  const tl = el("dayToets");
+  const toetsen = toetsOn(state.selected);
+  if (toetsen.length){
+    tl.textContent = "Toetsdag: " + toetsen.map(t => t.name + " (kans " + t.kans + ")").join(", ");
+    tl.classList.add("show");
+  } else { tl.classList.remove("show"); }
+
+  const list = el("taskList");
+  list.innerHTML = "";
+  const td = today();
+  const items = state.tasks.filter(t => t.planned_date === state.selected);
+
+  if (!items.length){
+    const e = document.createElement("div");
+    e.className = "empty";
+    e.textContent = "Nog niets gepland. Voeg hieronder een taak toe.";
+    list.appendChild(e);
+    return;
+  }
+
+  items.forEach(t => {
+    const overdue = !t.done && t.planned_date < td;
+    const row = document.createElement("div");
+    row.className = "task" + (t.done ? " done" : "") + (overdue ? " overdue" : "");
+    const check = document.createElement("button");
+    check.className = "check" + (t.done ? " on" : "");
+    check.setAttribute("aria-label", t.done ? "Vink uit" : "Vink af");
+    check.addEventListener("click", () => toggleTask(t));
+    const body = document.createElement("div");
+    body.className = "body";
+    let sub = "";
+    if (t.subject) sub = t.subject;
+    if (overdue) sub = (sub ? sub + " \u00b7 " : "") + "gemist";
+    body.innerHTML = '<div class="title">' + escapeHtml(t.title) + '</div>' + (sub ? '<div class="sub">' + escapeHtml(sub) + '</div>' : "");
+    const del = document.createElement("button");
+    del.className = "del"; del.textContent = "\u00d7"; del.setAttribute("aria-label", "Verwijderen");
+    del.addEventListener("click", () => deleteTask(t));
+    row.appendChild(check); row.appendChild(body); row.appendChild(del);
+    list.appendChild(row);
+  });
+}
+
+function renderMissedBanner(){
+  const td = today();
+  const missed = state.tasks.filter(t => !t.done && t.planned_date < td);
+  const b = el("missedBanner");
+  if (missed.length){
+    el("missedTxt").textContent = "Je hebt " + missed.length + " " + (missed.length === 1 ? "taak" : "taken") + " niet afgevinkt. Verdeel ze over je resterende dagen.";
+    b.classList.add("show");
+  } else {
+    b.classList.remove("show");
+  }
+}
+
+function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c])); }
+
+// ---------- CRUD ----------
+async function addTask(){
+  const title = el("newTitle").value.trim();
+  if (!title) return;
+  const subject = el("newSubject").value || null;
+  const subj = SUBJECTS.find(s => s.key === subject);
+  const deadline = subj ? subj.deadline : null;
+  const row = {
+    user_id: state.user.id, title, subject, deadline,
+    planned_date: state.selected, done: false,
+  };
+  const { data, error } = await sb.from("tasks").insert(row).select().single();
+  if (error){ console.error(error); alert("Toevoegen lukte niet: " + error.message); return; }
+  state.tasks.push(data);
+  el("newTitle").value = "";
+  el("newSubject").value = "";
+  renderAll();
+}
+
+async function toggleTask(t){
+  const nieuw = !t.done;
+  t.done = nieuw;
+  renderDay(); renderCalendar(); renderToetsRow(); renderMissedBanner();
+  const { error } = await sb.from("tasks").update({ done: nieuw }).eq("id", t.id);
+  if (error){ console.error(error); t.done = !nieuw; renderAll(); }
+}
+
+async function deleteTask(t){
+  const { error } = await sb.from("tasks").delete().eq("id", t.id);
+  if (error){ console.error(error); return; }
+  state.tasks = state.tasks.filter(x => x.id !== t.id);
+  renderAll();
+}
+
+// ---------- redistribute ----------
+async function redistributeMissed(){
+  const td = today();
+  const missed = state.tasks.filter(t => !t.done && t.planned_date < td);
+  if (!missed.length) return;
+
+  // huidige belasting per toekomstige dag (open taken die niet gemist zijn)
+  const load = {};
+  state.tasks.forEach(t => {
+    if (!t.done && t.planned_date >= td && !missed.includes(t)){
+      load[t.planned_date] = (load[t.planned_date] || 0) + 1;
+    }
+  });
+
+  // gemiste taken eerst met de vroegste deadline verdelen
+  missed.sort((a, b) => (a.deadline || "9999") < (b.deadline || "9999") ? -1 : 1);
+
+  const updates = [];
+  missed.forEach(t => {
+    let end = (t.deadline && t.deadline >= td) ? t.deadline : addDays(td, 13);
+    const window = rangeInclusive(td, end);
+    // kies de minst belaste dag; bij gelijke stand de vroegste
+    let best = window[0], bestLoad = Infinity;
+    window.forEach(d => {
+      const l = load[d] || 0;
+      if (l < bestLoad){ bestLoad = l; best = d; }
+    });
+    load[best] = (load[best] || 0) + 1;
+    t.planned_date = best;
+    updates.push({ id: t.id, date: best });
+  });
+
+  renderAll();
+  for (const u of updates){
+    const { error } = await sb.from("tasks").update({ planned_date: u.date }).eq("id", u.id);
+    if (error) console.error(error);
+  }
+}
+</script>
+</body>
+</html>
