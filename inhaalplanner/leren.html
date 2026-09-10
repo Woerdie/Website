@@ -723,55 +723,67 @@ function renderUpcomingExams(){
     box.appendChild(card);
   });
 }
-
-function renderFullQuiz(){
+async function renderFullQuiz(){
   const section=el("fullQuizSection");
 
-  const quiz=state.quizzes.find(q=>{
-    const sameSubject=
-      q.subject===state.selectedSubject;
+  section.classList.add("hidden");
 
-    const noTopic=
-      q.topic_id===null||
-      q.topic_id===undefined||
-      q.topic_id==="";
-
-    return sameSubject&&noTopic;
-  });
-
-  if(!quiz){
-    section.classList.add("hidden");
+  if(!state.selectedSubject){
     return;
   }
 
-  const count=
-    state.quizQuestions.filter(
-      question=>
-        question.quiz_id===quiz.id
-    ).length;
+  const{data,error}=await sb
+    .from("study_quizzes")
+    .select("*")
+    .eq("subject",state.selectedSubject)
+    .is("topic_id",null)
+    .order("created_at",{ascending:false})
+    .limit(1);
+
+  if(error){
+    console.error("Gehele oefentoets ophalen mislukt:",error);
+    return;
+  }
+
+  const quiz=data?.[0];
+
+  if(!quiz){
+    console.log(
+      "Geen gehele oefentoets gevonden voor:",
+      state.selectedSubject
+    );
+    return;
+  }
+
+  const{count,error:countError}=await sb
+    .from("study_quiz_questions")
+    .select("*",{count:"exact",head:true})
+    .eq("quiz_id",quiz.id);
+
+  if(countError){
+    console.error(
+      "Aantal vragen ophalen mislukt:",
+      countError
+    );
+  }
 
   el("fullQuizTitle").textContent=
-    quiz.title||
-    "Gehele oefentoets";
+    quiz.title||"Gehele oefentoets";
 
   el("fullQuizMeta").textContent=
-    count+
+    (count||0)+
     " vragen · "+
     (quiz.difficulty||"toetsniveau")+
     " · alle onderdelen";
 
   section.classList.remove("hidden");
 
-  const button=
-    el("startFullQuizBtn");
+  el("startFullQuizBtn").onclick=()=>{
+    if(!state.quizzes.some(q=>q.id===quiz.id)){
+      state.quizzes.push(quiz);
+    }
 
-  button.textContent=
-    "Start gehele oefentoets";
-
-  button.onclick=()=>{
-    startFullQuiz(
-      quiz.id
-    );
+    startFullQuiz(quiz.id);
   };
 }
 
