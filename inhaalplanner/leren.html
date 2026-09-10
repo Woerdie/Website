@@ -148,6 +148,7 @@ button,select,input,textarea{font-family:inherit}
       <h1>AI Leeromgeving</h1>
       <span class="learn-tag">samenvatten · flashcards · oefenen</span>
     </div>
+
     <div class="top-actions">
       <a href="index.html" class="btn">← Planner</a>
       <button id="logoutBtn" class="btn">Uitloggen</button>
@@ -160,6 +161,7 @@ button,select,input,textarea{font-family:inherit}
         <h2>Mijn leerstof</h2>
         <p>Kies een vak en oefen met je samenvattingen, flashcards en oefentoetsen.</p>
       </div>
+
       <div class="subject-select-wrap">
         <label>Vak</label>
         <select id="subjectSelect"></select>
@@ -171,6 +173,7 @@ button,select,input,textarea{font-family:inherit}
         <h3>Aankomende toetsen</h3>
         <span>Dichtstbijzijnde toets eerst</span>
       </div>
+
       <div id="upcomingExams" class="upcoming-grid"></div>
     </section>
 
@@ -178,24 +181,36 @@ button,select,input,textarea{font-family:inherit}
       <div class="full-quiz-card">
         <div class="full-quiz-info">
           <div class="full-quiz-icon">📝</div>
+
           <div>
-            <div id="fullQuizTitle" class="full-quiz-title">Gehele oefentoets</div>
+            <div id="fullQuizTitle" class="full-quiz-title">
+              Gehele oefentoets
+            </div>
+
             <div id="fullQuizMeta" class="full-quiz-meta"></div>
           </div>
         </div>
-        <button id="startFullQuizBtn" class="btn btn-primary">Start gehele oefentoets</button>
+
+        <button id="startFullQuizBtn" class="btn btn-primary">
+          Start gehele oefentoets
+        </button>
       </div>
     </section>
 
     <div class="learn-layout">
       <aside class="panel sidebar">
-        <div class="sidebar-title">Hoofdstukken & onderwerpen</div>
+        <div class="sidebar-title">
+          Hoofdstukken & onderwerpen
+        </div>
+
         <div id="topicList" class="topic-list"></div>
       </aside>
 
       <section class="panel content">
         <div id="nothingSelected" class="content-panel">
-          <div class="empty">Kies links een hoofdstuk of onderwerp.</div>
+          <div class="empty">
+            Kies links een hoofdstuk of onderwerp.
+          </div>
         </div>
 
         <div id="topicContent" class="content-panel hidden">
@@ -207,9 +222,17 @@ button,select,input,textarea{font-family:inherit}
           </div>
 
           <div class="tabs">
-            <button class="tab-btn active" data-tab="summary">Samenvatting</button>
-            <button class="tab-btn" data-tab="flashcards">Flashcards</button>
-            <button class="tab-btn" data-tab="quizzes">Oefentoetsen</button>
+            <button class="tab-btn active" data-tab="summary">
+              Samenvatting
+            </button>
+
+            <button class="tab-btn" data-tab="flashcards">
+              Flashcards
+            </button>
+
+            <button class="tab-btn" data-tab="quizzes">
+              Oefentoetsen
+            </button>
           </div>
 
           <div id="summaryTab"></div>
@@ -222,10 +245,16 @@ button,select,input,textarea{font-family:inherit}
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script>
 const SUPABASE_URL="https://rdlkdglzfjniwamumucb.supabase.co";
 const SUPABASE_ANON_KEY="sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+
+const sb=supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
 const el=id=>document.getElementById(id);
 
 const EXCLUDED_SUBJECTS=[
@@ -256,6 +285,7 @@ const state={
 
 function escapeHtml(value){
   if(value===null||value===undefined)return "";
+
   return String(value).replace(/[&<>"']/g,c=>({
     "&":"&amp;",
     "<":"&lt;",
@@ -271,33 +301,66 @@ function pad(n){
 
 function today(){
   const d=new Date();
-  return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+
+  return (
+    d.getFullYear()+
+    "-"+
+    pad(d.getMonth()+1)+
+    "-"+
+    pad(d.getDate())
+  );
 }
 
 function parseDate(value){
   const[y,m,d]=value.split("-").map(Number);
+
   return new Date(y,m-1,d);
 }
 
 function daysBetween(a,b){
-  return Math.round((parseDate(b)-parseDate(a))/86400000);
+  return Math.round(
+    (parseDate(b)-parseDate(a))/86400000
+  );
 }
 
 function formatDate(value){
   const d=parseDate(value);
+
   const months=[
-    "januari","februari","maart","april","mei","juni",
-    "juli","augustus","september","oktober","november","december"
+    "januari",
+    "februari",
+    "maart",
+    "april",
+    "mei",
+    "juni",
+    "juli",
+    "augustus",
+    "september",
+    "oktober",
+    "november",
+    "december"
   ];
+
   return d.getDate()+" "+months[d.getMonth()];
 }
 
 function formatMinutes(total){
-  total=Math.max(0,Math.round(Number(total||0)));
+  total=Math.max(
+    0,
+    Math.round(Number(total||0))
+  );
+
   const hours=Math.floor(total/60);
   const minutes=total%60;
-  if(hours&&minutes)return hours+" uur "+minutes+" min";
-  if(hours)return hours+" uur";
+
+  if(hours&&minutes){
+    return hours+" uur "+minutes+" min";
+  }
+
+  if(hours){
+    return hours+" uur";
+  }
+
   return minutes+" min";
 }
 
@@ -314,14 +377,20 @@ function showApp(){
 async function login(){
   const email=el("email").value.trim();
   const password=el("password").value;
+
   el("authMsg").textContent="";
 
   if(!email||!password){
-    el("authMsg").textContent="Vul e-mail en wachtwoord in.";
+    el("authMsg").textContent=
+      "Vul e-mail en wachtwoord in.";
+
     return;
   }
 
-  const{error}=await sb.auth.signInWithPassword({email,password});
+  const{error}=await sb.auth.signInWithPassword({
+    email,
+    password
+  });
 
   if(error){
     el("authMsg").textContent=error.message;
@@ -330,7 +399,9 @@ async function login(){
 
 async function startApp(user){
   state.user=user;
+
   showApp();
+
   await loadEverything();
 }
 
@@ -344,13 +415,42 @@ async function loadEverything(){
     quizzesRes,
     questionsRes
   ]=await Promise.all([
-    sb.from("exams").select("*").order("exam_date"),
-    sb.from("tasks").select("id,subject,planned_date,planned_minutes,actual_minutes,done"),
-    sb.from("study_topics").select("*").order("sort_order").order("chapter_number"),
-    sb.from("study_summaries").select("*").order("created_at"),
-    sb.from("study_flashcards").select("*").order("sort_order"),
-    sb.from("study_quizzes").select("*").order("created_at",{ascending:false}),
-    sb.from("study_quiz_questions").select("*").order("sort_order")
+    sb
+      .from("exams")
+      .select("*")
+      .order("exam_date"),
+
+    sb
+      .from("tasks")
+      .select(
+        "id,subject,planned_date,planned_minutes,actual_minutes,done"
+      ),
+
+    sb
+      .from("study_topics")
+      .select("*")
+      .order("sort_order")
+      .order("chapter_number"),
+
+    sb
+      .from("study_summaries")
+      .select("*")
+      .order("created_at"),
+
+    sb
+      .from("study_flashcards")
+      .select("*")
+      .order("sort_order"),
+
+    sb
+      .from("study_quizzes")
+      .select("*")
+      .order("created_at",{ascending:false}),
+
+    sb
+      .from("study_quiz_questions")
+      .select("*")
+      .order("sort_order")
   ]);
 
   const errors=[
@@ -365,7 +465,12 @@ async function loadEverything(){
 
   if(errors.length){
     console.error(errors);
-    alert("Niet alle leergegevens konden geladen worden: "+errors[0].message);
+
+    alert(
+      "Niet alle leergegevens konden geladen worden: "+
+      errors[0].message
+    );
+
     return;
   }
 
@@ -388,33 +493,66 @@ function isExcludedSubject(subject){
 
 function getNextExam(subject){
   return state.exams
-    .filter(exam=>exam.name===subject&&exam.exam_date>=today())
-    .sort((a,b)=>a.exam_date.localeCompare(b.exam_date))[0]||null;
+    .filter(exam=>
+      exam.name===subject&&
+      exam.exam_date>=today()
+    )
+    .sort(
+      (a,b)=>
+        a.exam_date.localeCompare(b.exam_date)
+    )[0]||null;
 }
 
 function getPlannedMinutes(subject){
   return state.tasks
-    .filter(task=>task.subject===subject&&task.planned_date>=today()&&!task.done)
+    .filter(task=>
+      task.subject===subject&&
+      task.planned_date>=today()&&
+      !task.done
+    )
     .reduce((sum,task)=>{
-      const planned=Number(task.planned_minutes||0);
-      const actual=Number(task.actual_minutes||0);
-      return sum+Math.max(planned-actual,0);
+      const planned=Number(
+        task.planned_minutes||0
+      );
+
+      const actual=Number(
+        task.actual_minutes||0
+      );
+
+      return sum+
+        Math.max(
+          planned-actual,
+          0
+        );
     },0);
 }
 
 function getSubjects(){
-  const fromExams=state.exams.map(e=>e.name);
-  const fromTopics=state.topics.map(t=>t.subject);
+  const fromExams=
+    state.exams.map(e=>e.name);
 
-  return [...new Set([...fromExams,...fromTopics])]
+  const fromTopics=
+    state.topics.map(t=>t.subject);
+
+  return [
+    ...new Set([
+      ...fromExams,
+      ...fromTopics
+    ])
+  ]
     .filter(Boolean)
-    .filter(subject=>!isExcludedSubject(subject))
+    .filter(
+      subject=>
+        !isExcludedSubject(subject)
+    )
     .sort((a,b)=>{
       const examA=getNextExam(a);
       const examB=getNextExam(b);
 
       if(examA&&examB){
-        return examA.exam_date.localeCompare(examB.exam_date);
+        return examA.exam_date.localeCompare(
+          examB.exam_date
+        );
       }
 
       if(examA)return -1;
@@ -427,30 +565,42 @@ function getSubjects(){
 function renderSubjects(){
   const subjects=getSubjects();
   const select=el("subjectSelect");
+
   select.innerHTML="";
 
   if(!subjects.length){
-    select.innerHTML='<option value="">Geen vakken gevonden</option>';
+    select.innerHTML=
+      '<option value="">Geen vakken gevonden</option>';
+
     renderTopicList();
     renderFullQuiz();
+
     return;
   }
 
   subjects.forEach(subject=>{
     const exam=getNextExam(subject);
     const option=document.createElement("option");
+
     option.value=subject;
-    option.textContent=exam
-      ?subject+" · "+formatDate(exam.exam_date)
-      :subject;
+
+    option.textContent=
+      exam
+        ?subject+" · "+formatDate(exam.exam_date)
+        :subject;
+
     select.appendChild(option);
   });
 
-  if(!state.selectedSubject||!subjects.includes(state.selectedSubject)){
+  if(
+    !state.selectedSubject||
+    !subjects.includes(state.selectedSubject)
+  ){
     state.selectedSubject=subjects[0];
   }
 
   select.value=state.selectedSubject;
+
   renderTopicList();
   renderFullQuiz();
 }
@@ -460,34 +610,55 @@ function renderUpcomingExams(){
   const grouped={};
 
   state.exams
-    .filter(exam=>exam.exam_date>=today()&&!isExcludedSubject(exam.name))
+    .filter(exam=>
+      exam.exam_date>=today()&&
+      !isExcludedSubject(exam.name)
+    )
     .forEach(exam=>{
       if(!grouped[exam.name]){
         grouped[exam.name]=[];
       }
+
       grouped[exam.name].push(exam);
     });
 
   const subjects=Object.entries(grouped)
     .map(([subject,exams])=>{
-      exams.sort((a,b)=>a.exam_date.localeCompare(b.exam_date));
+      exams.sort(
+        (a,b)=>
+          a.exam_date.localeCompare(
+            b.exam_date
+          )
+      );
+
       return{
         subject,
         exam:exams[0],
         planned:getPlannedMinutes(subject)
       };
     })
-    .sort((a,b)=>a.exam.exam_date.localeCompare(b.exam.exam_date));
+    .sort(
+      (a,b)=>
+        a.exam.exam_date.localeCompare(
+          b.exam.exam_date
+        )
+    );
 
   if(!subjects.length){
-    box.innerHTML='<div class="empty">Geen aankomende toetsen gevonden.</div>';
+    box.innerHTML=
+      '<div class="empty">Geen aankomende toetsen gevonden.</div>';
+
     return;
   }
 
   box.innerHTML="";
 
   subjects.forEach(item=>{
-    const days=daysBetween(today(),item.exam.exam_date);
+    const days=daysBetween(
+      today(),
+      item.exam.exam_date
+    );
+
     let dayClass="";
 
     if(days<=14){
@@ -496,20 +667,44 @@ function renderUpcomingExams(){
       dayClass="medium";
     }
 
-    const card=document.createElement("button");
-    card.className="upcoming-card"+(state.selectedSubject===item.subject?" active":"");
+    const card=
+      document.createElement("button");
+
+    card.className=
+      "upcoming-card"+
+      (
+        state.selectedSubject===
+        item.subject
+          ?" active"
+          :""
+      );
 
     card.innerHTML=`
       <div class="upcoming-top">
-        <div class="upcoming-name">${escapeHtml(item.subject)}</div>
+        <div class="upcoming-name">
+          ${escapeHtml(item.subject)}
+        </div>
+
         <span class="upcoming-days ${dayClass}">
-          ${days===0?"Vandaag":"nog "+days+" dagen"}
+          ${
+            days===0
+              ?"Vandaag"
+              :"nog "+days+" dagen"
+          }
         </span>
       </div>
+
       <div class="upcoming-date">
-        Kans ${item.exam.attempt} · ${formatDate(item.exam.exam_date)}
-        ${item.exam.study_year?" · Jaar "+item.exam.study_year:""}
+        Kans ${item.exam.attempt}
+        ·
+        ${formatDate(item.exam.exam_date)}
+        ${
+          item.exam.study_year
+            ?" · Jaar "+item.exam.study_year
+            :""
+        }
       </div>
+
       <div class="upcoming-planned">
         ${
           item.planned>0
@@ -520,7 +715,9 @@ function renderUpcomingExams(){
     `;
 
     card.onclick=()=>{
-      chooseSubject(item.subject);
+      chooseSubject(
+        item.subject
+      );
     };
 
     box.appendChild(card);
@@ -530,26 +727,51 @@ function renderUpcomingExams(){
 function renderFullQuiz(){
   const section=el("fullQuizSection");
 
-  const quiz=state.quizzes.find(q=>
-    q.subject===state.selectedSubject&&
-    q.topic_id===null
-  );
+  const quiz=state.quizzes.find(q=>{
+    const sameSubject=
+      q.subject===state.selectedSubject;
+
+    const noTopic=
+      q.topic_id===null||
+      q.topic_id===undefined||
+      q.topic_id==="";
+
+    return sameSubject&&noTopic;
+  });
 
   if(!quiz){
     section.classList.add("hidden");
     return;
   }
 
-  const count=state.quizQuestions.filter(q=>q.quiz_id===quiz.id).length;
+  const count=
+    state.quizQuestions.filter(
+      question=>
+        question.quiz_id===quiz.id
+    ).length;
 
-  el("fullQuizTitle").textContent=quiz.title;
+  el("fullQuizTitle").textContent=
+    quiz.title||
+    "Gehele oefentoets";
+
   el("fullQuizMeta").textContent=
-    count+" vragen · "+(quiz.difficulty||"toetsniveau")+" · alle onderdelen";
+    count+
+    " vragen · "+
+    (quiz.difficulty||"toetsniveau")+
+    " · alle onderdelen";
 
   section.classList.remove("hidden");
 
-  el("startFullQuizBtn").onclick=()=>{
-    startFullQuiz(quiz.id);
+  const button=
+    el("startFullQuizBtn");
+
+  button.textContent=
+    "Start gehele oefentoets";
+
+  button.onclick=()=>{
+    startFullQuiz(
+      quiz.id
+    );
   };
 }
 
@@ -560,7 +782,10 @@ function chooseSubject(subject){
   state.fullQuizMode=false;
   state.flashIndex=0;
   state.flashShowingAnswer=false;
-  el("subjectSelect").value=subject;
+
+  el("subjectSelect").value=
+    subject;
+
   renderUpcomingExams();
   renderFullQuiz();
   renderTopicList();
@@ -569,54 +794,119 @@ function chooseSubject(subject){
 function renderTopicList(){
   const list=el("topicList");
 
-  const topics=state.topics
-    .filter(t=>t.subject===state.selectedSubject)
-    .sort((a,b)=>{
-      const sortA=Number(a.sort_order||0);
-      const sortB=Number(b.sort_order||0);
+  const topics=
+    state.topics
+      .filter(
+        t=>
+          t.subject===
+          state.selectedSubject
+      )
+      .sort((a,b)=>{
+        const sortA=
+          Number(a.sort_order||0);
 
-      if(sortA!==sortB)return sortA-sortB;
+        const sortB=
+          Number(b.sort_order||0);
 
-      return Number(a.chapter_number??999)-Number(b.chapter_number??999);
-    });
+        if(sortA!==sortB){
+          return sortA-sortB;
+        }
+
+        return Number(
+          a.chapter_number??999
+        )-
+        Number(
+          b.chapter_number??999
+        );
+      });
 
   list.innerHTML="";
 
   if(!topics.length){
     list.innerHTML=`
       <div class="empty">
-        Voor <strong>${escapeHtml(state.selectedSubject||"dit vak")}</strong>
+        Voor
+        <strong>
+          ${escapeHtml(
+            state.selectedSubject||
+            "dit vak"
+          )}
+        </strong>
         staat nog geen leerstof in Supabase.
       </div>
     `;
 
     state.selectedTopic=null;
-    el("topicContent").classList.add("hidden");
-    el("nothingSelected").classList.remove("hidden");
+
+    el("topicContent")
+      .classList
+      .add("hidden");
+
+    el("nothingSelected")
+      .classList
+      .remove("hidden");
+
     return;
   }
 
   topics.forEach(topic=>{
-    const summaryCount=state.summaries.filter(s=>s.topic_id===topic.id).length;
-    const flashCount=state.flashcards.filter(f=>f.topic_id===topic.id).length;
-    const quizCount=state.quizzes.filter(q=>q.topic_id===topic.id).length;
+    const summaryCount=
+      state.summaries.filter(
+        s=>s.topic_id===topic.id
+      ).length;
 
-    const button=document.createElement("button");
+    const flashCount=
+      state.flashcards.filter(
+        f=>f.topic_id===topic.id
+      ).length;
+
+    const quizCount=
+      state.quizzes.filter(
+        q=>q.topic_id===topic.id
+      ).length;
+
+    const button=
+      document.createElement("button");
+
     button.className=
       "topic-btn"+
-      (state.selectedTopic?.id===topic.id&&!state.fullQuizMode?" active":"");
+      (
+        state.selectedTopic?.id===
+        topic.id&&
+        !state.fullQuizMode
+          ?" active"
+          :""
+      );
 
     button.innerHTML=`
       <div class="topic-title">
-        ${topic.chapter_number!==null&&topic.chapter_number!==undefined
-          ?topic.chapter_number+". "
-          :""}
+        ${
+          topic.chapter_number!==null&&
+          topic.chapter_number!==undefined
+            ?topic.chapter_number+". "
+            :""
+        }
         ${escapeHtml(topic.title)}
       </div>
+
       <div class="topic-meta">
-        ${summaryCount?`<span>✓ samenvatting</span>`:""}
-        ${flashCount?`<span>${flashCount} kaarten</span>`:""}
-        ${quizCount?`<span>${quizCount} toets${quizCount===1?"":"en"}</span>`:""}
+        ${
+          summaryCount
+            ?"<span>✓ samenvatting</span>"
+            :""
+        }
+
+        ${
+          flashCount
+            ?`<span>${flashCount} kaarten</span>`
+            :""
+        }
+
+        ${
+          quizCount
+            ?`<span>${quizCount} toets${quizCount===1?"":"en"}</span>`
+            :""
+        }
       </div>
     `;
 
@@ -627,6 +917,7 @@ function renderTopicList(){
       state.fullQuizMode=false;
       state.flashIndex=0;
       state.flashShowingAnswer=false;
+
       renderTopicList();
       renderTopic();
     };
@@ -636,43 +927,85 @@ function renderTopicList(){
 
   if(
     !state.fullQuizMode&&
-    (!state.selectedTopic||state.selectedTopic.subject!==state.selectedSubject)
+    (
+      !state.selectedTopic||
+      state.selectedTopic.subject!==
+      state.selectedSubject
+    )
   ){
-    state.selectedTopic=topics[0];
+    state.selectedTopic=
+      topics[0];
+
     renderTopic();
   }
 }
 
 function renderTopic(){
-  const topic=state.selectedTopic;
+  const topic=
+    state.selectedTopic;
 
   if(!topic){
-    el("topicContent").classList.add("hidden");
-    el("nothingSelected").classList.remove("hidden");
+    el("topicContent")
+      .classList
+      .add("hidden");
+
+    el("nothingSelected")
+      .classList
+      .remove("hidden");
+
     return;
   }
 
-  el("nothingSelected").classList.add("hidden");
-  el("topicContent").classList.remove("hidden");
+  el("nothingSelected")
+    .classList
+    .add("hidden");
+
+  el("topicContent")
+    .classList
+    .remove("hidden");
 
   el("topicTitle").textContent=
-    (topic.chapter_number!==null&&topic.chapter_number!==undefined
-      ?topic.chapter_number+". "
-      :"")+
+    (
+      topic.chapter_number!==null&&
+      topic.chapter_number!==undefined
+        ?topic.chapter_number+". "
+        :""
+    )+
     topic.title;
 
-  el("topicDescription").textContent=topic.description||"";
+  el("topicDescription").textContent=
+    topic.description||"";
 
-  document.querySelectorAll(".tab-btn").forEach(btn=>{
-    btn.classList.toggle(
-      "active",
-      btn.dataset.tab===state.currentTab
+  document
+    .querySelectorAll(".tab-btn")
+    .forEach(btn=>{
+      btn.classList.toggle(
+        "active",
+        btn.dataset.tab===
+        state.currentTab
+      );
+    });
+
+  el("summaryTab")
+    .classList
+    .toggle(
+      "hidden",
+      state.currentTab!=="summary"
     );
-  });
 
-  el("summaryTab").classList.toggle("hidden",state.currentTab!=="summary");
-  el("flashcardsTab").classList.toggle("hidden",state.currentTab!=="flashcards");
-  el("quizzesTab").classList.toggle("hidden",state.currentTab!=="quizzes");
+  el("flashcardsTab")
+    .classList
+    .toggle(
+      "hidden",
+      state.currentTab!=="flashcards"
+    );
+
+  el("quizzesTab")
+    .classList
+    .toggle(
+      "hidden",
+      state.currentTab!=="quizzes"
+    );
 
   renderSummary();
   renderFlashcards();
@@ -680,16 +1013,20 @@ function renderTopic(){
 }
 
 function renderSummary(){
-  const box=el("summaryTab");
+  const box=
+    el("summaryTab");
 
   if(!state.selectedTopic){
     box.innerHTML="";
     return;
   }
 
-  const summaries=state.summaries.filter(
-    summary=>summary.topic_id===state.selectedTopic.id
-  );
+  const summaries=
+    state.summaries.filter(
+      summary=>
+        summary.topic_id===
+        state.selectedTopic.id
+    );
 
   if(!summaries.length){
     box.innerHTML=`
@@ -697,34 +1034,49 @@ function renderSummary(){
         Voor dit hoofdstuk staat nog geen samenvatting in Supabase.
       </div>
     `;
+
     return;
   }
 
-  box.innerHTML=summaries.map(summary=>`
-    <div style="margin-bottom:30px">
-      <div class="summary-title">${escapeHtml(summary.title)}</div>
-      <div class="summary-content">${escapeHtml(summary.content)}</div>
-    </div>
-  `).join("");
+  box.innerHTML=
+    summaries.map(
+      summary=>`
+        <div style="margin-bottom:30px">
+          <div class="summary-title">
+            ${escapeHtml(summary.title)}
+          </div>
+
+          <div class="summary-content">
+            ${escapeHtml(summary.content)}
+          </div>
+        </div>
+      `
+    ).join("");
 }
 
 function getCurrentFlashcards(){
-  if(!state.selectedTopic)return[];
+  if(!state.selectedTopic){
+    return[];
+  }
 
   return state.flashcards.filter(
-    card=>card.topic_id===state.selectedTopic.id
+    card=>
+      card.topic_id===
+      state.selectedTopic.id
   );
 }
 
 function renderFlashcards(){
-  const box=el("flashcardsTab");
+  const box=
+    el("flashcardsTab");
 
   if(!state.selectedTopic){
     box.innerHTML="";
     return;
   }
 
-  const cards=getCurrentFlashcards();
+  const cards=
+    getCurrentFlashcards();
 
   if(!cards.length){
     box.innerHTML=`
@@ -732,71 +1084,135 @@ function renderFlashcards(){
         Voor dit hoofdstuk staan nog geen flashcards in Supabase.
       </div>
     `;
+
     return;
   }
 
-  if(state.flashIndex>=cards.length){
+  if(
+    state.flashIndex>=
+    cards.length
+  ){
     state.flashIndex=0;
   }
 
-  const card=cards[state.flashIndex];
+  const card=
+    cards[state.flashIndex];
 
   box.innerHTML=`
     <div class="flash-area">
       <div class="flash-progress">
-        <span>Kaart ${state.flashIndex+1} van ${cards.length}</span>
-        <span>${state.flashShowingAnswer?"Antwoord":"Vraag"}</span>
+        <span>
+          Kaart
+          ${state.flashIndex+1}
+          van
+          ${cards.length}
+        </span>
+
+        <span>
+          ${
+            state.flashShowingAnswer
+              ?"Antwoord"
+              :"Vraag"
+          }
+        </span>
       </div>
+
       <div class="flashcard" id="flashCard">
         <div>
-          <div class="${state.flashShowingAnswer?"back":"front"}">
-            ${escapeHtml(state.flashShowingAnswer?card.answer:card.question)}
+          <div class="${
+            state.flashShowingAnswer
+              ?"back"
+              :"front"
+          }">
+            ${
+              escapeHtml(
+                state.flashShowingAnswer
+                  ?card.answer
+                  :card.question
+              )
+            }
           </div>
+
           <div class="flash-hint">
-            ${state.flashShowingAnswer
-              ?"Klik om de vraag terug te zien"
-              :"Klik om het antwoord te tonen"}
+            ${
+              state.flashShowingAnswer
+                ?"Klik om de vraag terug te zien"
+                :"Klik om het antwoord te tonen"
+            }
           </div>
         </div>
       </div>
+
       <div class="flash-actions">
-        <button class="btn" id="previousFlash">← Vorige</button>
-        <button class="btn btn-primary" id="flipFlash">
-          ${state.flashShowingAnswer?"Vraag tonen":"Antwoord tonen"}
+        <button class="btn" id="previousFlash">
+          ← Vorige
         </button>
-        <button class="btn" id="nextFlash">Volgende →</button>
+
+        <button class="btn btn-primary" id="flipFlash">
+          ${
+            state.flashShowingAnswer
+              ?"Vraag tonen"
+              :"Antwoord tonen"
+          }
+        </button>
+
+        <button class="btn" id="nextFlash">
+          Volgende →
+        </button>
       </div>
     </div>
   `;
 
-  el("flashCard").onclick=flipFlash;
-  el("flipFlash").onclick=flipFlash;
+  el("flashCard").onclick=
+    flipFlash;
+
+  el("flipFlash").onclick=
+    flipFlash;
 
   el("previousFlash").onclick=()=>{
     state.flashIndex=
-      (state.flashIndex-1+cards.length)%cards.length;
+      (
+        state.flashIndex-
+        1+
+        cards.length
+      )%
+      cards.length;
+
     state.flashShowingAnswer=false;
+
     renderFlashcards();
   };
 
   el("nextFlash").onclick=()=>{
     state.flashIndex=
-      (state.flashIndex+1)%cards.length;
+      (
+        state.flashIndex+
+        1
+      )%
+      cards.length;
+
     state.flashShowingAnswer=false;
+
     renderFlashcards();
   };
 }
 
 function flipFlash(){
-  state.flashShowingAnswer=!state.flashShowingAnswer;
+  state.flashShowingAnswer=
+    !state.flashShowingAnswer;
+
   renderFlashcards();
 }
 
 function getTopicQuizzes(){
-  if(!state.selectedTopic)return[];
+  if(!state.selectedTopic){
+    return[];
+  }
 
   return state.quizzes.filter(
-    quiz=>quiz.topic_id===state.selectedTopic.id
+    quiz=>
+      quiz.topic_id===
+      state.selectedTopic.id
   );
 }
 
@@ -806,14 +1222,16 @@ function renderQuizzes(){
     return;
   }
 
-  const box=el("quizzesTab");
+  const box=
+    el("quizzesTab");
 
   if(!state.selectedTopic){
     box.innerHTML="";
     return;
   }
 
-  const quizzes=getTopicQuizzes();
+  const quizzes=
+    getTopicQuizzes();
 
   if(!quizzes.length){
     box.innerHTML=`
@@ -821,39 +1239,70 @@ function renderQuizzes(){
         Voor dit hoofdstuk staan nog geen oefentoetsen in Supabase.
       </div>
     `;
+
     return;
   }
 
   box.innerHTML=`
     <div class="quiz-list">
-      ${quizzes.map(quiz=>{
-        const count=state.quizQuestions.filter(q=>q.quiz_id===quiz.id).length;
+      ${
+        quizzes.map(quiz=>{
+          const count=
+            state.quizQuestions.filter(
+              q=>
+                q.quiz_id===
+                quiz.id
+            ).length;
 
-        return`
-          <div class="quiz-card">
-            <div>
-              <h3>${escapeHtml(quiz.title)}</h3>
-              <div class="quiz-meta">
-                ${count} vragen · ${escapeHtml(quiz.difficulty||"toetsniveau")}
+          return`
+            <div class="quiz-card">
+              <div>
+                <h3>
+                  ${escapeHtml(quiz.title)}
+                </h3>
+
+                <div class="quiz-meta">
+                  ${count} vragen ·
+                  ${escapeHtml(
+                    quiz.difficulty||
+                    "toetsniveau"
+                  )}
+                </div>
               </div>
+
+              <button
+                class="btn btn-primary start-quiz"
+                data-id="${quiz.id}"
+              >
+                Start toets
+              </button>
             </div>
-            <button class="btn btn-primary start-quiz" data-id="${quiz.id}">
-              Start toets
-            </button>
-          </div>
-        `;
-      }).join("")}
+          `;
+        }).join("")
+      }
     </div>
   `;
 
-  document.querySelectorAll(".start-quiz").forEach(btn=>{
-    btn.onclick=()=>startQuiz(btn.dataset.id);
-  });
+  document
+    .querySelectorAll(".start-quiz")
+    .forEach(btn=>{
+      btn.onclick=()=>{
+        startQuiz(
+          btn.dataset.id
+        );
+      };
+    });
 }
 
 function startQuiz(quizId){
-  const quiz=state.quizzes.find(q=>q.id===quizId);
-  if(!quiz)return;
+  const quiz=
+    state.quizzes.find(
+      q=>q.id===quizId
+    );
+
+  if(!quiz){
+    return;
+  }
 
   state.currentQuiz=quiz;
   state.quizIndex=0;
@@ -861,12 +1310,19 @@ function startQuiz(quizId){
   state.quizChecked=false;
   state.fullQuizMode=false;
   state.currentTab="quizzes";
+
   renderTopic();
 }
 
 function startFullQuiz(quizId){
-  const quiz=state.quizzes.find(q=>q.id===quizId);
-  if(!quiz)return;
+  const quiz=
+    state.quizzes.find(
+      q=>q.id===quizId
+    );
+
+  if(!quiz){
+    return;
+  }
 
   state.currentQuiz=quiz;
   state.quizIndex=0;
@@ -875,38 +1331,69 @@ function startFullQuiz(quizId){
   state.fullQuizMode=true;
   state.currentTab="quizzes";
 
-  el("nothingSelected").classList.add("hidden");
-  el("topicContent").classList.remove("hidden");
+  el("nothingSelected")
+    .classList
+    .add("hidden");
 
-  el("topicTitle").textContent=quiz.title;
+  el("topicContent")
+    .classList
+    .remove("hidden");
+
+  el("topicTitle").textContent=
+    quiz.title;
+
   el("topicDescription").textContent=
-    "Gemengde oefentoets over alle onderdelen van "+state.selectedSubject+".";
+    "Gemengde oefentoets over alle onderdelen van "+
+    state.selectedSubject+
+    ".";
 
-  document.querySelectorAll(".tab-btn").forEach(btn=>{
-    btn.classList.toggle(
-      "active",
-      btn.dataset.tab==="quizzes"
-    );
-  });
+  document
+    .querySelectorAll(".tab-btn")
+    .forEach(btn=>{
+      btn.classList.toggle(
+        "active",
+        btn.dataset.tab===
+        "quizzes"
+      );
+    });
 
-  el("summaryTab").classList.add("hidden");
-  el("flashcardsTab").classList.add("hidden");
-  el("quizzesTab").classList.remove("hidden");
+  el("summaryTab")
+    .classList
+    .add("hidden");
+
+  el("flashcardsTab")
+    .classList
+    .add("hidden");
+
+  el("quizzesTab")
+    .classList
+    .remove("hidden");
 
   renderTopicList();
   renderActiveQuiz();
 
   window.scrollTo({
-    top:el("topicContent").getBoundingClientRect().top+window.scrollY-90,
+    top:
+      el("topicContent")
+        .getBoundingClientRect()
+        .top+
+      window.scrollY-
+      90,
     behavior:"smooth"
   });
 }
 
 function getCurrentQuizQuestions(){
-  if(!state.currentQuiz)return[];
+  if(!state.currentQuiz){
+    return[];
+  }
 
   return state.quizQuestions
-    .filter(q=>q.quiz_id===state.currentQuiz.id)
+    .filter(
+      q=>
+        q.quiz_id===
+        state.currentQuiz.id
+    )
     .sort(
       (a,b)=>
         Number(a.sort_order||0)-
@@ -915,30 +1402,49 @@ function getCurrentQuizQuestions(){
 }
 
 function renderActiveQuiz(){
-  const box=el("quizzesTab");
-  const questions=getCurrentQuizQuestions();
+  const box=
+    el("quizzesTab");
+
+  const questions=
+    getCurrentQuizQuestions();
 
   if(!questions.length){
     box.innerHTML=`
       <div class="no-content">
         Deze oefentoets bevat nog geen vragen.
         <br><br>
-        <button class="btn" id="backToQuizzes">Terug</button>
+
+        <button class="btn" id="backToQuizzes">
+          Terug
+        </button>
       </div>
     `;
 
-    el("backToQuizzes").onclick=endQuiz;
+    el("backToQuizzes").onclick=
+      endQuiz;
+
     return;
   }
 
-  if(state.quizIndex>=questions.length){
+  if(
+    state.quizIndex>=
+    questions.length
+  ){
     finishQuiz();
     return;
   }
 
-  const question=questions[state.quizIndex];
-  const savedAnswer=state.quizAnswers[state.quizIndex];
-  const isMC=question.question_type==="multiple_choice";
+  const question=
+    questions[state.quizIndex];
+
+  const savedAnswer=
+    state.quizAnswers[
+      state.quizIndex
+    ];
+
+  const isMC=
+    question.question_type===
+    "multiple_choice";
 
   let answerHtml="";
 
@@ -948,35 +1454,62 @@ function renderActiveQuiz(){
       ["B",question.option_b],
       ["C",question.option_c],
       ["D",question.option_d]
-    ].filter(([,text])=>text);
+    ].filter(
+      ([,text])=>text
+    );
 
     answerHtml=`
       <div class="options">
-        ${options.map(([letter,text])=>{
-          let cls="";
+        ${
+          options.map(
+            ([letter,text])=>{
+              let cls="";
 
-          if(savedAnswer?.answer===letter){
-            cls+=" selected";
-          }
+              if(
+                savedAnswer?.answer===
+                letter
+              ){
+                cls+=" selected";
+              }
 
-          if(state.quizChecked){
-            if(letter.toUpperCase()===String(question.correct_answer).toUpperCase()){
-              cls+=" correct";
-            }else if(savedAnswer?.answer===letter){
-              cls+=" wrong";
+              if(
+                state.quizChecked
+              ){
+                if(
+                  letter.toUpperCase()===
+                  String(
+                    question.correct_answer
+                  ).toUpperCase()
+                ){
+                  cls+=" correct";
+                }else if(
+                  savedAnswer?.answer===
+                  letter
+                ){
+                  cls+=" wrong";
+                }
+              }
+
+              return`
+                <button
+                  class="option-btn${cls}"
+                  data-answer="${letter}"
+                  ${
+                    state.quizChecked
+                      ?"disabled"
+                      :""
+                  }
+                >
+                  <strong>
+                    ${letter}.
+                  </strong>
+
+                  ${escapeHtml(text)}
+                </button>
+              `;
             }
-          }
-
-          return`
-            <button
-              class="option-btn${cls}"
-              data-answer="${letter}"
-              ${state.quizChecked?"disabled":""}
-            >
-              <strong>${letter}.</strong> ${escapeHtml(text)}
-            </button>
-          `;
-        }).join("")}
+          ).join("")
+        }
       </div>
     `;
   }else{
@@ -985,141 +1518,261 @@ function renderActiveQuiz(){
         id="openAnswer"
         class="quiz-answer-input"
         placeholder="Typ hier je antwoord..."
-        ${state.quizChecked?"disabled":""}
-      >${escapeHtml(savedAnswer?.answer||"")}</textarea>
+        ${
+          state.quizChecked
+            ?"disabled"
+            :""
+        }
+      >${
+        escapeHtml(
+          savedAnswer?.answer||
+          ""
+        )
+      }</textarea>
     `;
   }
 
   box.innerHTML=`
     <div class="quiz-area">
       <div class="quiz-top">
-        <span>${escapeHtml(state.currentQuiz.title)}</span>
-        <span>Vraag ${state.quizIndex+1} van ${questions.length}</span>
+        <span>
+          ${escapeHtml(
+            state.currentQuiz.title
+          )}
+        </span>
+
+        <span>
+          Vraag
+          ${state.quizIndex+1}
+          van
+          ${questions.length}
+        </span>
       </div>
 
       <div class="question-box">
         <div class="question-text">
-          ${escapeHtml(question.question)}
+          ${escapeHtml(
+            question.question
+          )}
         </div>
 
         ${answerHtml}
 
-        ${state.quizChecked?`
-          <div class="explanation">
-            <strong>Juiste antwoord:</strong>
-            ${escapeHtml(question.correct_answer)}
-            ${question.explanation
-              ?`<br><br>${escapeHtml(question.explanation)}`
-              :""}
-          </div>
-        `:""}
+        ${
+          state.quizChecked
+            ?`
+              <div class="explanation">
+                <strong>
+                  Juiste antwoord:
+                </strong>
+
+                ${escapeHtml(
+                  question.correct_answer
+                )}
+
+                ${
+                  question.explanation
+                    ?`<br><br>${escapeHtml(
+                      question.explanation
+                    )}`
+                    :""
+                }
+              </div>
+            `
+            :""
+        }
       </div>
 
       <div class="quiz-bottom">
-        <button class="btn" id="stopQuiz">Stoppen</button>
+        <button
+          class="btn"
+          id="stopQuiz"
+        >
+          Stoppen
+        </button>
+
         ${
           !state.quizChecked
-            ?'<button class="btn btn-primary" id="checkAnswer">Controleren</button>'
-            :`<button class="btn btn-primary" id="nextQuestion">
-                ${state.quizIndex===questions.length-1
-                  ?"Resultaat"
-                  :"Volgende vraag"}
-              </button>`
+            ?`
+              <button
+                class="btn btn-primary"
+                id="checkAnswer"
+              >
+                Controleren
+              </button>
+            `
+            :`
+              <button
+                class="btn btn-primary"
+                id="nextQuestion"
+              >
+                ${
+                  state.quizIndex===
+                  questions.length-1
+                    ?"Resultaat"
+                    :"Volgende vraag"
+                }
+              </button>
+            `
         }
       </div>
     </div>
   `;
 
-  el("stopQuiz").onclick=endQuiz;
+  el("stopQuiz").onclick=
+    endQuiz;
 
-  if(isMC&&!state.quizChecked){
-    document.querySelectorAll(".option-btn").forEach(btn=>{
-      btn.onclick=()=>{
-        state.quizAnswers[state.quizIndex]={
-          answer:btn.dataset.answer
+  if(
+    isMC&&
+    !state.quizChecked
+  ){
+    document
+      .querySelectorAll(".option-btn")
+      .forEach(btn=>{
+        btn.onclick=()=>{
+          state.quizAnswers[
+            state.quizIndex
+          ]={
+            answer:
+              btn.dataset.answer
+          };
+
+          renderActiveQuiz();
         };
-        renderActiveQuiz();
-      };
-    });
+      });
   }
 
   if(!state.quizChecked){
     el("checkAnswer").onclick=()=>{
       if(isMC){
-        if(!state.quizAnswers[state.quizIndex]){
-          alert("Kies eerst een antwoord.");
+        if(
+          !state.quizAnswers[
+            state.quizIndex
+          ]
+        ){
+          alert(
+            "Kies eerst een antwoord."
+          );
+
           return;
         }
       }else{
-        const answer=el("openAnswer").value.trim();
+        const answer=
+          el("openAnswer")
+            .value
+            .trim();
 
         if(!answer){
-          alert("Vul eerst een antwoord in.");
+          alert(
+            "Vul eerst een antwoord in."
+          );
+
           return;
         }
 
-        state.quizAnswers[state.quizIndex]={
+        state.quizAnswers[
+          state.quizIndex
+        ]={
           answer
         };
       }
 
       state.quizChecked=true;
+
       renderActiveQuiz();
     };
   }else{
     el("nextQuestion").onclick=()=>{
       state.quizIndex++;
       state.quizChecked=false;
+
       renderActiveQuiz();
     };
   }
 }
 
 async function finishQuiz(){
-  const questions=getCurrentQuizQuestions();
+  const questions=
+    getCurrentQuizQuestions();
+
   let score=0;
   let automaticQuestions=0;
 
-  questions.forEach((question,index)=>{
-    if(question.question_type!=="multiple_choice"){
-      return;
+  questions.forEach(
+    (question,index)=>{
+      if(
+        question.question_type!==
+        "multiple_choice"
+      ){
+        return;
+      }
+
+      automaticQuestions++;
+
+      const given=
+        String(
+          state.quizAnswers[index]
+            ?.answer||
+          ""
+        )
+        .trim()
+        .toLowerCase();
+
+      const correct=
+        String(
+          question.correct_answer||
+          ""
+        )
+        .trim()
+        .toLowerCase();
+
+      if(given===correct){
+        score++;
+      }
     }
-
-    automaticQuestions++;
-
-    const given=String(
-      state.quizAnswers[index]?.answer||""
-    ).trim().toLowerCase();
-
-    const correct=String(
-      question.correct_answer||""
-    ).trim().toLowerCase();
-
-    if(given===correct){
-      score++;
-    }
-  });
+  );
 
   const percentage=
     automaticQuestions
-      ?Math.round(score/automaticQuestions*100)
+      ?Math.round(
+        score/
+        automaticQuestions*
+        100
+      )
       :0;
 
-  const box=el("quizzesTab");
+  const box=
+    el("quizzesTab");
 
   box.innerHTML=`
     <div class="result-box">
-      <div class="result-score">${percentage}%</div>
-      <div class="result-label">
-        ${score} van ${automaticQuestions} meerkeuzevragen goed
+      <div class="result-score">
+        ${percentage}%
       </div>
 
-      <p style="font-size:12px;color:#7a8492;margin:15px auto 20px;max-width:520px">
+      <div class="result-label">
+        ${score}
+        van
+        ${automaticQuestions}
+        meerkeuzevragen goed
+      </div>
+
+      <p
+        style="
+          font-size:12px;
+          color:#7a8492;
+          margin:15px auto 20px;
+          max-width:520px
+        "
+      >
         Open vragen worden voorlopig niet automatisch beoordeeld.
         Vergelijk daarbij zelf je antwoord met het modelantwoord.
       </p>
 
-      <button class="btn btn-primary" id="finishQuizBtn">
+      <button
+        class="btn btn-primary"
+        id="finishQuizBtn"
+      >
         ${
           state.fullQuizMode
             ?"Toets afsluiten"
@@ -1130,23 +1783,37 @@ async function finishQuiz(){
   `;
 
   if(state.currentQuiz){
-    const{error}=await sb.from("study_quiz_attempts").insert({
-      user_id:state.user.id,
-      quiz_id:state.currentQuiz.id,
-      score,
-      total_questions:automaticQuestions
-    });
+    const{error}=
+      await sb
+        .from("study_quiz_attempts")
+        .insert({
+          user_id:
+            state.user.id,
+
+          quiz_id:
+            state.currentQuiz.id,
+
+          score,
+
+          total_questions:
+            automaticQuestions
+        });
 
     if(error){
-      console.error("Resultaat opslaan mislukt:",error);
+      console.error(
+        "Resultaat opslaan mislukt:",
+        error
+      );
     }
   }
 
-  el("finishQuizBtn").onclick=endQuiz;
+  el("finishQuizBtn").onclick=
+    endQuiz;
 }
 
 function endQuiz(){
-  const wasFullQuiz=state.fullQuizMode;
+  const wasFullQuiz=
+    state.fullQuizMode;
 
   state.currentQuiz=null;
   state.quizIndex=0;
@@ -1161,8 +1828,13 @@ function endQuiz(){
       renderTopic();
       renderTopicList();
     }else{
-      el("topicContent").classList.add("hidden");
-      el("nothingSelected").classList.remove("hidden");
+      el("topicContent")
+        .classList
+        .add("hidden");
+
+      el("nothingSelected")
+        .classList
+        .remove("hidden");
     }
 
     return;
@@ -1171,21 +1843,27 @@ function endQuiz(){
   renderQuizzes();
 }
 
-document.querySelectorAll(".tab-btn").forEach(btn=>{
-  btn.onclick=()=>{
-    if(state.fullQuizMode){
-      return;
-    }
+document
+  .querySelectorAll(".tab-btn")
+  .forEach(btn=>{
+    btn.onclick=()=>{
+      if(state.fullQuizMode){
+        return;
+      }
 
-    state.currentTab=btn.dataset.tab;
+      state.currentTab=
+        btn.dataset.tab;
 
-    if(state.currentTab!=="quizzes"){
-      state.currentQuiz=null;
-    }
+      if(
+        state.currentTab!==
+        "quizzes"
+      ){
+        state.currentQuiz=null;
+      }
 
-    renderTopic();
-  };
-});
+      renderTopic();
+    };
+  });
 
 el("subjectSelect").onchange=()=>{
   chooseSubject(
@@ -1193,7 +1871,8 @@ el("subjectSelect").onchange=()=>{
   );
 };
 
-el("loginBtn").onclick=login;
+el("loginBtn").onclick=
+  login;
 
 el("password").onkeydown=e=>{
   if(e.key==="Enter"){
@@ -1205,23 +1884,34 @@ el("logoutBtn").onclick=()=>{
   sb.auth.signOut();
 };
 
-sb.auth.getSession().then(({data})=>{
-  if(data.session){
-    startApp(data.session.user);
-  }else{
-    showAuth();
-  }
-});
-
-sb.auth.onAuthStateChange((_event,session)=>{
-  if(session){
-    if(!state.user||state.user.id!==session.user.id){
-      startApp(session.user);
+sb.auth.getSession()
+  .then(({data})=>{
+    if(data.session){
+      startApp(
+        data.session.user
+      );
+    }else{
+      showAuth();
     }
-  }else{
-    showAuth();
+  });
+
+sb.auth.onAuthStateChange(
+  (_event,session)=>{
+    if(session){
+      if(
+        !state.user||
+        state.user.id!==
+        session.user.id
+      ){
+        startApp(
+          session.user
+        );
+      }
+    }else{
+      showAuth();
+    }
   }
-});
+);
 </script>
 
 </body>
