@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Schaallijn-maker</title>
+<meta name="description" content="Kies je kaartschaal en lengte en kopieer een nette schaallijn voor je kaart of rapport.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Zelfde stijl als de Legenda-maker: instellingen links, voorvertoning rechts; op telefoon onder elkaar */
+:root{
+  --bg:#f3f5f2; --panel:#ffffff; --fg:#1d2420; --muted:#5f6b64; --line:#dde3dd;
+  --accent:#2e6b30; --on-accent:#ffffff;
+  --font:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141916; --panel:#1c231f; --fg:#e6ebe7; --muted:#9aa69f; --line:#2e3832;
+  --accent:#7cc47e; --on-accent:#0f1a12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141916; --panel:#1c231f; --fg:#e6ebe7; --muted:#9aa69f; --line:#2e3832;
+  --accent:#7cc47e; --on-accent:#0f1a12; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:14px;
+  padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em}
+header p{margin:4px 0 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:18px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+input[type=number],select{font:inherit;font-size:14px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;min-width:0}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.schaal{display:flex;align-items:center;gap:6px}
+.schaal span{flex:none;white-space:nowrap;font-size:16px;font-weight:600;color:var(--fg);text-transform:none;letter-spacing:0}
+button{font:inherit;font-size:13px;font-weight:600;border-radius:6px;padding:7px 11px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--fg)}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+.opts{display:flex;gap:14px;flex-wrap:wrap}
+.opts label{display:flex;gap:6px;align-items:center;font-size:13px;cursor:pointer}
+.opts input{accent-color:var(--accent)}
+.prevbox{background:repeating-conic-gradient(var(--line) 0 25%,transparent 0 50%) 0 0/16px 16px;border-radius:8px;padding:24px 14px;overflow:auto;display:flex;justify-content:center}
+.prevbox img{max-width:100%;height:auto;display:block;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.maat{margin:0;padding:12px 14px;border-radius:8px;background:var(--bg);line-height:1.5}
+.maat b{font-family:var(--mono);font-size:15px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hint{color:var(--muted);font-size:13px;margin:0;line-height:1.45}
+.status{font-size:13px;color:var(--accent);min-height:1.2em}
+.fout{color:#b3261e;font-size:13px;margin:0}
+</style>
+</head>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../account.js"></script>
+
+<div class="wrap">
+  <header>
+    <h1>Schaallijn-maker</h1>
+    <p>Vul de schaal van je kaart in en hoe lang de schaallijn moet zijn. Je krijgt een schaallijn die op papier precies klopt.</p>
+  </header>
+  <div class="grid">
+    <section class="panel" aria-label="Instellingen">
+      <label class="f">Kaartschaal
+        <span class="schaal"><span>1 :</span><input type="number" id="schaal" min="1" step="any" inputmode="numeric"></span>
+      </label>
+      <div class="row2">
+        <label class="f">Lengte schaallijn <input type="number" id="lengte" min="0" step="any" inputmode="decimal"></label>
+        <label class="f">Eenheid
+          <select id="eenheid"><option value="m">meter</option><option value="km">kilometer</option></select>
+        </label>
+      </div>
+      <div class="row2">
+        <label class="f">Aantal vakjes <input type="number" id="vakjes" min="1" max="10" step="1"></label>
+        <label class="f">Stijl
+          <select id="stijl"><option value="blokken">Zwart-wit blokken</option><option value="lijn">Lijn met streepjes</option></select>
+        </label>
+      </div>
+      <div class="opts">
+        <label><input type="checkbox" id="schaaltekst"> Schaal eronder tonen</label>
+        <label><input type="checkbox" id="transp"> Transparante achtergrond</label>
+      </div>
+      <p class="hint" id="opslag"></p>
+    </section>
+
+    <section class="panel" aria-label="Voorvertoning">
+      <div class="prevbox"><img id="out" alt="Voorvertoning van de schaallijn"></div>
+      <p class="fout" id="fout" role="alert" hidden></p>
+      <p class="maat" id="maat"></p>
+      <div class="actions">
+        <button class="primary" id="copy">Kopieer afbeelding</button>
+        <span class="status" id="status" role="status"></span>
+      </div>
+      <p class="hint">Opslaan: klik met rechts op de schaallijn en kies <b>Afbeelding opslaan als</b> (op telefoon: lang indrukken).</p>
+    </section>
+  </div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const store={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+const STANDAARD={schaal:5000, lengte:500, eenheid:"m", vakjes:4, stijl:"blokken", schaaltekst:true, transp:false};
+let s={...STANDAARD, ...store.get("sl_instellingen",{})};
+const VELDEN=Object.keys(STANDAARD);
+
+function vulVelden(){ for(const k of VELDEN){ const el=$(k); el.type==="checkbox"?el.checked=s[k]:el.value=s[k]; } }
+function leesVelden(){
+  for(const k of VELDEN){ const el=$(k); s[k]=el.type==="checkbox"?el.checked:el.type==="number"?Number(el.value):el.value; }
+}
+for(const k of VELDEN) $(k).addEventListener("input",()=>{ leesVelden(); save(); render(); });
+
+const PX_PER_CM=96/2.54;   // schermpixels per centimeter, zo rekent Word ook
+const fmt=n=>n.toLocaleString("nl-NL",{maximumFractionDigits:2});
+const S=4;                  // 4x scherper tekenen zodat hij niet blokkerig wordt in je document
+const canvas=document.createElement("canvas");
+
+// Lengte op papier in cm voor een afstand in meters bij schaal 1:schaal
+const papierCm=(meters,schaal)=>meters*100/schaal;
+console.assert(papierCm(500,5000)===10 && papierCm(1000,25000)===4, "schaalberekening klopt niet");
+
+async function render(){
+  const fout=t=>{ $("fout").textContent=t; $("fout").hidden=false; $("out").hidden=true; $("maat").hidden=true; };
+  $("fout").hidden=true; $("out").hidden=false; $("maat").hidden=false;
+  if(!(s.schaal>0)) return fout("Vul een kaartschaal in, bijvoorbeeld 5000 voor 1:5.000.");
+  if(!(s.lengte>0)) return fout("Vul een lengte in die groter is dan 0.");
+  const vakjes=Math.round(s.vakjes);
+  if(!(vakjes>=1 && vakjes<=10)) return fout("Kies 1 tot 10 vakjes.");
+  const meters=s.lengte*(s.eenheid==="km"?1000:1);
+  const barCm=papierCm(meters,s.schaal), barPx=barCm*PX_PER_CM;
+  if(barCm<1) return fout(`Dan wordt de schaallijn maar ${fmt(barCm)} cm op papier. Kies een grotere lengte.`);
+  if(barCm>40) return fout(`Dan wordt de schaallijn ${fmt(barCm)} cm op papier, breder dan een A3. Kies een kleinere lengte.`);
+
+  await document.fonts.ready;
+  const ctx=canvas.getContext("2d");
+  const FL="500 12px 'Public Sans', Arial, sans-serif", FS="400 11px 'Public Sans', Arial, sans-serif";
+  const labels=[...Array(vakjes+1)].map((_,i)=>fmt(s.lengte*i/vakjes)+(i===vakjes?" "+s.eenheid:""));
+  ctx.font=FL;
+  const wEerste=ctx.measureText(labels[0]).width, wLaatste=ctx.measureText(labels[vakjes]).width;
+  const schaalTekst="Schaal 1:"+fmt(s.schaal);
+  // labels staan gecentreerd op de streepjes, dus links en rechts ruimte voor de halve labelbreedte
+  const PAD=12, links=Math.max(PAD,wEerste/2+PAD), rechts=Math.max(PAD,wLaatste/2+PAD);
+  const LABEL=16, BALK=s.stijl==="blokken"?8:10, ONDER=s.schaaltekst?20:0;
+  const W=Math.ceil(links+barPx+rechts), H=Math.ceil(PAD+LABEL+4+BALK+ONDER+PAD);
+  canvas.width=W*S; canvas.height=H*S;
+  ctx.setTransform(S,0,0,S,0,0);
+  ctx.clearRect(0,0,W,H);
+  if(!s.transp){ ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,W,H); }
+  const ink="#1d2420", y0=PAD+LABEL+4, stap=barPx/vakjes;
+  ctx.fillStyle=ink; ctx.strokeStyle=ink; ctx.textAlign="center"; ctx.textBaseline="alphabetic"; ctx.font=FL;
+  labels.forEach((t,i)=>ctx.fillText(t,links+i*stap,PAD+LABEL-3));
+  if(s.stijl==="blokken"){
+    for(let i=0;i<vakjes;i++){ ctx.fillStyle=i%2?"#ffffff":ink; ctx.fillRect(links+i*stap,y0,stap,BALK); }
+    ctx.lineWidth=1; ctx.strokeRect(links,y0,barPx,BALK);
+  }else{
+    ctx.lineWidth=1.5;
+    ctx.beginPath(); ctx.moveTo(links,y0+BALK); ctx.lineTo(links+barPx,y0+BALK);
+    for(let i=0;i<=vakjes;i++){ ctx.moveTo(links+i*stap,y0); ctx.lineTo(links+i*stap,y0+BALK); }
+    ctx.stroke();
+  }
+  if(s.schaaltekst){ ctx.fillStyle="#5f6b64"; ctx.font=FS; ctx.fillText(schaalTekst,links+barPx/2,y0+BALK+16); }
+
+  $("out").src=canvas.toDataURL("image/png");
+  $("out").style.width=W+"px";
+  $("maat").innerHTML=`De schaallijn is op papier <b>${fmt(barCm)} cm</b>. Zet de afbeelding in Word of PowerPoint op <b>${fmt(Math.round(W/PX_PER_CM*100)/100)} cm</b> breed, dan klopt hij bij 1:${fmt(s.schaal)}.`;
+}
+
+let syncT, accountGeladen=false;
+function save(){ store.set("sl_instellingen",s);
+  if(!accountGeladen) return;
+  clearTimeout(syncT); syncT=setTimeout(()=>bewaarAccountData("schaallijn",s),800); }
+
+let ft; function flash(t){ $("status").textContent=t; clearTimeout(ft); ft=setTimeout(()=>$("status").textContent="",3500); }
+$("copy").onclick=()=>{
+  try{
+    const blob=new Promise(res=>canvas.toBlob(res,"image/png"));
+    navigator.clipboard.write([new ClipboardItem({"image/png":blob})])
+      .then(()=>flash("Gekopieerd. Plak hem en zet de breedte op het getal hierboven."))
+      .catch(()=>flash("Kopiëren lukt hier niet. Klik met rechts op de schaallijn en kies Afbeelding kopiëren."));
+  }catch(e){ flash("Kopiëren lukt hier niet. Klik met rechts op de schaallijn en kies Afbeelding kopiëren."); }
+};
+
+vulVelden(); render();
+
+// Ingelogd? Dan komen je laatste instellingen uit je account.
+(async()=>{
+  const { data:{ session } }=await sb.auth.getSession();
+  $("opslag").textContent=session ? "Je instellingen worden bewaard in je account." : "Je instellingen worden bewaard in deze browser.";
+  if(!session) return;
+  const d=await laadAccountData("schaallijn");
+  accountGeladen=true;
+  if(d){ s={...STANDAARD,...d}; store.set("sl_instellingen",s); vulVelden(); render(); }
+})();
+</script>
+</body>
+</html>

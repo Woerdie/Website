@@ -22,7 +22,7 @@ Each app started as a real problem in Daan's own friend group or at school, and 
 
 - Projects listed on the hub, grouped by context:
   - Voor de vriendengroep: Borrelplanner (`borrelplanner/`), Pubgolf scorekaart (`pubgolf/`)
-  - Voor school: Inhaalplanner (`inhaalplanner/`), Leeromgeving (`inhaalplanner/leren.html`); both need an account
+  - Voor school: Inhaalplanner (`inhaalplanner/`), Leeromgeving (`inhaalplanner/leren.html`), both need an account; Legenda-maker (`legenda/`) and Schaallijn-maker (`schaallijn/`), which work without an account and save to it when logged in
 - The hub currently shows each project running live in an embedded viewer with desktop/mobile modes. Whether that stays is an open decision, not a fixed requirement.
 - Unconfirmed: visitors likely arrive on phones, via links shared in group chats.
 - `Borrelplanner.html` at the root is a redirect kept for old links to `/borrelplanner/`.
