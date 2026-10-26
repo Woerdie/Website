@@ -4,246 +4,375 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Daan Woerdman</title>
+<meta name="description" content="Daan Woerdman bouwt webapps: een borrelplanner, een pubgolf scorekaart en een studieplanner. Open ze hier direct." />
+<meta name="theme-color" content="#fbfaf6" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #f5f3ee;
-    --card: #ffffff;
-    --text: #1a1a18;
-    --muted: #6e6c65;
-    --line: #e2dfd6;
-    --grid: rgba(26, 26, 24, 0.05);
-    --accent: #f08a24;
-    --accent-soft: rgba(240, 138, 36, 0.14);
-    --cone-stripe: #ffffff;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --bg: #121211;
-      --card: #1b1b19;
-      --text: #efede7;
-      --muted: #9b9990;
-      --line: #2b2a27;
-      --grid: rgba(255, 255, 255, 0.04);
-      --accent-soft: rgba(240, 138, 36, 0.18);
-      --cone-stripe: #f3f1ea;
-    }
+    color-scheme: light;
+    --bg: #fbfaf6;
+    --surface: #ffffff;
+    --ink: #17201b;
+    --muted: #5d6862;
+    --line: #e7e4db;
+    --accent: #e8601c;
+    --accent-ink: #ffffff;
+    --bad: #b3261e;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
+  html { scroll-behavior: smooth; }
   body {
-    font-family: "Inter", system-ui, sans-serif;
+    font-family: "Schibsted Grotesk", system-ui, sans-serif;
     background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
+    color: var(--ink);
+    line-height: 1.55;
     -webkit-font-smoothing: antialiased;
-    position: relative;
     overflow-x: hidden;
   }
+  a { color: inherit; }
+  [hidden] { display: none !important; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
 
-  /* raster op de achtergrond, vervaagt naar de randen */
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 40px 40px;
-    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
-    -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
-    pointer-events: none;
-    z-index: 0;
-  }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
 
-  /* zachte oranje gloed */
-  body::after {
-    content: "";
-    position: fixed;
-    width: 520px;
-    height: 520px;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -60%);
-    background: radial-gradient(circle, var(--accent-soft), transparent 65%);
-    pointer-events: none;
-    z-index: 0;
+  /* Navigatie */
+  .nav {
+    position: sticky; top: 0; z-index: 10;
+    background: color-mix(in srgb, var(--bg) 85%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s;
   }
+  .nav.scrolled { border-bottom-color: var(--line); }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; }
+  .logo span {
+    display: grid; place-items: center;
+    width: 34px; height: 34px; border-radius: 10px;
+    background: var(--accent); color: var(--accent-ink);
+    font-size: 13px; letter-spacing: -0.02em;
+    transition: transform .3s cubic-bezier(.3, 1.6, .5, 1);
+  }
+  .logo:hover span { transform: rotate(-8deg) scale(1.08); }
+  .nav ul { display: flex; align-items: center; gap: 24px; list-style: none; font-size: 15px; }
+  .nav ul a { text-decoration: none; color: var(--muted); }
+  .nav ul a:hover { color: var(--ink); }
+  .lock {
+    display: inline-flex; align-items: center; gap: 6px;
+    font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+    padding: 7px 14px; border-radius: 999px;
+    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
+    transition: border-color .15s, transform .15s;
+  }
+  .lock:hover { border-color: var(--ink); transform: translateY(-1px); }
 
-  header, main, footer { position: relative; z-index: 1; }
+  /* Intro, met zachte kleurvlekken erachter */
+  .hero { position: relative; padding-block: 88px 72px; }
+  .hero::before, .hero::after {
+    content: ""; position: absolute; z-index: -1; border-radius: 50%;
+    filter: blur(60px); opacity: .55;
+    animation: drift 14s ease-in-out infinite alternate;
+  }
+  .hero::before { width: 380px; height: 380px; right: 4%; top: 10px; background: #ffc9a8; }
+  .hero::after { width: 300px; height: 300px; right: 24%; top: 160px; background: #bfe3cf; animation-delay: -7s; }
+  .hi {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px 6px 10px; border-radius: 999px;
+    background: var(--surface); border: 1px solid var(--line);
+    font-size: 14px; font-weight: 600;
+  }
+  .hi i { font-style: normal; display: inline-block; transform-origin: 70% 70%; animation: wave 2.4s ease-in-out 1s 2; }
+  .hero h1 {
+    margin-top: 22px;
+    font-size: clamp(38px, 6.4vw, 78px);
+    font-weight: 800; line-height: 1.03; letter-spacing: -0.04em;
+    max-width: 15ch;
+  }
+  .hero mark {
+    color: inherit; background: none; position: relative; white-space: nowrap;
+  }
+  .hero mark::after {
+    content: ""; position: absolute; z-index: -1; left: -2%; right: -2%; bottom: .06em; height: .32em;
+    background: #ffd36b; border-radius: 4px;
+    transform-origin: left; animation: swipe .8s .6s cubic-bezier(.2, .7, .2, 1) both;
+  }
+  .hero p { margin-top: 20px; max-width: 46ch; font-size: 19px; color: var(--muted); }
+  .hero > * { animation: rise .7s cubic-bezier(.2, .7, .2, 1) both; }
+  .hero h1 { animation-delay: .06s; }
+  .hero p { animation-delay: .12s; }
 
-  header {
-    padding: 24px;
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
+  /* Secties */
+  .section { padding-block: 64px; }
+  .section h2 { font-size: clamp(26px, 3.2vw, 38px); font-weight: 750; letter-spacing: -0.03em; line-height: 1.1; }
+  .group { margin-top: 36px; font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
 
-  main {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 32px 16px 64px;
+  /* Projectkaarten: de hele kaart is de link, elk project heeft een eigen kleur */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 14px; list-style: none; }
+  .card {
+    --c: var(--accent);
+    display: flex; flex-direction: column; gap: 8px; height: 100%;
+    padding: 22px; border-radius: 18px;
+    background: var(--surface); border: 1px solid var(--line);
+    text-decoration: none;
+    transition: transform .25s cubic-bezier(.3, 1.4, .5, 1), box-shadow .25s, border-color .25s;
   }
+  .card:hover {
+    transform: translateY(-4px) rotate(-.4deg);
+    border-color: color-mix(in srgb, var(--c) 45%, var(--line));
+    box-shadow: 0 18px 36px -18px color-mix(in srgb, var(--c) 55%, transparent);
+  }
+  .icon {
+    display: grid; place-items: center;
+    width: 48px; height: 48px; border-radius: 14px; margin-bottom: 6px;
+    background: color-mix(in srgb, var(--c) 16%, var(--surface));
+    font-size: 24px;
+    transition: transform .3s cubic-bezier(.3, 1.6, .5, 1);
+  }
+  .card:hover .icon { transform: scale(1.1) rotate(-6deg); }
+  .card strong { display: flex; justify-content: space-between; gap: 12px; font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
+  .card strong::after { content: "→"; color: var(--c); transition: transform .2s; }
+  .card:hover strong::after { transform: translateX(4px); }
+  .card p { color: var(--muted); font-size: 15px; }
 
-  .box {
-    width: 100%;
-    max-width: 520px;
-    text-align: center;
-    animation: rise 0.8s ease-out both;
-  }
+  /* Kaarten schuiven in beeld bij het scrollen */
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .6s cubic-bezier(.2, .7, .2, 1); }
+  .reveal.in { opacity: 1; transform: none; }
 
-  .cone {
-    width: 92px;
-    height: auto;
-    margin: 0 auto 28px;
-    display: block;
-    animation: wobble 4s ease-in-out infinite;
-    transform-origin: 50% 100%;
+  /* Over mij */
+  .about {
+    display: grid; grid-template-columns: 1fr 1.4fr; gap: 48px;
+    padding: 40px; border-radius: 24px;
+    background: #fff4ea;
   }
+  .about .body { font-size: 18px; color: #4d4640; max-width: 52ch; }
+  .about .body p + p { margin-top: 16px; }
 
-  .status {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    color: var(--muted);
-    background: var(--card);
-    border: 1px solid var(--line);
-    border-radius: 999px;
-    padding: 7px 14px;
-    margin-bottom: 24px;
-  }
+  footer { padding: 28px 0 48px; font-size: 14px; color: var(--muted); }
 
-  .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--accent);
-    animation: pulse 1.6s ease-in-out infinite;
+  /* Privé-popup */
+  dialog {
+    width: min(440px, calc(100% - 32px));
+    margin: auto; padding: 28px;
+    border: 0; border-radius: 22px;
+    background: var(--surface); color: var(--ink);
+    box-shadow: 0 30px 80px -20px rgba(23, 32, 27, .35);
   }
+  dialog[open] { animation: pop .3s cubic-bezier(.3, 1.4, .5, 1); }
+  dialog::backdrop { background: rgba(23, 32, 27, .3); backdrop-filter: blur(4px); }
+  .dlg-top { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
+  dialog h2 { font-size: 24px; font-weight: 750; letter-spacing: -0.02em; }
+  dialog .lead { margin-top: 6px; color: var(--muted); font-size: 15px; }
+  .close {
+    flex: none; width: 36px; height: 36px; border-radius: 50%;
+    border: 0; background: var(--bg); color: var(--ink);
+    font: inherit; font-size: 20px; line-height: 1; cursor: pointer;
+  }
+  .close:hover { background: var(--line); }
+  .login { display: grid; gap: 14px; margin-top: 22px; }
+  .login label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
+  .login input {
+    font: inherit; font-size: 16px; font-weight: 400;
+    padding: 11px 13px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+  }
+  .login input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+  .msg { font-size: 14px; color: var(--bad); }
+  .status { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; color: var(--muted); font-size: 14px; }
+  #priveLijst { grid-template-columns: 1fr; margin-top: 16px; }
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 12px 20px; border-radius: 12px;
+    font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
+    border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink);
+    transition: background .15s, transform .15s;
+  }
+  .btn:hover { background: #cf5214; transform: translateY(-1px); }
+  .btn:disabled { opacity: .6; cursor: wait; }
+  .btn.ghost { background: none; color: var(--ink); border-color: var(--line); padding: 7px 14px; font-size: 14px; }
+  .btn.ghost:hover { border-color: var(--muted); }
 
-  h1 {
-    font-size: clamp(38px, 9vw, 60px);
-    line-height: 1.02;
-    font-weight: 800;
-    letter-spacing: -0.035em;
-    margin-bottom: 18px;
-  }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+  @keyframes swipe { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+  @keyframes wave { 0%, 60%, 100% { transform: rotate(0); } 10%, 30% { transform: rotate(16deg); } 20%, 40% { transform: rotate(-8deg); } }
+  @keyframes drift { to { transform: translate(-40px, 30px) scale(1.1); } }
+  @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.97); } }
 
-  h1 em {
-    font-style: normal;
-    color: var(--accent);
+  @media (max-width: 800px) { .about { grid-template-columns: 1fr; gap: 16px; padding: 28px; } }
+  @media (max-width: 600px) {
+    .wrap { padding: 0 16px; }
+    .nav ul { gap: 14px; white-space: nowrap; }
+    .naam { display: none; }
+    .hero { padding-block: 48px 40px; }
+    .hero::before { width: 240px; height: 240px; right: -60px; }
+    .hero::after { width: 200px; height: 200px; right: 30%; top: 220px; }
+    .hero p { font-size: 17px; }
+    .section { padding-block: 44px; }
+    .about { padding: 24px 20px; }
+    dialog { padding: 22px; }
   }
-
-  p {
-    font-size: 17px;
-    line-height: 1.6;
-    color: var(--muted);
-    max-width: 400px;
-    margin: 0 auto 36px;
-  }
-
-  .progress {
-    max-width: 280px;
-    margin: 0 auto;
-  }
-
-  .bar {
-    height: 6px;
-    border-radius: 999px;
-    background: var(--line);
-    overflow: hidden;
-  }
-
-  .bar span {
-    display: block;
-    height: 100%;
-    width: 40%;
-    border-radius: 999px;
-    background: repeating-linear-gradient(
-      -45deg,
-      var(--accent) 0 8px,
-      #f6a85a 8px 16px
-    );
-    animation: load 2.4s ease-in-out infinite;
-  }
-
-  .progress small {
-    display: block;
-    margin-top: 10px;
-    font-size: 12px;
-    color: var(--muted);
-  }
-
-  footer {
-    padding: 24px;
-    text-align: center;
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  @keyframes rise {
-    from { opacity: 0; transform: translateY(14px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes wobble {
-    0%, 100% { transform: rotate(0deg); }
-    25%      { transform: rotate(-3deg); }
-    75%      { transform: rotate(3deg); }
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; transform: scale(1); }
-    50%      { opacity: 0.4; transform: scale(0.8); }
-  }
-  @keyframes load {
-    0%   { transform: translateX(-100%); }
-    100% { transform: translateX(260%); }
-  }
-
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { animation: none !important; }
+    html { scroll-behavior: auto; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    .reveal { opacity: 1; transform: none; }
   }
 </style>
 </head>
 <body>
-  <header>Daan Woerdman</header>
-
-  <main>
-    <div class="box">
-      <svg class="cone" viewBox="0 0 100 110" aria-hidden="true">
-        <ellipse cx="50" cy="104" rx="40" ry="5" fill="currentColor" opacity="0.08"/>
-        <rect x="8" y="92" width="84" height="10" rx="3" fill="#f08a24"/>
-        <path d="M42 8 h16 l24 84 h-64 z" fill="#f08a24"/>
-        <path d="M37.5 32 h25 l4.5 16 h-34 z" fill="var(--cone-stripe)"/>
-        <path d="M31 58 h38 l4.5 16 h-47 z" fill="var(--cone-stripe)"/>
-        <path d="M42 8 h16 l3 10 h-22 z" fill="#d9731a"/>
-      </svg>
-
-      <div class="status"><span class="dot"></span>Werk in uitvoering</div>
-
-      <h1>Even <em>geduld</em>,<br>hier wordt verbouwd.</h1>
-
-      <p>Deze site krijgt een flinke opknapbeurt. Kom binnenkort nog eens terug, dan staat alles er weer netjes bij.</p>
-
-      <div class="progress">
-        <div class="bar"><span></span></div>
-        <small>Bezig met bouwen</small>
-      </div>
+  <nav class="nav" id="nav">
+    <div class="wrap">
+      <a class="logo" href="#top" aria-label="Daan Woerdman"><span>DW</span><b class="naam">Daan Woerdman</b></a>
+      <ul>
+        <li><a href="#projecten">Projecten</a></li>
+        <li><a href="#over">Over mij</a></li>
+        <li><button class="lock" type="button" id="openPrive" aria-haspopup="dialog"><span aria-hidden="true">🔒</span>Privé</button></li>
+      </ul>
     </div>
+  </nav>
+
+  <main id="top">
+    <section class="hero wrap">
+      <span class="hi"><i aria-hidden="true">👋</i>Hoi, ik ben Daan</span>
+      <h1>Ik bouw webapps die mijn vrienden en ik <mark>echt</mark> gebruiken.</h1>
+      <p>Dit zijn de projecten waar ik nu mee bezig ben. Tik er een aan om hem meteen te openen.</p>
+    </section>
+
+    <section class="section wrap" id="projecten">
+      <h2>Waar ik mee bezig ben</h2>
+      <div id="lijst"></div>
+    </section>
+
+    <section class="section wrap" id="over">
+      <div class="about reveal">
+        <h2>Over mij</h2>
+        <div class="body">
+          <p>Ik ben Daan. Als ik iets tegenkom dat handiger kan, bouw ik er een webapp voor. Meestal begint het bij iets kleins in de vriendengroep of op school.</p>
+          <p>Alles op deze site heb ik zelf ontworpen en gebouwd.</p>
+        </div>
+      </div>
+    </section>
   </main>
 
-  <footer>&copy; <span id="year"></span> Daan Woerdman</footer>
+  <footer class="wrap">&copy; <span id="jaar"></span> Daan Woerdman</footer>
 
-  <script>document.getElementById("year").textContent = new Date().getFullYear();</script>
+  <dialog id="prive" aria-labelledby="priveTitel">
+    <div class="dlg-top">
+      <div>
+        <h2 id="priveTitel">Privéprojecten</h2>
+        <p class="lead">Projecten die ik voor iemand anders maak. Alleen te zien als je toegang hebt.</p>
+      </div>
+      <button class="close" type="button" id="sluitPrive" aria-label="Sluiten">×</button>
+    </div>
+
+    <form class="login" id="login" hidden>
+      <label>E-mail <input type="email" id="email" autocomplete="username" required></label>
+      <label>Wachtwoord <input type="password" id="wachtwoord" autocomplete="current-password" required></label>
+      <p class="msg" id="melding" role="alert" hidden></p>
+      <button class="btn" type="submit">Inloggen</button>
+    </form>
+
+    <div id="ingelogd" hidden>
+      <div class="status"><span id="wie"></span><button class="btn ghost" type="button" id="uitloggen">Uitloggen</button></div>
+      <p class="lead" id="geenToegang" hidden>Dit account heeft geen toegang tot privéprojecten.</p>
+      <ul class="grid" id="priveLijst"></ul>
+    </div>
+  </dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="prive.js"></script>
+<script>
+// Nieuw project? Voeg hier een regel toe. Met private: true komt hij achter de login.
+const projects = [
+  { group: "Voor de vriendengroep", name: "Borrelplanner", url: "borrelplanner/", icon: "🍻", color: "#e8601c",
+    desc: "Iedereen vinkt aan wanneer het uitkomt. De planner laat zien op welke dag de meesten kunnen." },
+  { group: "Voor de vriendengroep", name: "Pubgolf scorekaart", url: "pubgolf/", icon: "⛳", color: "#2f9e5b",
+    desc: "Spelers en teams aanmaken, scores per hole invullen en live de stand bijhouden." },
+  { group: "Voor school", name: "Inhaalplanner", url: "inhaalplanner/", icon: "📅", color: "#3a6fd8",
+    desc: "Zet je toetsen erin en hij verdeelt de leertijd over de dagen die je nog hebt. Werkt met een account." },
+  { group: "Voor school", name: "Leeromgeving", url: "inhaalplanner/leren.html", icon: "📚", color: "#8a4fd6",
+    desc: "Per vak samenvattingen, flashcards en oefentoetsen, gekoppeld aan je planning. Werkt met een account." },
+  { private: true, name: "BewindWijs", url: "bewindwijs/tarieven.html", icon: "⚖️", color: "#1a3a6b",
+    desc: "Tarievenpagina voor een bewindvoerder. Klantproject, nog in de maak." },
+];
+
+const $ = id => document.getElementById(id);
+
+function kaart(p) {
+  const li = document.createElement("li");
+  li.innerHTML = `<a class="card"><span class="icon" aria-hidden="true"></span><strong></strong><p></p></a>`;
+  const a = li.firstChild;
+  a.href = p.url;
+  a.style.setProperty("--c", p.color);
+  a.querySelector(".icon").textContent = p.icon;
+  a.querySelector("strong").textContent = p.name;
+  a.querySelector("p").textContent = p.desc;
+  return li;
+}
+
+// Openbare projecten, met een kopje per groep
+let ul;
+projects.filter(p => !p.private).forEach(p => {
+  if (p.group !== ul?.dataset.group) {
+    $("lijst").append(Object.assign(document.createElement("h3"), { className: "group", textContent: p.group }));
+    ul = Object.assign(document.createElement("ul"), { className: "grid" });
+    ul.dataset.group = p.group;
+    $("lijst").append(ul);
+  }
+  const li = kaart(p);
+  li.className = "reveal";
+  li.style.transitionDelay = ul.children.length * 80 + "ms";
+  ul.append(li);
+});
+
+// Kaarten laten inschuiven zodra ze in beeld komen
+const io = new IntersectionObserver(entries => entries.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+}), { threshold: .15 });
+document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+// Privé-popup: login tonen, of de privéprojecten als dit account toegang heeft
+const dlg = $("prive");
+$("openPrive").addEventListener("click", () => dlg.showModal());
+$("sluitPrive").addEventListener("click", () => dlg.close());
+dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
+// Privépagina's sturen bezoekers zonder toegang naar /#prive
+if (location.hash === "#prive") { dlg.showModal(); history.replaceState(null, "", location.pathname); }
+
+function toon(user) {
+  $("login").hidden = !!user;
+  $("ingelogd").hidden = !user;
+  $("priveLijst").replaceChildren();
+  if (!user) return;
+  $("wie").textContent = "Ingelogd als " + user.email;
+  $("geenToegang").hidden = magPrive(user);
+  if (magPrive(user)) projects.filter(p => p.private).forEach(p => $("priveLijst").append(kaart(p)));
+}
+
+sb.auth.onAuthStateChange((_e, session) => toon(session?.user));
+
+$("login").addEventListener("submit", async e => {
+  e.preventDefault();
+  const knop = e.submitter;
+  knop.disabled = true;
+  $("melding").hidden = true;
+  const { error } = await sb.auth.signInWithPassword({ email: $("email").value.trim(), password: $("wachtwoord").value });
+  knop.disabled = false;
+  if (error) {
+    $("melding").textContent = error.message === "Invalid login credentials" ? "E-mail of wachtwoord klopt niet." : error.message;
+    $("melding").hidden = false;
+  } else {
+    $("wachtwoord").value = "";
+  }
+});
+
+$("uitloggen").addEventListener("click", () => sb.auth.signOut());
+
+// Lijntje onder de navigatie zodra je scrolt
+addEventListener("scroll", () => $("nav").classList.toggle("scrolled", scrollY > 8), { passive: true });
+
+$("jaar").textContent = new Date().getFullYear();
+</script>
 </body>
 </html>
