@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Legenda-maker</title>
+<meta name="description" content="Stel een kaartlegenda samen, pas namen en kleuren aan en kopieer hem als PNG.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Layout: werkbank links (lagen per groep), vaste voorvertoning rechts; op telefoon onder elkaar */
+:root{
+  --bg:#f3f5f2; --panel:#ffffff; --fg:#1d2420; --muted:#5f6b64; --line:#dde3dd;
+  --accent:#2e6b30; --accent-soft:#e3eee2; --on-accent:#ffffff;
+  --font:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#141916; --panel:#1c231f; --fg:#e6ebe7; --muted:#9aa69f; --line:#2e3832;
+  --accent:#7cc47e; --accent-soft:#24362a; --on-accent:#0f1a12; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#141916; --panel:#1c231f; --fg:#e6ebe7; --muted:#9aa69f; --line:#2e3832;
+  --accent:#7cc47e; --accent-soft:#24362a; --on-accent:#0f1a12; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:14px;
+  padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-.01em}
+header p{margin:4px 0 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:18px;align-items:start}
+@media (max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;display:flex;flex-direction:column;gap:14px;min-width:0}
+.sticky{position:sticky;top:calc(env(safe-area-inset-top,0px) + 12px)}
+@media (max-width:860px){.sticky{position:static}}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+input[type=text],select{font:inherit;font-size:14px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;min-width:0}
+input[type=text]:focus,select:focus,button:focus-visible,input[type=checkbox]:focus-visible,input[type=color]:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.presets{display:flex;gap:8px;flex-wrap:wrap;align-items:end}
+button{font:inherit;font-size:13px;font-weight:600;border-radius:6px;padding:7px 11px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--fg)}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
+button.small{font-size:12px;padding:3px 8px;font-weight:500}
+.group{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:4px}
+.ghead{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.ghead h2{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);flex:1}
+.item{display:grid;grid-template-columns:22px 38px minmax(0,1fr) 30px;align-items:center;gap:8px;padding:3px 4px;border-radius:6px}
+.item.on{background:var(--accent-soft)}
+.item input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent);margin:0;cursor:pointer}
+.item input[type=text]{background:transparent;border-color:transparent;padding:5px 6px}
+.item input[type=text]:hover{border-color:var(--line)}
+.item.off input[type=text]{color:var(--muted)}
+.sw{width:38px;height:28px;display:block;background:#fff;border-radius:4px;border:1px solid var(--line)}
+.item input[type=color]{width:30px;height:26px;border:1px solid var(--line);border-radius:5px;padding:1px;background:var(--panel);cursor:pointer}
+.item input[type=color]:disabled{opacity:.4;cursor:default}
+.prevbox{background:repeating-conic-gradient(var(--line) 0 25%,transparent 0 50%) 0 0/16px 16px;border-radius:8px;padding:14px;overflow:auto;display:flex;justify-content:center}
+.prevbox img{max-width:100%;height:auto;display:block;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.hint{color:var(--muted);font-size:13px;margin:0;line-height:1.45}
+.status{font-size:13px;color:var(--accent);min-height:1.2em}
+.count{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.opts{display:flex;gap:14px;flex-wrap:wrap}
+.opts label{display:flex;gap:6px;align-items:center;font-size:13px;cursor:pointer}
+.opts input{accent-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Legenda-maker</h1>
+    <p>Vink per kaart aan wat erin moet, pas namen aan en sla de selectie op als netwerk.</p>
+  </header>
+  <div class="grid">
+    <section class="panel" aria-label="Lagen kiezen">
+      <div class="presets">
+        <label class="f" style="flex:1 1 180px">Netwerk
+          <select id="preset"></select>
+        </label>
+        <button id="savePreset">Opslaan als…</button>
+        <button id="delPreset">Verwijderen</button>
+      </div>
+      <div class="presets" id="saveRow" hidden>
+        <input type="text" id="presetName" placeholder="Naam, bijv. Fietsnetwerk" style="flex:1 1 180px">
+        <button class="primary" id="savePresetOk">Bewaar</button>
+        <button id="savePresetCancel">Annuleer</button>
+      </div>
+      <div id="groups"></div>
+    </section>
+
+    <section class="panel sticky" aria-label="Voorvertoning">
+      <div class="row2">
+        <label class="f">Titel
+          <input type="text" id="title" value="Legenda">
+        </label>
+        <label class="f">Kolommen
+          <select id="cols"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+        </label>
+      </div>
+      <div class="opts">
+        <label><input type="checkbox" id="optHeads" checked> Groepskoppen tonen</label>
+        <label><input type="checkbox" id="optTransp"> Transparante achtergrond</label>
+        <label><input type="checkbox" id="optTitle" checked> Titel tonen</label>
+      </div>
+      <div class="prevbox"><img id="out" alt="Voorvertoning van de legenda"></div>
+      <div class="actions">
+        <button class="primary" id="copy">Kopieer afbeelding</button>
+        <span class="count" id="count"></span>
+        <span class="status" id="status" role="status"></span>
+      </div>
+      <p class="hint">Opslaan: klik met rechts op de legenda en kies <b>Afbeelding opslaan als</b> (op telefoon: lang indrukken). De PNG is in hoge resolutie, dus hij blijft scherp in je rapport of op je kaart.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+const ICONS = {"landhuis": "<circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#8E2F3C\"/><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".35\" stroke-width=\"1.5\"/><path d=\"M20 44 L50 24 L80 44 Z\" fill=\"#fff\"/>\n<rect x=\"63\" y=\"25\" width=\"6\" height=\"12\" fill=\"#fff\"/>\n<rect x=\"25\" y=\"44\" width=\"50\" height=\"28\" fill=\"#fff\"/>\n<rect x=\"21\" y=\"71\" width=\"58\" height=\"4\" rx=\"1\" fill=\"#fff\"/>\n<g fill=\"#8E2F3C\"><rect x=\"30\" y=\"50\" width=\"8\" height=\"8\" rx=\"1\"/><rect x=\"62\" y=\"50\" width=\"8\" height=\"8\" rx=\"1\"/>\n<path d=\"M44 72 V58 a6 6 0 0 1 12 0 V72 Z\"/><circle cx=\"50\" cy=\"36\" r=\"3.5\"/></g>", "rustplek": "<circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#8B5A2B\"/><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".35\" stroke-width=\"1.5\"/><rect x=\"26\" y=\"31\" width=\"48\" height=\"8\" rx=\"3\" fill=\"#fff\"/>\n<rect x=\"32\" y=\"38\" width=\"5\" height=\"12\" fill=\"#fff\"/><rect x=\"63\" y=\"38\" width=\"5\" height=\"12\" fill=\"#fff\"/>\n<rect x=\"21\" y=\"49\" width=\"58\" height=\"8\" rx=\"3\" fill=\"#fff\"/>\n<rect x=\"28\" y=\"56\" width=\"6\" height=\"15\" rx=\"2\" fill=\"#fff\"/><rect x=\"66\" y=\"56\" width=\"6\" height=\"15\" rx=\"2\" fill=\"#fff\"/>", "natuurlijke-speelplek": "<circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#2E6B30\"/><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".35\" stroke-width=\"1.5\"/><circle cx=\"37\" cy=\"30\" r=\"7\" fill=\"#fff\"/><circle cx=\"63\" cy=\"30\" r=\"7\" fill=\"#fff\"/>\n<rect x=\"30\" y=\"40\" width=\"14\" height=\"21\" rx=\"6\" fill=\"#fff\"/><rect x=\"56\" y=\"40\" width=\"14\" height=\"21\" rx=\"6\" fill=\"#fff\"/>\n<g stroke=\"#fff\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" stroke-width=\"4.5\"><line x1=\"34\" y1=\"60\" x2=\"34\" y2=\"74\"/><line x1=\"40\" y1=\"60\" x2=\"40\" y2=\"74\"/><line x1=\"60\" y1=\"60\" x2=\"60\" y2=\"74\"/><line x1=\"66\" y1=\"60\" x2=\"66\" y2=\"74\"/>\n<line x1=\"43\" y1=\"47\" x2=\"57\" y2=\"47\"/><line x1=\"31\" y1=\"45\" x2=\"24\" y2=\"56\"/><line x1=\"69\" y1=\"45\" x2=\"76\" y2=\"56\"/></g>", "uitzichtpunt": "<circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#E8892B\"/><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".35\" stroke-width=\"1.5\"/><path d=\"M18 56 Q50 30 82 56 Q50 82 18 56 Z\" fill=\"#fff\"/>\n<circle cx=\"50\" cy=\"56\" r=\"11\" fill=\"#E8892B\"/><circle cx=\"54\" cy=\"52\" r=\"3.5\" fill=\"#fff\"/>\n<g stroke=\"#fff\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" stroke-width=\"4\"><line x1=\"50\" y1=\"20\" x2=\"50\" y2=\"29\"/><line x1=\"32\" y1=\"25\" x2=\"37\" y2=\"32\"/><line x1=\"68\" y1=\"25\" x2=\"63\" y2=\"32\"/></g>", "verblijfszone": "<circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#6BA539\"/><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".35\" stroke-width=\"1.5\"/><path d=\"M30 70 C30 40 48 26 74 26 C74 52 60 70 30 70 Z\" fill=\"#fff\"/>\n<path d=\"M32 68 Q48 52 64 36\" stroke=\"#6BA539\" stroke-width=\"3.5\" stroke-linecap=\"round\" fill=\"none\"/>\n<line x1=\"31\" y1=\"69\" x2=\"24\" y2=\"77\" stroke=\"#fff\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" stroke-width=\"4.5\"/>", "waterbeleving": "<circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#1F6FA8\"/><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".35\" stroke-width=\"1.5\"/><path d=\"M22 38 q7 -8 14 0 t14 0 t14 0 t14 0\" stroke=\"#fff\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" stroke-width=\"5\"/><path d=\"M22 52 q7 -8 14 0 t14 0 t14 0 t14 0\" stroke=\"#fff\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" stroke-width=\"5\"/><path d=\"M22 66 q7 -8 14 0 t14 0 t14 0 t14 0\" stroke=\"#fff\" stroke-linecap=\"round\" stroke-linejoin=\"round\" fill=\"none\" stroke-width=\"5\"/>", "rotonde": "<circle cx=\"50\" cy=\"50\" r=\"48\" fill=\"#4A5A6A\"/><circle cx=\"50\" cy=\"50\" r=\"43\" fill=\"none\" stroke=\"#fff\" stroke-opacity=\".35\" stroke-width=\"1.5\"/><path d=\"M45.63 29.46 A21 21 0 0 0 29.05 48.54\" stroke=\"#fff\" stroke-width=\"7\" fill=\"none\" stroke-linecap=\"butt\"/><polygon points=\"20.79,45.89 27.67,57.97 37.62,48.26\" fill=\"#fff\"/><path d=\"M34.39 64.05 A21 21 0 0 0 59.21 68.87\" stroke=\"#fff\" stroke-width=\"7\" fill=\"none\" stroke-linecap=\"butt\"/><polygon points=\"61.05,77.35 68.07,65.35 54.68,61.59\" fill=\"#fff\"/><path d=\"M69.97 56.49 A21 21 0 0 0 61.74 32.59\" stroke=\"#fff\" stroke-width=\"7\" fill=\"none\" stroke-linecap=\"butt\"/><polygon points=\"68.16,26.75 54.26,26.68 57.70,40.15\" fill=\"#fff\"/>"};
+const GROUPS = [
+  {id:"voorz", name:"Voorzieningen"},
+  {id:"mob", name:"Mobiliteit en infrastructuur"},
+  {id:"geb", name:"Gebieden"}
+];
+const ITEMS = [
+  {id:"landhuis", label:"Landhuis", shape:"icon", group:"voorz"},
+  {id:"rustplek", label:"Rustplek", shape:"icon", group:"voorz"},
+  {id:"natuurlijke-speelplek", label:"Natuurlijke speelplek", shape:"icon", group:"voorz"},
+  {id:"uitzichtpunt", label:"Uitzichtpunt", shape:"icon", group:"voorz"},
+  {id:"verblijfszone", label:"Verblijfszone", shape:"icon", group:"voorz"},
+  {id:"waterbeleving", label:"Waterbeleving", shape:"icon", group:"voorz"},
+  {id:"rotonde", label:"Rotonde", shape:"icon", group:"mob"},
+  {id:"trein", label:"Treinstation", shape:"blok", color:"#cc1517", group:"mob"},
+  {id:"bushalte", label:"Bushalte", shape:"rondje", color:"#cc1517", group:"mob"},
+  {id:"busbaan", label:"Busrijbaan", shape:"lijn", color:"#be4291", group:"mob"},
+  {id:"hoofdweg", label:"Hoofdweg", shape:"lijn", color:"#f59c1a", group:"mob"},
+  {id:"weg", label:"Weg", shape:"lijn", color:"#f4e710", group:"mob"},
+  {id:"fietspad", label:"Fietspad", shape:"lijn", color:"#51ab33", group:"mob"},
+  {id:"looproute", label:"Looproutes", shape:"lijn", color:"#aa6e14", group:"mob"},
+  {id:"wandelroute", label:"Wandelroutes", shape:"stippel", color:"#aa6e14", group:"mob"},
+  {id:"spoor", label:"Spoor", shape:"stippel", color:"#000000", group:"mob"},
+  {id:"gasleiding", label:"Gasleiding", shape:"lijn", color:"#6750a1", group:"mob"},
+  {id:"parkeren", label:"Parkeren", shape:"blok", color:"#010101", group:"mob"},
+  {id:"deelmob", label:"Deelmobiliteit", shape:"blok", color:"#43dda6", group:"mob"},
+  {id:"water", label:"Water", shape:"blok", color:"#aad3df", group:"geb"},
+  {id:"bos", label:"Bos", shape:"blok", color:"#085d2b", group:"geb"},
+  {id:"tussen", label:"Tussen groen en bos", shape:"blok", color:"#add19e", group:"geb"},
+  {id:"groen", label:"Groen", shape:"blok", color:"#75c043", group:"geb"},
+  {id:"bebouwing", label:"Bebouwing", shape:"blok", color:"#001511", group:"geb"},
+  {id:"bebouwing2", label:"Bebouwing (bruin)", shape:"blok", color:"#54491d", group:"geb"},
+  {id:"winkel", label:"Winkelgebied", shape:"blok", color:"#9361a9", group:"geb"},
+  {id:"school", label:"School", shape:"blok", color:"#2d3492", group:"geb"},
+  {id:"sport", label:"Sport", shape:"blok", color:"#feeb8f", group:"geb"}
+];
+const BUILTIN = {
+  "Alles": ITEMS.map(i=>i.id),
+  "OV-netwerk": ["trein","bushalte","busbaan","spoor","hoofdweg","weg","bebouwing","water"],
+  "Fietsnetwerk": ["fietspad","hoofdweg","weg","deelmob","parkeren","bebouwing","groen","water"],
+  "Wandel- en groennetwerk": ["looproute","wandelroute","rustplek","uitzichtpunt","natuurlijke-speelplek","verblijfszone","waterbeleving","landhuis","bos","groen","tussen","water"],
+  "Autonetwerk": ["hoofdweg","weg","rotonde","parkeren","bebouwing","water"]
+};
+
+const store = {
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+let user = store.get("lm_presets",{});
+let state = store.get("lm_state",null) || {on:[...BUILTIN["Alles"]], labels:{}, colors:{}, title:"Legenda", cols:1, heads:true, transp:false, showTitle:true, preset:"b:Alles"};
+const on = new Set(state.on);
+const $ = id=>document.getElementById(id);
+
+function lab(i){return state.labels[i.id] ?? i.label}
+function col(i){return state.colors[i.id] ?? i.color}
+
+function swatchSVG(i,w=36,h=28){
+  const c=col(i);
+  let inner="";
+  if(i.shape==="icon"){
+    inner=`<svg x="${(w-h)/2}" y="0" width="${h}" height="${h}" viewBox="0 0 100 100">${ICONS[i.id]}</svg>`;
+  }else if(i.shape==="blok"){
+    inner=`<rect x="4" y="6" width="${w-8}" height="${h-12}" rx="2.5" fill="${c}" stroke="rgba(0,0,0,.22)" stroke-width="1"/>`;
+  }else if(i.shape==="rondje"){
+    inner=`<circle cx="${w/2}" cy="${h/2}" r="8" fill="${c}" stroke="#ffffff" stroke-width="2"/><circle cx="${w/2}" cy="${h/2}" r="9.2" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/>`;
+  }else if(i.shape==="lijn"){
+    inner=`<line x1="4" y1="${h/2}" x2="${w-4}" y2="${h/2}" stroke="${c}" stroke-width="5" stroke-linecap="round"/>`;
+  }else{
+    inner=`<line x1="4" y1="${h/2}" x2="${w-4}" y2="${h/2}" stroke="${c}" stroke-width="4" stroke-dasharray="5 4"/>`;
+  }
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${inner}</svg>`;
+}
+
+function buildList(){
+  const g=$("groups"); g.innerHTML="";
+  for(const gr of GROUPS){
+    const sec=document.createElement("div"); sec.className="group";
+    sec.innerHTML=`<div class="ghead"><h2>${gr.name}</h2><button class="small" data-all="${gr.id}">Alles aan</button><button class="small" data-none="${gr.id}">Alles uit</button></div>`;
+    for(const i of ITEMS.filter(x=>x.group===gr.id)){
+      const r=document.createElement("div"); r.className="item"; r.dataset.id=i.id;
+      r.innerHTML=`<input type="checkbox" id="cb-${i.id}" aria-label="${i.label} tonen">
+        <img class="sw" alt="">
+        <input type="text" id="lb-${i.id}" aria-label="Naam voor ${i.label}">
+        <input type="color" id="cl-${i.id}" aria-label="Kleur van ${i.label}" ${i.shape==="icon"?"disabled title='Iconen hebben een vaste kleur'":""}>`;
+      sec.appendChild(r);
+    }
+    g.appendChild(sec);
+  }
+  syncList();
+}
+function syncList(){
+  for(const i of ITEMS){
+    const r=document.querySelector(`.item[data-id="${i.id}"]`);
+    const isOn=on.has(i.id);
+    r.classList.toggle("on",isOn); r.classList.toggle("off",!isOn);
+    r.querySelector("input[type=checkbox]").checked=isOn;
+    const t=r.querySelector("input[type=text]"); if(document.activeElement!==t) t.value=lab(i);
+    r.querySelector("input[type=color]").value=i.shape==="icon"?"#888888":col(i);
+    r.querySelector(".sw").src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(swatchSVG(i));
+  }
+}
+$("groups").addEventListener("change",e=>{
+  const r=e.target.closest(".item"); if(!r) return;
+  if(e.target.type==="checkbox"){ e.target.checked?on.add(r.dataset.id):on.delete(r.dataset.id); markCustom(); }
+  update();
+});
+$("groups").addEventListener("input",e=>{
+  const r=e.target.closest(".item"); if(!r || e.target.type==="checkbox") return;
+  const id=r.dataset.id;
+  if(e.target.type==="text") state.labels[id]=e.target.value;
+  if(e.target.type==="color") state.colors[id]=e.target.value;
+  update();
+});
+$("groups").addEventListener("click",e=>{
+  const a=e.target.dataset.all, n=e.target.dataset.none;
+  if(!a&&!n) return;
+  ITEMS.filter(i=>i.group===(a||n)).forEach(i=>a?on.add(i.id):on.delete(i.id));
+  markCustom(); update();
+});
+
+/* netwerken */
+function fillPresets(){
+  const s=$("preset"); s.innerHTML="";
+  const og1=document.createElement("optgroup"); og1.label="Standaard";
+  Object.keys(BUILTIN).forEach(k=>og1.append(new Option(k,"b:"+k)));
+  s.append(og1);
+  const keys=Object.keys(user);
+  if(keys.length){const og2=document.createElement("optgroup"); og2.label="Mijn netwerken";
+    keys.forEach(k=>og2.append(new Option(k,"u:"+k))); s.append(og2);}
+  s.append(new Option("Eigen selectie (niet opgeslagen)","custom"));
+  s.value=state.preset||"custom"; if(!s.value) s.value="custom";
+  $("delPreset").disabled=!s.value.startsWith("u:");
+}
+function markCustom(){ if(state.preset!=="custom"){state.preset="custom"; $("preset").value="custom"; $("delPreset").disabled=true;} }
+$("preset").addEventListener("change",e=>{
+  const v=e.target.value; state.preset=v;
+  if(v.startsWith("b:")){ on.clear(); BUILTIN[v.slice(2)].forEach(x=>on.add(x)); }
+  if(v.startsWith("u:")){ const p=user[v.slice(2)]; on.clear(); p.on.forEach(x=>on.add(x));
+    if(p.title!=null){state.title=p.title; $("title").value=p.title;} }
+  $("delPreset").disabled=!v.startsWith("u:");
+  update();
+});
+$("savePreset").onclick=()=>{ $("saveRow").hidden=false; const v=$("preset").value; $("presetName").value=v.startsWith("u:")?v.slice(2):""; $("presetName").focus(); };
+$("savePresetCancel").onclick=()=>{$("saveRow").hidden=true};
+$("savePresetOk").onclick=()=>{
+  const n=$("presetName").value.trim(); if(!n){$("presetName").focus();return}
+  user[n]={on:[...on], title:state.title}; store.set("lm_presets",user);
+  state.preset="u:"+n; fillPresets(); $("saveRow").hidden=true; flash(`Netwerk "${n}" opgeslagen`); save();
+};
+$("presetName").addEventListener("keydown",e=>{if(e.key==="Enter")$("savePresetOk").click()});
+$("delPreset").onclick=()=>{
+  const v=$("preset").value; if(!v.startsWith("u:")) return;
+  if($("delPreset").dataset.confirm!=="1"){ $("delPreset").dataset.confirm="1"; $("delPreset").textContent="Zeker weten?";
+    setTimeout(()=>{$("delPreset").dataset.confirm="";$("delPreset").textContent="Verwijderen"},3000); return; }
+  delete user[v.slice(2)]; store.set("lm_presets",user); state.preset="custom";
+  $("delPreset").dataset.confirm=""; $("delPreset").textContent="Verwijderen"; fillPresets(); flash("Netwerk verwijderd"); save();
+};
+
+/* opties */
+$("title").value=state.title; $("cols").value=state.cols; $("optHeads").checked=state.heads; $("optTransp").checked=state.transp; $("optTitle").checked=state.showTitle;
+$("title").oninput=e=>{state.title=e.target.value; update()};
+$("cols").onchange=e=>{state.cols=+e.target.value; update()};
+$("optHeads").onchange=e=>{state.heads=e.target.checked; update()};
+$("optTransp").onchange=e=>{state.transp=e.target.checked; update()};
+$("optTitle").onchange=e=>{state.showTitle=e.target.checked; update()};
+
+/* tekenen */
+const imgCache=new Map();
+function loadImg(svg){
+  if(imgCache.has(svg)) return imgCache.get(svg);
+  const p=new Promise(res=>{const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null);
+    im.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);});
+  imgCache.set(svg,p); return p;
+}
+const S=3, PAD=22, ROW=34, HEAD=30, SWW=36, SWH=28, GAP=10, COLGAP=30;
+const canvas=document.createElement("canvas");
+let renderId=0;
+async function render(){
+  const my=++renderId;
+  await document.fonts.ready;
+  const entries=[];
+  for(const gr of GROUPS){
+    const its=ITEMS.filter(i=>i.group===gr.id && on.has(i.id));
+    if(!its.length) continue;
+    if(state.heads) entries.push({head:gr.name});
+    its.forEach(i=>entries.push({item:i}));
+  }
+  const imgs=await Promise.all(entries.map(e=>e.item?loadImg(swatchSVG(e.item,SWW,SWH)):null));
+  if(my!==renderId) return;
+  const ctx=canvas.getContext("2d");
+  const FT="600 20px 'Public Sans', Arial, sans-serif", FH="700 11px 'Public Sans', Arial, sans-serif", FI="400 15px 'Public Sans', Arial, sans-serif";
+  // kolommen verdelen
+  const h=e=>e.head?HEAD:ROW;
+  const total=entries.reduce((s,e)=>s+h(e),0);
+  const nc=Math.max(1,Math.min(state.cols,entries.filter(e=>e.item).length||1));
+  const target=total/nc; const cols=[[]]; let acc=0;
+  entries.forEach((e,k)=>{
+    const cur=cols[cols.length-1];
+    if(cols.length<nc && acc>0 && acc+h(e)/2>target*cols.length){
+      if(cur.length && cur[cur.length-1].head){ const hd=cur.pop(); cols.push([hd]); } else cols.push([]);
+    }
+    cols[cols.length-1].push(e); acc+=h(e);
+  });
+  const widths=cols.map(c=>{let w=0;c.forEach(e=>{
+    if(e.head){ctx.font=FH; w=Math.max(w, ctx.measureText(e.head.toUpperCase()).width + e.head.length*0.9);}
+    else {ctx.font=FI; w=Math.max(w, SWW+GAP+ctx.measureText(lab(e.item)).width);} }); return w;});
+  const heights=cols.map(c=>c.reduce((s,e,ix)=>s+(e.head&&ix>0?HEAD+6:h(e)),0));
+  const titleOn=state.showTitle && state.title.trim();
+  ctx.font=FT; const tw=titleOn?ctx.measureText(state.title).width:0;
+  const W=Math.ceil(Math.max(tw, widths.reduce((a,b)=>a+b,0)+COLGAP*(cols.length-1), 120)+PAD*2);
+  const TH=titleOn?40:0;
+  const H=Math.ceil(PAD*2+TH+Math.max(...heights,ROW));
+  canvas.width=W*S; canvas.height=H*S;
+  ctx.setTransform(S,0,0,S,0,0);
+  ctx.clearRect(0,0,W,H);
+  if(!state.transp){ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,W,H);}
+  ctx.textBaseline="middle"; ctx.fillStyle="#1d2420";
+  if(titleOn){ctx.font=FT; ctx.fillText(state.title,PAD,PAD+12);
+    ctx.fillStyle="rgba(0,0,0,.12)"; ctx.fillRect(PAD,PAD+30,W-PAD*2,1);}
+  let x=PAD;
+  const flat=entries.map((e,k)=>({e,im:imgs[k]}));
+  cols.forEach((c,ci)=>{
+    let y=PAD+TH;
+    c.forEach((e,ix)=>{
+      const im=flat.find(f=>f.e===e).im;
+      if(e.head){ if(ix>0) y+=6; ctx.font=FH; ctx.fillStyle="#5f6b64";
+        if("letterSpacing" in ctx){ctx.letterSpacing="0.9px";}
+        ctx.fillText(e.head.toUpperCase(),x,y+HEAD/2+2); if("letterSpacing" in ctx){ctx.letterSpacing="0px";}
+        y+=HEAD; }
+      else { if(im) ctx.drawImage(im,x,y+(ROW-SWH)/2,SWW,SWH);
+        ctx.font=FI; ctx.fillStyle="#1d2420"; ctx.fillText(lab(e.item),x+SWW+GAP,y+ROW/2+1); y+=ROW; }
+    });
+    x+=widths[ci]+COLGAP;
+  });
+  $("out").src=canvas.toDataURL("image/png");
+  $("out").style.width=W+"px";
+  $("count").textContent=`${entries.filter(e=>e.item).length} items`;
+}
+function save(){ state.on=[...on]; store.set("lm_state",state); }
+function update(){ syncList(); save(); render(); }
+
+let ft; function flash(t){ $("status").textContent=t; clearTimeout(ft); ft=setTimeout(()=>$("status").textContent="",3500); }
+$("copy").onclick=()=>{
+  try{
+    const blob=new Promise(res=>canvas.toBlob(res,"image/png"));
+    navigator.clipboard.write([new ClipboardItem({"image/png":blob})])
+      .then(()=>flash("Gekopieerd, plak hem in Word, PowerPoint of je kaart"))
+      .catch(()=>flash("Kopiëren lukt hier niet. Klik met rechts op de legenda en kies Afbeelding kopiëren."));
+  }catch(e){ flash("Kopiëren lukt hier niet. Klik met rechts op de legenda en kies Afbeelding kopiëren."); }
+};
+
+buildList(); fillPresets(); render();
+</script>
+</body>
+</html>
