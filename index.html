@@ -68,6 +68,12 @@
     transition: border-color .15s, transform .15s;
   }
   .lock:hover { border-color: var(--ink); transform: translateY(-1px); }
+  /* Admins krijgen een hoedje op het poppetje */
+  .persoon { position: relative; }
+  .persoon.admin::before {
+    content: "🎩"; position: absolute; left: 50%; top: -10px;
+    font-size: 11px; transform: translateX(-50%) rotate(-14deg);
+  }
 
   /* Intro, met zachte kleurvlekken erachter */
   .hero { position: relative; padding-block: 88px 72px; }
@@ -239,7 +245,7 @@
       <ul>
         <li><a href="#projecten">Projecten</a></li>
         <li><a href="#over">Over mij</a></li>
-        <li><button class="lock" type="button" id="openAccount" aria-haspopup="dialog"><span aria-hidden="true">👤</span><span id="accountLabel">Inloggen</span></button></li>
+        <li><button class="lock" type="button" id="openAccount" aria-haspopup="dialog"><span class="persoon" id="accountIcoon" aria-hidden="true">👤</span><span id="accountLabel">Inloggen</span></button></li>
       </ul>
     </div>
   </nav>
@@ -384,6 +390,8 @@ function toon(user) {
   $("login").hidden = !!user;
   $("ingelogd").hidden = !user;
   $("accountLabel").textContent = user ? "Account" : "Inloggen";
+  $("accountIcoon").classList.toggle("admin", isAdmin(user));
+  $("openAccount").title = isAdmin(user) ? "Je bent admin" : "";
   $("accountUitleg").textContent = user
     ? "Je bent ingelogd. Wat je maakt in de Inhaalplanner, Legenda-maker, Pubgolf en Borrelplanner wordt bij je account bewaard."
     : "Met één account bewaar je je spullen in al mijn apps, ook op je andere apparaten.";
