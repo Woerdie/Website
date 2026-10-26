@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "website",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:\\Users\\daanw\\AppData\\Local\\Temp\\claude\\Z--Website\\769ace79-e3af-46e5-b1d0-572e90509f85\\scratchpad\\serve.js",
+        "Z:\\Website"
+      ],
+      "port": 5173
+    },
+    {
+      "name": "website-2",
+      "runtimeExecutable": "node",
+      "runtimeArgs": [
+        "C:\\Users\\daanw\\AppData\\Local\\Temp\\claude\\Z--Website\\d415a1ca-43ba-405f-bdd9-b0d70aaac531\\scratchpad\\serve.js",
+        "Z:\\Website"
+      ],
+      "port": 5174
+    }
+  ]
+}
