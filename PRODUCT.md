@@ -30,10 +30,11 @@ Each app started as a real problem in Daan's own friend group or at school, and 
 ## Capabilities and Constraints
 
 - Plain HTML, CSS and JavaScript with no build step, hosted on GitHub Pages under the custom domain daanwoerdman.nl (`CNAME`).
-- Data and login through Supabase (Auth for the school apps, Realtime for pubgolf).
+- Data and login through Supabase. One account for the whole site: visitors sign up and log in from the Account popup on the hub, and the session is shared by every app on the domain.
+- `account.js` holds the shared Supabase client, the private-access check and `laadAccountData` / `bewaarAccountData`, which keep one JSON blob per user per app in the `user_data` table (`supabase/user_data.sql`, run once). Legenda-maker syncs its networks and selection, Pubgolf its list of games, Borrelplanner the name. Without login those apps keep working locally. Borrelplanner and Pubgolf keep their own anonymous client for their game data.
 - New projects are added through the `projects` array in `index.html`.
-- `bewindwijs/` holds a client project (BewindWijs tarievenpagina). Don't restyle it as part of Daan's site. It is listed on the hub only as a private project (`private: true`), behind the login in the Privé section.
-- Private projects: `prive.js` holds the shared Supabase client and the access check. An account gets access when its `app_metadata.prive` is true, set in the Supabase SQL editor: `update auth.users set raw_app_meta_data = raw_app_meta_data || '{"prive": true}' where email = '<e-mail>';`. Private pages load `prive.js` and redirect to `/#prive` without access. This is client-side only: the files stay reachable through the public GitHub repo.
+- `bewindwijs/` holds a client project (BewindWijs tarievenpagina). Don't restyle it as part of Daan's site. It is listed on the hub only as a private project (`private: true`), shown in the Account popup to accounts with access.
+- Private projects: an account gets access when its `app_metadata.prive` or `app_metadata.admin` is true. Admins tick who gets access in the Account popup on the hub, through the security-definer functions in `supabase/admin.sql`; who is admin is only set in the Supabase SQL editor. Changes apply after that person logs in again. Private pages load `account.js` and redirect to `/#account` without access. This is client-side only: the files stay reachable through the public GitHub repo.
 - `_archief/` holds retired stylesheets; it is reference only.
 
 ## Brand Commitments

@@ -10,7 +10,8 @@ const configured =
 let db = null;
 
 if (configured) {
-  db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  // Beschikbaarheid blijft anoniem zoals altijd; het account (account.js) onthoudt alleen je naam.
+  db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: false, storageKey: "borrelplanner-anoniem" } });
 } else {
   document.getElementById("configWarn").style.display = "block";
 }
@@ -291,6 +292,7 @@ $("saveBtn").onclick = async () => {
   }
 
   toast("Opgeslagen! Bedankt 🎉");
+  bewaarAccountData("borrelplanner", { naam });
 
   gekozen.clear();
   renderCalendar();
@@ -787,3 +789,8 @@ $("refreshBtn").onclick = laadResultaten;
 renderCalendar();
 updateSelected();
 laadResultaten();
+
+// Ingelogd? Dan staat je naam al klaar.
+laadAccountData("borrelplanner").then(d => {
+  if (d?.naam && !$("naam").value) $("naam").value = d.naam;
+});

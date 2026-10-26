@@ -1,7 +1,8 @@
 const SUPABASE_URL = "https://rdlkdglzfjniwamumucb.supabase.co";
 const SUPABASE_KEY = "sb_publishable_AT7MYeDMdYFer6a8HL6LQA_P5_Itx3S";
 
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// Spelgegevens blijven anoniem zoals altijd; het account (account.js) bewaart alleen je lijst met games.
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: false, storageKey: "pubgolf-anoniem" } });
 
 const STORAGE_KEY = "pubgolf_my_games";
 
@@ -181,6 +182,15 @@ async function init() {
   } else {
     await loadSavedGames();
   }
+
+  // Ingelogd? Dan komen je games van al je apparaten samen.
+  const accountIds = await laadAccountData("pubgolf");
+  if (Array.isArray(accountIds)) {
+    const ids = [...new Set([...getMyGameIds(), ...accountIds])].slice(0, 20);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+    bewaarAccountData("pubgolf", ids);
+    if (!gameId) await loadSavedGames();
+  }
 }
 
 function toggleTeamSize() {
@@ -206,11 +216,13 @@ function rememberGame(gameId) {
   const ids = getMyGameIds().filter(id => id !== gameId);
   ids.unshift(gameId);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids.slice(0, 20)));
+  bewaarAccountData("pubgolf", ids.slice(0, 20));
 }
 
 function forgetGame(gameId) {
   const ids = getMyGameIds().filter(id => id !== gameId);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
+  bewaarAccountData("pubgolf", ids);
 }
 
 function isEnded() {

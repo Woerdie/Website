@@ -181,7 +181,19 @@
   .login input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
   .msg { font-size: 14px; color: var(--bad); }
   .status { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; color: var(--muted); font-size: 14px; }
-  #priveLijst { grid-template-columns: 1fr; margin-top: 16px; }
+  .msg.ok { color: #2f7d4a; }
+  .switch { font-size: 14px; color: var(--muted); text-align: center; }
+  .switch button { font: inherit; font-weight: 600; color: var(--accent); background: none; border: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
+  .blok h3 { margin-top: 24px; font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .blok .lead { font-size: 14px; }
+  .beheer { list-style: none; margin-top: 10px; max-height: 260px; overflow: auto; border: 1px solid var(--line); border-radius: 12px; }
+  .beheer li + li { border-top: 1px solid var(--line); }
+  .beheer label { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 10px 14px; font-size: 14px; cursor: pointer; }
+  .beheer span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .beheer small { color: var(--muted); }
+  .beheer input { flex: none; width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
+  .beheer input:disabled { cursor: default; }
+  #priveLijst { grid-template-columns: 1fr; margin-top: 10px; }
   .btn {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 12px 20px; border-radius: 12px;
@@ -227,7 +239,7 @@
       <ul>
         <li><a href="#projecten">Projecten</a></li>
         <li><a href="#over">Over mij</a></li>
-        <li><button class="lock" type="button" id="openPrive" aria-haspopup="dialog"><span aria-hidden="true">🔒</span>Privé</button></li>
+        <li><button class="lock" type="button" id="openAccount" aria-haspopup="dialog"><span aria-hidden="true">👤</span><span id="accountLabel">Inloggen</span></button></li>
       </ul>
     </div>
   </nav>
@@ -257,31 +269,40 @@
 
   <footer class="wrap">&copy; <span id="jaar"></span> Daan Woerdman</footer>
 
-  <dialog id="prive" aria-labelledby="priveTitel">
+  <dialog id="account" aria-labelledby="accountTitel">
     <div class="dlg-top">
       <div>
-        <h2 id="priveTitel">Privéprojecten</h2>
-        <p class="lead">Projecten die ik voor iemand anders maak. Alleen te zien als je toegang hebt.</p>
+        <h2 id="accountTitel">Account</h2>
+        <p class="lead" id="accountUitleg"></p>
       </div>
-      <button class="close" type="button" id="sluitPrive" aria-label="Sluiten">×</button>
+      <button class="close" type="button" id="sluitAccount" aria-label="Sluiten">×</button>
     </div>
 
     <form class="login" id="login" hidden>
       <label>E-mail <input type="email" id="email" autocomplete="username" required></label>
-      <label>Wachtwoord <input type="password" id="wachtwoord" autocomplete="current-password" required></label>
+      <label>Wachtwoord <input type="password" id="wachtwoord" autocomplete="current-password" minlength="6" required></label>
       <p class="msg" id="melding" role="alert" hidden></p>
-      <button class="btn" type="submit">Inloggen</button>
+      <button class="btn" type="submit" id="loginKnop">Inloggen</button>
+      <p class="switch"><span id="switchTekst">Nog geen account?</span> <button type="button" id="wissel">Account maken</button></p>
     </form>
 
     <div id="ingelogd" hidden>
       <div class="status"><span id="wie"></span><button class="btn ghost" type="button" id="uitloggen">Uitloggen</button></div>
-      <p class="lead" id="geenToegang" hidden>Dit account heeft geen toegang tot privéprojecten.</p>
-      <ul class="grid" id="priveLijst"></ul>
+      <div class="blok" id="priveBlok" hidden>
+        <h3>Privéprojecten</h3>
+        <ul class="grid" id="priveLijst"></ul>
+      </div>
+      <div class="blok" id="beheerBlok" hidden>
+        <h3>Wie mag in Privé</h3>
+        <p class="lead">Vink aan wie de privéprojecten mag zien. Het werkt bij die persoon na opnieuw inloggen.</p>
+        <ul class="beheer" id="beheerLijst"></ul>
+        <p class="msg" id="beheerMelding" role="alert" hidden></p>
+      </div>
     </div>
   </dialog>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script src="prive.js"></script>
+<script src="account.js"></script>
 <script>
 // Nieuw project? Voeg hier een regel toe. Met private: true komt hij achter de login.
 const projects = [
@@ -334,39 +355,99 @@ const io = new IntersectionObserver(entries => entries.forEach(e => {
 }), { threshold: .15 });
 document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
-// Privé-popup: login tonen, of de privéprojecten als dit account toegang heeft
-const dlg = $("prive");
-$("openPrive").addEventListener("click", () => dlg.showModal());
-$("sluitPrive").addEventListener("click", () => dlg.close());
+// Account-popup: inloggen of account maken; ingelogd zie je ook je privéprojecten als je daar toegang toe hebt
+const dlg = $("account");
+$("openAccount").addEventListener("click", () => dlg.showModal());
+$("sluitAccount").addEventListener("click", () => dlg.close());
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
-// Privépagina's sturen bezoekers zonder toegang naar /#prive
-if (location.hash === "#prive") { dlg.showModal(); history.replaceState(null, "", location.pathname); }
+// Privépagina's sturen bezoekers zonder toegang naar /#account
+if (location.hash === "#account") { dlg.showModal(); history.replaceState(null, "", location.pathname); }
+
+let nieuw = false; // false = inloggen, true = account maken
+function zetModus(n) {
+  nieuw = n;
+  $("loginKnop").textContent = n ? "Account maken" : "Inloggen";
+  $("switchTekst").textContent = n ? "Heb je al een account?" : "Nog geen account?";
+  $("wissel").textContent = n ? "Inloggen" : "Account maken";
+  $("wachtwoord").autocomplete = n ? "new-password" : "current-password";
+  $("melding").hidden = true;
+}
+$("wissel").addEventListener("click", () => zetModus(!nieuw));
+
+function melding(tekst, ok) {
+  $("melding").textContent = tekst;
+  $("melding").classList.toggle("ok", !!ok);
+  $("melding").hidden = false;
+}
 
 function toon(user) {
   $("login").hidden = !!user;
   $("ingelogd").hidden = !user;
+  $("accountLabel").textContent = user ? "Account" : "Inloggen";
+  $("accountUitleg").textContent = user
+    ? "Je bent ingelogd. Wat je maakt in de Inhaalplanner, Legenda-maker, Pubgolf en Borrelplanner wordt bij je account bewaard."
+    : "Met één account bewaar je je spullen in al mijn apps, ook op je andere apparaten.";
   $("priveLijst").replaceChildren();
+  $("priveBlok").hidden = !magPrive(user);
+  $("beheerBlok").hidden = !isAdmin(user);
   if (!user) return;
-  $("wie").textContent = "Ingelogd als " + user.email;
-  $("geenToegang").hidden = magPrive(user);
+  $("wie").textContent = "Ingelogd als " + user.email + (isAdmin(user) ? " (admin)" : "");
   if (magPrive(user)) projects.filter(p => p.private).forEach(p => $("priveLijst").append(kaart(p)));
+  if (isAdmin(user)) laadBeheer();
+}
+
+// Beheer: de lijst en het aan/uitzetten lopen via beveiligde functies in Supabase die eerst checken of je admin bent
+function beheerFout(tekst) {
+  $("beheerMelding").textContent = tekst;
+  $("beheerMelding").hidden = false;
+}
+
+async function laadBeheer() {
+  $("beheerMelding").hidden = true;
+  const { data, error } = await sb.rpc("admin_gebruikers");
+  if (error) return beheerFout("Kon de accounts niet ophalen. Is supabase/admin.sql uitgevoerd?");
+  $("beheerLijst").replaceChildren(...data.map(g => {
+    const li = document.createElement("li");
+    li.innerHTML = `<label><span></span><input type="checkbox"></label>`;
+    li.querySelector("span").textContent = g.email;
+    if (g.admin) li.querySelector("span").append(" ", Object.assign(document.createElement("small"), { textContent: "admin" }));
+    const vink = li.querySelector("input");
+    vink.checked = g.prive || g.admin;
+    vink.disabled = g.admin; // een admin houdt altijd toegang
+    vink.setAttribute("aria-label", "Privétoegang voor " + g.email);
+    vink.addEventListener("change", async () => {
+      vink.disabled = true;
+      const { error } = await sb.rpc("admin_zet_prive", { gebruiker: g.id, toegang: vink.checked });
+      vink.disabled = false;
+      if (error) { vink.checked = !vink.checked; beheerFout("Opslaan mislukt voor " + g.email + "."); }
+    });
+    return li;
+  }));
 }
 
 sb.auth.onAuthStateChange((_e, session) => toon(session?.user));
 
+const FOUTEN = {
+  "Invalid login credentials": "E-mail of wachtwoord klopt niet.",
+  "User already registered": "Er bestaat al een account met dit e-mailadres. Log in.",
+  "Email not confirmed": "Bevestig eerst je e-mailadres via de link in je mail.",
+  "Password should be at least 6 characters.": "Je wachtwoord moet minstens 6 tekens hebben.",
+};
+
 $("login").addEventListener("submit", async e => {
   e.preventDefault();
-  const knop = e.submitter;
+  const knop = $("loginKnop");
   knop.disabled = true;
   $("melding").hidden = true;
-  const { error } = await sb.auth.signInWithPassword({ email: $("email").value.trim(), password: $("wachtwoord").value });
+  const email = $("email").value.trim(), password = $("wachtwoord").value;
+  const { data, error } = nieuw
+    ? await sb.auth.signUp({ email, password, options: { emailRedirectTo: location.origin + "/" } })
+    : await sb.auth.signInWithPassword({ email, password });
   knop.disabled = false;
-  if (error) {
-    $("melding").textContent = error.message === "Invalid login credentials" ? "E-mail of wachtwoord klopt niet." : error.message;
-    $("melding").hidden = false;
-  } else {
-    $("wachtwoord").value = "";
-  }
+  if (error) return melding(FOUTEN[error.message] ?? error.message);
+  $("wachtwoord").value = "";
+  // Staat e-mailbevestiging aan in Supabase, dan komt er nog geen sessie terug
+  if (nieuw && !data.session) melding("Gelukt! Check je mail en klik op de link om je account te bevestigen.", true);
 });
 
 $("uitloggen").addEventListener("click", () => sb.auth.signOut());

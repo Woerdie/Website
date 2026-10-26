@@ -67,6 +67,8 @@ button.small{font-size:12px;padding:3px 8px;font-weight:500}
 </style>
 </head>
 <body>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="../account.js"></script>
 
 <div class="wrap">
   <header>
@@ -275,7 +277,8 @@ $("delPreset").onclick=()=>{
 };
 
 /* opties */
-$("title").value=state.title; $("cols").value=state.cols; $("optHeads").checked=state.heads; $("optTransp").checked=state.transp; $("optTitle").checked=state.showTitle;
+function zetOpties(){ $("title").value=state.title; $("cols").value=state.cols; $("optHeads").checked=state.heads; $("optTransp").checked=state.transp; $("optTitle").checked=state.showTitle; }
+zetOpties();
 $("title").oninput=e=>{state.title=e.target.value; update()};
 $("cols").onchange=e=>{state.cols=+e.target.value; update()};
 $("optHeads").onchange=e=>{state.heads=e.target.checked; update()};
@@ -354,7 +357,10 @@ async function render(){
   $("out").style.width=W+"px";
   $("count").textContent=`${entries.filter(e=>e.item).length} items`;
 }
-function save(){ state.on=[...on]; store.set("lm_state",state); }
+let syncT;
+function save(){ state.on=[...on]; store.set("lm_state",state);
+  // naar het account pas als je even stopt met typen
+  clearTimeout(syncT); syncT=setTimeout(()=>bewaarAccountData("legenda",{state,presets:user}),800); }
 function update(){ syncList(); save(); render(); }
 
 let ft; function flash(t){ $("status").textContent=t; clearTimeout(ft); ft=setTimeout(()=>$("status").textContent="",3500); }
@@ -368,6 +374,14 @@ $("copy").onclick=()=>{
 };
 
 buildList(); fillPresets(); render();
+
+// Ingelogd? Dan komen je netwerken en selectie van je account, op elk apparaat.
+laadAccountData("legenda").then(d=>{
+  if(!d) return;
+  user=d.presets||{}; store.set("lm_presets",user);
+  if(d.state){ state=d.state; on.clear(); state.on.forEach(x=>on.add(x)); }
+  zetOpties(); fillPresets(); update();
+});
 </script>
 </body>
 </html>
