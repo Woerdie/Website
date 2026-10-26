@@ -4,12 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Legenda-maker</title>
-<meta name="description" content="Stel een kaartlegenda samen, pas namen en kleuren aan en kopieer hem als PNG.">
+<meta name="description" content="Stel je eigen kaartlegenda's samen, pas namen en kleuren aan en kopieer ze als PNG.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
-/* Layout: werkbank links (lagen per groep), vaste voorvertoning rechts; op telefoon onder elkaar */
+/* Layout: werkbank links (lagen per groep), legenda kiezen en voorvertoning rechts; op telefoon onder elkaar */
 :root{
   --bg:#f3f5f2; --panel:#ffffff; --fg:#1d2420; --muted:#5f6b64; --line:#dde3dd;
   --accent:#2e6b30; --accent-soft:#e3eee2; --on-accent:#ffffff;
@@ -38,15 +38,19 @@ label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:60
 input[type=text],select{font:inherit;font-size:14px;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;min-width:0}
 input[type=text]:focus,select:focus,button:focus-visible,input[type=checkbox]:focus-visible,input[type=color]:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.presets{display:flex;gap:8px;flex-wrap:wrap;align-items:end}
 button{font:inherit;font-size:13px;font-weight:600;border-radius:6px;padding:7px 11px;cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--fg)}
 button:hover{border-color:var(--accent)}
 button.primary{background:var(--accent);color:var(--on-accent);border-color:var(--accent)}
 button.small{font-size:12px;padding:3px 8px;font-weight:500}
+/* legenda kiezen (rechts boven) */
+.kiezer{display:flex;flex-direction:column;gap:8px;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.kiezer .knoppen{display:flex;gap:6px;flex-wrap:wrap}
+.opslag{font-size:12px;color:var(--muted);margin:0}
 .group{border-top:1px solid var(--line);padding-top:12px;display:flex;flex-direction:column;gap:4px}
+.group:first-child{border-top:0;padding-top:0}
 .ghead{display:flex;align-items:center;gap:8px;margin-bottom:4px}
 .ghead h2{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);flex:1}
-.item{display:grid;grid-template-columns:22px 38px minmax(0,1fr) 30px;align-items:center;gap:8px;padding:3px 4px;border-radius:6px}
+.item{display:grid;grid-template-columns:22px 38px minmax(0,1fr) 30px 26px;align-items:center;gap:8px;padding:3px 4px;border-radius:6px}
 .item.on{background:var(--accent-soft)}
 .item input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent);margin:0;cursor:pointer}
 .item input[type=text]{background:transparent;border-color:transparent;padding:5px 6px}
@@ -55,16 +59,14 @@ button.small{font-size:12px;padding:3px 8px;font-weight:500}
 .sw{width:38px;height:28px;display:block;background:#fff;border-radius:4px;border:1px solid var(--line)}
 .item input[type=color]{width:30px;height:26px;border:1px solid var(--line);border-radius:5px;padding:1px;background:var(--panel);cursor:pointer}
 .item input[type=color]:disabled{opacity:.4;cursor:default}
-/* Admin: per laag een verwijderknop en een formulier om lagen toe te voegen */
-.del{display:none}
-.admin .item{grid-template-columns:22px 38px minmax(0,1fr) 30px 26px}
-.admin .del{display:block;padding:2px 0;font-size:15px;line-height:1}
-.admin .del:hover{border-color:#b3261e;color:#b3261e}
-.beheer{border-top:1px solid var(--line);padding-top:12px}
-.beheer summary{cursor:pointer;font-size:13px;font-weight:600}
-.beheer form{display:flex;flex-direction:column;gap:10px;margin-top:12px}
-.beheer textarea{font:12px var(--mono);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;resize:vertical}
-.beheer input[type=color]{width:100%;height:34px;border:1px solid var(--line);border-radius:6px;padding:2px;background:var(--panel)}
+.del{padding:2px 0;font-size:15px;line-height:1}
+.del:hover{border-color:#b3261e;color:#b3261e}
+.leeg{color:var(--muted);margin:0;line-height:1.45}
+.toevoegen{border-top:1px solid var(--line);padding-top:12px}
+.toevoegen summary{cursor:pointer;font-size:13px;font-weight:600}
+.toevoegen form{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.toevoegen textarea{font:12px var(--mono);color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:7px 9px;width:100%;resize:vertical}
+.toevoegen input[type=color]{width:100%;height:34px;border:1px solid var(--line);border-radius:6px;padding:2px;background:var(--panel)}
 .fout{color:#b3261e;font-size:13px;margin:0}
 .prevbox{background:repeating-conic-gradient(var(--line) 0 25%,transparent 0 50%) 0 0/16px 16px;border-radius:8px;padding:14px;overflow:auto;display:flex;justify-content:center}
 .prevbox img{max-width:100%;height:auto;display:block;box-shadow:0 1px 3px rgba(0,0,0,.18)}
@@ -84,25 +86,13 @@ button.small{font-size:12px;padding:3px 8px;font-weight:500}
 <div class="wrap">
   <header>
     <h1>Legenda-maker</h1>
-    <p>Vink per kaart aan wat erin moet, pas namen aan en sla de selectie op als netwerk.</p>
+    <p>Maak je eigen legenda's: voeg lagen toe, pas namen en kleuren aan en kies rechts welke legenda je gebruikt.</p>
   </header>
   <div class="grid">
-    <section class="panel" aria-label="Lagen kiezen">
-      <div class="presets">
-        <label class="f" style="flex:1 1 180px">Netwerk
-          <select id="preset"></select>
-        </label>
-        <button id="savePreset">Opslaan als…</button>
-        <button id="delPreset">Verwijderen</button>
-      </div>
-      <div class="presets" id="saveRow" hidden>
-        <input type="text" id="presetName" placeholder="Naam, bijv. Fietsnetwerk" style="flex:1 1 180px">
-        <button class="primary" id="savePresetOk">Bewaar</button>
-        <button id="savePresetCancel">Annuleer</button>
-      </div>
-      <div id="groups"><p class="hint">Lagen laden…</p></div>
-      <details class="beheer" id="beheer" hidden>
-        <summary>Laag toevoegen voor iedereen (admin)</summary>
+    <section class="panel" aria-label="Lagen van deze legenda">
+      <div id="groups"></div>
+      <details class="toevoegen" id="toevoegen">
+        <summary>Laag toevoegen</summary>
         <form id="nieuweLaag">
           <label class="f">Naam <input type="text" id="nlNaam" required></label>
           <div class="row2">
@@ -128,7 +118,19 @@ button.small{font-size:12px;padding:3px 8px;font-weight:500}
       </details>
     </section>
 
-    <section class="panel sticky" aria-label="Voorvertoning">
+    <section class="panel sticky" aria-label="Legenda kiezen en voorvertoning">
+      <div class="kiezer">
+        <label class="f">Mijn legenda's
+          <select id="kies"></select>
+        </label>
+        <div class="knoppen">
+          <button type="button" id="nieuw">Nieuwe legenda</button>
+          <button type="button" id="kopie">Kopie maken</button>
+          <button type="button" id="hernoem">Naam wijzigen</button>
+          <button type="button" id="weg">Verwijderen</button>
+        </div>
+        <p class="opslag" id="opslag"></p>
+      </div>
       <div class="row2">
         <label class="f">Titel
           <input type="text" id="title" value="Legenda">
@@ -154,44 +156,33 @@ button.small{font-size:12px;padding:3px 8px;font-weight:500}
 </div>
 
 <script>
-// Lagen, iconen en standaardnetwerken komen uit Supabase (tabellen legenda_lagen en legenda_netwerken, zie supabase/legenda.sql)
-let ICONS={}, GROUPS=[], ITEMS=[], BUILTIN={};
-async function laadLagen(){
-  const [l,n]=await Promise.all([
-    sb.from("legenda_lagen").select("*").order("volgorde"),
-    sb.from("legenda_netwerken").select("*").order("volgorde")
-  ]);
-  if(l.error||n.error) throw l.error||n.error;
-  ITEMS=l.data.map(r=>({id:r.id, label:r.label, shape:r.vorm, color:r.kleur, group:r.groep, volgorde:r.volgorde}));
-  ICONS=Object.fromEntries(l.data.filter(r=>r.icoon).map(r=>[r.id,r.icoon]));
-  GROUPS=[...new Set(ITEMS.map(i=>i.group))].map(g=>({id:g, name:g}));
-  BUILTIN={"Alles":ITEMS.map(i=>i.id), ...Object.fromEntries(n.data.map(r=>[r.naam,r.lagen]))};
-}
-
+const $ = id=>document.getElementById(id);
+// namen komen van gebruikers, dus escapen voordat ze in HTML gaan
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const store = {
   get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},
   set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
 };
-let user = store.get("lm_presets",{});
-const eerdereState = store.get("lm_state",null);
-// zonder eerdere selectie gaan alle lagen aan zodra ze geladen zijn
-let state = eerdereState || {on:[], labels:{}, colors:{}, title:"Legenda", cols:1, heads:true, transp:false, showTitle:true, preset:"b:Alles"};
-const on = new Set(state.on);
-const $ = id=>document.getElementById(id);
 
-function lab(i){return state.labels[i.id] ?? i.label}
-function col(i){return state.colors[i.id] ?? i.color}
+/* Elke gebruiker heeft zijn eigen legenda's, elk met eigen lagen.
+   Ingelogd staan ze in je account (user_data, app "legenda"), anders alleen in deze browser. */
+const nieuweLegenda=naam=>({id:crypto.randomUUID(), naam, titel:"Legenda", cols:1, heads:true, transp:false, showTitle:true, lagen:[]});
+let data=store.get("lm_legendas",null);
+if(!data?.legendas?.length) data={legendas:[nieuweLegenda("Mijn legenda")], actief:null};
+const L=()=>data.legendas.find(l=>l.id===data.actief) || data.legendas[0];
+const groepen=()=>[...new Set(L().lagen.map(i=>i.groep))];
+const laag=id=>L().lagen.find(i=>i.id===id);
 
 function swatchSVG(i,w=36,h=28){
-  const c=col(i);
+  const c=i.kleur;
   let inner="";
-  if(i.shape==="icon"){
-    inner=`<svg x="${(w-h)/2}" y="0" width="${h}" height="${h}" viewBox="0 0 100 100">${ICONS[i.id]}</svg>`;
-  }else if(i.shape==="blok"){
+  if(i.vorm==="icon"){
+    inner=`<svg x="${(w-h)/2}" y="0" width="${h}" height="${h}" viewBox="0 0 100 100">${i.icoon||""}</svg>`;
+  }else if(i.vorm==="blok"){
     inner=`<rect x="4" y="6" width="${w-8}" height="${h-12}" rx="2.5" fill="${c}" stroke="rgba(0,0,0,.22)" stroke-width="1"/>`;
-  }else if(i.shape==="rondje"){
+  }else if(i.vorm==="rondje"){
     inner=`<circle cx="${w/2}" cy="${h/2}" r="8" fill="${c}" stroke="#ffffff" stroke-width="2"/><circle cx="${w/2}" cy="${h/2}" r="9.2" fill="none" stroke="rgba(0,0,0,.22)" stroke-width="1"/>`;
-  }else if(i.shape==="lijn"){
+  }else if(i.vorm==="lijn"){
     inner=`<line x1="4" y1="${h/2}" x2="${w-4}" y2="${h/2}" stroke="${c}" stroke-width="5" stroke-linecap="round"/>`;
   }else{
     inner=`<line x1="4" y1="${h/2}" x2="${w-4}" y2="${h/2}" stroke="${c}" stroke-width="4" stroke-dasharray="5 4"/>`;
@@ -199,102 +190,111 @@ function swatchSVG(i,w=36,h=28){
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">${inner}</svg>`;
 }
 
-// namen komen nu uit de database, dus escapen voordat ze in HTML gaan
-const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+/* lagen (links) */
 function buildList(){
   const g=$("groups"); g.innerHTML="";
-  for(const gr of GROUPS){
+  if(!L().lagen.length){ g.innerHTML=`<p class="leeg">Deze legenda heeft nog geen lagen. Voeg hieronder je eerste laag toe.</p>`; $("toevoegen").open=true; }
+  for(const gr of groepen()){
     const sec=document.createElement("div"); sec.className="group";
-    sec.innerHTML=`<div class="ghead"><h2>${esc(gr.name)}</h2><button class="small" data-all="${esc(gr.id)}">Alles aan</button><button class="small" data-none="${esc(gr.id)}">Alles uit</button></div>`;
-    for(const i of ITEMS.filter(x=>x.group===gr.id)){
+    sec.innerHTML=`<div class="ghead"><h2>${esc(gr)}</h2><button class="small" data-all="${esc(gr)}">Alles aan</button><button class="small" data-none="${esc(gr)}">Alles uit</button></div>`;
+    for(const i of L().lagen.filter(x=>x.groep===gr)){
       const r=document.createElement("div"); r.className="item"; r.dataset.id=i.id;
-      r.innerHTML=`<input type="checkbox" id="cb-${esc(i.id)}" aria-label="${esc(i.label)} tonen">
+      r.innerHTML=`<input type="checkbox" aria-label="${esc(i.label)} tonen">
         <img class="sw" alt="">
-        <input type="text" id="lb-${esc(i.id)}" aria-label="Naam voor ${esc(i.label)}">
-        <input type="color" id="cl-${esc(i.id)}" aria-label="Kleur van ${esc(i.label)}" ${i.shape==="icon"?"disabled title='Iconen hebben een vaste kleur'":""}>
-        <button class="small del" type="button" data-del="${esc(i.id)}" aria-label="${esc(i.label)} verwijderen voor iedereen" title="Laag verwijderen (admin)">×</button>`;
+        <input type="text" aria-label="Naam voor ${esc(i.label)}">
+        <input type="color" aria-label="Kleur van ${esc(i.label)}" ${i.vorm==="icon"?"disabled title='Iconen hebben een vaste kleur'":""}>
+        <button class="small del" type="button" data-del="${esc(i.id)}" aria-label="${esc(i.label)} verwijderen" title="Laag verwijderen">×</button>`;
       sec.appendChild(r);
     }
     g.appendChild(sec);
   }
+  $("groepLijst").replaceChildren(...groepen().map(n=>new Option(n)));
   syncList();
 }
 function syncList(){
-  for(const i of ITEMS){
+  for(const i of L().lagen){
     const r=document.querySelector(`.item[data-id="${CSS.escape(i.id)}"]`);
-    const isOn=on.has(i.id);
-    r.classList.toggle("on",isOn); r.classList.toggle("off",!isOn);
-    r.querySelector("input[type=checkbox]").checked=isOn;
-    const t=r.querySelector("input[type=text]"); if(document.activeElement!==t) t.value=lab(i);
-    r.querySelector("input[type=color]").value=i.shape==="icon"?"#888888":col(i);
+    r.classList.toggle("on",i.aan); r.classList.toggle("off",!i.aan);
+    r.querySelector("input[type=checkbox]").checked=i.aan;
+    const t=r.querySelector("input[type=text]"); if(document.activeElement!==t) t.value=i.label;
+    r.querySelector("input[type=color]").value=i.vorm==="icon"?"#888888":i.kleur;
     r.querySelector(".sw").src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(swatchSVG(i));
   }
 }
 $("groups").addEventListener("change",e=>{
-  const r=e.target.closest(".item"); if(!r) return;
-  if(e.target.type==="checkbox"){ e.target.checked?on.add(r.dataset.id):on.delete(r.dataset.id); markCustom(); }
-  update();
+  const r=e.target.closest(".item"); if(!r || e.target.type!=="checkbox") return;
+  laag(r.dataset.id).aan=e.target.checked; update();
 });
 $("groups").addEventListener("input",e=>{
   const r=e.target.closest(".item"); if(!r || e.target.type==="checkbox") return;
-  const id=r.dataset.id;
-  if(e.target.type==="text") state.labels[id]=e.target.value;
-  if(e.target.type==="color") state.colors[id]=e.target.value;
+  const i=laag(r.dataset.id);
+  if(e.target.type==="text") i.label=e.target.value;
+  if(e.target.type==="color") i.kleur=e.target.value;
   update();
 });
 $("groups").addEventListener("click",e=>{
-  const a=e.target.dataset.all, n=e.target.dataset.none;
-  if(!a&&!n) return;
-  ITEMS.filter(i=>i.group===(a||n)).forEach(i=>a?on.add(i.id):on.delete(i.id));
-  markCustom(); update();
+  const {all,none,del}=e.target.dataset;
+  if(all||none){ L().lagen.filter(i=>i.groep===(all||none)).forEach(i=>i.aan=!!all); update(); }
+  if(del){
+    const i=laag(del);
+    if(!confirm(`"${i.label}" verwijderen uit deze legenda?`)) return;
+    L().lagen=L().lagen.filter(x=>x.id!==del); buildList(); update(); flash(`Laag "${i.label}" verwijderd`);
+  }
 });
 
-/* netwerken */
-function fillPresets(){
-  const s=$("preset"); s.innerHTML="";
-  const og1=document.createElement("optgroup"); og1.label="Standaard";
-  Object.keys(BUILTIN).forEach(k=>og1.append(new Option(k,"b:"+k)));
-  s.append(og1);
-  const keys=Object.keys(user);
-  if(keys.length){const og2=document.createElement("optgroup"); og2.label="Mijn netwerken";
-    keys.forEach(k=>og2.append(new Option(k,"u:"+k))); s.append(og2);}
-  s.append(new Option("Eigen selectie (niet opgeslagen)","custom"));
-  s.value=state.preset||"custom"; if(!s.value) s.value="custom";
-  $("delPreset").disabled=!s.value.startsWith("u:");
+/* laag toevoegen */
+function svgInhoud(code){
+  // plak een hele <svg> of alleen de vormen; we bewaren de vormen voor viewBox 0 0 100 100
+  const doc=new DOMParser().parseFromString(code.trim().startsWith("<svg")?code:`<svg xmlns="http://www.w3.org/2000/svg">${code}</svg>`,"image/svg+xml");
+  const svg=doc.querySelector("svg");
+  return doc.querySelector("parsererror")||!svg ? null : svg.innerHTML.trim();
 }
-function markCustom(){ if(state.preset!=="custom"){state.preset="custom"; $("preset").value="custom"; $("delPreset").disabled=true;} }
-$("preset").addEventListener("change",e=>{
-  const v=e.target.value; state.preset=v;
-  if(v.startsWith("b:")){ on.clear(); BUILTIN[v.slice(2)].forEach(x=>on.add(x)); }
-  if(v.startsWith("u:")){ const p=user[v.slice(2)]; on.clear(); p.on.forEach(x=>on.add(x));
-    if(p.title!=null){state.title=p.title; $("title").value=p.title;} }
-  $("delPreset").disabled=!v.startsWith("u:");
-  update();
+$("nlVorm").onchange=()=>{ const icoon=$("nlVorm").value==="icon"; $("nlIcoonVeld").hidden=!icoon; $("nlKleurVeld").hidden=icoon; };
+$("nieuweLaag").addEventListener("submit",e=>{
+  e.preventDefault();
+  $("nlFout").hidden=true;
+  const label=$("nlNaam").value.trim(), groep=$("nlGroep").value.trim(), vorm=$("nlVorm").value;
+  let icoon=null;
+  if(vorm==="icon"){ icoon=svgInhoud($("nlIcoon").value);
+    if(!icoon){ $("nlFout").textContent="Die SVG-code klopt niet. Plak een hele <svg>…</svg>."; $("nlFout").hidden=false; return; } }
+  L().lagen.push({id:crypto.randomUUID().slice(0,8), label, groep, vorm, kleur:vorm==="icon"?null:$("nlKleur").value, icoon, aan:true});
+  e.target.reset(); $("nlVorm").onchange();
+  buildList(); update(); flash(`Laag "${label}" toegevoegd`);
 });
-$("savePreset").onclick=()=>{ $("saveRow").hidden=false; const v=$("preset").value; $("presetName").value=v.startsWith("u:")?v.slice(2):""; $("presetName").focus(); };
-$("savePresetCancel").onclick=()=>{$("saveRow").hidden=true};
-$("savePresetOk").onclick=()=>{
-  const n=$("presetName").value.trim(); if(!n){$("presetName").focus();return}
-  user[n]={on:[...on], title:state.title}; store.set("lm_presets",user);
-  state.preset="u:"+n; fillPresets(); $("saveRow").hidden=true; flash(`Netwerk "${n}" opgeslagen`); save();
+
+/* legenda kiezen (rechts) */
+function vulKiezer(){
+  $("kies").replaceChildren(...data.legendas.map(l=>new Option(l.naam,l.id)));
+  $("kies").value=L().id;
+}
+function toonLegenda(){ vulKiezer(); zetOpties(); buildList(); update(); }
+$("kies").onchange=e=>{ data.actief=e.target.value; toonLegenda(); };
+$("nieuw").onclick=()=>{
+  const naam=prompt("Naam van de nieuwe legenda:","Nieuwe legenda")?.trim(); if(!naam) return;
+  const l=nieuweLegenda(naam); data.legendas.push(l); data.actief=l.id; toonLegenda();
 };
-$("presetName").addEventListener("keydown",e=>{if(e.key==="Enter")$("savePresetOk").click()});
-$("delPreset").onclick=()=>{
-  const v=$("preset").value; if(!v.startsWith("u:")) return;
-  if($("delPreset").dataset.confirm!=="1"){ $("delPreset").dataset.confirm="1"; $("delPreset").textContent="Zeker weten?";
-    setTimeout(()=>{$("delPreset").dataset.confirm="";$("delPreset").textContent="Verwijderen"},3000); return; }
-  delete user[v.slice(2)]; store.set("lm_presets",user); state.preset="custom";
-  $("delPreset").dataset.confirm=""; $("delPreset").textContent="Verwijderen"; fillPresets(); flash("Netwerk verwijderd"); save();
+$("kopie").onclick=()=>{
+  const l={...structuredClone(L()), id:crypto.randomUUID(), naam:L().naam+" (kopie)"};
+  data.legendas.push(l); data.actief=l.id; toonLegenda(); flash("Kopie gemaakt");
+};
+$("hernoem").onclick=()=>{
+  const naam=prompt("Nieuwe naam:",L().naam)?.trim(); if(!naam) return;
+  L().naam=naam; vulKiezer(); save();
+};
+$("weg").onclick=()=>{
+  if(!confirm(`Legenda "${L().naam}" verwijderen?`)) return;
+  data.legendas=data.legendas.filter(l=>l!==L());
+  if(!data.legendas.length) data.legendas.push(nieuweLegenda("Mijn legenda"));
+  data.actief=data.legendas[0].id; toonLegenda(); flash("Legenda verwijderd");
 };
 
-/* opties */
-function zetOpties(){ $("title").value=state.title; $("cols").value=state.cols; $("optHeads").checked=state.heads; $("optTransp").checked=state.transp; $("optTitle").checked=state.showTitle; }
-zetOpties();
-$("title").oninput=e=>{state.title=e.target.value; update()};
-$("cols").onchange=e=>{state.cols=+e.target.value; update()};
-$("optHeads").onchange=e=>{state.heads=e.target.checked; update()};
-$("optTransp").onchange=e=>{state.transp=e.target.checked; update()};
-$("optTitle").onchange=e=>{state.showTitle=e.target.checked; update()};
+/* opties van de actieve legenda */
+function zetOpties(){ const l=L(); $("title").value=l.titel; $("cols").value=l.cols; $("optHeads").checked=l.heads; $("optTransp").checked=l.transp; $("optTitle").checked=l.showTitle; }
+$("title").oninput=e=>{L().titel=e.target.value; update()};
+$("cols").onchange=e=>{L().cols=+e.target.value; update()};
+$("optHeads").onchange=e=>{L().heads=e.target.checked; update()};
+$("optTransp").onchange=e=>{L().transp=e.target.checked; update()};
+$("optTitle").onchange=e=>{L().showTitle=e.target.checked; update()};
 
 /* tekenen */
 const imgCache=new Map();
@@ -308,13 +308,13 @@ const S=3, PAD=22, ROW=34, HEAD=30, SWW=36, SWH=28, GAP=10, COLGAP=30;
 const canvas=document.createElement("canvas");
 let renderId=0;
 async function render(){
-  const my=++renderId;
+  const my=++renderId, l=L();
   await document.fonts.ready;
   const entries=[];
-  for(const gr of GROUPS){
-    const its=ITEMS.filter(i=>i.group===gr.id && on.has(i.id));
+  for(const gr of groepen()){
+    const its=l.lagen.filter(i=>i.groep===gr && i.aan);
     if(!its.length) continue;
-    if(state.heads) entries.push({head:gr.name});
+    if(l.heads) entries.push({head:gr});
     its.forEach(i=>entries.push({item:i}));
   }
   const imgs=await Promise.all(entries.map(e=>e.item?loadImg(swatchSVG(e.item,SWW,SWH)):null));
@@ -324,9 +324,9 @@ async function render(){
   // kolommen verdelen
   const h=e=>e.head?HEAD:ROW;
   const total=entries.reduce((s,e)=>s+h(e),0);
-  const nc=Math.max(1,Math.min(state.cols,entries.filter(e=>e.item).length||1));
+  const nc=Math.max(1,Math.min(l.cols,entries.filter(e=>e.item).length||1));
   const target=total/nc; const cols=[[]]; let acc=0;
-  entries.forEach((e,k)=>{
+  entries.forEach(e=>{
     const cur=cols[cols.length-1];
     if(cols.length<nc && acc>0 && acc+h(e)/2>target*cols.length){
       if(cur.length && cur[cur.length-1].head){ const hd=cur.pop(); cols.push([hd]); } else cols.push([]);
@@ -335,19 +335,19 @@ async function render(){
   });
   const widths=cols.map(c=>{let w=0;c.forEach(e=>{
     if(e.head){ctx.font=FH; w=Math.max(w, ctx.measureText(e.head.toUpperCase()).width + e.head.length*0.9);}
-    else {ctx.font=FI; w=Math.max(w, SWW+GAP+ctx.measureText(lab(e.item)).width);} }); return w;});
+    else {ctx.font=FI; w=Math.max(w, SWW+GAP+ctx.measureText(e.item.label).width);} }); return w;});
   const heights=cols.map(c=>c.reduce((s,e,ix)=>s+(e.head&&ix>0?HEAD+6:h(e)),0));
-  const titleOn=state.showTitle && state.title.trim();
-  ctx.font=FT; const tw=titleOn?ctx.measureText(state.title).width:0;
+  const titleOn=l.showTitle && l.titel.trim();
+  ctx.font=FT; const tw=titleOn?ctx.measureText(l.titel).width:0;
   const W=Math.ceil(Math.max(tw, widths.reduce((a,b)=>a+b,0)+COLGAP*(cols.length-1), 120)+PAD*2);
   const TH=titleOn?40:0;
   const H=Math.ceil(PAD*2+TH+Math.max(...heights,ROW));
   canvas.width=W*S; canvas.height=H*S;
   ctx.setTransform(S,0,0,S,0,0);
   ctx.clearRect(0,0,W,H);
-  if(!state.transp){ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,W,H);}
+  if(!l.transp){ctx.fillStyle="#ffffff"; ctx.fillRect(0,0,W,H);}
   ctx.textBaseline="middle"; ctx.fillStyle="#1d2420";
-  if(titleOn){ctx.font=FT; ctx.fillText(state.title,PAD,PAD+12);
+  if(titleOn){ctx.font=FT; ctx.fillText(l.titel,PAD,PAD+12);
     ctx.fillStyle="rgba(0,0,0,.12)"; ctx.fillRect(PAD,PAD+30,W-PAD*2,1);}
   let x=PAD;
   const flat=entries.map((e,k)=>({e,im:imgs[k]}));
@@ -360,7 +360,7 @@ async function render(){
         ctx.fillText(e.head.toUpperCase(),x,y+HEAD/2+2); if("letterSpacing" in ctx){ctx.letterSpacing="0px";}
         y+=HEAD; }
       else { if(im) ctx.drawImage(im,x,y+(ROW-SWH)/2,SWW,SWH);
-        ctx.font=FI; ctx.fillStyle="#1d2420"; ctx.fillText(lab(e.item),x+SWW+GAP,y+ROW/2+1); y+=ROW; }
+        ctx.font=FI; ctx.fillStyle="#1d2420"; ctx.fillText(e.item.label,x+SWW+GAP,y+ROW/2+1); y+=ROW; }
     });
     x+=widths[ci]+COLGAP;
   });
@@ -368,10 +368,12 @@ async function render(){
   $("out").style.width=W+"px";
   $("count").textContent=`${entries.filter(e=>e.item).length} items`;
 }
-let syncT;
-function save(){ state.on=[...on]; store.set("lm_state",state);
-  // naar het account pas als je even stopt met typen
-  clearTimeout(syncT); syncT=setTimeout(()=>bewaarAccountData("legenda",{state,presets:user}),800); }
+
+let syncT, accountGeladen=false;
+function save(){ data.actief=L().id; store.set("lm_legendas",data);
+  // naar het account pas als het account geladen is (anders overschrijf je het) en je even stopt met typen
+  if(!accountGeladen) return;
+  clearTimeout(syncT); syncT=setTimeout(()=>bewaarAccountData("legenda",data),800); }
 function update(){ syncList(); save(); render(); }
 
 let ft; function flash(t){ $("status").textContent=t; clearTimeout(ft); ft=setTimeout(()=>$("status").textContent="",3500); }
@@ -384,59 +386,22 @@ $("copy").onclick=()=>{
   }catch(e){ flash("Kopiëren lukt hier niet. Klik met rechts op de legenda en kies Afbeelding kopiëren."); }
 };
 
-/* beheer: admins voegen lagen toe of verwijderen ze, voor iedereen (Supabase controleert of je admin bent) */
-function vulGroepen(){ $("groepLijst").replaceChildren(...GROUPS.map(g=>new Option(g.name))); }
-async function herlaad(){ await laadLagen(); buildList(); fillPresets(); vulGroepen(); render(); }
-function slug(s){ return s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"") || "laag"; }
-function svgInhoud(code){
-  // plak een hele <svg> of alleen de vormen; we bewaren de vormen voor viewBox 0 0 100 100
-  const doc=new DOMParser().parseFromString(code.trim().startsWith("<svg")?code:`<svg xmlns="http://www.w3.org/2000/svg">${code}</svg>`,"image/svg+xml");
-  const svg=doc.querySelector("svg");
-  return doc.querySelector("parsererror")||!svg ? null : svg.innerHTML.trim();
-}
-$("nlVorm").onchange=e=>{ const icoon=e.target.value==="icon"; $("nlIcoonVeld").hidden=!icoon; $("nlKleurVeld").hidden=icoon; };
-$("nieuweLaag").addEventListener("submit",async e=>{
-  e.preventDefault();
-  const fout=t=>{ $("nlFout").textContent=t; $("nlFout").hidden=false; };
-  $("nlFout").hidden=true;
-  const label=$("nlNaam").value.trim(), groep=$("nlGroep").value.trim(), vorm=$("nlVorm").value;
-  let icoon=null;
-  if(vorm==="icon"){ icoon=svgInhoud($("nlIcoon").value); if(!icoon) return fout("Die SVG-code klopt niet. Plak een hele <svg>…</svg>."); }
-  let id=slug(label), n=2; while(ITEMS.some(i=>i.id===id)) id=slug(label)+"-"+n++;
-  const volgorde=Math.max(0,...ITEMS.map(i=>i.volgorde||0))+1;
-  const knop=e.submitter; knop.disabled=true;
-  const { error }=await sb.from("legenda_lagen").insert({ id, label, groep, vorm, kleur:vorm==="icon"?null:$("nlKleur").value, icoon, volgorde });
-  knop.disabled=false;
-  if(error) return fout("Toevoegen mislukt: "+error.message);
-  e.target.reset(); $("nlVorm").onchange({target:$("nlVorm")});
-  on.add(id); await herlaad(); update(); flash(`Laag "${label}" toegevoegd voor iedereen`);
-});
-$("groups").addEventListener("click",async e=>{
-  const id=e.target.dataset.del; if(!id) return;
-  const i=ITEMS.find(x=>x.id===id);
-  if(!confirm(`"${i.label}" verwijderen? Dan is hij voor iedereen weg uit de Legenda-maker.`)) return;
-  const { error }=await sb.from("legenda_lagen").delete().eq("id",id);
-  if(error) return flash("Verwijderen mislukt: "+error.message);
-  on.delete(id); await herlaad(); update(); flash(`Laag "${i.label}" verwijderd`);
-});
+vulKiezer(); zetOpties(); buildList(); render();
 
-laadLagen().then(async ()=>{
-  if(!eerdereState) BUILTIN["Alles"].forEach(id=>on.add(id));
-  buildList(); fillPresets(); vulGroepen(); render();
-
+// Ingelogd? Dan komen je legenda's uit je account, op elk apparaat.
+(async()=>{
   const { data:{ session } }=await sb.auth.getSession();
-  if(isAdmin(session?.user)){ document.body.classList.add("admin"); $("beheer").hidden=false; }
-
-  // Ingelogd? Dan komen je netwerken en selectie van je account, op elk apparaat.
-  const d=await laadAccountData("legenda");
-  if(!d) return;
-  user=d.presets||{}; store.set("lm_presets",user);
-  if(d.state){ state=d.state; on.clear(); state.on.forEach(x=>on.add(x)); }
-  zetOpties(); fillPresets(); update();
-}).catch(e=>{
-  console.error(e);
-  $("groups").innerHTML=`<p class="fout">De lagen konden niet geladen worden. Check je internet en ververs de pagina.</p>`;
-});
+  $("opslag").textContent=session
+    ? "Je legenda's worden bewaard in je account."
+    : "Je legenda's staan nu alleen in deze browser. Log in op daanwoerdman.nl om ze in je account te bewaren.";
+  if(!session) return;
+  const { data:rij, error }=await sb.from("user_data").select("data").eq("app","legenda").maybeSingle();
+  if(error){ $("opslag").textContent="Je legenda's konden niet uit je account geladen worden. Ververs de pagina."; return; }
+  const d=rij?.data;
+  accountGeladen=true;
+  if(d?.legendas?.length){ data=d; store.set("lm_legendas",data); toonLegenda(); }
+  else save(); // eerste keer ingelogd: wat je in deze browser had gaat naar je account
+})();
 </script>
 </body>
 </html>
