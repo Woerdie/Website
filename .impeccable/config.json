@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "broken-image",
+        "value": "*",
+        "files": [
+          "legenda/index.html"
+        ],
+        "createdAt": "2026-10-26T22:15:38.839Z",
+        "reason": "Claude: img src is set by JS at load (swatches and canvas preview), verified in browser"
+      }
+    ]
+  }
+}
