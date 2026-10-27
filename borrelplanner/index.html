@@ -19,18 +19,35 @@
 
     <header>
       <span class="badge">🍻 Borrelplanner</span>
-      <h1>Wanneer kunnen we<br>wat drinken?</h1>
-      <p>Vul je naam in, tik de dagen aan dat jij kan, en zie waar de meeste mensen kunnen.</p>
+      <h1 id="kop">Wanneer kunnen we<br>wat drinken?</h1>
+      <p id="intro">Maak een borrel, deel de link in de groepsapp en zie op welke dag de meeste mensen kunnen.</p>
     </header>
 
-    <div id="configWarn" class="config-warn" style="display:none">
-      ⚠️ Nog niet ingesteld: vul bovenin het bestand je <code>SUPABASE_URL</code> en <code>SUPABASE_ANON_KEY</code> in.
+    <!-- Zonder ?b= in de link: een borrel maken of een eerdere openen -->
+    <div id="startScherm" hidden>
+      <form class="card" id="nieuweBorrel">
+        <h2><span class="step">+</span> Nieuwe borrel</h2>
+        <input type="text" id="borrelNaam" placeholder="bijv. Borrel na de toetsweek" maxlength="60" autocomplete="off" required>
+        <button class="btn-save" type="submit" id="maakBtn">Borrel maken</button>
+      </form>
+
+      <div class="card" id="mijnBorrelsKaart" hidden>
+        <h2>Mijn borrels</h2>
+        <div class="borrel-lijst" id="mijnBorrels"></div>
+      </div>
+    </div>
+
+    <!-- Met ?b= in de link: de planning van die borrel -->
+    <div id="borrelScherm" hidden>
+    <div class="deel">
+      <button class="btn-tool" id="deelBtn">🔗 Link delen</button>
+      <a class="btn-tool" href="./">+ Andere borrel</a>
     </div>
 
     <div class="card">
       <h2><span class="step">1</span> Je naam</h2>
 
-      <input type="text" id="naam" placeholder="bijv. vader Daan" autocomplete="off">
+      <input type="text" id="naam" placeholder="bijv. vader Daan" maxlength="40" autocomplete="off">
 
       <h2 style="margin-top:24px"><span class="step">2</span> Kies je dagen</h2>
 
@@ -51,7 +68,7 @@
       </div>
 
       <button class="btn-save" id="saveBtn">Opslaan</button>
-      <button class="btn-remove" id="removeBtn">Verwijder mijn gekozen dag(en)</button>
+      <p class="uitleg" id="eigenUitleg">Je dagen staan aangevinkt. Tik dagen aan of uit en sla op; alleen jij kunt jouw dagen aanpassen.</p>
     </div>
 
     <div class="card">
@@ -93,39 +110,11 @@
         <button id="nextPage">Volgende ›</button>
       </div>
     </div>
-  </div>
+    </div>
 
-  <div class="modal-overlay" id="removeModal">
-    <div class="modal">
-      <div class="modal-head">
-        <h3>Dagen verwijderen</h3>
-        <p>Klik op je naam uit de lijst. Daarna zie je precies welke dagen onder die naam zijn opgeslagen.</p>
-      </div>
-
-      <div class="modal-body">
-        <label class="modal-label" for="removeNaam">Naam</label>
-
-        <input type="text" id="removeNaam" placeholder="bijv. Daan" autocomplete="off">
-
-        <button class="btn-small" id="loadRemoveDaysBtn">Toon mijn dagen</button>
-
-        <div class="modal-error" id="removeError"></div>
-
-        <div class="name-choices" id="nameChoicesBox">
-          <div class="name-choices-title">Opgeslagen namen — klik om te kiezen:</div>
-          <div class="name-choice-list" id="nameChoicesList"></div>
-        </div>
-
-        <div class="date-checklist" id="removeDaysBox">
-          <p class="date-hint">Datums staan per maand en oplopend. Klik alleen de dagen aan die je wilt verwijderen.</p>
-          <div class="date-list" id="removeDaysList"></div>
-        </div>
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-cancel" id="cancelRemoveBtn">Annuleren</button>
-        <button class="btn-confirm" id="confirmRemoveBtn" disabled>Geselecteerde dagen verwijderen</button>
-      </div>
+    <div class="card" id="nietGevonden" hidden>
+      <h2>Deze borrel bestaat niet (meer)</h2>
+      <p class="uitleg">Check de link, of <a href="./">maak een nieuwe borrel</a>.</p>
     </div>
   </div>
 

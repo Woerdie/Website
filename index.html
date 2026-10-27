@@ -147,15 +147,6 @@
   .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .6s cubic-bezier(.2, .7, .2, 1); }
   .reveal.in { opacity: 1; transform: none; }
 
-  /* Over mij */
-  .about {
-    display: grid; grid-template-columns: 1fr 1.4fr; gap: 48px;
-    padding: 40px; border-radius: 24px;
-    background: #fff4ea;
-  }
-  .about .body { font-size: 18px; color: #4d4640; max-width: 52ch; }
-  .about .body p + p { margin-top: 16px; }
-
   footer { padding: 28px 0 48px; font-size: 14px; color: var(--muted); }
 
   /* Privé-popup */
@@ -218,7 +209,6 @@
   @keyframes drift { to { transform: translate(-40px, 30px) scale(1.1); } }
   @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.97); } }
 
-  @media (max-width: 800px) { .about { grid-template-columns: 1fr; gap: 16px; padding: 28px; } }
   @media (max-width: 600px) {
     .wrap { padding: 0 16px; }
     .nav ul { gap: 14px; white-space: nowrap; }
@@ -228,7 +218,6 @@
     .hero::after { width: 200px; height: 200px; right: 30%; top: 220px; }
     .hero p { font-size: 17px; }
     .section { padding-block: 44px; }
-    .about { padding: 24px 20px; }
     dialog { padding: 22px; }
   }
   @media (prefers-reduced-motion: reduce) {
@@ -244,7 +233,6 @@
       <a class="logo" href="#top" aria-label="Daan Woerdman"><span>DW</span><b class="naam">Daan Woerdman</b></a>
       <ul>
         <li><a href="#projecten">Projecten</a></li>
-        <li><a href="#over">Over mij</a></li>
         <li><button class="lock" type="button" id="openAccount" aria-haspopup="dialog"><span class="persoon" id="accountIcoon" aria-hidden="true">👤</span><span id="accountLabel">Inloggen</span></button></li>
       </ul>
     </div>
@@ -262,15 +250,6 @@
       <div id="lijst"></div>
     </section>
 
-    <section class="section wrap" id="over">
-      <div class="about reveal">
-        <h2>Over mij</h2>
-        <div class="body">
-          <p>Ik ben Daan. Als ik iets tegenkom dat handiger kan, bouw ik er een webapp voor. Meestal begint het bij iets kleins in de vriendengroep of op school.</p>
-          <p>Alles op deze site heb ik zelf ontworpen en gebouwd.</p>
-        </div>
-      </div>
-    </section>
   </main>
 
   <footer class="wrap">&copy; <span id="jaar"></span> Daan Woerdman</footer>
@@ -321,7 +300,7 @@ const projects = [
   { group: "Voor school", name: "Schaallijn-maker", url: "schaallijn/", icon: "📏", color: "#c47a12",
     desc: "Vul je kaartschaal en lengte in en kopieer een schaallijn die op papier precies klopt." },
   { group: "Voor de vriendengroep", name: "Borrelplanner", url: "borrelplanner/", icon: "🍻", color: "#e8601c",
-    desc: "Iedereen vinkt aan wanneer het uitkomt. De planner laat zien op welke dag de meesten kunnen." },
+    desc: "Maak een borrel, deel de link in de groepsapp en zie op welke dag de meesten kunnen." },
   { group: "Voor de vriendengroep", name: "Pubgolf scorekaart", url: "pubgolf/", icon: "⛳", color: "#2f9e5b",
     desc: "Spelers en teams aanmaken, scores per hole invullen en live de stand bijhouden." },
   { private: true, name: "BewindWijs", url: "bewindwijs/tarieven.html", icon: "⚖️", color: "#1a3a6b",

@@ -4,8 +4,8 @@
   --card: #fffdf9;
   --card-2: #f6efe4;
   --ink: #352b20;
-  --muted: #8c8071;
-  --accent: #c2632f;
+  --muted: #6e6253;
+  --accent: #a9521f;
   --accent-2: #dd8542;
   --accent-soft: #f8e7d6;
   --line: #ebe0cf;
@@ -182,7 +182,7 @@ input[type="text"]:focus {
 
 .cal-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr);
+  grid-template-columns: repeat(7, minmax(0, 1fr));
   gap: clamp(4px, 1.4vw, 6px);
 }
 
@@ -198,6 +198,8 @@ input[type="text"]:focus {
 
 .cal-day {
   aspect-ratio: 1 / 1;
+  min-width: 0;
+  padding: 0;
   border: none;
   background: var(--card-2);
   border-radius: 11px;
@@ -303,32 +305,6 @@ button.btn-save:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   filter: grayscale(0.3);
-}
-
-.btn-remove {
-  display: block;
-  margin: 12px auto 0;
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-family: inherit;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-  padding: 8px 10px;
-  border-radius: 9px;
-  transition: 0.15s;
-  touch-action: manipulation;
-}
-
-.btn-remove:hover {
-  color: var(--t-red);
-  background: var(--t-red-soft);
-}
-
-.btn-remove:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .toolbar {
@@ -660,24 +636,6 @@ button.btn-save:disabled {
   background: #b03b25;
 }
 
-.config-warn {
-  background: #fff3cd;
-  border: 1px solid #f0d68a;
-  color: #7a5d10;
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 20px;
-  font-size: 0.9rem;
-}
-
-.config-warn code {
-  background: #ffffff;
-  padding: 2px 6px;
-  border-radius: 5px;
-  font-size: 0.85em;
-  word-break: break-word;
-}
-
 .backlink {
   display: inline-block;
   color: var(--muted);
@@ -692,313 +650,56 @@ button.btn-save:disabled {
   color: var(--accent);
 }
 
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(35, 25, 15, 0.48);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 50;
-  padding: 8px;
-  backdrop-filter: blur(2px);
-}
-
-.modal-overlay.open {
+/* Deellink en andere borrel */
+.deel {
   display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: -8px 0 18px;
 }
 
-.modal {
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  max-width: 430px;
-  width: 100%;
-  max-height: 96vh;
-  box-shadow: var(--shadow);
+.deel .btn-tool {
+  text-decoration: none;
+}
+
+/* Mijn borrels op het startscherm */
+.borrel-lijst {
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  gap: 8px;
 }
 
-.modal-head {
-  padding: 22px 22px 0;
-}
-
-.modal h3 {
-  font-family: 'Fraunces', serif;
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin: 0 0 8px;
-}
-
-.modal p {
-  margin: 0 0 14px;
-  color: var(--muted);
-  font-size: 0.9rem;
-}
-
-.modal-body {
-  padding: 0 22px 14px;
-  overflow: auto;
-}
-
-.modal-label {
+.borrel-link {
   display: block;
-  font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--muted);
-  margin-bottom: 7px;
-}
-
-.modal-actions {
-  display: flex;
-  gap: 10px;
-  padding: 14px 22px;
-  background: var(--card);
-  border-top: 1px solid var(--line);
-}
-
-.modal-actions button {
-  flex: 1;
-  font-family: inherit;
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
+  padding: 13px 15px;
   border-radius: 12px;
-  padding: 13px;
-  touch-action: manipulation;
-}
-
-.btn-cancel {
   background: var(--card-2);
   color: var(--ink);
-  border: 1.5px solid var(--line) !important;
-}
-
-.btn-confirm {
-  background: linear-gradient(150deg, var(--t-red), #d9603f);
-  color: #ffffff;
-}
-
-.btn-confirm:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.btn-small {
-  margin-top: 10px;
-  width: 100%;
-  background: linear-gradient(150deg, var(--accent), var(--accent-2));
-  color: #ffffff;
-  border: none;
-  border-radius: 12px;
-  padding: 13px;
-  font-family: inherit;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-.btn-small:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.modal-error {
-  display: none;
-  margin-top: 12px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  background: var(--t-red-soft);
-  color: var(--t-red);
-  font-size: 0.85rem;
   font-weight: 600;
+  text-decoration: none;
+  transition: 0.15s;
 }
 
-.modal-error.show {
-  display: block;
+.borrel-link::after {
+  content: " ›";
+  color: var(--accent);
 }
 
-.name-choices {
-  display: none;
+.borrel-link:hover {
+  background: var(--accent-soft);
+}
+
+#nieuweBorrel .btn-save {
   margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px dashed var(--line);
 }
 
-.name-choices.open {
-  display: block;
-}
-
-.name-choices-title {
-  font-size: 0.78rem;
-  font-weight: 700;
+.uitleg {
+  margin: 12px 0 0;
   color: var(--muted);
-  margin-bottom: 8px;
+  font-size: 0.85rem;
+  text-align: center;
 }
 
-.name-choice-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-}
-
-.name-choice {
-  background: #ffffff;
-  border: 1.5px solid var(--line);
-  color: var(--ink);
-  font-family: inherit;
-  font-size: 0.82rem;
-  font-weight: 700;
-  padding: 7px 12px;
-  border-radius: 999px;
-  cursor: pointer;
-  transition: 0.15s;
-}
-
-.name-choice:hover,
-.name-choice.active {
-  border-color: var(--accent);
-  color: #ffffff;
-  background: linear-gradient(150deg, var(--accent), var(--accent-2));
-}
-
-.date-checklist {
-  display: none;
-  margin-top: 16px;
-  border-top: 1px dashed var(--line);
-  padding-top: 14px;
-}
-
-.date-checklist.open {
-  display: block;
-}
-
-.date-hint {
-  margin: 0 0 10px !important;
-  font-size: 0.86rem !important;
-  color: var(--muted) !important;
-}
-
-.date-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.month-divider {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 14px 0 2px;
+.uitleg a {
   color: var(--accent);
-  font-size: 0.78rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.month-divider::after {
-  content: "";
-  height: 1px;
-  background: var(--line);
-  flex: 1;
-}
-
-.month-divider:first-child {
-  margin-top: 4px;
-}
-
-.date-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  border: 1.5px solid var(--line);
-  background: #ffffff;
-  border-radius: 14px;
-  padding: 13px 12px;
-  cursor: pointer;
-  transition: 0.15s;
-  min-height: 74px;
-}
-
-.date-card:hover {
-  border-color: var(--accent);
-  background: #fffaf4;
-}
-
-.date-card input {
-  width: 22px;
-  height: 22px;
-  accent-color: var(--accent);
-  flex: none;
-}
-
-.date-card.selected {
-  border-color: #e7a77e;
-  background: #fff8f3;
-  box-shadow: inset 4px 0 0 var(--accent);
-}
-
-.date-card:not(.selected) {
-  opacity: 1;
-}
-
-.date-info {
-  flex: 1;
-  min-width: 0;
-}
-
-.date-weekday {
-  font-size: 0.74rem;
-  font-weight: 800;
-  color: var(--accent);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.date-main {
-  font-size: 1.05rem;
-  font-weight: 900;
-  color: var(--ink);
-  text-transform: capitalize;
-  line-height: 1.2;
-  margin-top: 2px;
-}
-
-.date-year {
-  font-size: 0.82rem;
-  color: var(--muted);
-  font-weight: 600;
-  margin-top: 2px;
-}
-
-.date-status {
-  font-size: 0.75rem;
-  font-weight: 800;
-  border-radius: 999px;
-  padding: 7px 10px;
-  background: #eee5da;
-  color: var(--muted);
-  white-space: nowrap;
-}
-
-.date-card.selected .date-status {
-  background: var(--t-red-soft);
-  color: var(--t-red);
-}
-
-@media (max-width: 360px) {
-  .cal-day {
-    border-radius: 9px;
-  }
-
-  .legend {
-    gap: 10px;
-  }
-
-  .modal-actions {
-    flex-direction: column;
-  }
 }
