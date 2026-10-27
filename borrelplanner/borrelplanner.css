@@ -703,3 +703,62 @@ button.btn-save:disabled {
 .uitleg a {
   color: var(--accent);
 }
+
+/* Mijn borrels: link met een kruisje om hem uit je lijst te halen */
+.borrel-rij {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.borrel-rij .borrel-link {
+  flex: 1;
+  min-width: 0;
+}
+
+.uit-lijst {
+  flex: none;
+  width: 46px;
+  border: none;
+  border-radius: 12px;
+  background: var(--card-2);
+  color: var(--muted);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: 0.15s;
+}
+
+.uit-lijst:hover {
+  background: var(--t-red-soft);
+  color: var(--t-red);
+}
+
+/* Onderaan een borrel: uit je lijst halen of (als maker) verwijderen */
+.weg-acties {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.weg-knop {
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 9px;
+  transition: 0.15s;
+}
+
+.weg-knop:hover,
+.weg-knop.gevaar {
+  color: #9c3417; /* donkerder rood: leesbaar op de lichte achtergrond */
+}
+
+.weg-knop:hover {
+  background: var(--t-red-soft);
+}

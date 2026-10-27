@@ -29,6 +29,7 @@
         <h2><span class="step">+</span> Nieuwe borrel</h2>
         <input type="text" id="borrelNaam" placeholder="bijv. Borrel na de toetsweek" maxlength="60" autocomplete="off" required>
         <button class="btn-save" type="submit" id="maakBtn">Borrel maken</button>
+        <p class="uitleg tip" data-inlogtip hidden>Tip: <a href="../#account">log in</a> als je je borrels ook op je andere apparaten wilt zien. Hoeft niet, het werkt ook zo.</p>
       </form>
 
       <div class="card" id="mijnBorrelsKaart" hidden>
@@ -69,6 +70,7 @@
 
       <button class="btn-save" id="saveBtn">Opslaan</button>
       <p class="uitleg" id="eigenUitleg">Je dagen staan aangevinkt. Tik dagen aan of uit en sla op; alleen jij kunt jouw dagen aanpassen.</p>
+      <p class="uitleg tip" data-inlogtip hidden>Tip: <a href="../#account">log in</a> als je je borrels en dagen ook op je andere apparaten wilt hebben. Hoeft niet, het werkt ook zo.</p>
     </div>
 
     <div class="card">
@@ -109,6 +111,11 @@
         <span class="page-info" id="pageInfo"></span>
         <button id="nextPage">Volgende ›</button>
       </div>
+    </div>
+
+    <div class="weg-acties">
+      <button class="weg-knop" id="uitLijstBtn">Uit mijn borrels halen</button>
+      <button class="weg-knop gevaar" id="verwijderBtn" hidden>Borrel verwijderen voor iedereen</button>
     </div>
     </div>
 

@@ -59,6 +59,8 @@ function bewaarAccount() {
 // Ingelogd? Dan neem je sleutel, naam en borrels mee naar elk apparaat.
 async function laadAccount() {
   const { data: { session } } = await sb.auth.getSession();
+  // Niet ingelogd: een vrijblijvende tip, want zonder account staan je borrels en sleutel alleen in deze browser
+  document.querySelectorAll("[data-inlogtip]").forEach(el => { el.hidden = !!session; });
   if (!session) return;
   const { data: rij, error } = await sb.from("user_data").select("data").eq("app", "borrelplanner").maybeSingle();
   if (error) return; // niet overschrijven als het laden mislukt
@@ -66,14 +68,23 @@ async function laadAccount() {
   const d = rij?.data || {};
   if (d.sleutel) { sleutel = d.sleutel; opslag.set("borrel_sleutel", sleutel); }
   accountNaam = d.naam || "";
-  const ids = new Set(mijnBorrels.map(b => b.id));
-  mijnBorrels = [...mijnBorrels, ...(d.borrels || []).filter(b => !ids.has(b.id))];
+  // De lijst in je account is leidend (anders komt een borrel die je ergens uit je lijst haalt via een ander apparaat terug);
+  // alleen de eerste keer gaat wat je in deze browser had mee naar je account.
+  const eersteKeer = !Array.isArray(d.borrels);
+  if (!eersteKeer) mijnBorrels = d.borrels;
   opslag.set("borrel_mijn", mijnBorrels);
-  if (!d.sleutel || (d.borrels || []).length !== mijnBorrels.length) bewaarAccount();
+  if (!d.sleutel || eersteKeer) bewaarAccount();
 }
 
 function onthoudBorrel(b) {
   mijnBorrels = [{ id: b.id, naam: b.naam }, ...mijnBorrels.filter(x => x.id !== b.id)].slice(0, 30);
+  opslag.set("borrel_mijn", mijnBorrels);
+  bewaarAccount();
+}
+
+// Alleen uit jouw lijst; de borrel blijft gewoon bestaan voor de anderen
+function vergeetBorrel(id) {
+  mijnBorrels = mijnBorrels.filter(x => x.id !== id);
   opslag.set("borrel_mijn", mijnBorrels);
   bewaarAccount();
 }
@@ -121,15 +132,45 @@ function tierVan(count) {
 
 /* Startscherm: borrel maken of een eerdere openen */
 
-function toonStart() {
+async function toonStart() {
   $("startScherm").hidden = false;
+
+  // Borrels die de maker intussen heeft verwijderd, halen we stilletjes uit je lijst
+  if (mijnBorrels.length) {
+    const { data, error } = await db.from("borrels").select("id").in("id", mijnBorrels.map(b => b.id));
+    if (!error) {
+      const bestaan = new Set(data.map(b => b.id));
+      mijnBorrels.filter(b => !bestaan.has(b.id)).forEach(b => vergeetBorrel(b.id));
+    }
+  }
+
+  tekenMijnBorrels();
+}
+
+function tekenMijnBorrels() {
   $("mijnBorrelsKaart").hidden = !mijnBorrels.length;
   $("mijnBorrels").replaceChildren(...mijnBorrels.map(b => {
+    const rij = document.createElement("div");
+    rij.className = "borrel-rij";
+
     const a = document.createElement("a");
     a.className = "borrel-link";
     a.href = "?b=" + encodeURIComponent(b.id);
     a.textContent = b.naam;
-    return a;
+
+    const weg = document.createElement("button");
+    weg.className = "uit-lijst";
+    weg.textContent = "×";
+    weg.title = "Uit mijn borrels halen";
+    weg.setAttribute("aria-label", `${b.naam} uit mijn borrels halen`);
+    weg.onclick = () => {
+      vergeetBorrel(b.id);
+      tekenMijnBorrels();
+      toast(`"${b.naam}" staat niet meer in je lijst. Met de link kom je er nog steeds in.`);
+    };
+
+    rij.append(a, weg);
+    return rij;
   }));
 }
 
@@ -139,7 +180,8 @@ $("nieuweBorrel").onsubmit = async event => {
   if (!naam) return;
 
   $("maakBtn").disabled = true;
-  const { data, error } = await db.from("borrels").insert({ naam }).select().single();
+  // maker = de hash van jouw sleutel, zodat alleen jij hem later voor iedereen kunt verwijderen
+  const { data, error } = await db.from("borrels").insert({ naam, maker: mijnHash }).select("id, naam").single();
   $("maakBtn").disabled = false;
 
   if (error) {
@@ -155,7 +197,7 @@ $("nieuweBorrel").onsubmit = async event => {
 /* Borrelscherm */
 
 async function openBorrel() {
-  const { data, error } = await db.from("borrels").select("id, naam").eq("id", borrelId).maybeSingle();
+  const { data, error } = await db.from("borrels").select("id, naam, maker").eq("id", borrelId).maybeSingle();
 
   if (error || !data) {
     if (error) console.error(error);
@@ -169,6 +211,7 @@ async function openBorrel() {
   $("kop").textContent = borrel.naam;
   $("intro").textContent = "Vul je naam in, tik de dagen aan dat jij kan, en zie waar de meeste mensen kunnen.";
   $("borrelScherm").hidden = false;
+  $("verwijderBtn").hidden = borrel.maker !== mijnHash;
   if (accountNaam) $("naam").value = accountNaam;
 
   renderCalendar();
@@ -188,6 +231,26 @@ $("deelBtn").onclick = async () => {
   } catch (e) {
     if (e.name !== "AbortError") toast("Delen lukte niet. Kopieer de link uit de adresbalk.", true);
   }
+};
+
+$("uitLijstBtn").onclick = () => {
+  vergeetBorrel(borrel.id);
+  location.href = "./";
+};
+
+$("verwijderBtn").onclick = async () => {
+  if (!confirm(`"${borrel.naam}" voor iedereen verwijderen? Alle ingevulde dagen gaan ook weg en de link werkt niet meer.`)) return;
+
+  const { data: gelukt, error } = await db.rpc("borrel_verwijder", { borrel: borrel.id, sleutel });
+
+  if (error || !gelukt) {
+    if (error) console.error(error);
+    toast("Verwijderen lukte niet.", true);
+    return;
+  }
+
+  vergeetBorrel(borrel.id);
+  location.href = "./";
 };
 
 function renderCalendar() {
