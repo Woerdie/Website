@@ -653,6 +653,7 @@ button.btn-save:disabled {
 /* Deellink en andere borrel */
 .deel {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 8px;
   margin: -8px 0 18px;
@@ -733,32 +734,108 @@ button.btn-save:disabled {
   color: var(--t-red);
 }
 
-/* Onderaan een borrel: uit je lijst halen of (als maker) verwijderen */
-.weg-acties {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 8px;
+/* Verwijder-pop-up */
+.weg-dialog {
+  width: min(420px, calc(100% - 32px));
+  margin: auto;
+  padding: 22px;
+  border: none;
+  border-radius: 20px;
+  background: var(--card);
+  color: var(--ink);
+  box-shadow: 0 24px 60px rgba(53, 43, 32, 0.28);
 }
 
-.weg-knop {
-  background: none;
-  border: none;
-  color: var(--muted);
-  font-family: inherit;
-  font-size: 0.85rem;
+.weg-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  animation: pop 0.22s ease-out;
+}
+
+.weg-dialog::backdrop {
+  background: rgba(53, 43, 32, 0.45);
+}
+
+.weg-dialog h3 {
+  font-family: "Fraunces", serif;
+  font-size: 1.25rem;
   font-weight: 600;
+  margin: 0;
+}
+
+.weg-naam {
+  margin: -4px 0 6px;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.weg-optie {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: left;
+  padding: 14px 16px;
+  border: 1.5px solid var(--line);
+  border-radius: 14px;
+  background: #ffffff;
+  color: var(--ink);
+  font-family: inherit;
   cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 9px;
   transition: 0.15s;
 }
 
-.weg-knop:hover,
-.weg-knop.gevaar {
+.weg-optie strong {
+  font-size: 0.98rem;
+}
+
+.weg-optie span {
+  font-size: 0.85rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.weg-optie:hover {
+  border-color: var(--accent);
+}
+
+.weg-optie.gevaar strong {
   color: #9c3417; /* donkerder rood: leesbaar op de lichte achtergrond */
 }
 
-.weg-knop:hover {
+.weg-optie.gevaar:hover,
+.weg-optie.gevaar.zeker {
+  border-color: #9c3417;
   background: var(--t-red-soft);
+}
+
+.weg-optie:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.weg-annuleer {
+  margin-top: 4px;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.92rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.weg-annuleer:hover {
+  background: var(--card-2);
+  color: var(--ink);
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .weg-dialog[open] { animation: none; }
 }

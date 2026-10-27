@@ -43,6 +43,7 @@
     <div class="deel">
       <button class="btn-tool" id="deelBtn">🔗 Link delen</button>
       <a class="btn-tool" href="./">+ Andere borrel</a>
+      <button class="btn-tool" id="wegBtn" aria-haspopup="dialog">🗑️ Verwijderen</button>
     </div>
 
     <div class="card">
@@ -112,11 +113,6 @@
         <button id="nextPage">Volgende ›</button>
       </div>
     </div>
-
-    <div class="weg-acties">
-      <button class="weg-knop" id="uitLijstBtn">Uit mijn borrels halen</button>
-      <button class="weg-knop gevaar" id="verwijderBtn" hidden>Borrel verwijderen voor iedereen</button>
-    </div>
     </div>
 
     <div class="card" id="nietGevonden" hidden>
@@ -124,6 +120,23 @@
       <p class="uitleg">Check de link, of <a href="./">maak een nieuwe borrel</a>.</p>
     </div>
   </div>
+
+  <dialog class="weg-dialog" id="wegDialog" aria-labelledby="wegTitel">
+    <h3 id="wegTitel">Borrel verwijderen</h3>
+    <p class="weg-naam" id="wegNaam"></p>
+
+    <button class="weg-optie" id="uitLijstBtn">
+      <strong>Uit mijn borrels halen</strong>
+      <span>Hij verdwijnt alleen uit jouw lijst. De anderen kunnen gewoon verder, en met de link kom je er weer in.</span>
+    </button>
+
+    <button class="weg-optie gevaar" id="verwijderBtn" hidden>
+      <strong id="verwijderTitel">Voor iedereen verwijderen</strong>
+      <span id="verwijderUitleg">Jij hebt deze borrel gemaakt. Alle ingevulde dagen gaan weg en de link werkt niet meer.</span>
+    </button>
+
+    <button class="weg-annuleer" id="wegAnnuleer">Annuleren</button>
+  </dialog>
 
   <div class="toast" id="toast"></div>
 

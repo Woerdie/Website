@@ -211,7 +211,6 @@ async function openBorrel() {
   $("kop").textContent = borrel.naam;
   $("intro").textContent = "Vul je naam in, tik de dagen aan dat jij kan, en zie waar de meeste mensen kunnen.";
   $("borrelScherm").hidden = false;
-  $("verwijderBtn").hidden = borrel.maker !== mijnHash;
   if (accountNaam) $("naam").value = accountNaam;
 
   renderCalendar();
@@ -233,15 +232,37 @@ $("deelBtn").onclick = async () => {
   }
 };
 
+/* Verwijder-pop-up: uit je eigen lijst halen, of (als maker) voor iedereen verwijderen */
+let zekerWeten = false;
+function zetVerwijderKnop(zeker) {
+  zekerWeten = zeker;
+  $("verwijderBtn").classList.toggle("zeker", zeker);
+  $("verwijderTitel").textContent = zeker ? "Zeker weten? Tik nog een keer" : "Voor iedereen verwijderen";
+  $("verwijderUitleg").textContent = zeker
+    ? "Dit kan niet ongedaan worden gemaakt."
+    : "Jij hebt deze borrel gemaakt. Alle ingevulde dagen gaan weg en de link werkt niet meer.";
+}
+
+$("wegBtn").onclick = () => {
+  $("wegNaam").textContent = borrel.naam;
+  $("verwijderBtn").hidden = borrel.maker !== mijnHash;
+  zetVerwijderKnop(false);
+  $("wegDialog").showModal();
+};
+$("wegAnnuleer").onclick = () => $("wegDialog").close();
+$("wegDialog").addEventListener("click", e => { if (e.target === $("wegDialog")) $("wegDialog").close(); });
+
 $("uitLijstBtn").onclick = () => {
   vergeetBorrel(borrel.id);
   location.href = "./";
 };
 
 $("verwijderBtn").onclick = async () => {
-  if (!confirm(`"${borrel.naam}" voor iedereen verwijderen? Alle ingevulde dagen gaan ook weg en de link werkt niet meer.`)) return;
+  if (!zekerWeten) return zetVerwijderKnop(true);
 
+  $("verwijderBtn").disabled = true;
   const { data: gelukt, error } = await db.rpc("borrel_verwijder", { borrel: borrel.id, sleutel });
+  $("verwijderBtn").disabled = false;
 
   if (error || !gelukt) {
     if (error) console.error(error);
