@@ -5,180 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Daan Woerdman</title>
 <meta name="description" content="De website van Daan Woerdman. Ik ontwerp en bouw graag dingen, zoals een studieplanner, een borrelplanner en een pubgolf scorekaart." />
-<meta name="theme-color" content="#fbfaf6" />
+<meta name="theme-color" content="#f3f3f1" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&family=Instrument+Serif:ital@1&display=swap" rel="stylesheet">
 <style>
+  /* Ontwerp: Licht en rustig */
   :root {
     color-scheme: light;
-    --bg: #fbfaf6;
-    --surface: #ffffff;
-    --ink: #17201b;
-    --muted: #5d6862;
-    --line: #e7e4db;
-    --accent: #e8601c;
-    --accent-ink: #ffffff;
-    --bad: #b3261e;
+    --bg: #fbfaf6; --surface: #ffffff; --ink: #17201b; --muted: #5d6862;
+    --line: #e7e4db; --accent: #e8601c; --accent-ink: #ffffff; --bad: #b3261e;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body {
-    font-family: "Schibsted Grotesk", system-ui, sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    line-height: 1.55;
-    -webkit-font-smoothing: antialiased;
-    overflow-x: hidden;
-  }
+  body { font-family: "Schibsted Grotesk", system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.55; -webkit-font-smoothing: antialiased; }
   a { color: inherit; }
   [hidden] { display: none !important; }
   :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
-
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
-
-  /* Navigatie */
-  .nav {
-    position: sticky; top: 0; z-index: 10;
-    background: color-mix(in srgb, var(--bg) 85%, transparent);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid transparent;
-    transition: border-color .2s;
-  }
-  .nav.scrolled { border-bottom-color: var(--line); }
-  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-  .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; text-decoration: none; }
-  .logo span {
-    display: grid; place-items: center;
-    width: 34px; height: 34px; border-radius: 10px;
-    background: var(--accent); color: var(--accent-ink);
-    font-size: 13px; letter-spacing: -0.02em;
-    transition: transform .3s cubic-bezier(.3, 1.6, .5, 1);
-  }
-  .logo:hover span { transform: rotate(-8deg) scale(1.08); }
-  .nav ul { display: flex; align-items: center; gap: 24px; list-style: none; font-size: 15px; }
-  .nav ul a { text-decoration: none; color: var(--muted); }
-  .nav ul a:hover { color: var(--ink); }
-  .lock {
-    display: inline-flex; align-items: center; gap: 6px;
-    font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
-    padding: 7px 14px; border-radius: 999px;
-    border: 1px solid var(--line); background: var(--surface); color: var(--ink);
-    transition: border-color .15s, transform .15s;
-  }
-  .lock:hover { border-color: var(--ink); transform: translateY(-1px); }
-  /* Admins krijgen een hoedje op het poppetje */
   .persoon { position: relative; }
-  .persoon.admin::before {
-    content: "🎩"; position: absolute; left: 50%; top: -10px;
-    font-size: 11px; transform: translateX(-50%) rotate(-14deg);
-  }
+  .persoon.admin::before { content: "🎩"; position: absolute; left: 50%; top: -10px; font-size: 11px; transform: translateX(-50%) rotate(-14deg); }
+  .grid { list-style: none; }
 
-  /* Intro, met zachte kleurvlekken erachter */
-  .hero { position: relative; padding-block: 88px 72px; }
-  .hero::before, .hero::after {
-    content: ""; position: absolute; z-index: -1; border-radius: 50%;
-    filter: blur(60px); opacity: .55;
-    animation: drift 14s ease-in-out infinite alternate;
-  }
-  .hero::before { width: 380px; height: 380px; right: 4%; top: 10px; background: #ffc9a8; }
-  .hero::after { width: 300px; height: 300px; right: 24%; top: 160px; background: #bfe3cf; animation-delay: -7s; }
-  .hi {
-    display: inline-flex; align-items: center; gap: 8px;
-    padding: 6px 14px 6px 10px; border-radius: 999px;
-    background: var(--surface); border: 1px solid var(--line);
-    font-size: 14px; font-weight: 600;
-  }
-  .hi i { font-style: normal; display: inline-block; transform-origin: 70% 70%; animation: wave 2.4s ease-in-out 1s 2; }
-  .hero h1 {
-    margin-top: 22px;
-    font-size: clamp(38px, 6.4vw, 78px);
-    font-weight: 800; line-height: 1.03; letter-spacing: -0.04em;
-    max-width: 15ch;
-  }
-  .hero mark {
-    color: inherit; background: none; position: relative; white-space: nowrap;
-  }
-  .hero mark::after {
-    content: ""; position: absolute; z-index: -1; left: -2%; right: -2%; bottom: .06em; height: .32em;
-    background: #ffd36b; border-radius: 4px;
-    transform-origin: left; animation: swipe .8s .6s cubic-bezier(.2, .7, .2, 1) both;
-  }
-  .hero p { margin-top: 20px; max-width: 46ch; font-size: 19px; color: var(--muted); }
-  .hero > * { animation: rise .7s cubic-bezier(.2, .7, .2, 1) both; }
-  .hero h1 { animation-delay: .06s; }
-  .hero p { animation-delay: .12s; }
-
-  /* Secties */
-  .section { padding-block: 64px; }
-  .section h2 { font-size: clamp(26px, 3.2vw, 38px); font-weight: 750; letter-spacing: -0.03em; line-height: 1.1; }
-  .group { margin-top: 36px; font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
-
-  /* Projectkaarten: de hele kaart is de link, elk project heeft een eigen kleur */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-top: 14px; list-style: none; }
-  .card {
-    --c: var(--accent);
-    display: flex; flex-direction: column; gap: 8px; height: 100%;
-    padding: 22px; border-radius: 18px;
-    background: var(--surface); border: 1px solid var(--line);
-    text-decoration: none;
-    transition: transform .25s cubic-bezier(.3, 1.4, .5, 1), box-shadow .25s, border-color .25s;
-  }
-  .card:hover {
-    transform: translateY(-4px) rotate(-.4deg);
-    border-color: color-mix(in srgb, var(--c) 45%, var(--line));
-    box-shadow: 0 18px 36px -18px color-mix(in srgb, var(--c) 55%, transparent);
-  }
-  .icon {
-    display: grid; place-items: center;
-    width: 48px; height: 48px; border-radius: 14px; margin-bottom: 6px;
-    background: color-mix(in srgb, var(--c) 16%, var(--surface));
-    font-size: 24px;
-    transition: transform .3s cubic-bezier(.3, 1.6, .5, 1);
-  }
-  .card:hover .icon { transform: scale(1.1) rotate(-6deg); }
-  .card strong { display: flex; justify-content: space-between; gap: 12px; font-size: 19px; font-weight: 700; letter-spacing: -0.01em; }
-  .card strong::after { content: "→"; color: var(--c); transition: transform .2s; }
-  .card:hover strong::after { transform: translateX(4px); }
-  .card p { color: var(--muted); font-size: 15px; }
-
-  /* Kaarten schuiven in beeld bij het scrollen */
-  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .6s cubic-bezier(.2, .7, .2, 1); }
-  .reveal.in { opacity: 1; transform: none; }
-
-  footer { padding: 28px 0 48px; font-size: 14px; color: var(--muted); }
-
-  /* Privé-popup */
-  dialog {
-    width: min(440px, calc(100% - 32px));
-    margin: auto; padding: 28px;
-    border: 0; border-radius: 22px;
-    background: var(--surface); color: var(--ink);
-    box-shadow: 0 30px 80px -20px rgba(23, 32, 27, .35);
-  }
-  dialog[open] { animation: pop .3s cubic-bezier(.3, 1.4, .5, 1); }
+  /* Account-popup */
+  dialog { width: min(440px, calc(100% - 32px)); margin: auto; padding: 28px; border: 0; border-radius: 20px; background: var(--surface); color: var(--ink); box-shadow: 0 30px 80px -20px rgba(23, 32, 27, .35); }
+  dialog[open] { animation: pop .25s ease-out; }
   dialog::backdrop { background: rgba(23, 32, 27, .3); backdrop-filter: blur(4px); }
   .dlg-top { display: flex; justify-content: space-between; align-items: start; gap: 16px; }
-  dialog h2 { font-size: 24px; font-weight: 750; letter-spacing: -0.02em; }
+  dialog h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
   dialog .lead { margin-top: 6px; color: var(--muted); font-size: 15px; }
-  .close {
-    flex: none; width: 36px; height: 36px; border-radius: 50%;
-    border: 0; background: var(--bg); color: var(--ink);
-    font: inherit; font-size: 20px; line-height: 1; cursor: pointer;
-  }
+  .close { flex: none; width: 34px; height: 34px; border-radius: 50%; border: 0; background: var(--bg); color: var(--ink); font: inherit; font-size: 20px; line-height: 1; cursor: pointer; }
   .close:hover { background: var(--line); }
   .login { display: grid; gap: 14px; margin-top: 22px; }
   .login label { display: grid; gap: 6px; font-size: 14px; font-weight: 600; }
-  .login input {
-    font: inherit; font-size: 16px; font-weight: 400;
-    padding: 11px 13px; border-radius: 10px;
-    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
-  }
+  .login input { font: inherit; font-size: 16px; font-weight: 400; padding: 11px 13px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--ink); }
   .login input:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
   .msg { font-size: 14px; color: var(--bad); }
-  .status { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; color: var(--muted); font-size: 14px; }
   .msg.ok { color: #2f7d4a; }
+  .status { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 20px; color: var(--muted); font-size: 14px; }
   .switch { font-size: 14px; color: var(--muted); text-align: center; }
   .switch button { font: inherit; font-weight: 600; color: var(--accent); background: none; border: 0; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; }
   .blok h3 { margin-top: 24px; font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
@@ -190,49 +53,224 @@
   .beheer small { color: var(--muted); }
   .beheer input { flex: none; width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; }
   .beheer input:disabled { cursor: default; }
-  #priveLijst { grid-template-columns: 1fr; margin-top: 10px; }
-  .btn {
-    display: inline-flex; align-items: center; justify-content: center;
-    padding: 12px 20px; border-radius: 12px;
-    font: inherit; font-size: 15px; font-weight: 600; cursor: pointer;
-    border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink);
-    transition: background .15s, transform .15s;
-  }
-  .btn:hover { background: #cf5214; transform: translateY(-1px); }
+  #priveLijst { display: grid; grid-template-columns: 1fr; gap: 8px; margin-top: 10px; }
+  #priveLijst .card { display: flex; align-items: center; gap: 14px; padding: 14px; border: 1px solid var(--line); border-radius: 12px; text-decoration: none; background: var(--surface); min-height: 0; }
+  #priveLijst .card p { display: none; }
+  #priveLijst .card .tekst { flex: 1; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 11px 18px; border-radius: 10px; text-decoration: none; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); transition: background .15s; }
+  .btn:hover { background: #cf5214; }
   .btn:disabled { opacity: .6; cursor: wait; }
-  .btn.ghost { background: none; color: var(--ink); border-color: var(--line); padding: 7px 14px; font-size: 14px; }
+  .btn.ghost { background: var(--surface); color: var(--ink); border-color: var(--line); }
   .btn.ghost:hover { border-color: var(--muted); }
+  .status .btn.ghost { padding: 7px 14px; font-size: 14px; }
+  @keyframes pop { from { opacity: 0; transform: translateY(10px); } }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation: none !important; transition: none !important; } }
 
-  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
-  @keyframes swipe { from { transform: scaleX(0); } to { transform: scaleX(1); } }
-  @keyframes wave { 0%, 60%, 100% { transform: rotate(0); } 10%, 30% { transform: rotate(16deg); } 20%, 40% { transform: rotate(-8deg); } }
-  @keyframes drift { to { transform: translate(-40px, 30px) scale(1.1); } }
-  @keyframes pop { from { opacity: 0; transform: translateY(12px) scale(.97); } }
+  :root { --bg: #f3f3f1; --navy: #15172b; --roze: #f7d9e6; --mint: #d6f1df; --blauw: #dfe7ff; --perzik: #ffe6d3; }
+  body { background: var(--bg); }
+  .serif { font-family: "Instrument Serif", Georgia, serif; font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .tag { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; background: var(--mint); color: #1f6a3a; }
+  .tag.roze { background: var(--roze); color: #8d2c5a; }
+  .tag.blauw { background: var(--blauw); color: #2c46a0; }
+  .tag.perzik { background: var(--perzik); color: #9a4a12; }
 
+  /* Navigatie */
+  .nav { position: sticky; top: 0; z-index: 10; background: color-mix(in srgb, var(--bg) 85%, transparent); backdrop-filter: blur(12px); }
+  .nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-weight: 700; font-size: 17px; text-decoration: none; letter-spacing: -0.01em; }
+  .logo span { display: grid; place-items: center; width: 30px; height: 30px; border-radius: 9px; background: var(--navy); color: #fff; font-size: 12px; }
+  .nav ul { display: flex; align-items: center; gap: 28px; list-style: none; font-size: 15px; }
+  .nav ul a { text-decoration: none; color: var(--muted); }
+  .nav ul a:hover { color: var(--ink); }
+  .lock { display: inline-flex; align-items: center; gap: 7px; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; padding: 9px 18px; border-radius: 999px; border: 0; background: var(--navy); color: #fff; transition: background .2s; }
+  .lock:hover { background: #000; }
+
+  /* Hero */
+  .hero { padding: 56px 0 0; }
+  .hero-kop { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; align-items: end; }
+  .tags { display: flex; gap: 6px; margin-bottom: 18px; }
+  .hero h1 { font-size: clamp(42px, 6vw, 76px); font-weight: 500; letter-spacing: -0.04em; line-height: 1.02; }
+  .hero h1 .serif { font-size: 1.08em; }
+  .hero-kop p { font-size: 17px; color: var(--muted); max-width: 40ch; }
+  .hero-kop .knoppen { display: flex; gap: 10px; margin-top: 20px; }
+  .knop { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 999px; font: inherit; font-size: 15px; font-weight: 600; text-decoration: none; cursor: pointer; border: 1px solid var(--navy); background: var(--navy); color: #fff; transition: transform .15s, background .15s; }
+  .knop:hover { transform: translateY(-1px); background: #000; }
+  .knop.licht { background: #fff; color: var(--ink); border-color: #e2e2de; }
+  .knop.licht:hover { background: #fff; border-color: var(--muted); }
+
+  /* Groot paneel met voorbeeldschermpjes */
+  .paneel {
+    position: relative; overflow: hidden; margin-top: 44px; height: 440px; border-radius: 28px;
+    background:
+      radial-gradient(circle at 15% 20%, #ffd9e8 0, transparent 40%),
+      radial-gradient(circle at 85% 15%, #d9e4ff 0, transparent 45%),
+      radial-gradient(circle at 70% 90%, #ffe4cc 0, transparent 45%),
+      radial-gradient(circle at 25% 95%, #d4f2e0 0, transparent 40%),
+      #f7f5fa;
+  }
+  .mini { position: absolute; padding: 18px; border-radius: 18px; background: rgba(255,255,255,.82); backdrop-filter: blur(10px); box-shadow: 0 24px 50px -24px rgba(21, 23, 43, .35); text-decoration: none; transition: transform .3s cubic-bezier(.3, 1.4, .5, 1); }
+  .mini:hover { transform: translateY(-6px); }
+  .mini h4 { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 14px; font-weight: 600; }
+  .mini h4 small { font-weight: 500; color: var(--muted); font-size: 12px; }
+  .mini .groot { margin-top: 8px; font-size: 34px; font-weight: 600; letter-spacing: -0.03em; line-height: 1; }
+  .mini .sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .m1 { left: 6%; top: 50px; width: 330px; }
+  .staven { display: flex; align-items: end; gap: 9px; height: 120px; margin-top: 16px; }
+  .staven i { flex: 1; border-radius: 7px 7px 3px 3px; background: linear-gradient(180deg, #c9d4ff, #e6ebff); }
+  .staven i.nu { background: linear-gradient(180deg, #3a55e0, #6f86f5); }
+  .dagen { display: flex; gap: 9px; margin-top: 6px; font-size: 11px; color: var(--muted); }
+  .dagen span { flex: 1; text-align: center; }
+  .m2 { left: 42%; top: 120px; width: 270px; background: var(--navy); color: #fff; }
+  .m2 h4 small, .m2 .sub { color: #a6a9c7; }
+  .stem { display: flex; align-items: center; gap: 10px; margin-top: 12px; font-size: 13px; }
+  .stem b { width: 26px; font-weight: 600; }
+  .stem span { flex: 1; height: 8px; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; }
+  .stem span i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, #ff9a5a, #e8601c); }
+  .m3 { right: 6%; top: 40px; width: 260px; }
+  .speler { display: flex; align-items: center; gap: 10px; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #ecebe7; }
+  .speler:last-child { border: 0; }
+  .speler em { font-style: normal; display: grid; place-items: center; width: 24px; height: 24px; border-radius: 50%; background: var(--mint); font-size: 11px; font-weight: 700; }
+  .speler b { margin-left: auto; font-weight: 600; }
+  .m4 { right: 12%; bottom: 36px; width: 240px; display: flex; align-items: center; gap: 12px; }
+  .m4 .ico { display: grid; place-items: center; width: 42px; height: 42px; border-radius: 12px; background: var(--perzik); font-size: 22px; }
+  .voorbeeld { position: absolute; left: 20px; bottom: 16px; font-size: 12px; color: #8a8aa0; }
+
+  /* Uitgelicht */
+  .sectie { padding: 96px 0 0; }
+  .twee { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: end; }
+  .sectie h2 { font-size: clamp(34px, 4.4vw, 52px); font-weight: 500; letter-spacing: -0.035em; line-height: 1.05; margin-top: 14px; }
+  .sectie h2 .serif { font-size: 1.1em; }
+  .twee > p { color: var(--muted); font-size: 16px; max-width: 42ch; }
+  .uitgelicht { display: grid; grid-template-columns: 1fr 1.15fr; gap: 16px; margin-top: 36px; padding: 16px; border-radius: 26px; background: #fff; }
+  .tabs { display: grid; gap: 6px; align-content: start; padding: 8px; }
+  .tabs button { display: block; width: 100%; text-align: left; padding: 18px 20px; border-radius: 16px; border: 0; background: none; color: var(--ink); font: inherit; cursor: pointer; transition: background .25s, color .25s; }
+  .tabs button:hover { background: var(--bg); }
+  .tabs button .rij { display: flex; align-items: center; gap: 12px; font-size: 17px; font-weight: 600; }
+  .tabs button .nr { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .tabs button p { margin-top: 6px; font-size: 14px; color: var(--muted); display: none; }
+  .tabs button[aria-selected="true"] { background: var(--navy); color: #fff; }
+  .tabs button[aria-selected="true"] p { display: block; color: #b7b9d4; }
+  .tabs button[aria-selected="true"] .nr { color: #8d90b3; }
+  .toon { position: relative; overflow: hidden; display: grid; place-items: center; min-height: 380px; border-radius: 20px; padding: 32px;
+    background: radial-gradient(circle at 20% 15%, #ffd6e7, transparent 50%), radial-gradient(circle at 85% 80%, #cfdcff, transparent 55%), #f4f1fb; transition: background .4s; }
+  .toon .kaartje { width: min(100%, 340px); padding: 24px; border-radius: 20px; background: rgba(255,255,255,.88); box-shadow: 0 30px 60px -30px rgba(21, 23, 43, .45); animation: in .4s cubic-bezier(.2, .7, .2, 1); }
+  .kaartje .ico { display: grid; place-items: center; width: 56px; height: 56px; border-radius: 16px; font-size: 28px; background: color-mix(in srgb, var(--c) 14%, #fff); }
+  .kaartje h3 { margin-top: 18px; font-size: 26px; font-weight: 600; letter-spacing: -0.02em; }
+  .kaartje p { margin-top: 6px; font-size: 15px; color: var(--muted); }
+  .kaartje .knop { margin-top: 20px; }
+
+  /* Bento met alle projecten */
+  .midden { text-align: center; }
+  .midden p { margin: 14px auto 0; max-width: 52ch; color: var(--muted); }
+  .bento { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 32px; list-style: none; }
+  .bento li.breed { grid-column: span 2; }
+  .bento .card { position: relative; overflow: hidden; display: flex; flex-direction: column; height: 100%; min-height: 250px; padding: 22px; border-radius: 22px; background: #fff; text-decoration: none; transition: transform .25s, box-shadow .25s; }
+  .bento .card:hover { transform: translateY(-4px); box-shadow: 0 24px 40px -26px rgba(21, 23, 43, .45); }
+    .bento .card strong { margin-top: 64px; font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
+  .bento .card p { margin-top: 6px; font-size: 14px; color: var(--muted); max-width: 36ch; }
+  .bento .card .icon { position: absolute; left: 22px; top: 22px; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; font-size: 24px; background: color-mix(in srgb, var(--c) 14%, #fff); }
+  .bento .donker .card .icon { background: rgba(255,255,255,.1); }
+  .bento .breed .card .icon { left: auto; right: 26px; top: 26px; width: 64px; height: 64px; border-radius: 18px; font-size: 32px; background: rgba(255,255,255,.65); }
+  .bento .breed .card strong { margin-top: auto; padding-top: 70px; }
+  .bento .card .pijl { margin-top: auto; padding-top: 18px; display: flex; align-items: center; justify-content: space-between; font-size: 13px; font-weight: 600; }
+  .bento .card .pijl::before { content: "Openen"; }
+  .bento .card .pijl { color: var(--ink); }
+  .bento .donker .card { background: var(--navy); color: #fff; }
+  .bento .donker .card::before { content: ""; position: absolute; right: -30%; bottom: -40%; width: 120%; height: 100%; background: radial-gradient(circle, rgba(124, 92, 255, .55), transparent 60%); filter: blur(10px); }
+  .bento .donker .card > *:not(.icon) { position: relative; }
+  .bento .donker .card p { color: #b7b9d4; }
+  .bento .donker .card .pijl { color: #fff; }
+  .bento .pastel1 .card { background: linear-gradient(120deg, #ffe2ec 0%, #f4ecff 50%, #dfe8ff 100%); }
+  .bento .pastel2 .card { background: linear-gradient(120deg, #ffe7d4 0%, #fff1e8 45%, #fde0ea 100%); }
+  .bento .breed .card strong { font-size: 26px; }
+
+  /* Footer */
+  footer { margin-top: 96px; padding: 48px 0 36px; background: #fff; }
+  .voet { display: grid; grid-template-columns: 1.4fr repeat(3, 1fr); gap: 32px; }
+  .voet p { margin-top: 10px; font-size: 14px; color: var(--muted); max-width: 26ch; }
+  .voet h5 { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .voet ul { list-style: none; display: grid; gap: 6px; font-size: 14px; }
+  .voet ul a, .voet ul button { color: var(--muted); text-decoration: none; background: none; border: 0; font: inherit; cursor: pointer; padding: 0; text-align: left; }
+  .voet ul a:hover, .voet ul button:hover { color: var(--ink); }
+  .copy { margin-top: 40px; padding-top: 20px; border-top: 1px solid #ecebe7; font-size: 13px; color: var(--muted); }
+
+  @keyframes in { from { opacity: 0; transform: translateY(10px) scale(.98); } }
+
+  @media (max-width: 960px) {
+    .hero-kop, .twee, .uitgelicht { grid-template-columns: 1fr; }
+    .paneel { height: 520px; }
+    .m1 { left: 5%; top: 30px; width: 300px; }
+    .m2 { left: auto; right: 5%; top: 210px; }
+    .m3 { right: auto; left: 5%; top: auto; bottom: 30px; width: 240px; }
+    .m4 { display: none; }
+    .bento { grid-template-columns: 1fr 1fr; }
+    .bento li.breed { grid-column: 1 / -1; }
+    .voet { grid-template-columns: 1fr 1fr; }
+  }
   @media (max-width: 600px) {
     .wrap { padding: 0 16px; }
-    .nav ul { gap: 14px; white-space: nowrap; }
-    .naam { display: none; }
-    .hero { padding-block: 48px 40px; }
-    .hero::before { width: 240px; height: 240px; right: -60px; }
-    .hero::after { width: 200px; height: 200px; right: 30%; top: 220px; }
-    .hero p { font-size: 17px; }
-    .section { padding-block: 44px; }
-    dialog { padding: 22px; }
+    .nav .wrap { height: 60px; }
+    .nav ul li:not(:last-child) { display: none; }
+    .lock { padding: 8px 14px; }
+    .hero { padding-top: 24px; }
+    .tags { margin-bottom: 14px; }
+    .hero h1 { font-size: 38px; }
+    .hero-kop { gap: 16px; }
+    .hero-kop p { font-size: 16px; }
+    .hero-kop .knoppen { display: grid; grid-template-columns: 1fr 1fr; }
+    .knop { justify-content: center; padding: 13px 14px; }
+
+    /* Voorbeeldschermpjes worden een veegstrook */
+    .paneel { display: flex; gap: 12px; height: auto; margin: 28px -16px 0; padding: 20px 16px 40px; border-radius: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+    .paneel::-webkit-scrollbar { display: none; }
+    .mini, .m1, .m2, .m3, .m4 { position: static; flex: 0 0 78%; width: auto; scroll-snap-align: center; }
+    .m3, .m4 { display: block; }
+    .m4 { display: flex; align-self: flex-start; }
+    .voorbeeld { left: 16px; bottom: 14px; }
+
+    .sectie { padding-top: 56px; }
+    .sectie h2 { font-size: 32px; }
+    .twee { gap: 10px; }
+    .twee > p { font-size: 15px; }
+
+    /* Uitgelicht: knoppen naast elkaar */
+    .uitgelicht { margin-top: 22px; padding: 8px; gap: 8px; border-radius: 22px; }
+    .tabs { display: flex; gap: 6px; padding: 0; overflow-x: auto; scrollbar-width: none; }
+    .tabs button { flex: none; width: auto; padding: 11px 16px; border-radius: 999px; background: var(--bg); }
+    .tabs button .rij { font-size: 15px; gap: 8px; }
+    .tabs button[aria-selected="true"] p { display: none; }
+    .toon { min-height: 0; padding: 18px; border-radius: 16px; }
+    .toon .kaartje { padding: 20px; }
+    .kaartje h3 { font-size: 22px; }
+    .kaartje .knop { width: 100%; }
+
+    /* Projectkaarten: compact, icoon links */
+    .bento { grid-template-columns: 1fr; gap: 10px; margin-top: 22px; }
+    .bento li.breed { grid-column: auto; }
+    .bento .card, .bento .breed .card { display: grid; grid-template-columns: 48px 1fr 20px; column-gap: 14px; min-height: 0; padding: 16px; border-radius: 18px; }
+    .bento .card .icon, .bento .breed .card .icon { position: static; grid-row: 1 / 3; width: 48px; height: 48px; font-size: 24px; border-radius: 14px; }
+    .bento .card strong, .bento .breed .card strong { margin: 0; padding: 0; font-size: 17px; align-self: end; }
+    .bento .card p { grid-column: 2; margin-top: 2px; font-size: 13.5px; }
+    .bento .card .pijl { grid-column: 3; grid-row: 1 / 3; margin: 0; padding: 0; align-self: center; }
+    .bento .card .pijl::before { content: none; }
+    .bento .card:hover { transform: none; }
+
+    footer { margin-top: 64px; padding: 36px 0 28px; }
+    .voet { grid-template-columns: 1fr 1fr; gap: 26px 16px; }
+    .voet > div:first-child { grid-column: 1 / -1; }
+    .copy { margin-top: 28px; }
   }
-  @media (prefers-reduced-motion: reduce) {
-    html { scroll-behavior: auto; }
-    *, *::before, *::after { animation: none !important; transition: none !important; }
-    .reveal { opacity: 1; transform: none; }
-  }
+
 </style>
 </head>
 <body>
-  <nav class="nav" id="nav">
+  <nav class="nav">
     <div class="wrap">
-      <a class="logo" href="#top" aria-label="Daan Woerdman"><span>DW</span><b class="naam">Daan Woerdman</b></a>
+      <a class="logo" href="#top"><span>DW</span>Daan Woerdman</a>
       <ul>
-        <li><a href="#projecten">Projecten</a></li>
+        <li><a href="#school">Voor school</a></li>
+        <li><a href="#vrienden">Voor vrienden</a></li>
         <li><button class="lock" type="button" id="openAccount" aria-haspopup="dialog"><span class="persoon" id="accountIcoon" aria-hidden="true">👤</span><span id="accountLabel">Inloggen</span></button></li>
       </ul>
     </div>
@@ -240,19 +278,76 @@
 
   <main id="top">
     <section class="hero wrap">
-      <span class="hi"><i aria-hidden="true">👋</i>Hoi, ik ben Daan. Welkom op mijn website!</span>
-      <h1>Ik ontwerp en <mark>bouw</mark> graag dingen.</h1>
-      <p>Meestal zijn het webapps voor school of voor mijn vrienden. Hieronder staan de projecten waar ik nu mee bezig ben; tik er een aan om hem meteen te openen.</p>
+      <div class="hero-kop">
+        <div>
+          <div class="tags"><span class="tag">Webapps</span><span class="tag roze">School &amp; vrienden</span></div>
+          <h1>Hoi, ik ben Daan. Ik ontwerp en bouw graag <span class="serif">dingen.</span></h1>
+        </div>
+        <div>
+          <p>Meestal zijn het webapps voor school of voor mijn vrienden. Hieronder staan de projecten waar ik nu mee bezig ben; tik er een aan om hem meteen te openen.</p>
+          <div class="knoppen">
+            <a class="knop" href="#school">Bekijk projecten</a>
+            <button class="knop licht" type="button" id="heroAccount">Account maken</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="paneel" aria-hidden="true">
+        <a class="mini m1" href="inhaalplanner/" tabindex="-1">
+          <h4>📅 Inhaalplanner <small>deze week</small></h4>
+          <div class="groot">14,5 uur</div>
+          <div class="sub">leertijd verdeeld over 6 dagen</div>
+          <div class="staven"><i style="height:45%"></i><i style="height:70%"></i><i style="height:55%"></i><i class="nu" style="height:95%"></i><i style="height:60%"></i><i style="height:30%"></i><i style="height:15%"></i></div>
+          <div class="dagen"><span>ma</span><span>di</span><span>wo</span><span>do</span><span>vr</span><span>za</span><span>zo</span></div>
+        </a>
+        <a class="mini m2" href="borrelplanner/" tabindex="-1">
+          <h4>🍻 Borrel <small>wie kan er?</small></h4>
+          <div class="stem"><b>vr</b><span><i style="width:88%"></i></span>7</div>
+          <div class="stem"><b>za</b><span><i style="width:62%"></i></span>5</div>
+          <div class="stem"><b>do</b><span><i style="width:38%"></i></span>3</div>
+          <div class="sub" style="margin-top:12px">Vrijdag wint het</div>
+        </a>
+        <a class="mini m3" href="pubgolf/" tabindex="-1">
+          <h4>⛳ Pubgolf <small>hole 6</small></h4>
+          <div class="speler"><em>1</em>Team Bier <b>18</b></div>
+          <div class="speler"><em>2</em>De Putters <b>21</b></div>
+          <div class="speler"><em>3</em>Hole in One <b>24</b></div>
+        </a>
+        <a class="mini m4" href="legenda/" tabindex="-1">
+          <span class="ico">🗺️</span><span><h4>Legenda klaar</h4><div class="sub">gekopieerd als afbeelding</div></span>
+        </a>
+        <span class="voorbeeld">Voorbeeldschermpjes</span>
+      </div>
     </section>
 
-    <section class="section wrap" id="projecten">
-      <h2>Waar ik mee bezig ben</h2>
-      <div id="lijst"></div>
+    <section class="sectie wrap" id="uitgelicht">
+      <div class="twee">
+        <div>
+          <span class="tag blauw">Uitgelicht</span>
+          <h2>De apps die ik zelf het <span class="serif">meest</span> gebruik</h2>
+        </div>
+        <p>Kies er een om te zien wat hij doet. Met één account bewaar je je spullen in al mijn apps, ook op je andere apparaten.</p>
+      </div>
+      <div class="uitgelicht">
+        <div class="tabs" role="tablist" id="tabs"></div>
+        <div class="toon" id="toon" role="tabpanel"></div>
+      </div>
     </section>
 
+    <div id="groepen"></div>
   </main>
 
-  <footer class="wrap">&copy; <span id="jaar"></span> Daan Woerdman</footer>
+  <footer>
+    <div class="wrap">
+      <div class="voet">
+        <div><a class="logo" href="#top"><span>DW</span>Daan Woerdman</a><p>Ik ontwerp en bouw graag dingen.</p></div>
+        <div><h5>Voor school</h5><ul id="voetSchool"></ul></div>
+        <div><h5>Voor de vriendengroep</h5><ul id="voetVrienden"></ul></div>
+        <div><h5>Account</h5><ul><li><button type="button" id="voetAccount">Inloggen of account maken</button></li></ul></div>
+      </div>
+      <div class="copy">&copy; <span id="jaar"></span> Daan Woerdman</div>
+    </div>
+  </footer>
 
   <dialog id="account" aria-labelledby="accountTitel">
     <div class="dlg-top">
@@ -290,16 +385,17 @@
 <script src="account.js"></script>
 <script>
 // Nieuw project? Voeg hier een regel toe. Met private: true komt hij achter de login.
+// Met uitgelicht: true komt hij ook in het blok "Uitgelicht" bovenaan.
 const projects = [
-  { group: "Voor school", name: "Inhaalplanner", url: "inhaalplanner/", icon: "📅", color: "#3a6fd8",
+  { group: "Voor school", name: "Inhaalplanner", url: "inhaalplanner/", icon: "📅", color: "#3a6fd8", uitgelicht: true,
     desc: "Zet je toetsen erin en hij verdeelt de leertijd over de dagen die je nog hebt. Werkt met een account." },
-  { group: "Voor school", name: "Leeromgeving", url: "inhaalplanner/leren.html", icon: "📚", color: "#8a4fd6",
+  { group: "Voor school", name: "Leeromgeving", url: "inhaalplanner/leren.html", icon: "📚", color: "#8a4fd6", uitgelicht: true,
     desc: "Per vak samenvattingen, flashcards en oefentoetsen, gekoppeld aan je planning. Werkt met een account." },
   { group: "Voor school", name: "Legenda-maker", url: "legenda/", icon: "🗺️", color: "#2e6b30",
     desc: "Vink aan wat er op je kaart staat, pas namen en kleuren aan en kopieer de legenda als afbeelding." },
   { group: "Voor school", name: "Schaallijn-maker", url: "schaallijn/", icon: "📏", color: "#c47a12",
     desc: "Vul je kaartschaal en lengte in en kopieer een schaallijn die op papier precies klopt." },
-  { group: "Voor de vriendengroep", name: "Borrelplanner", url: "borrelplanner/", icon: "🍻", color: "#e8601c",
+  { group: "Voor de vriendengroep", name: "Borrelplanner", url: "borrelplanner/", icon: "🍻", color: "#e8601c", uitgelicht: true,
     desc: "Maak een borrel, deel de link in de groepsapp en zie op welke dag de meesten kunnen." },
   { group: "Voor de vriendengroep", name: "Pubgolf scorekaart", url: "pubgolf/", icon: "⛳", color: "#2f9e5b",
     desc: "Spelers en teams aanmaken, scores per hole invullen en live de stand bijhouden." },
@@ -311,7 +407,7 @@ const $ = id => document.getElementById(id);
 
 function kaart(p) {
   const li = document.createElement("li");
-  li.innerHTML = `<a class="card"><span class="icon" aria-hidden="true"></span><strong></strong><p></p></a>`;
+  li.innerHTML = `<a class="card"><span class="icon" aria-hidden="true"></span><span class="tekst"><strong></strong><p></p></span><span class="pijl" aria-hidden="true">→</span></a>`;
   const a = li.firstChild;
   a.href = p.url;
   a.style.setProperty("--c", p.color);
@@ -321,30 +417,85 @@ function kaart(p) {
   return li;
 }
 
-// Openbare projecten, met een kopje per groep
-let ul;
-projects.filter(p => !p.private).forEach(p => {
-  if (p.group !== ul?.dataset.group) {
-    $("lijst").append(Object.assign(document.createElement("h3"), { className: "group", textContent: p.group }));
-    ul = Object.assign(document.createElement("ul"), { className: "grid" });
-    ul.dataset.group = p.group;
-    $("lijst").append(ul);
-  }
-  const li = kaart(p);
-  li.className = "reveal";
-  li.style.transitionDelay = ul.children.length * 80 + "ms";
-  ul.append(li);
+
+const openbaar = projects.filter(p => !p.private);
+
+// Uitgelicht: genummerde lijst links, voorbeeldkaart rechts
+const uit = openbaar.filter(p => p.uitgelicht);
+const tints = [
+  "radial-gradient(circle at 20% 15%, #ffd6e7, transparent 50%), radial-gradient(circle at 85% 80%, #cfdcff, transparent 55%), #f4f1fb",
+  "radial-gradient(circle at 80% 20%, #e3d6ff, transparent 50%), radial-gradient(circle at 15% 85%, #d4f2e0, transparent 55%), #f5f3fb",
+  "radial-gradient(circle at 25% 20%, #ffe0c7, transparent 50%), radial-gradient(circle at 85% 85%, #ffd6e7, transparent 55%), #fbf4f1",
+];
+function kies(i) {
+  const p = uit[i];
+  $("tabs").querySelectorAll("button").forEach((b, j) => b.setAttribute("aria-selected", i === j));
+  $("toon").style.background = tints[i % tints.length];
+  const k = document.createElement("div");
+  k.className = "kaartje";
+  k.style.setProperty("--c", p.color);
+  k.innerHTML = `<span class="ico" aria-hidden="true"></span><h3></h3><p></p><a class="knop"></a>`;
+  k.querySelector(".ico").textContent = p.icon;
+  k.querySelector("h3").textContent = p.name;
+  k.querySelector("p").textContent = p.desc;
+  k.querySelector("a").href = p.url;
+  k.querySelector("a").textContent = p.name + " openen →";
+  $("toon").replaceChildren(k);
+}
+$("tabs").replaceChildren(...uit.map((p, i) => {
+  const b = document.createElement("button");
+  b.type = "button"; b.setAttribute("role", "tab");
+  b.innerHTML = `<span class="rij"><span class="nr"></span><span></span></span><p></p>`;
+  b.querySelector(".nr").textContent = String(i + 1).padStart(2, "0");
+  b.querySelector(".rij span:last-child").textContent = p.name;
+  b.querySelector("p").textContent = p.desc;
+  b.addEventListener("click", () => kies(i));
+  return b;
+}));
+if (uit.length) kies(0);
+
+// Elke groep een eigen blok. Breed (2 kolommen) en smal wisselen elkaar af, zodat het raster vol blijft.
+const GROEPEN = {
+  "Voor school": { id: "school", tag: "blauw", kop: 'Voor <span class="serif">school</span>', tekst: "Plannen, leren en kaarten maken voor je opdrachten." },
+  "Voor de vriendengroep": { id: "vrienden", tag: "perzik", kop: 'Voor de <span class="serif">vriendengroep</span>', tekst: "Borrels plannen en pubgolf bijhouden met je vrienden." },
+};
+const BREED = [true, false, false, true, true, false];
+[...new Set(openbaar.map(p => p.group))].forEach((groep, gi) => {
+  const info = GROEPEN[groep] ?? { id: "groep" + gi, tag: "", kop: groep, tekst: "" };
+  const lijst = openbaar.filter(p => p.group === groep);
+  const sec = document.createElement("section");
+  sec.className = "sectie wrap groep";
+  sec.id = info.id;
+  sec.innerHTML = `<div class="twee"><div><span class="tag ${info.tag}"></span><h2>${info.kop}</h2></div><p></p></div><ul class="bento"></ul>`;
+  sec.querySelector(".tag").textContent = lijst.length + (lijst.length === 1 ? " project" : " projecten");
+  sec.querySelector("p").textContent = info.tekst;
+  let donker = false, pastel = gi;
+  sec.querySelector(".bento").append(...lijst.map((p, i) => {
+    const li = kaart(p);
+    const breed = lijst.length > 1 && BREED[i % BREED.length];
+    if (breed) li.classList.add("breed", "pastel" + (pastel++ % 2 + 1));
+    else if (!donker) { li.classList.add("donker"); donker = true; }
+    const a = li.firstChild;
+    const t = a.querySelector(".tekst");
+    t.replaceWith(...t.childNodes);
+    return li;
+  }));
+  $("groepen").append(sec);
 });
 
-// Kaarten laten inschuiven zodra ze in beeld komen
-const io = new IntersectionObserver(entries => entries.forEach(e => {
-  if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
-}), { threshold: .15 });
-document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+// Footer-links per groep
+for (const [id, groep] of [["voetSchool", "Voor school"], ["voetVrienden", "Voor de vriendengroep"]])
+  $(id).replaceChildren(...openbaar.filter(p => p.group === groep).map(p => {
+    const li = document.createElement("li");
+    li.append(Object.assign(document.createElement("a"), { href: p.url, textContent: p.name }));
+    return li;
+  }));
 
 // Account-popup: inloggen of account maken; ingelogd zie je ook je privéprojecten als je daar toegang toe hebt
 const dlg = $("account");
 $("openAccount").addEventListener("click", () => dlg.showModal());
+$("voetAccount").addEventListener("click", () => dlg.showModal());
+$("heroAccount").addEventListener("click", () => { zetModus(true); dlg.showModal(); });
 $("sluitAccount").addEventListener("click", () => dlg.close());
 dlg.addEventListener("click", e => { if (e.target === dlg) dlg.close(); });
 // Privépagina's sturen bezoekers zonder toegang naar /#account
@@ -441,8 +592,6 @@ $("login").addEventListener("submit", async e => {
 
 $("uitloggen").addEventListener("click", () => sb.auth.signOut());
 
-// Lijntje onder de navigatie zodra je scrolt
-addEventListener("scroll", () => $("nav").classList.toggle("scrolled", scrollY > 8), { passive: true });
 
 $("jaar").textContent = new Date().getFullYear();
 </script>
