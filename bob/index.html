@@ -17,7 +17,7 @@
   .mini span{display:block;font-weight:400;color:var(--muted)}
 
   /* nav */
-  nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:26px 48px;mix-blend-mode:difference}
+  nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:26px 48px;background:linear-gradient(180deg,rgba(7,10,20,.85) 0%,rgba(7,10,20,.45) 60%,transparent 100%)}
   .brand{font-weight:600;font-size:.95rem;letter-spacing:.02em}
   .brand i{font-family:"Playfair Display",serif;font-weight:500}
   .links{display:flex;gap:34px;font-size:.85rem}
@@ -58,7 +58,7 @@
         -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.55;filter:blur(1.5px)}
 
   /* PROJECTEN */
-  .vivid{position:relative;overflow:hidden;padding:140px 0 120px}
+  .vivid{position:relative;overflow:hidden;padding:140px 0 130px}
   .vivid .b1{width:42vw;height:42vw;left:-12vw;top:5%;background:#e8a21e}
   .vivid .b2{width:38vw;height:38vw;left:18vw;top:-8%;background:#a3175e;animation-delay:-4s}
   .vivid .b3{width:40vw;height:40vw;right:-8vw;top:20%;background:#0f8f8a;animation-delay:-9s}
@@ -66,39 +66,38 @@
   .vivid .b5{width:30vw;height:30vw;right:15vw;bottom:-5vw;background:#5a1d8a;animation-delay:-2s}
   .vivid::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--bg) 0%,transparent 18%,transparent 80%,var(--bg) 100%);z-index:0}
   .wrap{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 48px}
-  .intro{display:grid;grid-template-columns:.9fr 1.4fr;gap:60px;align-items:center}
-  .intro>*{min-width:0}
-  .intro h2{font-weight:400;font-size:clamp(1.6rem,2.6vw,2.4rem);line-height:1.3;letter-spacing:-.02em}
-  .intro .mini{margin-top:28px}
-  .carousel{position:relative}
-  .track-wrap{overflow:hidden;border-radius:26px}
-  .track{display:flex;gap:22px;transition:transform .7s cubic-bezier(.7,0,.2,1)}
-  .slide{flex:0 0 78%;background:#06070c;border-radius:26px;padding:30px;display:flex;flex-direction:column;gap:22px;opacity:.55;transition:opacity .5s}
-  .slide.active{opacity:1}
-  .slide-head{display:flex;align-items:center;gap:18px}
-  .slide-head h3{font-weight:500;font-size:1.35rem;letter-spacing:.02em;white-space:nowrap}
-  .slide-head .ln{flex:1;height:1px;background:var(--line)}
-  .slide-head .no{font-family:"Playfair Display",serif;font-style:italic;color:var(--gold);font-size:1.2rem}
-  .screen{position:relative;aspect-ratio:16/8.5;border-radius:16px;overflow:hidden;border:6px solid #1a1c24}
-  .screen .g{position:absolute;inset:-20%;filter:blur(30px)}
-  .screen .txt{position:absolute;left:8%;bottom:12%;font-size:clamp(1.6rem,3.6vw,3.2rem);font-weight:500;line-height:.95;letter-spacing:-.03em}
-  .screen .txt .serif{font-size:.6em;display:block;margin-top:6px}
-  .screen .tags{position:absolute;right:6%;top:10%;display:flex;gap:8px}
-  .screen .tags span{font-size:.68rem;padding:5px 11px;border-radius:99px;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.25)}
-  .ctrl{display:flex;align-items:center;justify-content:space-between;margin-top:26px}
-  .arrows{display:flex;gap:10px}
-  .arrows button{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-size:1.05rem;cursor:pointer;transition:.25s}
-  .arrows button:hover{background:#fff;color:#000}
-  .dots{display:flex;gap:10px}
-  .dots i{width:8px;height:8px;border-radius:50%;border:1px solid #fff;cursor:pointer;transition:.3s}
-  .dots i.on{background:var(--gold);border-color:var(--gold)}
+  .vivid .sec-title{margin-bottom:60px}
 
-  .qa{margin-top:90px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-  .q{background:rgba(6,7,12,.55);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:20px;padding:26px;transition:opacity .35s,transform .35s}
-  .q.fade{opacity:0;transform:translateY(10px)}
-  .q .num{font-family:"Playfair Display",serif;font-style:italic;color:var(--gold);font-size:1.1rem}
-  .q h4{font-weight:500;font-size:1.02rem;margin:8px 0 8px}
-  .q p{font-size:.9rem;color:var(--muted)}
+  .carousel{position:relative;z-index:1;user-select:none;-webkit-user-select:none}
+  .viewport{overflow:hidden;padding:20px 0 30px;touch-action:pan-y;cursor:grab}
+  .viewport.drag{cursor:grabbing}
+  .track{display:flex;gap:28px;will-change:transform;transition:transform .8s cubic-bezier(.65,0,.2,1)}
+  .viewport.drag .track{transition:none}
+  .slide{flex:0 0 min(900px,78vw);transform:scale(.86);opacity:.4;transition:transform .8s cubic-bezier(.65,0,.2,1),opacity .6s}
+  .slide.active{transform:scale(1);opacity:1}
+  .card{display:block;position:relative;background:#06070c;border-radius:30px;padding:16px;box-shadow:0 40px 80px -40px rgba(0,0,0,.8)}
+  .photo{position:relative;aspect-ratio:16/9;border-radius:20px;overflow:hidden}
+  .photo .g{position:absolute;inset:-25%;filter:blur(34px);transition:transform 1.2s ease}
+  .photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s ease;pointer-events:none}
+  .slide.active .card:hover .g,.slide.active .card:hover img{transform:scale(1.06)}
+  .photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.25) 0%,transparent 35%,transparent 45%,rgba(0,0,0,.75) 100%)}
+  .photo .top{position:absolute;z-index:1;left:28px;right:28px;top:24px;display:flex;justify-content:space-between;align-items:center}
+  .photo .top .no{font-family:"Playfair Display",serif;font-style:italic;color:var(--gold);font-size:1.5rem}
+  .chips{display:flex;gap:8px;flex-wrap:wrap}
+  .chips span{font-size:.7rem;padding:6px 12px;border-radius:99px;background:rgba(0,0,0,.3);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.25)}
+  .photo .bottom{position:absolute;z-index:1;left:28px;right:28px;bottom:26px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+  .photo h3{font-weight:500;font-size:clamp(2rem,5.2vw,4.6rem);line-height:.92;letter-spacing:-.045em}
+  .photo h3 .serif{display:block;font-size:.5em;margin-top:.25em;letter-spacing:-.01em}
+  .open{flex:none;display:inline-flex;align-items:center;gap:12px;background:#fff;color:#000;font-size:.85rem;font-weight:500;padding:8px 8px 8px 20px;border-radius:99px;opacity:0;transform:translateY(10px);transition:.5s .2s}
+  .open i{font-style:normal;width:36px;height:36px;border-radius:50%;background:var(--gold);display:grid;place-items:center}
+  .slide.active .open{opacity:1;transform:none}
+  .ctrl{display:flex;align-items:center;justify-content:center;gap:28px;margin-top:10px}
+  .arrows button{width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-size:1.05rem;cursor:pointer;transition:.25s}
+  .arrows button:hover{background:#fff;color:#000}
+  .count{font-family:"Playfair Display",serif;font-style:italic;font-size:1.3rem;min-width:70px;text-align:center}
+  .count b{color:var(--gold);font-weight:500}
+  .progress{width:180px;height:2px;background:var(--line);position:relative;overflow:hidden;border-radius:2px}
+  .progress i{position:absolute;left:0;top:0;bottom:0;background:var(--gold);transition:width .8s cubic-bezier(.65,0,.2,1)}
 
   /* BEDRIJVEN */
   .companies{position:relative;padding:130px 0 140px;overflow:hidden}
@@ -125,6 +124,7 @@
 
   @media (max-width:900px){
     nav{padding:20px 22px}.links{gap:18px}
+    .links a:not(:last-child){display:none}
     .hero{cursor:auto}
     .headline{left:6vw;top:20vh;font-size:21vw}
     .headline .l2{padding-left:10vw}
@@ -132,9 +132,12 @@
     .metas{left:6vw;flex-direction:column;gap:18px;bottom:6vh}
     .side{right:6vw;bottom:6vh}
     .wrap{padding:0 22px}
-    .intro{grid-template-columns:1fr;gap:40px}
-    .slide{flex-basis:90%;padding:20px}
-    .qa{grid-template-columns:1fr}
+    .slide{flex-basis:86vw}
+    .card{padding:10px;border-radius:22px}
+    .photo{aspect-ratio:4/5;border-radius:16px}
+    .photo .top,.photo .bottom{left:18px;right:18px}
+    .photo .bottom{flex-direction:column;align-items:flex-start}
+    .progress{display:none}
     .co-head{grid-template-columns:50px 1fr 48px}
     .co-head .tag{display:none}
     .co-grid{grid-template-columns:1fr;padding-left:0}
@@ -174,20 +177,16 @@
 <section class="vivid" id="projecten">
   <div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div><div class="blob b5"></div></div>
   <div class="wrap">
-    <div class="intro">
-      <div>
-        <h2>Ik ben Daan, en ik onderzoek <span class="serif">drie</span> projecten die laten zien waar ik later wil werken.</h2>
-        <div class="mini">Onderdeel 01<span>Projecten op hbo-niveau</span></div>
-      </div>
-      <div class="carousel">
-        <div class="track-wrap"><div class="track" id="track"></div></div>
-        <div class="ctrl">
-          <div class="arrows"><button id="prev" aria-label="Vorige">←</button><button id="next" aria-label="Volgende">→</button></div>
-          <div class="dots" id="dots"></div>
-        </div>
-      </div>
+    <h2 class="sec-title">Projecten<span class="serif">drie op hbo-niveau</span></h2>
+  </div>
+  <div class="carousel">
+    <div class="viewport" id="viewport"><div class="track" id="track"></div></div>
+    <div class="ctrl">
+      <div class="arrows"><button id="prev" aria-label="Vorige project">←</button></div>
+      <div class="count" id="count"></div>
+      <div class="progress"><i id="bar"></i></div>
+      <div class="arrows"><button id="next" aria-label="Volgende project">→</button></div>
     </div>
-    <div class="qa" id="qa"></div>
   </div>
 </section>
 
@@ -203,43 +202,51 @@
 <footer><span>BeroepsOriëntatieBoek · Daan Woerdman</span><span>Windesheim · Ruimtelijke Ontwikkeling · 2026–2027</span></footer>
 
 <script>
-/* ---------- data ---------- */
+/* ---------- projecten ---------- */
+// Pas hier titel, ondertitel en labels aan. Een foto zet je in img/project-1/cover.jpg (enz.).
 const projecten = [
   {t:"Lorem ipsum",s:"herinrichting",tags:["Mobiliteit","Gemeente"],g:"radial-gradient(circle at 20% 30%,#ffb02e,transparent 50%),radial-gradient(circle at 80% 20%,#c21d6b,transparent 50%),radial-gradient(circle at 60% 90%,#14a39a,transparent 55%),#3a1240"},
   {t:"Dolor sit",s:"fietsroute",tags:["Openbare ruimte","Provincie"],g:"radial-gradient(circle at 25% 70%,#1fd1a5,transparent 50%),radial-gradient(circle at 75% 30%,#3d6bff,transparent 50%),radial-gradient(circle at 50% 10%,#ffd34d,transparent 45%),#0e2a3a"},
   {t:"Amet consec",s:"stationsgebied",tags:["Mobiliteit","Rijk"],g:"radial-gradient(circle at 70% 70%,#ff5a36,transparent 50%),radial-gradient(circle at 20% 20%,#8a2be2,transparent 50%),radial-gradient(circle at 85% 15%,#ffc04d,transparent 45%),#1d1030"}
 ];
-const vragen = ["Waar gaat het project over?","Waarom spreekt het mij aan?","Welke rol had ik willen hebben?","Wat kan ik al goed?","Wat heb ik nog te leren?","Welke organisaties zijn betrokken?"];
-const lorem = ["Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus suspendisse lectus tortor dignissim.","Cras elementum ultrices diam. Maecenas ligula massa, varius a semper congue, euismod non mi.","Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.","Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.","Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.","Gemeente Lorem, Ipsum Adviesbureau en Dolor Infra. Aenean ut orci vel massa suscipit pulvinar."];
-
-/* ---------- carousel ---------- */
-const track=document.getElementById('track'),dots=document.getElementById('dots'),qa=document.getElementById('qa');
+const track=document.getElementById('track'),vp=document.getElementById('viewport');
 track.innerHTML=projecten.map((p,i)=>`
-  <article class="slide">
-    <div class="slide-head"><h3>PROJECT</h3><div class="ln"></div><span class="no">0${i+1}</span></div>
-    <div class="screen"><div class="g" style="background:${p.g}"></div>
-      <div class="tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div>
-      <div class="txt">${p.t}<span class="serif">${p.s}</span></div>
-    </div>
-  </article>`).join('');
-dots.innerHTML=projecten.map((_,i)=>`<i data-i="${i}"></i>`).join('');
-qa.innerHTML=vragen.map((v,i)=>`<div class="q"><span class="num">0${i+1}</span><h4>${v}</h4><p></p></div>`).join('');
-let cur=0;
+  <div class="slide" data-i="${i}">
+    <a class="card" href="project-${i+1}.html" draggable="false">
+      <div class="photo">
+        <div class="g" style="background:${p.g}"></div>
+        <img src="img/project-${i+1}/cover.jpg" alt="" onerror="this.remove()">
+        <div class="top"><span class="no">0${i+1}</span><div class="chips">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div></div>
+        <div class="bottom"><h3>${p.t}<span class="serif">${p.s}</span></h3><span class="open">Bekijk project <i>→</i></span></div>
+      </div>
+    </a>
+  </div>`).join('');
+const slides=[...track.children];
+let cur=0,dx=0;
+function offset(i){const s=slides[i];return vp.offsetWidth/2-(s.offsetLeft+s.offsetWidth/2);}
 function go(i){
-  cur=(i+projecten.length)%projecten.length;
-  const slide=track.children[0],gap=22;
-  track.style.transform=`translateX(-${cur*(slide.offsetWidth+gap)}px)`;
-  [...track.children].forEach((s,j)=>s.classList.toggle('active',j===cur));
-  [...dots.children].forEach((d,j)=>d.classList.toggle('on',j===cur));
-  const qs=[...qa.children];
-  qs.forEach(q=>q.classList.add('fade'));
-  setTimeout(()=>qs.forEach((q,j)=>{q.querySelector('p').textContent=`${lorem[(j+cur)%lorem.length]}`;q.classList.remove('fade')}),250);
+  cur=Math.max(0,Math.min(projecten.length-1,i));
+  track.style.transform=`translateX(${offset(cur)}px)`;
+  slides.forEach((s,j)=>s.classList.toggle('active',j===cur));
+  document.getElementById('count').innerHTML=`<b>0${cur+1}</b> / 0${projecten.length}`;
+  document.getElementById('bar').style.width=((cur+1)/projecten.length*100)+'%';
 }
 document.getElementById('prev').onclick=()=>go(cur-1);
 document.getElementById('next').onclick=()=>go(cur+1);
-dots.onclick=e=>{if(e.target.dataset.i)go(+e.target.dataset.i)};
+addEventListener('keydown',e=>{const r=vp.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0){if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1);}});
 addEventListener('resize',()=>go(cur));
+// slepen / swipen
+let startX=null,moved=false;
+vp.addEventListener('pointerdown',e=>{startX=e.clientX;dx=0;moved=false;vp.classList.add('drag');});
+addEventListener('pointermove',e=>{if(startX===null)return;dx=e.clientX-startX;if(Math.abs(dx)>6)moved=true;track.style.transform=`translateX(${offset(cur)+dx}px)`;});
+addEventListener('pointerup',()=>{if(startX===null)return;vp.classList.remove('drag');startX=null;
+  if(dx<-70)go(cur+1);else if(dx>70)go(cur-1);else go(cur);});
+// klik op een zijkaart = daarheen schuiven, klik op de middelste = openen
+track.addEventListener('click',e=>{const sl=e.target.closest('.slide');if(!sl)return;
+  if(moved){e.preventDefault();return;}
+  if(+sl.dataset.i!==cur){e.preventDefault();go(+sl.dataset.i);}});
 go(0);
+requestAnimationFrame(()=>go(0));
 
 /* ---------- bedrijven ---------- */
 const bedrijven=["Lorem Advies","Ipsum Ingenieurs","Dolor Infra"];

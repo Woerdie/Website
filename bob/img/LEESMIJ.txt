@@ -1,0 +1,9 @@
+Zet hier je fotos neer per project:
+
+project-1/cover.jpg   grote foto bovenaan en in de carrousel
+project-1/foto-1.jpg  onder vraag 1
+project-1/foto-2.jpg  links onder vraag 3
+project-1/foto-3.jpg  rechts onder vraag 3
+project-1/foto-4.jpg  onder vraag 5
+
+Hetzelfde voor project-2 en project-3. Zolang er geen foto staat zie je een kleurvlak.
