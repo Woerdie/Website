@@ -177,7 +177,7 @@
 <section class="vivid" id="projecten">
   <div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div><div class="blob b5"></div></div>
   <div class="wrap">
-    <h2 class="sec-title">Projecten<span class="serif">drie op hbo-niveau</span></h2>
+    <h2 class="sec-title">Projecten</h2>
   </div>
   <div class="carousel">
     <div class="viewport" id="viewport"><div class="track" id="track"></div></div>
@@ -210,8 +210,9 @@ const projecten = [
   {t:"Amet consec",s:"stationsgebied",tags:["Mobiliteit","Rijk"],g:"radial-gradient(circle at 70% 70%,#ff5a36,transparent 50%),radial-gradient(circle at 20% 20%,#8a2be2,transparent 50%),radial-gradient(circle at 85% 15%,#ffc04d,transparent 45%),#1d1030"}
 ];
 const track=document.getElementById('track'),vp=document.getElementById('viewport');
-track.innerHTML=projecten.map((p,i)=>`
-  <div class="slide" data-i="${i}">
+const N=projecten.length, SETS=3; // drie keer achter elkaar, zodat de carrousel rond kan lopen
+const kaart=(p,i)=>`
+  <div class="slide" data-real="${i}">
     <a class="card" href="project-${i+1}.html" draggable="false">
       <div class="photo">
         <div class="g" style="background:${p.g}"></div>
@@ -220,33 +221,53 @@ track.innerHTML=projecten.map((p,i)=>`
         <div class="bottom"><h3>${p.t}<span class="serif">${p.s}</span></h3><span class="open">Bekijk project <i>→</i></span></div>
       </div>
     </a>
-  </div>`).join('');
+  </div>`;
+track.innerHTML=Array.from({length:SETS},()=>projecten.map(kaart).join('')).join('');
 const slides=[...track.children];
-let cur=0,dx=0;
+slides.forEach((s,k)=>s.dataset.i=k);
+let cur=N,dx=0; // start in de middelste set
 function offset(i){const s=slides[i];return vp.offsetWidth/2-(s.offsetLeft+s.offsetWidth/2);}
-function go(i){
-  cur=Math.max(0,Math.min(projecten.length-1,i));
+function zet(i,anim=true){
+  cur=i;
+  track.style.transition=anim?'':'none';
+  slides.forEach(s=>s.style.transition=anim?'':'none');
   track.style.transform=`translateX(${offset(cur)}px)`;
   slides.forEach((s,j)=>s.classList.toggle('active',j===cur));
-  document.getElementById('count').innerHTML=`<b>0${cur+1}</b> / 0${projecten.length}`;
-  document.getElementById('bar').style.width=((cur+1)/projecten.length*100)+'%';
+  const r=cur%N;
+  document.getElementById('count').innerHTML=`<b>0${r+1}</b> / 0${N}`;
+  document.getElementById('bar').style.width=((r+1)/N*100)+'%';
+  if(!anim){track.offsetHeight;track.style.transition='';slides.forEach(s=>s.style.transition='');}
 }
+// na het schuiven ongemerkt terugspringen naar de middelste set
+track.addEventListener('transitionend',e=>{
+  if(e.target!==track||e.propertyName!=='transform')return;
+  if(cur<N||cur>=2*N)zet(N+cur%N,false);
+});
+const go=i=>{zet(i);herstart();};
 document.getElementById('prev').onclick=()=>go(cur-1);
 document.getElementById('next').onclick=()=>go(cur+1);
 addEventListener('keydown',e=>{const r=vp.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0){if(e.key==='ArrowRight')go(cur+1);if(e.key==='ArrowLeft')go(cur-1);}});
-addEventListener('resize',()=>go(cur));
+addEventListener('resize',()=>zet(cur,false));
+// elke 10 seconden door, pauze als je met de muis op de carrousel staat
+let timer,hover=false;
+function herstart(){clearInterval(timer);timer=setInterval(()=>{if(!hover&&!document.hidden)zet(cur+1)},10000);}
+const car=document.querySelector('.carousel');
+car.addEventListener('mouseenter',()=>hover=true);
+car.addEventListener('mouseleave',()=>{hover=false;herstart();});
 // slepen / swipen
 let startX=null,moved=false;
 vp.addEventListener('pointerdown',e=>{startX=e.clientX;dx=0;moved=false;vp.classList.add('drag');});
 addEventListener('pointermove',e=>{if(startX===null)return;dx=e.clientX-startX;if(Math.abs(dx)>6)moved=true;track.style.transform=`translateX(${offset(cur)+dx}px)`;});
 addEventListener('pointerup',()=>{if(startX===null)return;vp.classList.remove('drag');startX=null;
-  if(dx<-70)go(cur+1);else if(dx>70)go(cur-1);else go(cur);});
+  if(dx<-70)go(cur+1);else if(dx>70)go(cur-1);else zet(cur);});
 // klik op een zijkaart = daarheen schuiven, klik op de middelste = openen
 track.addEventListener('click',e=>{const sl=e.target.closest('.slide');if(!sl)return;
   if(moved){e.preventDefault();return;}
   if(+sl.dataset.i!==cur){e.preventDefault();go(+sl.dataset.i);}});
-go(0);
-requestAnimationFrame(()=>go(0));
+zet(N,false);
+requestAnimationFrame(()=>zet(N,false));
+addEventListener('load',()=>zet(cur,false));
+herstart();
 
 /* ---------- bedrijven ---------- */
 const bedrijven=["Lorem Advies","Ipsum Ingenieurs","Dolor Infra"];
