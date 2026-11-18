@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BeroepsOriëntatieBoek | Daan Woerdman</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#070a14;--ink:#f4f2ee;--muted:rgba(244,242,238,.6);--gold:#e9b632;--line:rgba(255,255,255,.14)}
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden}
+  a{color:inherit;text-decoration:none}
+  .serif{font-family:"Playfair Display",Georgia,serif;font-style:italic;font-weight:500;color:var(--gold);letter-spacing:0}
+  .mini{font-size:.66rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;line-height:1.7}
+  .mini span{display:block;font-weight:400;color:var(--muted)}
+
+  /* nav */
+  nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:26px 48px;mix-blend-mode:difference}
+  .brand{font-weight:600;font-size:.95rem;letter-spacing:.02em}
+  .brand i{font-family:"Playfair Display",serif;font-weight:500}
+  .links{display:flex;gap:34px;font-size:.85rem}
+  .links a{position:relative;opacity:.85}
+  .links a::after{content:"";position:absolute;left:0;bottom:-4px;width:0;height:1px;background:currentColor;transition:width .3s}
+  .links a:hover::after{width:100%}
+
+  /* blobs */
+  .blobs{position:absolute;inset:0;overflow:hidden;z-index:0;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.7;animation:float 18s ease-in-out infinite alternate}
+  @keyframes float{0%{transform:translate(0,0) scale(1)}50%{transform:translate(6%,-8%) scale(1.15)}100%{transform:translate(-5%,6%) scale(.95)}}
+
+  /* HERO */
+  .hero{position:relative;height:100vh;min-height:620px;overflow:hidden;cursor:none}
+  .hero .b1{width:55vw;height:55vw;left:-15vw;top:-20vw;background:#1c3f8f}
+  .hero .b2{width:45vw;height:45vw;right:-10vw;top:10vh;background:#24325f;animation-delay:-6s}
+  .hero .b3{width:35vw;height:35vw;left:30vw;bottom:-20vw;background:#3b1f5c;opacity:.5;animation-delay:-11s}
+  .layer{position:absolute;inset:0;z-index:1}
+  .base{background:var(--bg)}
+  .headline{position:absolute;left:8vw;top:24vh;font-weight:400;font-size:clamp(3.6rem,12.5vw,13rem);line-height:.88;letter-spacing:-.05em}
+  .headline .l1{position:relative;display:inline-block}
+  .headline .l2{display:block;padding-left:18vw}
+  .headline .serif{position:absolute;font-size:.4em;left:100%;margin-left:.15em;bottom:.05em;letter-spacing:-.01em;white-space:nowrap}
+  .metas{position:absolute;left:8vw;bottom:8vh;display:flex;gap:60px}
+  .side{position:absolute;right:8vw;bottom:8vh;display:flex;flex-direction:column;align-items:center;gap:14px}
+  .side .bar{width:1px;height:70px;background:var(--line);position:relative;overflow:hidden}
+  .side .bar::after{content:"";position:absolute;left:0;top:-30px;width:1px;height:30px;background:var(--ink);animation:drop 2.2s infinite}
+  @keyframes drop{to{top:70px}}
+  .side .mini{writing-mode:vertical-rl;transform:rotate(180deg);opacity:.6}
+
+  /* lens */
+  .zoomed{pointer-events:none;background:var(--bg);z-index:2;will-change:clip-path,transform}
+  .ring{position:absolute;z-index:3;width:190px;height:190px;margin:-95px 0 0 -95px;border-radius:50%;pointer-events:none;
+        box-shadow:inset 0 0 0 1px rgba(255,255,255,.35),inset 0 0 30px rgba(120,180,255,.35),0 20px 60px rgba(0,0,0,.45);
+        background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.18),transparent 45%)}
+  .ring::before{content:"";position:absolute;inset:-3px;border-radius:50%;padding:3px;
+        background:conic-gradient(from 0deg,#ff6b6b,#ffd36b,#6bffb8,#6bc4ff,#c66bff,#ff6b6b);
+        -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;opacity:.55;filter:blur(1.5px)}
+
+  /* PROJECTEN */
+  .vivid{position:relative;overflow:hidden;padding:140px 0 120px}
+  .vivid .b1{width:42vw;height:42vw;left:-12vw;top:5%;background:#e8a21e}
+  .vivid .b2{width:38vw;height:38vw;left:18vw;top:-8%;background:#a3175e;animation-delay:-4s}
+  .vivid .b3{width:40vw;height:40vw;right:-8vw;top:20%;background:#0f8f8a;animation-delay:-9s}
+  .vivid .b4{width:36vw;height:36vw;left:30vw;bottom:-10vw;background:#d6361f;animation-delay:-13s}
+  .vivid .b5{width:30vw;height:30vw;right:15vw;bottom:-5vw;background:#5a1d8a;animation-delay:-2s}
+  .vivid::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,var(--bg) 0%,transparent 18%,transparent 80%,var(--bg) 100%);z-index:0}
+  .wrap{position:relative;z-index:1;max-width:1320px;margin:0 auto;padding:0 48px}
+  .intro{display:grid;grid-template-columns:.9fr 1.4fr;gap:60px;align-items:center}
+  .intro>*{min-width:0}
+  .intro h2{font-weight:400;font-size:clamp(1.6rem,2.6vw,2.4rem);line-height:1.3;letter-spacing:-.02em}
+  .intro .mini{margin-top:28px}
+  .carousel{position:relative}
+  .track-wrap{overflow:hidden;border-radius:26px}
+  .track{display:flex;gap:22px;transition:transform .7s cubic-bezier(.7,0,.2,1)}
+  .slide{flex:0 0 78%;background:#06070c;border-radius:26px;padding:30px;display:flex;flex-direction:column;gap:22px;opacity:.55;transition:opacity .5s}
+  .slide.active{opacity:1}
+  .slide-head{display:flex;align-items:center;gap:18px}
+  .slide-head h3{font-weight:500;font-size:1.35rem;letter-spacing:.02em;white-space:nowrap}
+  .slide-head .ln{flex:1;height:1px;background:var(--line)}
+  .slide-head .no{font-family:"Playfair Display",serif;font-style:italic;color:var(--gold);font-size:1.2rem}
+  .screen{position:relative;aspect-ratio:16/8.5;border-radius:16px;overflow:hidden;border:6px solid #1a1c24}
+  .screen .g{position:absolute;inset:-20%;filter:blur(30px)}
+  .screen .txt{position:absolute;left:8%;bottom:12%;font-size:clamp(1.6rem,3.6vw,3.2rem);font-weight:500;line-height:.95;letter-spacing:-.03em}
+  .screen .txt .serif{font-size:.6em;display:block;margin-top:6px}
+  .screen .tags{position:absolute;right:6%;top:10%;display:flex;gap:8px}
+  .screen .tags span{font-size:.68rem;padding:5px 11px;border-radius:99px;background:rgba(0,0,0,.35);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.25)}
+  .ctrl{display:flex;align-items:center;justify-content:space-between;margin-top:26px}
+  .arrows{display:flex;gap:10px}
+  .arrows button{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:transparent;color:#fff;font-size:1.05rem;cursor:pointer;transition:.25s}
+  .arrows button:hover{background:#fff;color:#000}
+  .dots{display:flex;gap:10px}
+  .dots i{width:8px;height:8px;border-radius:50%;border:1px solid #fff;cursor:pointer;transition:.3s}
+  .dots i.on{background:var(--gold);border-color:var(--gold)}
+
+  .qa{margin-top:90px;display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+  .q{background:rgba(6,7,12,.55);backdrop-filter:blur(18px);border:1px solid var(--line);border-radius:20px;padding:26px;transition:opacity .35s,transform .35s}
+  .q.fade{opacity:0;transform:translateY(10px)}
+  .q .num{font-family:"Playfair Display",serif;font-style:italic;color:var(--gold);font-size:1.1rem}
+  .q h4{font-weight:500;font-size:1.02rem;margin:8px 0 8px}
+  .q p{font-size:.9rem;color:var(--muted)}
+
+  /* BEDRIJVEN */
+  .companies{position:relative;padding:130px 0 140px;overflow:hidden}
+  .companies .b1{width:40vw;height:40vw;right:-15vw;top:0;background:#1c3f8f;opacity:.45}
+  .companies .b2{width:30vw;height:30vw;left:-10vw;bottom:0;background:#3b1f5c;opacity:.45;animation-delay:-7s}
+  .sec-title{font-weight:400;font-size:clamp(3rem,8vw,7.5rem);letter-spacing:-.05em;line-height:.9;margin-bottom:70px;position:relative;display:inline-block}
+  .sec-title .serif{position:absolute;font-size:.36em;left:100%;margin-left:.3em;bottom:.15em;white-space:nowrap}
+  .co-list{border-top:1px solid var(--line)}
+  .co{border-bottom:1px solid var(--line)}
+  .co-head{display:grid;grid-template-columns:90px 1fr auto 60px;align-items:center;gap:20px;padding:34px 0;cursor:pointer}
+  .co-head .no{font-family:"Playfair Display",serif;font-style:italic;color:var(--gold);font-size:1.4rem}
+  .co-head h3{font-weight:400;font-size:clamp(1.6rem,3.4vw,3rem);letter-spacing:-.03em;transition:padding .4s}
+  .co:hover .co-head h3{padding-left:14px}
+  .co-head .plus{width:48px;height:48px;border-radius:50%;border:1px solid rgba(255,255,255,.4);display:grid;place-items:center;transition:transform .4s,background .3s}
+  .co.open .plus{transform:rotate(45deg);background:var(--gold);border-color:var(--gold);color:#000}
+  .co-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s ease}
+  .co.open .co-body{grid-template-rows:1fr}
+  .co-body>div{overflow:hidden}
+  .co-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;padding:0 0 40px 110px}
+  .co-grid h5{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+  .co-grid p{font-size:.88rem;color:var(--muted)}
+
+  footer{border-top:1px solid var(--line);padding:40px 48px;display:flex;justify-content:space-between;font-size:.8rem;color:var(--muted)}
+
+  @media (max-width:900px){
+    nav{padding:20px 22px}.links{gap:18px}
+    .hero{cursor:auto}
+    .headline{left:6vw;top:20vh;font-size:21vw}
+    .headline .l2{padding-left:10vw}
+    .headline .serif{position:static;display:block;font-size:.38em;margin:.15em 0 .1em .1em}
+    .metas{left:6vw;flex-direction:column;gap:18px;bottom:6vh}
+    .side{right:6vw;bottom:6vh}
+    .wrap{padding:0 22px}
+    .intro{grid-template-columns:1fr;gap:40px}
+    .slide{flex-basis:90%;padding:20px}
+    .qa{grid-template-columns:1fr}
+    .co-head{grid-template-columns:50px 1fr 48px}
+    .co-head .tag{display:none}
+    .co-grid{grid-template-columns:1fr;padding-left:0}
+    .sec-title .serif{position:static;display:block;margin:14px 0 0}
+    footer{flex-direction:column;gap:8px;padding:30px 22px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="#top">Daan Woerdman <i>· BOB</i></a>
+  <div class="links">
+    <a href="#projecten">Projecten</a>
+    <a href="#bedrijven">Bedrijven</a>
+    <a href="/">daanwoerdman.nl ↗</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="layer base" id="heroBase">
+    <div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+    <h1 class="headline"><span class="l1">Werkveld<span class="serif">oriëntatie</span></span><span class="l2">in beeld</span></h1>
+    <div class="metas">
+      <div class="mini">Ruimtelijke Ontwikkeling<span>Mobiliteit / Openbare Ruimte</span></div>
+      <div class="mini">Windesheim<span>2026 · 2027</span></div>
+      <div class="mini">Inleveren<span>17 januari 2027</span></div>
+    </div>
+    <div class="side"><div class="mini">Scroll</div><div class="bar"></div></div>
+  </div>
+
+  <div class="ring" id="ring"></div>
+</header>
+
+<!-- PROJECTEN -->
+<section class="vivid" id="projecten">
+  <div class="blobs"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div><div class="blob b5"></div></div>
+  <div class="wrap">
+    <div class="intro">
+      <div>
+        <h2>Ik ben Daan, en ik onderzoek <span class="serif">drie</span> projecten die laten zien waar ik later wil werken.</h2>
+        <div class="mini">Onderdeel 01<span>Projecten op hbo-niveau</span></div>
+      </div>
+      <div class="carousel">
+        <div class="track-wrap"><div class="track" id="track"></div></div>
+        <div class="ctrl">
+          <div class="arrows"><button id="prev" aria-label="Vorige">←</button><button id="next" aria-label="Volgende">→</button></div>
+          <div class="dots" id="dots"></div>
+        </div>
+      </div>
+    </div>
+    <div class="qa" id="qa"></div>
+  </div>
+</section>
+
+<!-- BEDRIJVEN -->
+<section class="companies" id="bedrijven">
+  <div class="blobs"><div class="blob b1"></div><div class="blob b2"></div></div>
+  <div class="wrap">
+    <h2 class="sec-title">Bedrijven<span class="serif">waar ik wil werken</span></h2>
+    <div class="co-list" id="coList"></div>
+  </div>
+</section>
+
+<footer><span>BeroepsOriëntatieBoek · Daan Woerdman</span><span>Windesheim · Ruimtelijke Ontwikkeling · 2026–2027</span></footer>
+
+<script>
+/* ---------- data ---------- */
+const projecten = [
+  {t:"Lorem ipsum",s:"herinrichting",tags:["Mobiliteit","Gemeente"],g:"radial-gradient(circle at 20% 30%,#ffb02e,transparent 50%),radial-gradient(circle at 80% 20%,#c21d6b,transparent 50%),radial-gradient(circle at 60% 90%,#14a39a,transparent 55%),#3a1240"},
+  {t:"Dolor sit",s:"fietsroute",tags:["Openbare ruimte","Provincie"],g:"radial-gradient(circle at 25% 70%,#1fd1a5,transparent 50%),radial-gradient(circle at 75% 30%,#3d6bff,transparent 50%),radial-gradient(circle at 50% 10%,#ffd34d,transparent 45%),#0e2a3a"},
+  {t:"Amet consec",s:"stationsgebied",tags:["Mobiliteit","Rijk"],g:"radial-gradient(circle at 70% 70%,#ff5a36,transparent 50%),radial-gradient(circle at 20% 20%,#8a2be2,transparent 50%),radial-gradient(circle at 85% 15%,#ffc04d,transparent 45%),#1d1030"}
+];
+const vragen = ["Waar gaat het project over?","Waarom spreekt het mij aan?","Welke rol had ik willen hebben?","Wat kan ik al goed?","Wat heb ik nog te leren?","Welke organisaties zijn betrokken?"];
+const lorem = ["Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus suspendisse lectus tortor dignissim.","Cras elementum ultrices diam. Maecenas ligula massa, varius a semper congue, euismod non mi.","Proin porttitor, orci nec nonummy molestie, enim est eleifend mi, non fermentum diam nisl sit amet erat.","Duis semper. Duis arcu massa, scelerisque vitae, consequat in, pretium a, enim. Pellentesque congue.","Ut in risus volutpat libero pharetra tempor. Cras vestibulum bibendum augue. Praesent egestas leo in pede.","Gemeente Lorem, Ipsum Adviesbureau en Dolor Infra. Aenean ut orci vel massa suscipit pulvinar."];
+
+/* ---------- carousel ---------- */
+const track=document.getElementById('track'),dots=document.getElementById('dots'),qa=document.getElementById('qa');
+track.innerHTML=projecten.map((p,i)=>`
+  <article class="slide">
+    <div class="slide-head"><h3>PROJECT</h3><div class="ln"></div><span class="no">0${i+1}</span></div>
+    <div class="screen"><div class="g" style="background:${p.g}"></div>
+      <div class="tags">${p.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+      <div class="txt">${p.t}<span class="serif">${p.s}</span></div>
+    </div>
+  </article>`).join('');
+dots.innerHTML=projecten.map((_,i)=>`<i data-i="${i}"></i>`).join('');
+qa.innerHTML=vragen.map((v,i)=>`<div class="q"><span class="num">0${i+1}</span><h4>${v}</h4><p></p></div>`).join('');
+let cur=0;
+function go(i){
+  cur=(i+projecten.length)%projecten.length;
+  const slide=track.children[0],gap=22;
+  track.style.transform=`translateX(-${cur*(slide.offsetWidth+gap)}px)`;
+  [...track.children].forEach((s,j)=>s.classList.toggle('active',j===cur));
+  [...dots.children].forEach((d,j)=>d.classList.toggle('on',j===cur));
+  const qs=[...qa.children];
+  qs.forEach(q=>q.classList.add('fade'));
+  setTimeout(()=>qs.forEach((q,j)=>{q.querySelector('p').textContent=`${lorem[(j+cur)%lorem.length]}`;q.classList.remove('fade')}),250);
+}
+document.getElementById('prev').onclick=()=>go(cur-1);
+document.getElementById('next').onclick=()=>go(cur+1);
+dots.onclick=e=>{if(e.target.dataset.i)go(+e.target.dataset.i)};
+addEventListener('resize',()=>go(cur));
+go(0);
+
+/* ---------- bedrijven ---------- */
+const bedrijven=["Lorem Advies","Ipsum Ingenieurs","Dolor Infra"];
+const bv=[["Type bedrijf","Lorem ipsum dolor sit amet, consectetur adipiscing elit."],["Werkvelden","Sed do eiusmod tempor incididunt ut labore et dolore magna."],["Waarom hier","Ut enim ad minim veniam, quis nostrud exercitation ullamco."],["Andere projecten","Duis aute irure dolor in reprehenderit in voluptate velit."],["Functies","Excepteur sint occaecat cupidatat non proident, sunt in culpa."]];
+const coList=document.getElementById('coList');
+coList.innerHTML=bedrijven.map((b,i)=>`
+  <div class="co ${i===0?'open':''}">
+    <div class="co-head"><span class="no">0${i+1}</span><h3>${b}</h3><span class="mini tag">Bij project 0${i+1}</span><span class="plus">+</span></div>
+    <div class="co-body"><div><div class="co-grid">${bv.map(v=>`<div><h5>${v[0]}</h5><p>${v[1]}</p></div>`).join('')}</div></div></div>
+  </div>`).join('');
+coList.querySelectorAll('.co-head').forEach(h=>h.onclick=()=>h.parentElement.classList.toggle('open'));
+
+/* ---------- vergrootglas ---------- */
+const hero=document.querySelector('.hero'),base=document.getElementById('heroBase'),ring=document.getElementById('ring');
+const zoom=base.cloneNode(true);zoom.id='';zoom.classList.add('zoomed');zoom.querySelector('.side')?.remove();
+hero.insertBefore(zoom,ring);
+const R=innerWidth<700?60:95,S=1.55;ring.style.width=ring.style.height=2*R+'px';ring.style.margin=(-R)+'px 0 0 '+(-R)+'px';
+let tx=innerWidth*.55,ty=innerHeight*.42,x=tx,y=ty,user=false,t0=performance.now();
+hero.addEventListener('mousemove',e=>{const r=hero.getBoundingClientRect();tx=e.clientX-r.left;ty=e.clientY-r.top;user=true});
+hero.addEventListener('mouseleave',()=>user=false);
+function tick(now){
+  if(!user){const t=(now-t0)/1000;const hr=hero.getBoundingClientRect(),r=base.querySelector('.headline').getBoundingClientRect();
+    tx=r.left-hr.left+r.width*(.5+.38*Math.sin(t*.45));ty=r.top-hr.top+r.height*(.5+.3*Math.sin(t*.9));}
+  x+=(tx-x)*.12;y+=(ty-y)*.12;
+  ring.style.left=x+'px';ring.style.top=y+'px';
+  zoom.style.transformOrigin=`${x}px ${y}px`;
+  zoom.style.transform=`scale(${S})`;
+  zoom.style.clipPath=`circle(${R/S}px at ${x}px ${y}px)`;
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+</script>
+</body>
+</html>
